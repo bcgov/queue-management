@@ -1,7 +1,4 @@
 def owaspPodLabel = "jenkins-agent-zap"
-def STAFFURL = sh (
-		script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
-		returnStdout: true
 	).trim()
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
@@ -31,6 +28,9 @@ podTemplate(
     )]
 ) {
     node(owaspPodLabel) {
+	    def STAFFURL = sh (
+		script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+		returnStdout: true
         stage('ZAP Security Scan') {
 				def retVal = sh (
 					returnStatus: true, 
