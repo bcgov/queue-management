@@ -1,7 +1,7 @@
 def owaspPodLabel = "jenkins-agent-zap"
 def STAFFURL = ""
 podTemplate(
-    label: label, 
+    label: geturl, 
     name: 'jenkins-agent-nodejs', 
     serviceAccount: 'jenkins', 
     cloud: 'openshift', 
@@ -19,7 +19,7 @@ podTemplate(
         )
     ]
 ){
-    node(label) {
+    node(geturl) {
 
          stage('get url') {
 		        STAFFURL = sh (
