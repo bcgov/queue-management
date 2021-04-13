@@ -1,5 +1,6 @@
 def owaspPodLabel = "jenkins-agent-zap"
 def STAFFURL = ""
+def APPTMNTURL = ""
 node() {
 
          stage('get url') {
@@ -7,7 +8,10 @@ node() {
                     script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
                     returnStdout: true
                 ).trim()
-
+		        STAFFURL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_appntmnt/{print $2}\'',
+                    returnStdout: true
+                ).trim()				
         }
 	}
 podTemplate(
@@ -37,7 +41,7 @@ podTemplate(
         stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index2.html -t $zap_url_appntmnt",
+                    script: "/zap/zap-baseline.py -r index2.html -t ${APPTMNTURL}",
                 )
                 sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
                 publishHTML([
