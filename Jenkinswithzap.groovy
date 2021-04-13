@@ -91,7 +91,7 @@ podTemplate(
                     script: "pwd",
                     returnStdout: true
             ).trim()
-            SONAR_SOURCES = 'api,frontend,appointment-frontend,jobs'
+            SONAR_SOURCES = 'api,frontend,appointment-frontend,jobs,feedback-api,notifications-api'
             SONARQUBE_PWD = sh (
                 script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^sonarqube_key/{print $2}\'',
                 returnStdout: true
