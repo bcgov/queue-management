@@ -8,7 +8,7 @@ node() {
                     script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
                     returnStdout: true
                 ).trim()
-		        STAFFURL = sh (
+		        APPTMNTURL = sh (
                     script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_appntmnt/{print $2}\'',
                     returnStdout: true
                 ).trim()				
