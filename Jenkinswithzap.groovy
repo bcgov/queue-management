@@ -412,10 +412,10 @@ podTemplate(
     containers: [ containerTemplate(
         name: 'jenkins-agent-zap',
         image: 'image-registry.openshift-image-registry.svc:5000/df1ee0-tools/jenkins-agent-zap:latest',
-        resourceRequestCpu: '500m',
-        resourceLimitCpu: '1000m',
-        resourceRequestMemory: '3Gi',
-        resourceLimitMemory: '4Gi',
+        resourceRequestCpu: '1000m',
+        resourceLimitCpu: '2000m',
+        resourceRequestMemory: '4Gi',
+        resourceLimitMemory: '5Gi',
         workingDir: '/home/jenkins',
         command: '',
         args: '${computer.jnlpmac} ${computer.name}'
