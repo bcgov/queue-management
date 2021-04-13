@@ -561,11 +561,6 @@ export default class ApptBookingModal extends Vue {
       if (services && services.length > 0) {
         if (this.selectedService) {
           this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
-          if (this.clickedAppt && !this.is_first_edit) {
-            if (this.clickedAppt.start && this.clickedAppt.end ) {
-              this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
-            }
-          } 
           if (this.selectedServiceObj.timeslot_duration) {
             if (this.clickedAppt && !this.is_first_edit) {
               if (this.clickedAppt.start && this.clickedAppt.end ) {
@@ -573,7 +568,6 @@ export default class ApptBookingModal extends Vue {
               if (!this.lengthOptions.includes(serviceMin)) {
                 this.lengthOptions.push(serviceMin)
               }
-              this.selectLength = serviceMin
               }
             } else {
             if (!this.lengthOptions.includes(this.selectedServiceObj.timeslot_duration)) {
@@ -764,7 +758,7 @@ export default class ApptBookingModal extends Vue {
   }
 
   show () {
-    this.selectLength = 15
+    // this.selectLength = 15
     if (!this.selectedServiceObj) {
       this.start = null
       this.appt_time = null
