@@ -59,7 +59,7 @@ class Appointment(Base):
     @declared_attr
     def updated_by(cls):  # pylint:disable=no-self-argument, # noqa: N805
         """Return updated by."""
-        return db.Column('updated_by', db.String(), nullable=True, default=cls._get_user_name)
+        return db.Column('updated_by', db.String(), nullable=True, onupdate=cls._get_user_name)
 
     @staticmethod
     def _get_user_name(**kwargs):
