@@ -9,10 +9,6 @@ metadata:
 labels:
   template: python
 parameters:
-  - name: S2I_NAMESPACE
-    displayName: Namespace
-    description: The OpenShift Namespace where the S2I ImageStream resides.
-    value: openshift
   - name: SOURCE_REPOSITORY_URL
     displayName: Git Repository URL
     description: The URL of the repository with your application source code.
@@ -53,9 +49,8 @@ objects:
         type: Source
         sourceStrategy:
           from:
-            kind: ImageStreamTag
-            namespace: openshift
-            name: python:latest
+            kind: DockerImage
+            name: 'registry.access.redhat.com/ubi8/python-38:latest'
       output:
         to:
           kind: ImageStreamTag
@@ -69,7 +64,7 @@ objects:
           memory: 4Gi
       postCommit: {}
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
       failedBuildsHistoryLimit: 2
     status:
       lastVersion: 0
