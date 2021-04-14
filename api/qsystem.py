@@ -23,6 +23,7 @@ from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
 from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from sqlalchemy_continuum import make_versioned
 
 
 def my_print(my_data):
@@ -73,6 +74,8 @@ cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': applicati
 cache.init_app(application)
 
 ma = Marshmallow(application)
+
+make_versioned(user_cls=None, plugins=[])
 
 #   Set up socket io and rabbit mq.
 socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=ping_timeout_seconds,ping_interval=ping_interval_seconds,
