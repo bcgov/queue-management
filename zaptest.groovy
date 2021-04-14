@@ -22,26 +22,26 @@ podTemplate(
     containers: [ containerTemplate(
         name: 'jenkins-agent-zap',
         image: 'image-registry.openshift-image-registry.svc:5000/df1ee0-tools/jenkins-agent-zap:latest',
-        resourceRequestCpu: '500m',
-        resourceLimitCpu: '1000m',
-        resourceRequestMemory: '3Gi',
-        resourceLimitMemory: '4Gi',
+        resourceRequestCpu: '1000m',
+        resourceLimitCpu: '2000m',
+        resourceRequestMemory: '4Gi',
+        resourceLimitMemory: '5Gi',
         workingDir: '/home/jenkins',
         command: '',
         args: '${computer.jnlpmac} ${computer.name}'
     )]
 ) {
     node(owaspPodLabel) {
-        stage('ZAP Security Scan') {
-				def retVal = sh (
-					returnStatus: true, 
-					script: '/zap/zap-baseline.py -r index1.html -t ${STAFFURL}'
-          )
+        stage('ZAP Security Scan') {          
+            def retVal = sh (
+                returnStatus: true, 
+                script: "/zap/zap-baseline.py -r index1.html -t ${STAFFURL}",
+            )
         }
         stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: '/zap/zap-baseline.py -r index2.html -t ${APPTMNTURL}'
+                    script: "/zap/zap-baseline.py -r index2.html -t ${APPTMNTURL}",
                 )
                 sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
                 publishHTML([
