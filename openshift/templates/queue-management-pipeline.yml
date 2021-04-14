@@ -1,0 +1,57 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: queue-management-piepline-build
+  annotations:
+    description: ""
+    tags: queue-management
+parameters:
+  - name: SOURCE_REPOSITORY_URL
+    displayName: Git Repository URL
+    description: The URL of the repository with your application source code.
+    value: https://github.com/bcgov/queue-management.git
+  - name: SOURCE_REPOSITORY_REF
+    displayName: Git Reference
+    description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+objects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: jenkin-config
+    data:
+      jenkin-config: |
+        user_qtxn=<set to cfms-postman-operator>
+        password_qtxn=<cfms-postman-operator userid password>
+        userid_nonqtxn=<set to cfms-postman-non-operator>
+        password_nonqtxn=<cfms-postman-non-operator userid password>
+        client_secret=<keycloak client secret>
+        zap_with_url=<zap command including dev url for analysis> 
+        namespace=< project namespace>
+        url=<url of api>/api/v1/
+        auth_url=<Keycloak domain>
+        clientid=<keycload Client ID>
+        realm=<keycloak realm>
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: queue-management-pipeline
+      labels:
+        app: queue-management-pipeline
+        name: queue-management-pipeline
+    spec:
+      runPolicy: Parallel
+      source:
+        type: Git
+        git:
+          uri: "${SOURCE_REPOSITORY_URL}"
+          ref: "${SOURCE_REPOSITORY_REF}"
+      strategy:
+        type: JenkinsPipeline
+        jenkinsPipelineStrategy:
+          jenkinsfilePath: Jenkinsfile.groovy
+      output: {}
+      resources: {}
+      postCommit: {}
+      nodeSelector:
+    status:
+      lastVersion: 0

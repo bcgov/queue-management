@@ -13,7 +13,12 @@ objects:
       accessModes:
         - ReadWriteMany
       resources:
+        limits:
+          cpu: '1'
+          memory: 600Mi
         requests:
+          cpu: 400m
+          memory: 400Mi
           storage: 128Mi
   - apiVersion: v1
     kind: Service
@@ -115,9 +120,9 @@ objects:
                 - name: APP_MODULE
                   value: wsgi
                 - name: ACTIVE_MQ_HOST
-                  value: rabbitmq
+                  value: "${ACTIVE_MQ_HOST}"
                 - name: ACTIVE_MQ_PORT
-                  value: "5672"
+                  value: "${ACTIVE_MQ_PORT}"
                 - name: SECRET_KEY
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
@@ -142,12 +147,18 @@ objects:
                   value: "true"
                 - name: APPOINTMENT_LIMIT_DAYS
                   value: "${APPOINTMENT_LIMIT_DAYS}"
-                - name: NOTIFICATIONS_EMAIL_ENDPOINT
-                  value: "${NOTIFICATIONS_EMAIL_ENDPOINT}"
+                - name: CHES_SSO_TOKEN_URL
+                  value: "${CHES_SSO_TOKEN_URL}"
+                - name: CHES_SSO_CLIENT_ID
+                  value: "${CHES_SSO_CLIENT_ID}"
+                - name: CHES_SSO_CLIENT_SECRET
+                  value: "${CHES_SSO_CLIENT_SECRET}"
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: ROCKET_CHAT_URL
                   value: "${ROCKET_CHAT_URL}"
                 - name: TEAMS_URL
-                  value: "${TEAMS_URL}"
+                  value: "${TEAMS_URL}"                  
                 - name: SERVICENOW_INSTANCE
                   value: "${SERVICENOW_INSTANCE}"
                 - name: SERVICENOW_USER
@@ -210,16 +221,20 @@ objects:
                   value: WARNING
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
                   value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
-                - name: JWT_OIDC_ALGORITHMS
-                  value: "${JWT_OIDC_ALGORITHMS}"
                 - name: JWT_OIDC_AUDIENCE
                   value: "${JWT_OIDC_AUDIENCE}"
                 - name: JWT_OIDC_CLIENT_SECRET
                   value: "${JWT_OIDC_CLIENT_SECRET}"
+                - name: SOCKETIO_PING_TIMEOUT
+                  value: "10"
+                - name: SOCKETIO_PING_INTERVAL
+                  value: "5"
                 - name: SHOW_ESTIMATE_TIME_WALKIN
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"
                 - name: APPOINTMENT_PORTAL_URL
-                  value: "${APPOINTMENT_PORTAL_URL}"
+                  value: "${SHOW_ESTIMATE_TIME_WALKIN}"
+                - name: NOTIFICATIONS_EMAIL_ENDPOINT
+                  value: "${NOTIFICATIONS_EMAIL_ENDPOINT}"                     
 
               ports:
                 - containerPort: 8080
@@ -323,10 +338,6 @@ parameters:
     required: true
     generate: expression
     from: "[a-zA-Z0-9]{16}"
-  - name: TEAMS_URL
-    description: "Teams API URL"
-    required: false
-    value: ""
   - name: THEQ_CLEAR_COMMENTS_FLAG
     description: "Remove Comments in Database (True or False)"
     required: false
@@ -360,7 +371,7 @@ parameters:
     required: false
     value: "false"
   - name: THEQ_FEEDBACK
-    description: "Where feedback should go (eg. 'Teams, Service Now')"
+    description: "Where feedback should go (eg. 'Slack, Service Now')"
     required: false
   - name: SERVICENOW_INSTANCE
     description: "The name of your organizations Service Now instance"
@@ -386,8 +397,17 @@ parameters:
   - name: ROCKET_CHAT_URL
     description: "Send messages from feedback to Rocket Chat. The Rocketchat Webhook URL"
     required: false
-  - name: NOTIFICATIONS_EMAIL_ENDPOINT
-    description: "Notifications email send endpoint."
+  - name: CHES_SSO_TOKEN_URL
+    description: "CHES token URL. See https://github.com/bcgov/common-hosted-email-service for more details."
+    required: true
+  - name: CHES_SSO_CLIENT_ID
+    description: "CHES service client id."
+    required: true
+  - name: CHES_SSO_CLIENT_SECRET
+    description: "CHES Service client secret."
+    required: true
+  - name: CHES_POST_EMAIL_ENDPOINT
+    description: "CHES email send endpoint."
     required: true
   - name: CACHE_DEFAULT_TIMEOUT
     description: "Timeout for all caches."
@@ -461,17 +481,13 @@ parameters:
     description: "Well known config URL for the keycloak realm "
     required: true
     value: ""
-  - name: JWT_OIDC_ALGORITHMS
-    description: "OIDC Algorithm"
-    required: false
-    value: "RS256"
   - name: JWT_OIDC_AUDIENCE
     description: "OIDC Audience"
     required: true
     value: ""
   - name: JWT_OIDC_CLIENT_SECRET
     description: "OIDC Client secret"
-    required: true
+    required: false
     value: ""
   - name: NOTIFICATIONS_ENDPOINT
     description: "Notifications endpoint"
@@ -482,6 +498,24 @@ parameters:
     required: true
     value: ""
   - name: APPOINTMENT_PORTAL_URL
-    description: "appointment portal url to generate dynamic walkin url "
+    description: "appointment portal url to generate dynamic walkin url"
     required: true
     value: ""
+  - name: ACTIVE_MQ_HOST
+    description: "rabbitmq/redis"
+    required: true
+    value: ""
+  - name: ACTIVE_MQ_PORT
+    description: "rabbitmq/redis port"
+    required: true
+    value: ""
+  - name: TEAMS_URL
+    description: "URL for Teams feedback"
+    required: true
+    value: ""
+  - name: NOTIFICATIONS_EMAIL_ENDPOINT
+    description: "Notifications email send endpoint."
+    required: true
+    value: ""
+
+

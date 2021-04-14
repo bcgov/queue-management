@@ -14,8 +14,8 @@ objects:
     spec:
       ports:
         - name: web
-          port: 2015
-          targetPort: 2015
+          port: 8080
+          targetPort: 8080
       selector:
         app: "${NAME}"
   - apiVersion: v1
@@ -44,7 +44,10 @@ objects:
             "hideBCServicesCard": ${HIDEBCSERVICESCARD},
             "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
             "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}",
-            "disableSms": ${DISABLE_SMS}
+            "disableSms": ${DISABLE_SMS},
+            "VUE_APP_FEEDBACK_API": ${VUE_APP_FEEDBACK_API},
+            "FEEDBACK_SERVICE_CHANNEL": ${FEEDBACK_SERVICE_CHANNEL},
+            "FEEDBACK_ENABLED": ${FEEDBACK_ENABLED}
           }
   - apiVersion: v1
     kind: ConfigMap
@@ -80,7 +83,13 @@ objects:
           timeoutSeconds: 60
           maxSurge: 2
           maxUnavailable: 0
-        resources: {}
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
         activeDeadlineSeconds: 3600
       template:
         metadata:
@@ -91,17 +100,15 @@ objects:
           containers:
             - name: "${NAME}"
               image: " "
-              args:
-                - "/tmp/scripts/run"
               ports:
-                - containerPort: 2015
+                - containerPort: 8080
               readinessProbe:
                 failureThreshold: 3
                 initialDelaySeconds: 3
                 periodSeconds: 10
                 successThreshold: 1
                 tcpSocket:
-                  port: 2015
+                  port: 8080
                 timeoutSeconds: 3
               livenessProbe:
                 failureThreshold: 3
@@ -109,12 +116,12 @@ objects:
                 periodSeconds: 10
                 successThreshold: 1
                 tcpSocket:
-                  port: 2015
+                  port: 8080
                 timeoutSeconds: 3
               volumeMounts:
-                - mountPath: /var/www/html/config/kc
+                - mountPath: /app/config/kc
                   name: keycloak
-                - mountPath: /var/www/html/config
+                - mountPath: /app/config
                   name: appointment-configuration
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
@@ -206,22 +213,21 @@ parameters:
     required: true
   - name: VUE_APP_ROOT_API
     description: "The new route to API which will be rate limited"
+    value: ""
   - name: BCEID_REG_URL
     description: The BCEID Registration URL.
     required: true
+    value: ""
   - name: VUE_APP_GOOGLE_STATIC_MAP_API_KEY
     description: API KEY for Google Map
     required: true
+    value: ""
   - name: KEYCLOAK_REALM
     description: "Keycloak Realm"
     required: true
     value: ""
   - name: KEYCLOAK_RESOURCE
     description: "Keycloak client id"
-    required: true
-    value: ""
-  - name: KEYCLOAK_SECRET
-    description: "Keycloak Secret"
     required: true
     value: ""
   - name: HIDEBCSERVICESCARD
@@ -235,5 +241,17 @@ parameters:
   - name: DISABLE_SMS
     description: "Flag to decide if SMS is disabled"
     required: true
-    value: true
+    value: "true"
+  - name: VUE_APP_FEEDBACK_API
+    description: "API details for the feedback channel"
+    required: true
+    value: ""
+  - name: FEEDBACK_SERVICE_CHANNEL
+    description: "channel name for feedback"
+    required: true
+    value: ""
+  - name: FEEDBACK_ENABLE
+    description: "Flag to decide if Feedback is enabled"
+    required: true
+    value: ""
 
