@@ -162,16 +162,18 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     this.$router.push(`/signin/${idpHint}`)
     this.callsp()
   }
+
   private createBCEID (url) {
     const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     this.$router.push(url)
     this.callsp()
   }
+
   private clickHyperlink (url, thelabel) {
     const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
-    this.$router.push(url)
+    window.open(url, '_blank')
     this.callsp()
   }
 

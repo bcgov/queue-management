@@ -347,6 +347,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private callsp () {
     (window as any).snowplow('trackPageView')
   }
+
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {

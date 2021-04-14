@@ -248,6 +248,7 @@ export default class AppointmentBookingView extends Vue {
       this.stepCounter--
     }
   }
+
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
     if (this.stepCounter !== this.$store.state.spLastStep) {
