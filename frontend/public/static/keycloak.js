@@ -633,14 +633,15 @@
             }
 
         }
-
         function loadConfig(url) {
             var promise = createPromise(true);
             var configUrl;
 
             if (!config) {
                 // configUrl = 'keycloak.json';
-                configUrl = 'static/keycloak/keycloak.json';
+                const baseThisUrl = window.location.protocol + '//' +  window.location.host
+                configUrl = baseThisUrl + '/static/keycloak/keycloak.json'
+                // configUrl = 'static/keycloak/keycloak.json';
             } else if (typeof config === 'string') {
                 configUrl = config;
             }
