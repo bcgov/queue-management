@@ -303,13 +303,13 @@ parameters:
     required: false
   - name: GC_NOTIFY_API_BASE_URL
     description: 
-    required: ture
+    required: true
   - name: GC_NOTIFY_API_KEY
     description: 
-    required: ture
+    required: true
   - name: GC_NOTIFY_SMS_TEMPLATE_ID
     description: 
-    required: ture
+    required: true
   - name: NOTIFICATIONS_EMAIL_ENDPOINT
     description: 
-    required: ture
+    required: true
