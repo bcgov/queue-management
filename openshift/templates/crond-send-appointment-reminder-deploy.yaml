@@ -32,8 +32,15 @@ objects:
       MAIL_FROM_ID: '${MAIL_FROM_ID}'
       EMAIL_APPOINTMENT_APP_URL: '${EMAIL_APPOINTMENT_APP_URL}'
       MAX_EMAIL_PER_BATCH: '${MAX_EMAIL_PER_BATCH}'
-      NOTIFICATIONS_EMAIL_ENDPOINT: '${NOTIFICATIONS_EMAIL_ENDPOINT}'
+      CHES_SSO_TOKEN_URL: '${CHES_SSO_TOKEN_URL}'
+      CHES_SSO_CLIENT_ID: '${CHES_SSO_CLIENT_ID}'
+      CHES_SSO_CLIENT_SECRET: '${CHES_SSO_CLIENT_SECRET}'
+      CHES_POST_EMAIL_ENDPOINT: '${CHES_POST_EMAIL_ENDPOINT}'
       NOTIFICATIONS_ENDPOINT: '${NOTIFICATIONS_ENDPOINT}'
+      GC_NOTIFY_API_BASE_URL: '${GC_NOTIFY_API_BASE_URL}'
+      GC_NOTIFY_API_KEY: '${GC_NOTIFY_API_KEY}'
+      GC_NOTIFY_SMS_TEMPLATE_ID: '${GC_NOTIFY_SMS_TEMPLATE_ID}'
+      NOTIFICATIONS_EMAIL_ENDPOINT: '${NOTIFICATIONS_EMAIL_ENDPOINT}'
 
   - kind: DeploymentConfig
     apiVersion: v1
@@ -128,11 +135,26 @@ objects:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
                       key: SERVICE_ACCOUNT_SECRET
-                - name: NOTIFICATIONS_EMAIL_ENDPOINT
+                - name: CHES_SSO_TOKEN_URL
                   valueFrom:
                     configMapKeyRef:
                       name: 'appointment-reminder-${TAG_NAME}-config'
-                      key: NOTIFICATIONS_EMAIL_ENDPOINT
+                      key: CHES_SSO_TOKEN_URL
+                - name: CHES_SSO_CLIENT_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: CHES_SSO_CLIENT_ID
+                - name: CHES_SSO_CLIENT_SECRET
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: CHES_SSO_CLIENT_SECRET
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: 'appointment-reminder-${TAG_NAME}-config'
+                      key: CHES_POST_EMAIL_ENDPOINT
                 - name: NOTIFICATIONS_ENDPOINT
                   valueFrom:
                     configMapKeyRef:
@@ -279,3 +301,15 @@ parameters:
   - name: NOTIFICATIONS_ENDPOINT
     description: Notifications endpoint
     required: false
+  - name: GC_NOTIFY_API_BASE_URL
+    description: 
+    required: ture
+  - name: GC_NOTIFY_API_KEY
+    description: 
+    required: ture
+  - name: GC_NOTIFY_SMS_TEMPLATE_ID
+    description: 
+    required: ture
+  - name: NOTIFICATIONS_EMAIL_ENDPOINT
+    description: 
+    required: ture
