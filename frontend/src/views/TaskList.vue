@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Vue ,Watch } from 'vue-property-decorator'
-import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/tasklist.vue'
+import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/TaskList.vue'
 import { State } from 'vuex-class'
 import configMap from '../utils/config-helper'
 @Component({
