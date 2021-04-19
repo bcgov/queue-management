@@ -11,8 +11,8 @@
           >
             Mobile BC Services Card App
           </v-btn>
-          <a class="link-w-icon mt-6 ml-2" href="https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/log-in-with-card"
-            target="_blank" rel="noopener noreferrer">
+          <a class="link-w-icon mt-6" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/log-in-with-card','Info: About the BC Services Card')"
+            target="_blank" rel="noopener noreferrer" >
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>About the mobile BC Services Card app</span>
           </a>
@@ -37,8 +37,8 @@
         >
         Basic BCeID Username
         </v-btn>
-        <a class="link-w-icon mt-6" href="https://www.bceid.ca/"
-          target="_blank" rel="noopener noreferrer">
+        <a class="link-w-icon mt-6"
+          target="_blank" rel="noopener noreferrer" @click="clickHyperlink('https://www.bceid.ca/','Info: About the BCeID')">
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>About the BCeID</span>
         </a>
@@ -58,10 +58,11 @@
       </v-row>
       <v-row class="align-row-1 bcsc-btn">
         <v-col class="fill-width">
-          <v-btn :href="BCEIDRegistrationURL"
-          width="220"
+          <v-btn
+          min-width="150"
           large
           color="primary"
+          @click="createBCEID(BCEIDRegistrationURL)"
         >
         Create Basic BCeID Username
         </v-btn>
@@ -70,7 +71,7 @@
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>Don't have a BCeID? Click Here</span>
         </a-->
-        <a class="link-w-icon mt-3" href="https://www2.gov.bc.ca/gov/content/home/privacy"
+        <a class="link-w-icon mt-3" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/home/privacy','Info: Privacy Statement')"
           target="_blank" rel="noopener noreferrer">
           <v-icon small class="mr-2">mdi-open-in-new</v-icon>
           <span>Privacy Statement</span>
@@ -91,24 +92,56 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { mapActions, mapState } from 'vuex'
+import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { IdpHint } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
-import { mapState } from 'vuex'
 
 @Component({
   computed: {
     ...mapState('auth', [
       'currentUserProfile'
     ])
+  },
+  methods: {
+    ...mapActions('office', [
+      'callSnowplowClick'
+    ])
   }
 })
+
 export default class LoginToConfirm extends Mixins(StepperMixin) {
   private idpHint = IdpHint
+
+  private currStep = ''
+
   private readonly currentUserProfile!: User
+
+  private readonly callSnowplowClick!: (mySP: any) => any
+
   @Prop({ default: false }) isStepperView: boolean
+
+  async mounted () {
+    switch (this.$store.state.spLastStep) {
+      case 1:
+        this.currStep = 'Location Selection'
+        break
+      case 2:
+        this.currStep = 'Select Service'
+        break
+      case 3:
+        this.currStep = 'Select Date'
+        break
+      case 4:
+        this.currStep = 'Login to Confirm Appointmente'
+        break
+      default:
+        break
+    }
+  }
 
   private get description () {
     return (this.isStepperView)
@@ -116,9 +149,36 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
       : 'Please login using one of the following'
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private login (idpHint) {
+    let thelabel = ''
+    if (idpHint === 'bcsc') {
+      thelabel = 'Login: BC Services Card'
+    } else {
+      thelabel = 'Login: BCeID'
+    }
+    let myurl = 'https://appointments.servicebc.gov.bc.ca/signin/' + idpHint
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: myurl }
+    this.callSnowplowClick(mySP)
     this.$router.push(`/signin/${idpHint}`)
-    // this.stepNext()
+    this.callsp()
+  }
+
+  private createBCEID (url) {
+    const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
+    this.callSnowplowClick(mySP)
+    window.location.href = url
+    this.callsp()
+  }
+
+  private clickHyperlink (url, thelabel) {
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
+    this.callSnowplowClick(mySP)
+    window.open(url, '_blank')
+    this.callsp()
   }
 
   private get hideBCServicesCard (): boolean {
