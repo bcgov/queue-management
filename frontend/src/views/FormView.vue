@@ -1,5 +1,5 @@
 <template>
-    <div> Form Submission
+    <div>
         <FormViewSubmission
           v-if="form_id && submission_id"
           :formid="form_id"
