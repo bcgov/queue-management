@@ -183,7 +183,8 @@ import { getModule } from 'vuex-module-decorators'
     ...mapActions('office', [
       'createAppointment',
       'clearSelectedValues',
-      'deleteDraftAppointment'
+      'deleteDraftAppointment',
+      'callSnowplow'
     ]),
     ...mapActions('appointment', [
       'getAppointmentList'
@@ -201,11 +202,13 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private mapConfigurations = ConfigHelper.getMapConfigurations()
   private readonly currentOffice!: Office
   private readonly currentService!: Service
+  private readonly currentUserProfile!: User
   private readonly currentAppointmentSlot!: AppointmentSlot
   private readonly currentOfficeTimezone!: string
   private readonly createAppointment!: () => Appointment
   private readonly deleteDraftAppointment!: () => Appointment
   private readonly clearSelectedValues!: () => void
+  private readonly callSnowplow!: (mySP: any) => any
   private readonly isAuthenticated!: boolean
   private showTermsOfServiceModal: boolean = false
   private termsOfServiceConsent: boolean = false
@@ -222,7 +225,6 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private isSendSmsReminders:boolean = false
   private isSendEmailReminders:boolean = false
-  private readonly currentUserProfile!: User
   private readonly updateUserAccount!: (userBody: UserUpdateBody) => Promise<any>
 
   private async mounted () {
@@ -316,6 +318,8 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       try {
         const resp = await this.createAppointment()
         if (resp.appointment_id) {
+          const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          this.callSnowplow(mySP)
           this.dialogPopup.showDialog = true
           this.dialogPopup.isSuccess = true
           this.dialogPopup.title = 'Success! Your appointment has been booked.'
@@ -340,11 +344,16 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     }
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private clickOk () {
     this.dialogPopup.showDialog = false
     if (this.dialogPopup.isSuccess) {
       this.clearSelectedValues()
       this.$router.push('/booked-appointments')
+      this.callsp()
     }
   }
 
@@ -356,6 +365,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private goToMyAppointments () {
     this.dialogPopup.showDialog = false
     this.$router.push('/booked-appointments')
+    this.callsp()
   }
 
   private getMapUrl (location) {

@@ -55,13 +55,23 @@ export default class SignedUser extends Vue {
   private async mounted () {
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private goTo (page) {
     switch (page) {
-      case 'appointments': this.$router.push('/booked-appointments')
+      case 'appointments':
+        this.$router.push('/booked-appointments')
+        this.callsp()
         break
-      case 'account': this.$router.push('/account-settings')
+      case 'account':
+        this.$router.push('/account-settings')
+        this.callsp()
         break
-      case 'logout': this.$router.push('/signout')
+      case 'logout':
+        this.$router.push('/signout')
+        this.callsp()
         break
     }
   }
