@@ -15,8 +15,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit",
-    "preinstall": "npx npm-force-resolutions"
+    "test:unit": "vue-cli-service test:unit"
   },
   "resolutions": {
     "yargs-parser": "15.0.1"
