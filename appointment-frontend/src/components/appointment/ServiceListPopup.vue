@@ -68,7 +68,7 @@
                   </div>
                 </td>
                 <td>
-                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.online_link)">
+                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.external_service_name, item.online_link)">
                     Online Option <v-icon small>mdi-open-in-new</v-icon>
                   </div>
                 </td>
@@ -83,15 +83,26 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import { ServiceAvailability } from '@/utils/constants'
-import { mapState } from 'vuex'
+import { User } from '@/models/user'
 
 @Component({
   computed: {
     ...mapState('office', [
+      'currentOffice',
+      'currentService',
       'categoryList'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
+    ])
+  },
+  methods: {
+    ...mapActions('office', [
+      'callSnowplowClick'
     ])
   }
 })
@@ -100,9 +111,14 @@ export default class ServiceListPopup extends Vue {
   private categorySearchInput:string = ''
   private filteredServiceList: Service[] = []
   private readonly categoryList!: Service[]
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly currentUserProfile!: User
+  private readonly isAuthenticated!: boolean
   private isFiltered: boolean = false
   private isModelOpen: boolean = false
   private ServiceAvailability = ServiceAvailability
+  private readonly callSnowplowClick!: (mySP: any) => any
 
   @Prop({ default: false })
   private locationServicesModal!: boolean
@@ -152,7 +168,9 @@ export default class ServiceListPopup extends Vue {
     }
   }
 
-  private goToServiceLink (url) {
+  private goToServiceLink (sn, url) {
+    const mySP = { label: 'Online Option', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.selectedLocationName, serv: sn, url: url }
+    this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }
 }
