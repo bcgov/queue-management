@@ -132,7 +132,6 @@ podTemplate(
                     }
                 }
             }
-        }
         }, Build_feedback_api: {
             stage("Build feedback api") {
                 script: {
