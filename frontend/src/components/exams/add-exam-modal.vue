@@ -162,8 +162,8 @@
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
+import AddExamFormController from './add-exam-form-controller.vue'
 import moment from 'moment'
 
 @Component({
@@ -173,8 +173,8 @@ import moment from 'moment'
   }
 })
 export default class AddExamModal extends Vue {
-  @State('event_ids') private event_ids!: any
-  @State('event_id_warning') private event_id_warning!: any
+  @State('event_ids') private eventIds!: any
+  @State('event_id_warning') private eventIdWarning!: any
   @State('capturedExam') private exam!: any
   @State('examTypes') private examTypes!: any
   @State('addExamModal') private addExamModal!: any
@@ -265,7 +265,7 @@ export default class AddExamModal extends Vue {
   }
 
   clickNext () {
-    if (this.event_id_warning) {
+    if (this.eventIdWarning) {
       this.removeError(2)
       this.setEventWarning(false)
     }
@@ -329,7 +329,6 @@ export default class AddExamModal extends Vue {
       const d = new Date()
       const today = moment(d).format('YYYY-MM-DD')
       this.captureExamDetail({ key: 'exam_received_date', value: today })
-      const recd = moment().add(90, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'group':
@@ -338,7 +337,6 @@ export default class AddExamModal extends Vue {
     case 'other':
       this.resetModal()
       this.captureExamDetail({ key: 'on_or_off', value: 'on' })
-      const exp = moment().add(60, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'pesticide':

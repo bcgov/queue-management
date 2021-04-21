@@ -265,8 +265,8 @@ export default class AddExamFinalStep extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('offices') private offices!: any
 
-  @Getter('exam_object') private exam_object!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
+  @Getter('exam_object') private examObject!: any;
+  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
 
   get officeName () {
     if (this.addExamModal.setup === 'group' || this.addExamModal.setup === 'pesticide' && this.exam.office_id) {

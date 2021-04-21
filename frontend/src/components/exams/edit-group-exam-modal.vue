@@ -714,17 +714,16 @@ export default class EditGroupExamBookingModal extends Vue {
 
   @State('showEditGroupBookingModal') private showModal!: any
   @State('invigilators') private invigilators!: any
-  @State('pesticide_invigilators') private pesticide_invigilators!: any
-  @State('pesticide_offsite_invigilators') private pesticide_offsite_invigilators!: any
+  @State('pesticide_invigilators') private pesticideInvigilators!: any
+  @State('pesticide_offsite_invigilators') private pesticideOffsiteInvigilators!: any
   @State('user') private user!: any
-  @State('shadowInvigilators') private shadowInvigilators!: any
 
-  @Getter('role_code') private role_code!: any;
-  @Getter('invigilator_dropdown') private invigilator_dropdown!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
-  @Getter('invigilator_multi_select') private invigilator_multi_select!: any;
-  @Getter('shadow_invigilator_options') private shadow_invigilator_options!: any;
-  @Getter('shadow_invigilators') private shadow_invigilators!: any;
+  @Getter('role_code') private roleCode!: any;
+  @Getter('invigilator_dropdown') private invigilatorDropdown!: any;
+  @Getter('is_ita2_designate') private isIta2Designate!: any;
+  @Getter('invigilator_multi_select') private invigilatorMultiSelect!: any;
+  @Getter('shadow_invigilator_options') private shadowInvigilatorOptions!: any;
+  @Getter('shadow_invigilators') private shadowInvigilators!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('getExams') public getExams: any
@@ -734,10 +733,10 @@ export default class EditGroupExamBookingModal extends Vue {
 
   @Mutation('toggleEditGroupBookingModal') public toggleEditGroupBookingModal: any
 
-  public invigilator_id: any = ''
+  public invigilatorId: any = ''
   public date: any = ''
   public time: any = ''
-  public offsite_location: any = ''
+  public offsiteLocation: any = ''
   public notes: any = ''
   public eventId: any = ''
   public editedFields: any = []
@@ -767,7 +766,7 @@ export default class EditGroupExamBookingModal extends Vue {
   public invigilatorBoolean: any = true
   public shadowInvigilatorBoolean: any = true
   public groupInvigilatorBoolean: any = true
-  public exam_received: any = false
+  public examReceived: any = false
   public examNotReady: any = false
   public message: string = ''
 
@@ -807,15 +806,15 @@ export default class EditGroupExamBookingModal extends Vue {
 
   get examType () {
     if (this.actionedExam && this.actionedExam.exam_type) {
-      const { exam_type } = this.actionedExam
+      const { examType } = this.actionedExam
 
-      if (exam_type.exam_type_name === 'Monthly Session Exam') {
+      if (examType.exam_type_name === 'Monthly Session Exam') {
         return 'challenger'
       }
-      if (exam_type.group_exam_ind) {
+      if (examType.group_exam_ind) {
         return 'group'
       }
-      if (exam_type.ita_ind) {
+      if (examType.ita_ind) {
         return 'individual'
       }
       return 'other'
@@ -831,12 +830,12 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get invigilatorList () {
-    const invigilators = (this.actionedExam.office && this.actionedExam.office.office_name === 'Pesticide Offsite') ? this.pesticide_offsite_invigilators : this.pesticide_invigilators
+    const invigilators = (this.actionedExam.office && this.actionedExam.office.office_name === 'Pesticide Offsite') ? this.pesticideOffsiteInvigilators : this.pesticideInvigilators
     return invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) }))
   }
 
   get examReceivedOptions () {
-    this.exam_received = this.actionedExam.exam_received_date !== null
+    this.examReceived = this.actionedExam.exam_received_date !== null
     this.fields.exam_received_date = this.actionedExam.exam_received_date
     return [
       { value: false, text: 'No' },
@@ -845,7 +844,7 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get fieldDisabled () {
-    if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType !== 'other') {
+    if ((this.roleCode !== 'GA' && !this.isIta2Designate) && this.examType !== 'other') {
       return true
     }
     return false
@@ -940,20 +939,20 @@ export default class EditGroupExamBookingModal extends Vue {
     }
   }
 
-  hideCollapse (div_id) {
-    const divSelection = document.getElementById(div_id)
+  hideCollapse (divId) {
+    const divSelection = document.getElementById(divId)
     if (divSelection) {
       if (divSelection.classList.contains('show')) {
-        this.$root.$emit('bv::toggle::collapse', div_id)
+        this.$root.$emit('bv::toggle::collapse', divId)
       }
     }
   }
 
-  showCollapse (div_id) {
-    const divSelection = document.getElementById(div_id)
+  showCollapse (divId) {
+    const divSelection = document.getElementById(divId)
     if (divSelection) {
       if (divSelection.style.display === 'none') {
-        this.$root.$emit('bv::toggle::collapse', div_id)
+        this.$root.$emit('bv::toggle::collapse', divId)
       }
     }
   }
@@ -1036,7 +1035,7 @@ export default class EditGroupExamBookingModal extends Vue {
         }
         // JSTOTS
         // Property 'invigiator_id' does not exist on type 'EditGroupExamBookingModal'. Did you mean 'invigilator_id'?
-        this.invigilator_id = ''
+        this.invigilatorId = ''
         return
       }
     }
@@ -1060,7 +1059,7 @@ export default class EditGroupExamBookingModal extends Vue {
   submit () {
     if (!this.actionedExam.booking || !this.actionedExam.booking.start_time) {
       console.log('    --> The exam is not booked, or is booked but does not have a start time')
-      const { exam_id } = this.actionedExam
+      const { examId } = this.actionedExam
       // JSTOTS INFO removed new from moment. no need to use new with moment
       const date = moment(this.date).format('YYYY-MM-DD').toString()
       // JSTOTS INFO removed new from moment. no need to use new with moment
@@ -1069,29 +1068,29 @@ export default class EditGroupExamBookingModal extends Vue {
       const start = moment(`${date}T${time}`)
       const end = start.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
       const bookingPost: any = {
-        exam_id,
+        examId,
         invigilator_id: null,
         sbc_staff_invigilated: false,
         start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         booking_name: this.actionedExam.exam_name
       }
-      if (this.invigilator_id) {
-        bookingPost.invigilator_id = this.invigilator_id
-        if (this.invigilator_id === 'sbc') {
+      if (this.invigilatorId) {
+        bookingPost.invigilator_id = this.invigilatorId
+        if (this.invigilatorId === 'sbc') {
           bookingPost.sbc_staff_invigilated = true
           bookingPost.invigilator_id = null
         }
       }
 
       const examPut: any = {
-        offsite_location: this.offsite_location,
+        offsite_location: this.offsiteLocation,
         event_id: this.eventId,
         notes: this.notes
       }
-      this.postBooking(bookingPost).then(booking_id => {
-        examPut.booking_id = booking_id
-        this.putRequest({ url: `/exams/${exam_id}/`, data: examPut }).then(() => {
+      this.postBooking(bookingPost).then(bookingId => {
+        examPut.booking_id = bookingId
+        this.putRequest({ url: `/exams/${examId}/`, data: examPut }).then(() => {
           this.getBookings().then(() => {
             this.getExams().then(() => {
               this.cancel()
@@ -1105,19 +1104,19 @@ export default class EditGroupExamBookingModal extends Vue {
     }
     const edits = this.editedFields
     const putRequests: any = []
-    const local_timezone_name = this.user.office.timezone.timezone_name
-    const edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
+    const localTimezoneName = this.user.office.timezone.timezone_name
+    const editTimezoneName = this.actionedExam.booking.office.timezone.timezone_name
     const bookingChanges: any = {}
-    const invigilator_id_list: any = []
-    const current_invigilator_id_list: any = []
+    const invigilatorIdList: any = []
+    const currentInvigilatorIdList: any = []
     let start
     this.selected.forEach(function (invigilator) {
-      invigilator_id_list.push(invigilator.value)
+      invigilatorIdList.push(invigilator.value)
     })
 
     if (this.currentInvigilatorList) {
       this.currentInvigilatorList.forEach(function (invigilator) {
-        current_invigilator_id_list.push(invigilator.value)
+        currentInvigilatorIdList.push(invigilator.value)
       })
     }
 
@@ -1126,11 +1125,11 @@ export default class EditGroupExamBookingModal extends Vue {
       console.log('    --> Edits include time, date, invigilator, or shadow invigilator')
       const baseDate = moment(this.date).clone().format('YYYY-MM-DD')
       const baseTime = moment(this.time).clone().format('HH:mm:ss')
-      if (local_timezone_name !== edit_timezone_name) {
-        start = zone.tz(`${baseDate}T${baseTime}`, edit_timezone_name)
+      if (localTimezoneName !== editTimezoneName) {
+        start = zone.tz(`${baseDate}T${baseTime}`, editTimezoneName)
       }
 
-      if (local_timezone_name === edit_timezone_name) {
+      if (localTimezoneName === editTimezoneName) {
         start = moment(`${baseDate}T${baseTime}`)
       }
 
@@ -1149,16 +1148,16 @@ export default class EditGroupExamBookingModal extends Vue {
       }
 
       if (this.actionedExam.is_pesticide) {
-        bookingChanges.invigilator_id = [this.invigilator_id]
+        bookingChanges.invigilator_id = [this.invigilatorId]
       } else {
-        if (current_invigilator_id_list.length === 0) {
-          bookingChanges.invigilator_id = invigilator_id_list
-        } else if (invigilator_id_list.length >= current_invigilator_id_list.length) {
-          bookingChanges.invigilator_id = invigilator_id_list
-        } else if (invigilator_id_list.length < current_invigilator_id_list.length) {
-          bookingChanges.invigilator_id = invigilator_id_list
+        if (currentInvigilatorIdList.length === 0) {
+          bookingChanges.invigilator_id = invigilatorIdList
+        } else if (invigilatorIdList.length >= currentInvigilatorIdList.length) {
+          bookingChanges.invigilator_id = invigilatorIdList
+        } else if (invigilatorIdList.length < currentInvigilatorIdList.length) {
+          bookingChanges.invigilator_id = invigilatorIdList
         } else {
-          bookingChanges.invigilator_id = current_invigilator_id_list
+          bookingChanges.invigilator_id = currentInvigilatorIdList
         }
       }
 
@@ -1187,13 +1186,13 @@ export default class EditGroupExamBookingModal extends Vue {
     }
     const examChanges: any = {}
     if (edits.includes('offsite_location')) {
-      examChanges.offsite_location = this.offsite_location
+      examChanges.offsite_location = this.offsiteLocation
     }
     if (edits.includes('notes')) {
       examChanges.notes = this.notes
     }
     if (edits.includes('invigilator_id')) {
-      examChanges.invigilator_id = this.invigilator_id
+      examChanges.invigilator_id = this.invigilatorId
     }
     if (edits.includes('exam_received')) {
       examChanges.exam_received_date = this.fields.exam_received_date + 'T00:00:00Z'
@@ -1248,38 +1247,38 @@ export default class EditGroupExamBookingModal extends Vue {
     if (this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
       this.actionedExam.booking.invigilators.forEach(function (invigilator) {
         const indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id === invigilator)
-        const index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
-        const index_invigilator_name = self.invigilators[indexOfInvigilator].invigilator_name
-        const invigilator_json = { name: index_invigilator_name, value: index_invigilator_id }
-        self.currentInvigilatorList.push(invigilator_json)
+        const indexInvigilatorId = self.invigilators[indexOfInvigilator].invigilator_id
+        const indexInvigilatorName = self.invigilators[indexOfInvigilator].invigilator_name
+        const invigilatorJson = { name: indexInvigilatorName, value: indexInvigilatorId }
+        self.currentInvigilatorList.push(invigilatorJson)
       })
     }
     const tempItem = Object.assign({}, this.actionedExam)
     if (tempItem.booking && tempItem.booking.start_time) {
-      const { start_time } = tempItem.booking
-      const { timezone_name } = this.actionedExam.booking.office.timezone
-      const time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
+      const { startTime } = tempItem.booking
+      const { timezoneName } = this.actionedExam.booking.office.timezone
+      const time = zone.tz(startTime, timezoneName).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
       this.time = moment(time).format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
-      this.date = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+      this.date = zone.tz(startTime, timezoneName).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
       if (tempItem.booking.sbc_staff_invigilated) {
-        this.invigilator_id = 'sbc'
+        this.invigilatorId = 'sbc'
       } else {
-        this.invigilator_id = tempItem.booking.invigilator_id
+        this.invigilatorId = tempItem.booking.invigilator_id
       }
       const currentID = this.currentShadowInvigilator = this.actionedExam.booking.shadow_invigilator_id || null
       let currentName = ''
-      this.shadow_invigilators.forEach(function (invigilator) {
+      this.shadowInvigilators.forEach(function (invigilator) {
         if (invigilator.id === currentID) {
           currentName = invigilator.name
         }
       })
       this.currentShadowInvigilatorName = currentName
     }
-    this.offsite_location = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
+    this.offsiteLocation = tempItem.offsite_location === '_offsite' ? null : tempItem.offsite_location
     this.notes = tempItem.notes
     this.eventId = tempItem.event_id
     if (tempItem.is_pesticide && tempItem.invigilator_id) {
-      this.invigilator_id = parseInt(tempItem.invigilator_id)
+      this.invigilatorId = parseInt(tempItem.invigilator_id)
     }
     this.editedFields = []
     this.itemCopy = tempItem
@@ -1288,17 +1287,17 @@ export default class EditGroupExamBookingModal extends Vue {
   reset () {
     this.time = null
     this.date = null
-    this.offsite_location = null
+    this.offsiteLocation = null
     this.notes = null
     this.eventId = null
-    this.invigilator_id = null
+    this.invigilatorId = null
     this.itemCopy = {}
     this.editedFields = []
-    this.exam_received = false
+    this.examReceived = false
   }
 
-  rowSelected (invigilator_multi_select) {
-    this.selected = invigilator_multi_select
+  rowSelected (invigilatorMultiSelect) {
+    this.selected = invigilatorMultiSelect
     this.editedFields.push('invigilator_id')
   }
 
@@ -1390,9 +1389,9 @@ export default class EditGroupExamBookingModal extends Vue {
 
   setSelectedInvigilator () {
     this.removeCurrentInvigilatorFlag = true
-    const current_invigilator_array_length = this.currentInvigilatorList.length
+    const currentInvigilatorArrayLength = this.currentInvigilatorList.length
     if (this.actionedExam && this.actionedExam.booking) {
-      if (current_invigilator_array_length > 0) {
+      if (currentInvigilatorArrayLength > 0) {
         if (!this.editedFields.includes('invigilator_id')) {
           this.editedFields.push('invigilator_id')
         }
@@ -1415,12 +1414,12 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   updateExamReceived (e) {
-    const { exam_received_date } = this.fields
+    const { examReceivedDate } = this.fields
     this.editedFields.push('exam_received')
     if (e.type === 'exam-downloaded') {
-      this.exam_received = true
+      this.examReceived = true
     }
-    if (e && !exam_received_date) {
+    if (e && !examReceivedDate) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
       return
@@ -1431,11 +1430,11 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   updatePrintExamReceived (strExam) {
-    const { exam_received_date } = this.fields
+    const { examReceivedDate } = this.fields
     if (strExam === 'exam-downloaded') {
-      this.exam_received = true
+      this.examReceived = true
     }
-    if (strExam && !exam_received_date) {
+    if (strExam && !examReceivedDate) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
     }
@@ -1466,7 +1465,7 @@ export default class EditGroupExamBookingModal extends Vue {
 
   invigilatorChanged (value) {
     console.log(value)
-    this.invigilator_id = value
+    this.invigilatorId = value
     if (!this.editedFields.includes('invigilator_id')) {
       this.editedFields.push('invigilator_id')
     }

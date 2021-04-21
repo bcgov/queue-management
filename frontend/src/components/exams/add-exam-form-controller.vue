@@ -194,10 +194,10 @@ import { mapState } from 'vuex'
 export default class AddExamFormController extends Vue {
   @Getter('add_modal_steps') private steps!: any;
   // @Getter('event_id_warning') private event_id_warning!: any;
-  @Getter('exam_object') private exam_object!: any;
-  @Getter('role_code') private role_code!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
+  @Getter('exam_object') private examObject!: any;
+  @Getter('role_code') private roleCode!: any;
+  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
+  @Getter('is_ita2_designate') private isIta2Designate!: any;
   @Getter('addPesticideSteps') private addPesticideSteps!: any;
 
   @Action('getExamTypes') public getExamTypes: any
@@ -227,8 +227,8 @@ export default class AddExamFormController extends Vue {
   }
 
   private readonly exam!: any
-  private readonly event_ids!: any
-  private readonly event_id_warning!: any
+  private readonly eventIds!: any
+  private readonly eventIdWarning!: any
   private readonly addExamModal!: any
   private readonly addGroupSteps!: any
   private readonly addChallengerSteps!: any
@@ -245,7 +245,7 @@ export default class AddExamFormController extends Vue {
     { text: 'paper', value: 'paper' }
   ]
 
-  event_form_validation: boolean = false
+  eventFormValidation: boolean = false
 
   get error () {
     if (this.errors.includes(this.step)) {
@@ -254,7 +254,7 @@ export default class AddExamFormController extends Vue {
     return false
   }
 
-  get ind_or_group () {
+  get indOrGroup () {
     if (this.exam) {
       return this.exam.ind_or_group
     }
@@ -323,7 +323,7 @@ export default class AddExamFormController extends Vue {
           }
         }) */
       if (key === 'event_id' && answer && answer.length >= 4) {
-        if (this.event_id_warning) {
+        if (this.eventIdWarning) {
           valid.event_id = true
           messages.event_id = 'Event ID already in Use'
           // Should handle next button bug
@@ -334,7 +334,7 @@ export default class AddExamFormController extends Vue {
         if ((document.activeElement as any).id === 'event_id') {
           this.getExamEventIDs(answer)
         }
-        if (this.event_ids === false) {
+        if (this.eventIds === false) {
           valid.event_id = true
           messages.event_id = ''
           // Should handle next button bug

@@ -583,11 +583,11 @@ export default class EditExamModal extends Vue {
   @State('showDeleteExamModal') private showDeleteExamModal!: any
   @State('user') private user!: any
 
-  @Getter('exam_object_id') private exam_object_id!: any;
-  @Getter('role_code') private role_code!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
-  @Getter('is_office_manager') private is_office_manager!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
+  @Getter('exam_object_id') private examObjectId!: any;
+  @Getter('role_code') private roleCode!: any;
+  @Getter('is_ita2_designate') private isIta2Designate!: any;
+  @Getter('is_office_manager') private isOfficeManager!: any;
+  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
 
   @Action('downloadExam') public downloadExam: any
   @Action('getBookings') public getBookings: any
@@ -622,8 +622,8 @@ export default class EditExamModal extends Vue {
     { text: 'online', value: 'online' }
   ]
 
-  public exam_received: any = this.actionedExam.exam_received_date !== null
-  public office_number: any = null
+  public examReceived: any = this.actionedExam.exam_received_date !== null
+  public officeNumber: any = null
   public officeChoices: any = []
   public showMessage: any = false
   public search: string = ''
@@ -634,13 +634,13 @@ export default class EditExamModal extends Vue {
     let examCanBeDeleted = false
 
     //  If an individual pesticide exam, can only delete if a pesticide liaison
-    if (this.examType === 'pest' && this.is_pesticide_designate) {
+    if (this.examType === 'pest' && this.isPesticideDesignate) {
       examCanBeDeleted = true
     }
 
     //  If not an individual pesticide exam, do the old, standard test.
     if (this.examType !== 'pest') {
-      examCanBeDeleted = this.is_office_manager || this.role_code === 'GA' || this.is_ita2_designate
+      examCanBeDeleted = this.isOfficeManager || this.roleCode === 'GA' || this.isIta2Designate
     }
     return examCanBeDeleted
   }
@@ -693,7 +693,7 @@ export default class EditExamModal extends Vue {
   }
 
   get otherOfficeExam () {
-    if (!this.is_ita2_designate) {
+    if (!this.isIta2Designate) {
       return false
     }
     if (this.actionedExam && this.actionedExam.office_id !== this.user.office_id) {
@@ -714,8 +714,8 @@ export default class EditExamModal extends Vue {
 
   get examInputStyle () {
     if (this.examObject && this.examObject.exam_color !== '#FFFFFF') {
-      const { exam_color } = this.examObject
-      return { border: `1px solid ${exam_color}`, boxShadow: `inset 0px 0px 0px 3px ${exam_color}` }
+      const { examColor } = this.examObject
+      return { border: `1px solid ${examColor}`, boxShadow: `inset 0px 0px 0px 3px ${examColor}` }
     }
     return ''
   }
@@ -729,25 +729,25 @@ export default class EditExamModal extends Vue {
 
   get examObject () {
     if (this.fields && this.fields.exam_type_id) {
-      return this.exam_object_id(this.fields.exam_type_id)
+      return this.examObjectId(this.fields.exam_type_id)
     }
     return ''
   }
 
   get examType () {
     if (this.exam && this.exam.exam_type) {
-      const { exam_type } = this.exam
+      const { examType } = this.exam
 
-      if (exam_type.exam_type_name === 'Monthly Session Exam') {
+      if (examType.exam_type_name === 'Monthly Session Exam') {
         return 'challenger'
       }
-      if (exam_type.pesticide_exam_ind) {
+      if (examType.pesticide_exam_ind) {
         return 'pest'
       }
-      if (exam_type.group_exam_ind) {
+      if (examType.group_exam_ind) {
         return 'group'
       }
-      if (exam_type.ita_ind) {
+      if (examType.ita_ind) {
         return 'individual'
       }
       return 'other'
@@ -783,7 +783,7 @@ export default class EditExamModal extends Vue {
   }
 
   get examReceivedOptions () {
-    this.exam_received = this.actionedExam.exam_received_date !== null
+    this.examReceived = this.actionedExam.exam_received_date !== null
     this.fields.exam_received_date = this.actionedExam.exam_received_date
     return [
       { value: false, text: 'No' },
@@ -792,7 +792,7 @@ export default class EditExamModal extends Vue {
   }
 
   get showAllFields () {
-    if (this.role_code === 'GA' || this.is_ita2_designate || this.is_office_manager) {
+    if (this.roleCode === 'GA' || this.isIta2Designate || this.isOfficeManager) {
       return true
     }
     if (this.examType && ['individual', 'other'].includes(this.examType)) {
@@ -904,13 +904,13 @@ export default class EditExamModal extends Vue {
     if (exam.exam_received_date && moment(exam.exam_received_date).isValid()) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment(exam.exam_received_date).format('YYYY-MM-DD')
-      this.exam_received = true
+      this.examReceived = true
     }
-    this.office_number = exam.office.office_number
+    this.officeNumber = exam.office.office_number
   }
 
   setOffice (officeNumber) {
-    this.office_number = officeNumber
+    this.officeNumber = officeNumber
     this.fields.office_id = this.offices.find(office => office.office_number === officeNumber).office_id
   }
 
@@ -929,8 +929,8 @@ export default class EditExamModal extends Vue {
     this.lengthError = false
     this.clickedMenu = false
     this.message = null
-    this.office_number = null
-    this.exam_received = false
+    this.officeNumber = null
+    this.examReceived = false
     this.search = ''
     this.searching = false
     this.showMessage = false
@@ -965,7 +965,7 @@ export default class EditExamModal extends Vue {
         putRequest[key] = data[key]
       }
     })
-    if (!this.exam_received) {
+    if (!this.examReceived) {
       putRequest.exam_received_date = null
     }
     this.putExamInfo(putRequest).then(() => {
@@ -976,11 +976,11 @@ export default class EditExamModal extends Vue {
   }
 
   updateExamReceived (e) {
-    const { exam_received_date } = this.fields
+    const { examReceivedDate } = this.fields
     if (e.type === 'exam-downloaded') {
-      this.exam_received = true
+      this.examReceived = true
     }
-    if (e && !exam_received_date) {
+    if (e && !examReceivedDate) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
       return
@@ -991,11 +991,11 @@ export default class EditExamModal extends Vue {
   }
 
   updatePrintExamReceived (strExam) {
-    const { exam_received_date } = this.fields
+    const { examReceivedDate } = this.fields
     if (strExam === 'exam-downloaded') {
-      this.exam_received = true
+      this.examReceived = true
     }
-    if (strExam && !exam_received_date) {
+    if (strExam && !examReceivedDate) {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
     }

@@ -2,7 +2,7 @@
   <div class="q-w100-flex-fs">
     <b-form inline>
       <b-dd
-        v-if="role_code === 'GA' || is_office_manager"
+        v-if="roleCode === 'GA' || isOfficeManager"
         id="add-ita"
         split
         class="mr-1"
@@ -15,14 +15,14 @@
         >
       </b-dd>
       <b-button
-        v-if="!(role_code === 'GA' || is_office_manager)"
+        v-if="!(roleCode === 'GA' || isOfficeManager)"
         id="add_ita"
         class="mr-1 btn-primary"
         @click="handleClick('individual')"
         >Add ITA Exam</b-button
       >
       <b-button
-        v-if="is_ita2_designate"
+        v-if="isIta2Designate"
         id="add_group"
         class="mr-1 btn-primary"
         @click="handleClick('group')"
@@ -35,14 +35,14 @@
         >Add Other Exam</b-button
       >
       <b-button
-        v-if="is_pesticide_designate"
+        v-if="isPesticideDesignate"
         class="mr-1 btn-primary"
         id="add_pesticide"
         @click="handleClick('pesticide')"
         >Add Pesticide Exam</b-button
       >
       <b-button
-        v-if="is_financial_designate || role_code === 'GA' || is_office_manager"
+        v-if="isFinancialDesignate || roleCode === 'GA' || isOfficeManager"
         class="btn-primary mr-3"
         @click="clickGenFinReport"
         >Generate Financial Report</b-button
@@ -69,11 +69,11 @@ export default class ButtonsExams extends Vue {
   @State('showGenFinReportModal') private showGenFinReportModal!: any
   @State('user') private user!: any
 
-  @Getter('is_financial_designate') private is_financial_designate!: any;
-  @Getter('is_office_manager') private is_office_manager!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
-  @Getter('role_code') private role_code!: any;
+  @Getter('is_financial_designate') private isFinancialDesignate!: any;
+  @Getter('is_office_manager') private isOfficeManager!: any;
+  @Getter('is_ita2_designate') private isIta2Designate!: any;
+  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
+  @Getter('role_code') private roleCode!: any;
   @Getter('showExams') private showExams!: any;
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any

@@ -1,8 +1,8 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Getter, Mutation, State } from 'vuex-class'
-import { mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
+import { mapState } from 'vuex'
 import moment from 'moment'
 
 // checkmark
@@ -22,7 +22,6 @@ import moment from 'moment'
 export class checkmark extends Vue {
   @Prop()
   private validated!: any
-
 }
 
 // AddExamCounter
@@ -234,7 +233,7 @@ export class DropdownQuestion extends Vue {
   private exam!: any
 
   @Prop()
-  private exam_object!: any
+  private examObject!: any
 
   @Prop()
   private examTypes!: any
@@ -302,15 +301,15 @@ export class DropdownQuestion extends Vue {
   }
 
   get inputText () {
-    if (this.exam_object && this.exam_object.exam_type_name) {
-      return this.exam_object.exam_type_name
+    if (this.examObject && this.examObject.exam_type_name) {
+      return this.examObject.exam_type_name
     }
     return ''
   }
 
   get inputStyle () {
-    if (this.exam_object && this.exam_object.exam_type_name) {
-      return { backgroundColor: `${this.exam_object.exam_color}` }
+    if (this.examObject && this.examObject.exam_type_name) {
+      return { backgroundColor: `${this.examObject.exam_color}` }
     }
     return ''
   }
@@ -509,7 +508,6 @@ export class ExamReceivedQuestion extends Vue {
 `
 })
 export class InputQuestion extends Vue {
-
   @Prop()
   private error!: any
 
@@ -589,11 +587,11 @@ export class InputQuestion2 extends Vue {
     { text: 'Yes', value: true }
   ]
 
-  get capture_names () {
+  get captureNames () {
     return this.exam.capture_names
   }
 
-  set capture_names (value) {
+  set captureNames (value) {
     this.$store.commit('captureExamDetail', { key: 'capture_names', value })
   }
 
@@ -748,7 +746,7 @@ export class LocationInput extends Vue {
   }
 
   launchSchedule () {
-    const { exam_type_id } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
+    const { examTypeId } = this.examTypes.find(t => t.exam_type_name === 'Monthly Session Exam')
     const exam: any = {
       exam_name: this.exam.exam_name,
       examinee_name: 'Monthly Session',
@@ -756,7 +754,7 @@ export class LocationInput extends Vue {
       office_id: this.user.office_id,
       exam_type: {
         exam_type_name: 'Monthly Session Exam',
-        exam_type_id,
+        examTypeId,
         number_of_hours: 4
       },
       number_of_students: 1
@@ -913,7 +911,6 @@ export class OffsiteSelect extends Vue {
   `
 })
 export class SelectQuestion extends Vue {
-
   @Prop()
   private error!: any
 
@@ -933,13 +930,13 @@ export class SelectQuestion extends Vue {
   @State('capturedExam') private capturedExam!: any
 
   @Watch('ind_or_group')
-  onInd_or_groupChange (newVal: any, oldVal: any) {
+  onIndOrGroupChange (newVal: any, oldVal: any) {
     if (this.addExamModal.setup === 'pesticide' && newVal === 'group') {
       this.$store.commit('captureExamDetail', { key: 'capture_names', value: false })
     }
   }
 
-  get ind_or_group () {
+  get indOrGroup () {
     if (this.capturedExam.ind_or_group) {
       return this.capturedExam.ind_or_group
     }
@@ -967,7 +964,7 @@ export class SelectOffice extends Vue {
   @State('user') private user!: any
   @State('addExamModal') private addExamModal!: any
 
-  @Getter('role_code') private role_code!: any;
+  @Getter('role_code') private roleCode!: any;
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
   @Prop()
@@ -985,7 +982,7 @@ export class SelectOffice extends Vue {
   @Prop()
   private exam!: any
 
-  get office_number () {
+  get officeNumber () {
     return this.addExamModal.office_number
   }
 
@@ -1003,17 +1000,17 @@ export class SelectOffice extends Vue {
     return '(Start typing to search or enter Office #)'
   }
 
-  setOffice (office_number) {
-    office_number = parseInt(office_number)
-    this.setAddExamModalSetting({ office_number })
+  setOffice (officeNumber) {
+    officeNumber = parseInt(officeNumber)
+    this.setAddExamModalSetting({ officeNumber })
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number === office_number) || null
+      const office = this.offices.find(office => office.office_number === officeNumber) || null
       if (office) {
-        const { office_id } = office
+        const { officeId } = office
         this.handleInput({
           target: {
             name: 'office_id',
-            value: office_id
+            value: officeId
           }
         })
         this.$nextTick(function () { this.$root.$emit('validateform') })

@@ -122,12 +122,10 @@ export default class AddPesticideFinalStep extends Vue {
   @State('user') private user!: any
   @State('addExamModal') private addExamModal!: any
   @State('offices') private offices!: any
-  // @State('offices') private offices!: any
   @State('examBcmpJobId') private examBcmpJobId!: any
-  // @State('addExamModule.candidateTableData') private candidateTableData!: any
 
-  @Getter('exam_object') private exam_object!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
+  @Getter('exam_object') private examObject!: any;
+  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
 
   @Action('clickPesticideRequestExam') public clickPesticideRequestExam: any
   @Mutation('setBCMPJobId') public setBCMPJobId: any
@@ -203,10 +201,10 @@ export default class AddPesticideFinalStep extends Vue {
 
   requestExam () {
     this.isRequestExamBtnLoading = true
-    this.clickPesticideRequestExam().then(bcmp_job_id => {
-      console.log('bcmp_job_id: ', bcmp_job_id)
-      this.setBCMPJobId(bcmp_job_id)
-      this.generatedJobId = bcmp_job_id
+    this.clickPesticideRequestExam().then(bcmpJobId => {
+      console.log('bcmp_job_id: ', bcmpJobId)
+      this.setBCMPJobId(bcmpJobId)
+      this.generatedJobId = bcmpJobId
       this.isRequestExamBtnLoading = false
     }).catch(error => {
       console.log(error)

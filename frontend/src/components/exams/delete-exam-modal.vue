@@ -48,10 +48,8 @@
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapMutations, mapState } from 'vuex'
 @Component({})
 export default class DeleteExamModal extends Vue {
-  [x: string]: any
   @State('showDeleteExamModal') private showDeleteExamModal!: any
   @State('returnExam') private returnExam!: any
 
@@ -61,6 +59,7 @@ export default class DeleteExamModal extends Vue {
 
   @Mutation('toggleDeleteExamModalVisible') public toggleDeleteExamModalVisible: any
   @Mutation('toggleEditExamModal') public toggleEditExamModal: any
+  actionedExam: any
 
   get deleteModalVisible () {
     return this.showDeleteExamModal
@@ -78,8 +77,8 @@ export default class DeleteExamModal extends Vue {
   }
 
   clickYes () {
-    const exam_id = this.returnExam.exam_id
-    this.deleteExam(exam_id)
+    const examId = this.returnExam.exam_id
+    this.deleteExam(examId)
       .then(() => { this.getExams() })
     this.toggleDeleteExamModalVisible(false)
     this.toggleEditExamModal(false)
