@@ -13,7 +13,7 @@
         v-if="q.kind === 'dropdown'"
         :question="q"
         :exam="exam"
-        :exam_object="exam_object"
+        :examObject="examObject"
         :examTypes="examTypes"
         :message="validationObj[q.key].message"
         :error="error"
@@ -194,7 +194,7 @@ import { mapState } from 'vuex'
 export default class AddExamFormController extends Vue {
   @Getter('add_modal_steps') private steps!: any;
   // @Getter('event_id_warning') private event_id_warning!: any;
-  @Getter('exam_object') private examObject!: any;
+  @Getter('examObject') private examObject!: any;
   @Getter('role_code') private roleCode!: any;
   @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
   @Getter('is_ita2_designate') private isIta2Designate!: any;

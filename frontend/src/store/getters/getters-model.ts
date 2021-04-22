@@ -143,7 +143,7 @@ export const commonGetters: any = {
     return state.examTypes.find(type => type.exam_type_id === examId)
   },
 
-  exam_object (state) {
+  examObject (state) {
     if (state.capturedExam && state.capturedExam.exam_type_id) {
       return state.examTypes.find(
         type => type.exam_type_id === state.capturedExam.exam_type_id
