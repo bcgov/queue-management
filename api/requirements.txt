@@ -35,3 +35,4 @@ SQLAlchemy-Utc
 Jinja2
 alembic==1.5.2
 SQLAlchemy-Continuum
+redis
