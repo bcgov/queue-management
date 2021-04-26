@@ -128,19 +128,11 @@ export const commonMutation: any = {
     (state.editDeleteSeries = payload),
 
   setServiceModalForm (state, citizen) {
-    
     const citizen_comments = citizen.citizen_comments
     const activeService = citizen.service_reqs.filter(sr =>
       sr.periods.some(p => p.time_end === null)
     )
-    let activeQuantity = activeService[0].quantity
-    // INC0086005 - On initial entry to the Service Modal use activeService Quantity, 
-    // when placing on Hold/The Q pick up value from modal
-    if (!state.serviceModalForm.citizen_id) {
-      activeQuantity = activeService[0].quantity
-    } else {
-      activeQuantity = state.serviceModalForm.activeQuantity
-    }
+    const activeQuantity = activeService[0].quantity
     const { citizen_id } = citizen
     const service_citizen = citizen
     const priority = citizen.priority
