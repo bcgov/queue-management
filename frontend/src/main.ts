@@ -74,6 +74,8 @@ import './assets/css/bc-gov-style.css'
 import MainApp from './MainApp.vue'
 
 import ConfigHelper from '@/utils/config-helper'
+import FormsFlowStore from 'camunda-formio-tasklist-vue/src/store/index'
+Vue.use(FormsFlowStore, { store })
 
 import FormsFlowStore from 'camunda-formio-tasklist-vue/src/store/index'
 Vue.use(FormsFlowStore, { store })
