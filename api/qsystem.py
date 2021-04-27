@@ -84,6 +84,7 @@ socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet',
                       message_queue=application.config['ACTIVE_MQ_URL'],
+                      redis_options={'REDIS_OPTIONS'},
                       path='/api/v1/socket.io')
 else:
     socketio.init_app(application, path='/api/v1/socket.io')

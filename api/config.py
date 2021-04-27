@@ -51,11 +51,13 @@ class BaseConfig(object):
         CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     #   Set up RabbitMQ variables.
+    ACTIVE_MQ_TYPE = os.getenv('ACTIVE_MQ_TYPE','amqp')
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
     ACTIVE_MQ_HOST = os.getenv('ACTIVE_MQ_HOST', '')
     ACTIVE_MQ_PORT = os.getenv('ACTIVE_MQ_PORT', '')
-    ACTIVE_MQ_URL = 'amqp://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
+    ACTIVE_MQ_URL = '{amq_type}://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
+        amq_type=ACTIVE_MQ_TYPE,
         amq_user=ACTIVE_MQ_USER,
         amq_password=ACTIVE_MQ_PASSWORD,
         amq_host=ACTIVE_MQ_HOST,

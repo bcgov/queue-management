@@ -1351,10 +1351,10 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postHold', citizen_id)
@@ -1485,10 +1485,10 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postAddToQueue', citizen_id)
@@ -1568,10 +1568,10 @@ export const commonActions: any = {
     const { citizen_id } = context.state.serviceModalForm
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postBeginService', citizen_id)
@@ -1612,10 +1612,10 @@ export const commonActions: any = {
     context.commit('toggleServeCitizenSpinner', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(resp => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postFinishService', {
@@ -2377,7 +2377,7 @@ export const commonActions: any = {
         resolve(' ')
       })
     }
-
+    
     return new Promise((resolve, reject) => {
       const url = `/service_requests/${sr_id}/`
       Axios(context)
