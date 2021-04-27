@@ -1,9 +1,9 @@
 <template>
   <div>
     <CamundaTasklist
+      v-if="isServiceFLowEnabled"
       :bpmApiUrl="configs.BPM_URL"
       :token="token"
-      :userName="user && user.username"
       :formIOUserRoles="configs.FORM_IO_USER_ROLES"
       :formIOApiUrl= "configs.FORM_IO_API_URL"
       :formIOResourceId = "configs.FORM_IO_RESOURCE_ID"
@@ -11,7 +11,6 @@
       :formIOReviewer = "configs.FORM_IO_REVIEWER"
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
-      v-if="isServiceFLowEnabled"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
@@ -28,11 +27,11 @@ import configMap from '../utils/config-helper'
   }
 })
 export default class TaskList extends Vue {
-  @State('user') private user!: any
   @State('bearer') private bearer!: any
   public token:any = sessionStorage.getItem('token')
   public  configs = configMap.getconfig()
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+
   mounted () {
     this.token = sessionStorage.getItem('token')
     this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
