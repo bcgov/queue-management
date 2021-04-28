@@ -50,7 +50,7 @@ export interface StateModelIF {
   iframeLogedIn: boolean,
   inventoryFilters: any,
   invigilators: any,
-  pesticide_invigilators: any,
+  pesticideInvigilators: any,
   pesticide_offsite_invigilators: any,
   shadowInvigilators: any,
   isLoggedIn: boolean,

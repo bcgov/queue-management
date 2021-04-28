@@ -397,14 +397,14 @@ export default class GroupPesticideModal extends Vue {
     })
     const output: any = []
     console.log(examsObj)
-    for (const exam_type_id in examsObj) {
-      const exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id === exam_type_id)
+    for (const examTypeId in examsObj) {
+      const exam = this.pesticideExamTypes.find(pesticideExam => pesticideExam.exam_type_id === examTypeId)
       output.push({
         name: exam.exam_name,
         ...exam,
-        qty: examsObj[exam_type_id].length
+        qty: examsObj[examTypeId].length
       })
-      for (const candidate of examsObj[exam_type_id]) {
+      for (const candidate of examsObj[examTypeId]) {
         const { firstName, lastName } = candidate
         candidate.name = `${firstName || ''}${lastName ? ' ' : ''}${lastName || ''}`
         output.push(candidate)

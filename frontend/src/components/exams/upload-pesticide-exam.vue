@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { Action, Mutation, namespace } from 'vuex-class'
+import { Action, Mutation } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 
@@ -151,8 +151,8 @@ export default class UploadPesticideModal extends Vue {
   public status: any = 'unwritten'
   public destroyed: any = this.actionedExam.exam_destroyed_date !== null
   public submitted: any = false
-  public exam_printed: any = this.actionedExam.exam_received_date !== null
-  public statusOptions: any = this.exam_printed ? [
+  public examPrinted: any = this.actionedExam.exam_received_date !== null
+  public statusOptions: any = this.examPrinted ? [
     { value: 'unwritten', text: 'Unwritten' },
     { value: 'written', text: 'Written' },
     { value: 'noshow', text: 'No Show' }

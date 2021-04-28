@@ -155,12 +155,12 @@ export default class ReturnExamModal extends Vue {
 
   public exam: any = null
   public returned: any = false
-  public exam_written_ind: any = true
-  public exam_returned_date: any = null
+  public examWrittenInd: any = true
+  public examReturnedDate: any = null
   public errorText: any = false
   public notes: any = null
   public showFieldErrors: any = null
-  public exam_returned_tracking_number: any = ''
+  public examReturnedTrackingNumber: any = ''
   public returnOptions: any = [
     { value: false, text: 'Not Returned' },
     { value: true, text: 'Returned' }
@@ -198,7 +198,7 @@ export default class ReturnExamModal extends Vue {
       return { title: 'Submit', disabled: true }
     }
     if (this.returned && this.modalUse === 'return') {
-      if (this.exam_returned_date && this.exam_returned_tracking_number) {
+      if (this.examReturnedDate && this.examReturnedTrackingNumber) {
         return { title: 'Submit', disabled: false }
       }
       return { title: 'Submit', disabled: true }
@@ -219,7 +219,7 @@ export default class ReturnExamModal extends Vue {
       this.removeError()
       return true
     }
-    if (this.exam_returned_tracking_number && this.exam_returned_tracking_number.length >= 250) {
+    if (this.examReturnedTrackingNumber && this.examReturnedTrackingNumber.length >= 250) {
       this.errorText = true
       e.preventDefault()
       e.stopPropagation()
@@ -229,8 +229,8 @@ export default class ReturnExamModal extends Vue {
 
   handleReturnedStatus (value) {
     if (value) {
-      if (!this.exam_returned_date) {
-        this.exam_returned_date = moment()
+      if (!this.examReturnedDate) {
+        this.examReturnedDate = moment()
       }
       if (this.modalUse === 'return') {
         this.$nextTick(() => {
@@ -244,16 +244,16 @@ export default class ReturnExamModal extends Vue {
     this.exam = this.actionedExam
     const tempValues = Object.assign({}, this.actionedExam)
     this.notes = tempValues.notes
-    this.exam_returned_tracking_number = tempValues.exam_returned_tracking_number
+    this.examReturnedTrackingNumber = tempValues.exam_returned_tracking_number
     if (tempValues.exam_returned_date) {
       this.modalUse = 'edit'
       this.returned = true
-      this.exam_returned_date = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
-      this.exam_written_ind = tempValues.exam_written_ind
+      this.examReturnedDate = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
+      this.examWrittenInd = tempValues.exam_written_ind
       return
     }
     this.modalUse = 'return'
-    this.exam_written_ind = 1
+    this.examWrittenInd = 1
   }
 
   resetModal () {
@@ -262,8 +262,8 @@ export default class ReturnExamModal extends Vue {
     this.exam = null
     this.errorText = false
     this.returned = false
-    this.exam_returned_date = null
-    this.exam_returned_tracking_number = ''
+    this.examReturnedDate = null
+    this.examReturnedTrackingNumber = ''
     this.notes = null
     this.resetExam()
   }
@@ -279,10 +279,10 @@ export default class ReturnExamModal extends Vue {
     }
     let putData: any = {
       exam_id: this.exam.exam_id,
-      exam_returned_date: moment(this.exam_returned_date).format('YYYY-MM-DD'),
-      exam_returned_tracking_number: this.exam_returned_tracking_number,
+      exam_returned_date: moment(this.examReturnedDate).format('YYYY-MM-DD'),
+      exam_returned_tracking_number: this.examReturnedTrackingNumber,
       notes: this.notes,
-      exam_written_ind: this.exam_written_ind
+      exam_written_ind: this.examWrittenInd
     }
     if (!this.returned && this.modalUse === 'edit') {
       putData = {

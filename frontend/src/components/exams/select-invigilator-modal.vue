@@ -17,7 +17,7 @@
       selectable
       select-mode="single"
       :fields="fields"
-      :items="pesticide_invigilators"
+      :items="pesticideInvigilators"
       responsive
       selected-variant="success"
       ref="invigilator_table"
@@ -34,7 +34,7 @@
         <b-btn class="btn-secondary mr-2" @click="closeModal()">Cancel</b-btn>
         <b-btn
           class="btn-primary"
-          :disabled="!this.selected_invigilator || this.loading"
+          :disabled="!this.selectedInvigilator || this.loading"
           @click="submit()"
         >
           <b-spinner small v-if="this.loading"></b-spinner>
@@ -57,7 +57,7 @@ export default class SelectInvigilatorModal extends Vue {
   };
 
   @State('showSelectInvigilatorModal') private showSelectInvigilatorModal!: any
-  @State('pesticide_invigilators') private pesticide_invigilators!: any
+  @State('pesticideInvigilators') private pesticideInvigilators!: any
   @State('selectedExam') private selectedExam!: any
 
   @Action('emailInvigilator') public emailInvigilator: any
@@ -71,7 +71,7 @@ export default class SelectInvigilatorModal extends Vue {
   public fields: any = ['selected', 'invigilator_name']
   public invigilators: any = []
   public loading: any = false
-  public selected_invigilator: any = null
+  public selectedInvigilator: any = null
 
   mounted () {
     this.getPesticideOfficeInvigilators()
@@ -94,7 +94,7 @@ export default class SelectInvigilatorModal extends Vue {
     this.alertMessage = ''
     this.loading = false
     this.$refs.invigilator_table.clearSelected()
-    this.selected_invigilator = null
+    this.selectedInvigilator = null
   }
 
   closeModal () {
@@ -104,14 +104,14 @@ export default class SelectInvigilatorModal extends Vue {
 
   rowSelected (item) {
     if (item.length >= 1) {
-      this.selected_invigilator = item[0]
+      this.selectedInvigilator = item[0]
     }
   }
 
   submit () {
     this.loading = true
     this.emailInvigilator({
-      invigilator: this.selected_invigilator,
+      invigilator: this.selectedInvigilator,
       // JSTOTS confirm changed  selectedExam to this.selectedExam
       exam: this.selectedExam
     })

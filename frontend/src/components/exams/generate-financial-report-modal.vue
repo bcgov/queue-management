@@ -140,9 +140,9 @@ export default class FinancialReportModal extends Vue {
   }
 
   submit () {
-    const form_start_date = moment.utc(this.startDate).format('YYYY-MM-DD')
-    const form_end_date = moment.utc(this.endDate).format('YYYY-MM-DD')
-    const url = '/exams/export/?start_date=' + form_start_date + '&end_date=' + form_end_date + '&exam_type=' +
+    const formStartDate = moment.utc(this.startDate).format('YYYY-MM-DD')
+    const formEndDate = moment.utc(this.endDate).format('YYYY-MM-DD')
+    const url = '/exams/export/?start_date=' + formStartDate + '&end_date=' + formEndDate + '&exam_type=' +
       this.selectedExamType
     const today = moment().format('YYYY-MM-DD_HHMMSS')
     const filename = 'export-csv-' + today + '.csv'

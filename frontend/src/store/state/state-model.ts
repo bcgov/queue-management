@@ -104,7 +104,7 @@ export const stateModel: StateModelIF = {
     uploadFilter: 'default'
   },
   invigilators: [],
-  pesticide_invigilators: [],
+  pesticideInvigilators: [],
   pesticide_offsite_invigilators: [],
   shadowInvigilators: [],
   isLoggedIn: false,

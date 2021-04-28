@@ -72,7 +72,7 @@ export default class OfficeDrop extends Vue {
   private columnW!: any
 
   @Prop()
-  private office_number!: any
+  private officeNumber!: any
 
   @Prop()
   private setOffice!: any
@@ -103,7 +103,7 @@ export default class OfficeDrop extends Vue {
   public searchNumber: any = ''
   public timer: any = null
 
-  get office_id () {
+  get officeId () {
     if (this.capturedExam && this.capturedExam.office_id) {
       return this.capturedExam.office_id
     }
@@ -120,20 +120,20 @@ export default class OfficeDrop extends Vue {
 
   get numberSearch () {
     if (!this.searchingNumber) {
-      return this.office_number
+      return this.officeNumber
     }
     this.searchNumber // What does this do??
   }
 
   get officeSearch () {
-    if (!this.searching && this.office_number && this.offices.length > 0) {
-      return this.offices.find(office => office.office_number === this.office_number).office_name
+    if (!this.searching && this.officeNumber && this.offices.length > 0) {
+      return this.offices.find(office => office.office_number === this.officeNumber).office_name
     }
     return this.search
   }
 
   getFilteredOffices (offices) {
-    
+
   }
 
   handleOfficeDropClick (e) {
@@ -159,26 +159,26 @@ export default class OfficeDrop extends Vue {
       this.showSearch = true
 
       this.officeChoices = this.offices.filter(item => {
-        const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
-        const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
-        const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
-        const office_name =  item['office_name'] === undefined || item['office_name'] === null ? '' : item['office_name']
-        const longitude =  item['longitude'] === undefined || item['longitude'] === null ? '' : item['longitude'] + ''
-        const latitude =  item['latitude'] === undefined || item['latitude'] === null ? '' : item['latitude'] + ''
+        const telephone = item.telephone === undefined || item.telephone === null ? '' : item.telephone
+        const officeAppointmentMessage =  item.office_appointment_message === undefined || item.office_appointment_message === null ? '' : item.office_appointment_message
+        const civicAddress = item.civic_address === undefined || item.civic_address === null ? '' : item.civic_address
+        const officeName = item.office_name === undefined || item.office_name === null ? '' : item.office_name
+        const longitude = item.longitude === undefined || item.longitude === null ? '' : item.longitude + ''
+        const latitude = item.latitude === undefined || item.latitude === null ? '' : item.latitude + ''
 
         let searchResult = telephone.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         if (searchResult) {
           return true
         }
-        searchResult = office_appointment_message.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        searchResult = officeAppointmentMessage.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         if (searchResult) {
           return true
         }
-        searchResult = civic_address.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        searchResult = civicAddress.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         if (searchResult) {
           return true
         }
-        searchResult = office_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        searchResult = officeName.toLowerCase().indexOf(this.search.toLowerCase()) > -1
         if (searchResult) {
           return true
         }
@@ -195,7 +195,7 @@ export default class OfficeDrop extends Vue {
 
       if (this.officeChoices.length === 0) {
         this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
-      } else{
+      } else {
         this.officeChoices = this.officeChoices.length >= 4 ? this.officeChoices.slice(0, 4) : this.officeChoices
       }
     }
