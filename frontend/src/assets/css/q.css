@@ -260,4 +260,5 @@ input#app_timepicker_id {
   overflow-x: hidden !important;
   padding-right: 2vh !important;
   padding-left: 2vh !important;
+  overflow-y: hidden !important;
 }
