@@ -115,9 +115,13 @@ import { User } from '@/models/user'
 
 export default class LoginToConfirm extends Mixins(StepperMixin) {
   private idpHint = IdpHint
+
   private currStep = ''
+
   private readonly currentUserProfile!: User
+
   private readonly callSnowplowClick!: (mySP: any) => any
+
   @Prop({ default: false }) isStepperView: boolean
 
   async mounted () {
@@ -166,7 +170,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   private createBCEID (url) {
     const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
-    this.$router.push(url)
+    window.location.href = url
     this.callsp()
   }
 

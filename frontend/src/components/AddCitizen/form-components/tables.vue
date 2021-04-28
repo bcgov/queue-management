@@ -231,31 +231,27 @@ export default class Tables extends Vue {
 
   serveCustomerAction () {
     //  NOTE!!     When actionToTake is serveCustomer then we execute this code
-    if (this.$route.path == '/exams') {
+    if (this.addModalSetup === 'add_mode') {
+      this.clickAddServiceApply()
+    } else if (this.addModalSetup === 'edit_mode') {
+      this.clickEditApply()
+    } else if (this.$route.path === '/exams') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
-    } else if (this.$route.path == '/appointments') {
+    } else if (this.$route.path === '/appointments') {
       this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
       this.closeAddServiceModal()
-    } else if (this.$route.path == '/booking') {
+    } else if (this.$route.path === '/booking') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
-    } else if (this.$route.path == '/service-flow') {
+    } else if (this.$route.path === '/service-flow') {
       // remove continue button in service flow
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
     } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
       this.clickBeginService({ simple: false })
-    } else if (this.simplifiedTicketStarted) {
-      if (this.addModalSetup == 'add_mode') {
-        this.clickAddServiceApply()
-      } else if (this.addModalSetup == 'edit_mode') {
-        this.clickEditApply()
-      } else {
-        console.log('==> No service selected.')
-      }
     } else {
-      console.log('==> Still no service selected')
+      console.log('==> No service selected.')
     }
   }
 
