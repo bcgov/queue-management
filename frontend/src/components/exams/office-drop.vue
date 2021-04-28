@@ -86,9 +86,9 @@ export default class OfficeDrop extends Vue {
   @State('offices') private offices!: any
   @State('capturedExam') private capturedExam!: any
 
-  @Getter('role_code') private role_code!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
+  @Getter('roleCode') private roleCode!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
 
   @Action('getOffices') public getOffices: any
 

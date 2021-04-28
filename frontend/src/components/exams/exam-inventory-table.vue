@@ -77,7 +77,7 @@
               <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
             <b-dd
-              v-if="is_pesticide_designate || is_ita2_designate"
+              v-if="isPesticideDesignate || isIta2Designate"
               split
               size="sm"
               :variant="
@@ -90,7 +90,7 @@
               @click="officeFilterModal = true"
             >
               <b-dd-item
-                v-if="is_pesticide_designate"
+                v-if="isPesticideDesignate"
                 @click="viewAllOfficePesticideExams"
                 >View All Offices</b-dd-item
               >
@@ -152,7 +152,7 @@
             </b-btn-group>
 
             <!--  The Quick Action filter, if ITA designate or GA.  -->
-            <template v-if="is_office_manager || role_code === 'GA'">
+            <template v-if="isOfficeManager || roleCode === 'GA'">
               <!--  The Quick Action filter if no filter has been set.  -->
               <b-btn-group v-if="selectedQuickActionFilter === ''">
                 <b-dropdown
@@ -778,12 +778,13 @@ export default class ExamInventoryTable extends Vue {
 
   private readonly showPesticideModal!: any
 
-  @Getter('calendar_events') private calendar_events!: any;
-  @Getter('exam_inventory') private exam_inventory!: any;
-  @Getter('role_code') private role_code!: any;
-  @Getter('is_ita2_designate') private is_ita2_designate!: any;
-  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
-  @Getter('is_office_manager') private is_office_manager!: any;
+  //  This might be a duplicate of "calendarEvents" but I'm unsure, so I'm commenting it out instead of deleting it.
+  //  @Getter('calendar_events') private calendar_events!: any;
+  @Getter('examInventory') private examInventory!: any;
+  @Getter('roleCode') private roleCode!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
+  @Getter('isOfficeManager') private isOfficeManager!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('getExams') public getExams: any
@@ -934,12 +935,12 @@ export default class ExamInventoryTable extends Vue {
 
   get officeNumber () {
     if (this.inventoryFilters && this.inventoryFilters.office_number) {
-      const { office_number } = this.inventoryFilters
+      const { officeNumber } = this.inventoryFilters
       if (this.inventoryFilters.office_number === 'pesticide_offsite') {
         const office = (this.offices.find(office => office.office_name === 'Pesticide Offsite'))
         return office.office_number
-      } else if (office_number !== 'default') {
-        return office_number
+      } else if (officeNumber !== 'default') {
+        return officeNumber
       }
     }
     if (this.user && this.user.office_id) {
@@ -984,27 +985,27 @@ export default class ExamInventoryTable extends Vue {
   }
 
   checkInvigilator (item) {
-    let length_of_invigilator_array: any = null
-    const number_of_invigilators = Math.ceil(item.number_of_students / 24)
+    let lengthOfInvigilatorArray: any = null
+    const numberOfInvigilators = Math.ceil(item.number_of_students / 24)
     if (!item.booking) {
-      length_of_invigilator_array = 0
+      lengthOfInvigilatorArray = 0
     } else {
-      length_of_invigilator_array = item.booking.invigilators.length
+      lengthOfInvigilatorArray = item.booking.invigilators.length
     }
-    if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array === 0) {
+    if (item.exam_type.group_exam_ind === 1 && lengthOfInvigilatorArray === 0) {
       return false
-    } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array >= number_of_invigilators) {
+    } else if (item.exam_type.group_exam_ind === 1 && lengthOfInvigilatorArray >= numberOfInvigilators) {
       return true
-    } else if (item.exam_type.group_exam_ind === 1 && length_of_invigilator_array < number_of_invigilators) {
+    } else if (item.exam_type.group_exam_ind === 1 && lengthOfInvigilatorArray < numberOfInvigilators) {
       return false
     } else if (item.exam_type.group_exam_ind === 0 && item.booking && item.exam_type.exam_type_name !== 'Monthly Session Exam' &&
-      (number_of_invigilators === 1 || item.booking.sbc_staff_invigilated)) {
+      (numberOfInvigilators === 1 || item.booking.sbc_staff_invigilated)) {
       return true
     } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-      length_of_invigilator_array >= number_of_invigilators) {
+      lengthOfInvigilatorArray >= numberOfInvigilators) {
       return true
     } else if (item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-      length_of_invigilator_array < number_of_invigilators) {
+      lengthOfInvigilatorArray < numberOfInvigilators) {
       return false
     }
     return false
@@ -1266,12 +1267,12 @@ export default class ExamInventoryTable extends Vue {
   }
 
   filteredExams () {
-    const examInventory: any = this.exam_inventory
-    let office_number = this.inventoryFilters.office_number === 'default'
+    const examInventory: any = this.examInventory
+    let officeNumber = this.inventoryFilters.office_number === 'default'
       ? this.user.office.office_number : this.inventoryFilters.office_number
     if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-      office_number = (this.offices.find(office => office.office_name === 'Pesticide Offsite')).office_number
-      this.inventoryFilters.office_number = office_number
+      officeNumber = (this.offices.find(office => office.office_name === 'Pesticide Offsite')).office_number
+      this.inventoryFilters.office_number = officeNumber
     }
     let filtered = []
     if (examInventory.length > 0) {
@@ -1279,12 +1280,12 @@ export default class ExamInventoryTable extends Vue {
         filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
         const moreFiltered: any = filtered.filter((ex: any) => !ex.booking)
         const evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
-        const { office_id } = this.user
-        return evenMoreFiltered.filter(ex => ex.office_id === office_id)
+        const { officeId } = this.user
+        return evenMoreFiltered.filter(ex => ex.office_id === officeId)
       }
 
       const exams = this.showAllPesticide ? examInventory
-        : examInventory.filter((ex: any) => ex.office.office_number === office_number)
+        : examInventory.filter((ex: any) => ex.office.office_number === officeNumber)
 
       if (this.inventoryFilters.requireAttentionFilter === 'both') {
         return exams.filter(ex => this.checkAllAttention(ex))
@@ -1424,24 +1425,24 @@ export default class ExamInventoryTable extends Vue {
         output.Invigilator = 'SBC Employee'
       }
       if (item.booking.invigilators) {
-        const invigilator_name_list: any = []
-        item.booking.invigilators.forEach(exam_invigilator => {
-          this.invigilators.forEach(office_invigilator => {
-            if (exam_invigilator === office_invigilator.invigilator_id) {
-              invigilator_name_list.push(office_invigilator.invigilator_name)
+        const invigilatorNameList: any = []
+        item.booking.invigilators.forEach(examInvigilator => {
+          this.invigilators.forEach(officeInvigilator => {
+            if (examInvigilator === officeInvigilator.invigilator_id) {
+              invigilatorNameList.push(officeInvigilator.invigilator_name)
             }
           })
         })
-        let invigilator_string = ''
-        if (invigilator_name_list.length > 0) {
-          invigilator_name_list.forEach(invigilator => {
-            invigilator_string += invigilator
-            invigilator_string += ', '
+        let invigilatorString = ''
+        if (invigilatorNameList.length > 0) {
+          invigilatorNameList.forEach(invigilator => {
+            invigilatorString += invigilator
+            invigilatorString += ', '
           })
-          invigilator_string = invigilator_string.replace(/,\s*$/, '')
+          invigilatorString = invigilatorString.replace(/,\s*$/, '')
         }
-        if (invigilator_string.length > 0) {
-          output.Invigilators = invigilator_string
+        if (invigilatorString.length > 0) {
+          output.Invigilators = invigilatorString
         }
       }
       if (item.booking.room_id) {
@@ -1636,8 +1637,8 @@ export default class ExamInventoryTable extends Vue {
     }
   }
 
-  setOfficeFilter (office_number) {
-    this.setFilter({ type: 'office_number', value: office_number })
+  setOfficeFilter (officeNumber) {
+    this.setFilter({ type: 'office_number', value: officeNumber })
     this.$store.commit('toggleShowAllPesticideExams', false)
   }
 
@@ -1681,12 +1682,11 @@ export default class ExamInventoryTable extends Vue {
   }
 
   statusIcon (item: any) {
-    const number_of_students: any = item.number_of_students
-    let length_of_invigilator_array: any = null
+    let lengthOfInvigilatorArray: any = null
     if (!item.booking) {
-      length_of_invigilator_array = 0
+      lengthOfInvigilatorArray = 0
     } else {
-      length_of_invigilator_array = item.booking.invigilators.length
+      lengthOfInvigilatorArray = item.booking.invigilators.length
     }
     const lifeRing: any = {
       icon: 'life-ring',
@@ -1746,7 +1746,7 @@ export default class ExamInventoryTable extends Vue {
           }
         }
       }
-      if (item.number_of_students === null && length_of_invigilator_array > 0) {
+      if (item.number_of_students === null && lengthOfInvigilatorArray > 0) {
         return exclamationTriangle
       }
       if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
@@ -1800,13 +1800,13 @@ export default class ExamInventoryTable extends Vue {
 
   stillRequires (item) {
     const output: any = []
-    let length_of_invigilator_array: any = null
+    let lengthOfInvigilatorArray: any = null
     if (!item.booking) {
-      length_of_invigilator_array = 0
+      lengthOfInvigilatorArray = 0
     } else {
-      length_of_invigilator_array = item.booking.invigilators.length
+      lengthOfInvigilatorArray = item.booking.invigilators.length
     }
-    const number_of_invigilators = Math.ceil(item.number_of_students / 24)
+    const numberOfInvigilators = Math.ceil(item.number_of_students / 24)
     if (item.exam_returned_date) {
       return output
     }
@@ -1832,15 +1832,15 @@ export default class ExamInventoryTable extends Vue {
     console.log('==> In stillRequires(item), item: ', item)
     if (item.booking) {
       if (item.exam_type.group_exam_ind === 1) {
-        if (length_of_invigilator_array === 0 && number_of_invigilators === 1) {
+        if (lengthOfInvigilatorArray === 0 && numberOfInvigilators === 1) {
           output.push('Assignment of Invigilator')
-        } else if (length_of_invigilator_array === 0 && number_of_invigilators > 1) {
+        } else if (lengthOfInvigilatorArray === 0 && numberOfInvigilators > 1) {
           output.push('Assignment of Invigilators')
-        } else if (length_of_invigilator_array > 0 && length_of_invigilator_array < number_of_invigilators) {
+        } else if (lengthOfInvigilatorArray > 0 && lengthOfInvigilatorArray < numberOfInvigilators) {
           output.push('Assignment of More Invigilators')
         }
       } else if (item.exam_type.group_exam_ind === 0) {
-        if (length_of_invigilator_array === 0 && !item.booking.sbc_staff_invigilated) {
+        if (lengthOfInvigilatorArray === 0 && !item.booking.sbc_staff_invigilated) {
           output.push('Assignment of Invigilator')
         }
       }
@@ -1869,7 +1869,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   mounted () {
-    if (this.is_pesticide_designate) {
+    if (this.isPesticideDesignate) {
       const pestFilterOptions = [
         { text: 'Awaiting Upload', value: 'awaiting_upload' },
         { text: 'Awaiting Receipt', value: 'awaiting_receipt' },

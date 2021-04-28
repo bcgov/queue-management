@@ -70,10 +70,10 @@ export default class ButtonsExams extends Vue {
   @State('user') private user!: any
 
   @Getter('is_financial_designate') private isFinancialDesignate!: any;
-  @Getter('is_office_manager') private isOfficeManager!: any;
-  @Getter('is_ita2_designate') private isIta2Designate!: any;
-  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
-  @Getter('role_code') private roleCode!: any;
+  @Getter('isOfficeManager') private isOfficeManager!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
+  @Getter('roleCode') private roleCode!: any;
   @Getter('showExams') private showExams!: any;
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any

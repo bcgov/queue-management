@@ -82,7 +82,7 @@
       />
       <SelectOffice
         v-if="q.kind === 'office'"
-        v-show="is_ita2_designate || is_pesticide_designate"
+        v-show="isIta2Designate || isPesticideDesignate"
         :error="error"
         :q="q"
         :validationObj="validationObj"
@@ -195,9 +195,9 @@ export default class AddExamFormController extends Vue {
   @Getter('add_modal_steps') private steps!: any;
   // @Getter('event_id_warning') private event_id_warning!: any;
   @Getter('examObject') private examObject!: any;
-  @Getter('role_code') private roleCode!: any;
-  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
-  @Getter('is_ita2_designate') private isIta2Designate!: any;
+  @Getter('roleCode') private roleCode!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
   @Getter('addPesticideSteps') private addPesticideSteps!: any;
 
   @Action('getExamTypes') public getExamTypes: any

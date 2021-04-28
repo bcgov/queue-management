@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <div v-if="is_office_manager || role_code === 'GA'" id="EXAMALERT">
+  <div v-if="isOfficeManager || roleCode === 'GA'" id="EXAMALERT">
     <b-alert
       variant="primary"
       dismissible
@@ -39,8 +39,8 @@ export default class ExamAlert extends Vue {
   @State('examDismissCount') private examDismissCount!: any
   @State('examAlertMessage') private examAlertMessage!: any
 
-  @Getter('is_office_manager') private is_office_manager!: any;
-  @Getter('role_code') private role_code!: any;
+  @Getter('isOfficeManager') private isOfficeManager!: any;
+  @Getter('roleCode') private roleCode!: any;
 
   @Mutation('examDismissCountDown') public examDismissCountDown: any
   @Mutation('setInventoryFilters') public setInventoryFilters: any

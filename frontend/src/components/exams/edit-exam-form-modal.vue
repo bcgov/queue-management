@@ -200,7 +200,7 @@
         <!-- All fields are to be shown.  Not sure what this means just now. -->
         <b-form v-if="showAllFields">
           <!--  For group exams, except Monthly Sessional (Challenger)  -->
-          <b-form-row v-if="is_ita2_designate && examType === 'group'">
+          <b-form-row v-if="isIta2Designate && examType === 'group'">
             <OfficeDrop
               :columnW="10"
               :office_number="office_number"
@@ -584,10 +584,10 @@ export default class EditExamModal extends Vue {
   @State('user') private user!: any
 
   @Getter('exam_object_id') private examObjectId!: any;
-  @Getter('role_code') private roleCode!: any;
-  @Getter('is_ita2_designate') private isIta2Designate!: any;
-  @Getter('is_office_manager') private isOfficeManager!: any;
-  @Getter('is_pesticide_designate') private isPesticideDesignate!: any;
+  @Getter('roleCode') private roleCode!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
+  @Getter('isOfficeManager') private isOfficeManager!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
 
   @Action('downloadExam') public downloadExam: any
   @Action('getBookings') public getBookings: any

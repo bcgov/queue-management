@@ -19,7 +19,7 @@
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
                 <div class="q-id-grid-col">Exam Details</div>
-                <div class="q-id-grid-col" v-if="is_ita2_designate">
+                <div class="q-id-grid-col" v-if="isIta2Designate">
                   <div>Office:</div>
                   <div>{{ actionedExam.office.office_name }}</div>
                 </div>
@@ -718,9 +718,9 @@ export default class EditGroupExamBookingModal extends Vue {
   @State('pesticide_offsite_invigilators') private pesticideOffsiteInvigilators!: any
   @State('user') private user!: any
 
-  @Getter('role_code') private roleCode!: any;
+  @Getter('roleCode') private roleCode!: any;
   @Getter('invigilator_dropdown') private invigilatorDropdown!: any;
-  @Getter('is_ita2_designate') private isIta2Designate!: any;
+  @Getter('isIta2Designate') private isIta2Designate!: any;
   @Getter('invigilator_multi_select') private invigilatorMultiSelect!: any;
   @Getter('shadow_invigilator_options') private shadowInvigilatorOptions!: any;
   @Getter('shadow_invigilators') private shadowInvigilators!: any;

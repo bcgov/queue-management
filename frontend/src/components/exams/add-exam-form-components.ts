@@ -964,7 +964,7 @@ export class SelectOffice extends Vue {
   @State('user') private user!: any
   @State('addExamModal') private addExamModal!: any
 
-  @Getter('role_code') private roleCode!: any;
+  @Getter('roleCode') private roleCode!: any;
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
   @Prop()

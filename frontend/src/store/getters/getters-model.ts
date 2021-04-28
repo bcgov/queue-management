@@ -126,7 +126,7 @@ export const commonGetters: any = {
     )
   },
 
-  exam_inventory (state) {
+  examInventory (state) {
     if (state.showExamInventoryModal) {
       return state.exams.filter(exam => exam.booking_id === null)
     }
@@ -185,14 +185,14 @@ export const commonGetters: any = {
     }
   },
 
-  role_code (state) {
+  roleCode (state) {
     if (state.user && state.user.role && state.user.role.role_code) {
       return state.user.role.role_code
     }
     return ''
   },
 
-  is_pesticide_designate (state) {
+  isPesticideDesignate (state) {
     if (state.user.pesticide_designate) {
       return true
     }
@@ -206,14 +206,14 @@ export const commonGetters: any = {
     return false
   },
 
-  is_ita2_designate (state) {
+  isIta2Designate (state) {
     if (state.user.ita2_designate) {
       return true
     }
     return false
   },
 
-  is_office_manager (state) {
+  isOfficeManager (state) {
     if (state.user.office_manager) {
       return true
     }

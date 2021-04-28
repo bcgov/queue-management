@@ -258,18 +258,18 @@ export default class Agenda extends Vue {
   private showInvigilator (data: any) {
     const { exam } = data
     const self = this
-    const invigilator_name_list: any = []
+    const invigilatorNameList: any = []
     exam.booking.invigilators.forEach(function (invigilator: any) {
       const i = self.invigilator_multi_select.filter((i: any) => i.value === invigilator)
       if (i[0] && i[0].name) {
-        invigilator_name_list.push(i[0].name)
+        invigilatorNameList.push(i[0].name)
       }
     })
     if (exam.booking.sbc_staff_invigilated) {
       return ['SBC Employee']
     }
     if (exam.booking.invigilators) {
-      return invigilator_name_list
+      return invigilatorNameList
     }
     return false
   }

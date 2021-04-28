@@ -126,7 +126,7 @@ export default class Login extends Vue {
   @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
   @State('offices') private offices!: any
 
-  @Getter('role_code') private role_code!: any;
+  @Getter('roleCode') private roleCode!: any;
   @Getter('quick_trans_status') private quick_trans_status!: any;
   @Getter('reception') private reception!: any;
   @Getter('receptionist_status') private receptionist_status!: any;
