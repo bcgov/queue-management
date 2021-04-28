@@ -255,3 +255,9 @@ input#app_timepicker_id {
   width: 213px;
   height: 40px;
 }
+
+.formio-component.formio-component-table.table-responsive {
+  overflow-x: hidden !important;
+  padding-right: 2vh !important;
+  padding-left: 2vh !important;
+}
