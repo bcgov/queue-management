@@ -482,7 +482,7 @@ export default class AddExamFormController extends Vue {
   }
 
   mounted () {
-    this.event_form_validation = false
+    this.eventFormValidation = false
     this.getExamTypes()
     this.getOffices()
     this.$root.$on('validateform', () => {
