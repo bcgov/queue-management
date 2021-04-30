@@ -114,7 +114,7 @@ export default class Buttons extends Vue {
   @State('addModalForm') private addModalForm!: any
   @State('citizenButtons') private citizenButtons!: any
 
-  @Getter('form_data') private form_data!: any;
+  @Getter('formData') private formData!: any;
   @Getter('reception') private reception!: any;
   @Getter('commentsTooLong') private commentsTooLong!: any;
 
@@ -143,12 +143,12 @@ export default class Buttons extends Vue {
   }
 
   addServiceApply () {
-    if (this.form_data.service === '') {
+    if (this.formData.service === '') {
       this.$store.commit('setModalAlert', 'You must select a service')
       this.$root.$emit('showAddMessage')
       return null
     }
-    if (this.form_data.channel === '') {
+    if (this.formData.channel === '') {
       this.$store.commit('setModalAlert', 'You must select a channel')
       this.$root.$emit('showAddMessage')
       return null
@@ -157,12 +157,12 @@ export default class Buttons extends Vue {
   }
 
   addToQueue () {
-    if (this.form_data.service === '') {
+    if (this.formData.service === '') {
       this.$store.commit('setModalAlert', 'You must select a service')
       this.$root.$emit('showAddMessage')
       return null
     }
-    if (this.form_data.channel === '') {
+    if (this.formData.channel === '') {
       this.$store.commit('setModalAlert', 'You must select a channel')
       this.$root.$emit('showAddMessage')
       return null
@@ -171,12 +171,12 @@ export default class Buttons extends Vue {
   }
 
   beginService () {
-    if (this.form_data.service === '') {
+    if (this.formData.service === '') {
       this.$store.commit('setModalAlert', 'You must select a service')
       this.$root.$emit('showAddMessage')
       return null
     }
-    if (this.form_data.channel === '') {
+    if (this.formData.channel === '') {
       this.$store.commit('setModalAlert', 'You must select a channel')
       this.$root.$emit('showAddMessage')
       return null
@@ -185,12 +185,12 @@ export default class Buttons extends Vue {
   }
 
   beginServiceSimplified () {
-    if (this.form_data.service === '') {
+    if (this.formData.service === '') {
       this.$store.commit('setModalAlert', 'You must select a service')
       this.$root.$emit('showAddMessage')
       return null
     }
-    if (this.form_data.channel === '') {
+    if (this.formData.channel === '') {
       this.$store.commit('setModalAlert', 'You must select a channel')
       this.$root.$emit('showAddMessage')
       return null

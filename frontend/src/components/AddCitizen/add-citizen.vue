@@ -45,7 +45,7 @@
               v-show="reception && !simplified"
               id="counter-selection-add"
               class="custom-select"
-              v-model="counter_selection"
+              v-model="counterSelection"
             >
               <option
                 v-for="counter in sortedCounters"
@@ -58,7 +58,7 @@
                 id="priority-selection"
                 v-if="!simplified"
                 class="custom-select"
-                v-model="priority_selection"
+                v-model="prioritySelection"
               >
                 <option value="1">High Priority</option>
                 <option value="2">Default Priority</option>
@@ -107,7 +107,7 @@ export default class AddCitizen extends Vue {
   @State('citizenButtons') private citizenButtons!: string | undefined
   @State('performingAction') private performingAction!: string | undefined
 
-  @Getter('form_data') private form_data!: any;
+  @Getter('formData') private formData!: any;
   @Getter('reception') private reception!: any;
 
   @Action('cancelAddCitizensModal') public cancelAddCitizensModal: any
@@ -164,19 +164,19 @@ export default class AddCitizen extends Vue {
     return 'Add Citizen'
   }
 
-  get counter_selection () {
-    return this.form_data.counter
+  get counterSelection () {
+    return this.formData.counter
   }
 
-  set counter_selection (value: string) {
+  set counterSelection (value: string) {
     this.updateAddModalForm({ type: 'counter', value })
   }
 
-  get priority_selection () {
-    return this.form_data.priority
+  get prioritySelection () {
+    return this.formData.priority
   }
 
-  set priority_selection (value) {
+  set prioritySelection (value) {
     this.updateAddModalForm({ type: 'priority', value })
   }
 

@@ -76,8 +76,6 @@ export default class App extends Vue {
   }
 
   private async initSetup () {
-    // eslint-disable-next-line no-console
-
     if (this.isAuthenticated) {
       await this.loadUserInfo()
       await this.getUser()
@@ -85,9 +83,7 @@ export default class App extends Vue {
         await this.tokenService.init(this.$store)
         this.tokenService.scheduleRefreshTimer()
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.log('Could not initialize token refresher: ' + e)
-        // this.$store.dispatch('user/reset')
         this.$store.commit('loadComplete')
         this.$router.push('/')
       }

@@ -46,7 +46,7 @@
               <div class="q-loader2"></div>
             </template>
             <b-table
-              :items="filtered_services"
+              :items="filteredServices"
               :fields="fields"
               sort-by="parent.service_name"
               :filter="filter"
@@ -87,7 +87,7 @@
                   }}</span>
                   <div style="display: none">
                     {{
-                      data.item.service_id === form_data.service
+                      data.item.service_id === formData.service
                         ? (data.item._rowVariant = 'active')
                         : (data.item._rowVariant = '')
                     }}
@@ -122,10 +122,10 @@ export default class Tables extends Vue {
   @State('performingAction') private performingAction!: any
   @State('showServeCitizenSpinner') private showServeCitizenSpinner!: any
 
-  @Getter('form_data') private form_data!: any;
-  @Getter('filtered_services') private filtered_services!: any;
+  @Getter('formData') private formData!: any;
+  @Getter('filteredServices') private filteredServices!: any;
   @Getter('reception') private reception!: any;
-  @Getter('receptionist_status') private receptionist_status!: any;
+  @Getter('receptionistStatus') private receptionistStatus!: any;
 
   @Action('clickQuickServe') public clickQuickServe: any
   @Action('clickAddServiceApply') public clickAddServiceApply: any
@@ -145,7 +145,7 @@ export default class Tables extends Vue {
   $route: any
 
   get showQuickQIcon () {
-    return this.reception && this.receptionist_status &&
+    return this.reception && this.receptionistStatus &&
       this.addModalSetup === 'reception' && this.$route.path === '/queue'
   }
 
@@ -202,7 +202,7 @@ export default class Tables extends Vue {
   }
 
   get filter () {
-    return this.form_data.search
+    return this.formData.search
   }
 
   rowClicked (item: any, index: any) {

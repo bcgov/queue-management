@@ -111,8 +111,8 @@ export default class DashTable extends Vue {
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('user') private user!: any
 
-  @Getter('citizens_queue') private citizens_queue!: any;
-  @Getter('active_service_id') private active_service_id!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
+  @Getter('activeServiceId') private activeServiceId!: any;
   @Getter('reception') private reception!: any;
 
   @AppointmentsModule.Getter('apointments') private apointments!: any;
@@ -152,7 +152,7 @@ export default class DashTable extends Vue {
   private fields: any = this.fields_without_notification
 
   get citizens () {
-    return this.citizens_queue
+    return this.citizensQueue
   }
 
   get getFields () {
@@ -215,7 +215,7 @@ export default class DashTable extends Vue {
   }
 
   private showCSR (id: number) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }
@@ -232,7 +232,7 @@ export default class DashTable extends Vue {
   }
 
   private showCategory (id: number) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }
@@ -249,7 +249,7 @@ export default class DashTable extends Vue {
   }
 
   private showService (id: any) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }

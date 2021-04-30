@@ -5,7 +5,7 @@
       <b-col>
         <b-table
           :fields="fields"
-          :items="invited_service_reqs"
+          :items="invitedServiceReqs"
           head-variant="light"
           class="m-0 p-0 align-middle"
           small
@@ -33,7 +33,7 @@
             </div>
             <div
               v-if="row.item.periods.some(p=>p.time_end===null)===false"
-            >{{ invited_service_reqs[row.index].quantity }}</div>
+            >{{ invitedServiceReqs[row.index].quantity }}</div>
           </template>
           <template #cell(service)="row">
             {{ row.item.service.service_name }}
@@ -68,7 +68,6 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -76,9 +75,9 @@ import { Component, Vue } from 'vue-property-decorator'
 export default class ServeCitizenTable extends Vue {
   @State('serviceModalForm') private serviceModalForm!: any
 
-  @Getter('invited_service_reqs') private invited_service_reqs!: any;
-  @Getter('active_service') private active_service!: any;
-  @Getter('active_index') private active_index!: any;
+  @Getter('invitedServiceReqs') private invitedServiceReqs!: any;
+  @Getter('activeService') private activeService!: any;
+  @Getter('activeIndex') private activeIndex!: any;
 
   @Action('clickEdit') public clickEdit: any
   @Action('clickMakeActive') public clickMakeActive: any

@@ -583,7 +583,7 @@ export default class EditExamModal extends Vue {
   @State('showDeleteExamModal') private showDeleteExamModal!: any
   @State('user') private user!: any
 
-  @Getter('exam_object_id') private examObjectId!: any;
+  @Getter('examObjectId') private examObjectId!: any;
   @Getter('roleCode') private roleCode!: any;
   @Getter('isIta2Designate') private isIta2Designate!: any;
   @Getter('isOfficeManager') private isOfficeManager!: any;

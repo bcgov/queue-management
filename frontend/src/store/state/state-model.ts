@@ -10,6 +10,7 @@
  * and import in index.ts
  *
  */
+
 import { StateModelIF } from '@/interfaces'
 
 export const stateModel: StateModelIF = {
@@ -85,8 +86,8 @@ export const stateModel: StateModelIF = {
   examEditFailureMessage: '',
   examEditSuccessMessage: '',
   exams: [],
-  event_ids: null,
-  event_id_warning: false,
+  eventIds: null,
+  eventIdWarning: false,
   examsTrackingIP: false,
   examSuccessDismiss: 0,
   examTypes: [],
@@ -142,7 +143,7 @@ export const stateModel: StateModelIF = {
     service_citizen: null,
     citizen_comments: '',
     activeQuantity: 1,
-    accurate_time_ind: 1,
+    accurateTimeInd: 1,
     priority: 2,
     counter: 1
   },

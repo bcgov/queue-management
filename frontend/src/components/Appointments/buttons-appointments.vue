@@ -68,7 +68,7 @@ const appointmentsModule = namespace('appointmentsModule')
 export default class ButtonsAppointments extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
   @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
-  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
   @appointmentsModule.Action('beginAppointment') public beginAppointment: any
 

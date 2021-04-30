@@ -158,8 +158,6 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
-
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
@@ -173,8 +171,8 @@ import moment from 'moment'
   }
 })
 export default class AddExamModal extends Vue {
-  @State('event_ids') private eventIds!: any
-  @State('event_id_warning') private eventIdWarning!: any
+  @State('eventIds') private eventIds!: any
+  @State('eventIdWarning') private eventIdWarning!: any
   @State('capturedExam') private exam!: any
   @State('examTypes') private examTypes!: any
   @State('addExamModal') private addExamModal!: any
@@ -184,7 +182,7 @@ export default class AddExamModal extends Vue {
   @State('examBcmpJobId') private examBcmpJobId!: any
 
   @Getter('add_modal_steps') private steps!: any;
-  @Getter('add_exam_modal_navigation_buttons') private button!: any;
+  @Getter('addExamModalNavigationButtons') private button!: any;
 
   @Action('clearChallengerBooking') public clearChallengerBooking: any
   @Action('clickAddExamSubmit') public clickAddExamSubmit: any

@@ -25,12 +25,12 @@
             addExamModal.setup === 'individual'
           "
         >
-          <span :style="{ color: exam_object.exam_color }">{{
-            exam_object.exam_type_name
+          <span :style="{ color: examObject.exam_color }">{{
+            examObject.exam_type_name
           }}</span>
         </template>
         <template v-else>
-          {{ exam_object.exam_type_name }}
+          {{ examObject.exam_type_name }}
         </template>
       </b-col>
     </b-row>
@@ -265,7 +265,7 @@ export default class AddExamFinalStep extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('offices') private offices!: any
 
-  @Getter('exam_object') private examObject!: any;
+  @Getter('examObject') private examObject!: any;
   @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
 
   get officeName () {

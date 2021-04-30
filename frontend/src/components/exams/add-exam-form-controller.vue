@@ -177,8 +177,8 @@ import { mapState } from 'vuex'
 
     ...mapState({
       exam: (state: any) => state.capturedExam,
-      event_ids: (state: any) => state.event_ids,
-      event_id_warning: (state: any) => state.event_id_warning,
+      eventIds: (state: any) => state.eventIds,
+      eventIdWarning: (state: any) => state.eventIdWarning,
       addExamModal: (state: any) => state.addExamModal,
       addGroupSteps: (state: any) => state.addExamModule.addGroupSteps,
       addChallengerSteps: (state: any) => state.addExamModule.addChallengerSteps,
@@ -193,7 +193,6 @@ import { mapState } from 'vuex'
 })
 export default class AddExamFormController extends Vue {
   @Getter('add_modal_steps') private steps!: any;
-  // @Getter('event_id_warning') private event_id_warning!: any;
   @Getter('examObject') private examObject!: any;
   @Getter('roleCode') private roleCode!: any;
   @Getter('isPesticideDesignate') private isPesticideDesignate!: any;

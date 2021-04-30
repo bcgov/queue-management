@@ -19,7 +19,7 @@
       >
         <div v-if="!stat_flag"><h5>Edit Booking</h5></div>
         <div v-else>
-            <h5 v-if="is_Support">Edit STAT</h5>
+            <h5 v-if="isSupport">Edit STAT</h5>
             <h5 v-else>View STAT</h5>
           </div>
         <div>
@@ -53,7 +53,7 @@
             <b-col>
               <b-form-group>
                 <label>STAT Notes</label><br />
-                <b-input v-if="is_Support"
+                <b-input v-if="isSupport"
                   id="blackout_notes"
                   v-model="blackout_notes"
                   class="mb-2"
@@ -99,7 +99,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-form-row class="mt-0" v-if="is_Support">
+          <b-form-row class="mt-0" v-if="isSupport">
             <b-col>
               <b-form-group>
                 <label>Delete STAT?</label><br />
@@ -109,7 +109,7 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-          <b-collapse id="delete_recurring_stat_collapse" visible  v-if="is_Support">
+          <b-collapse id="delete_recurring_stat_collapse" visible  v-if="isSupport">
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
@@ -124,7 +124,7 @@
               </b-col>
             </b-form-row>
           </b-collapse>
-          <b-collapse id="delete_recurring_stat_curroff_collapse" visible  v-if="is_Support">
+          <b-collapse id="delete_recurring_stat_curroff_collapse" visible  v-if="isSupport">
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
@@ -139,7 +139,7 @@
               </b-col>
             </b-form-row>
           </b-collapse>
-          <b-collapse id="confirm_delete_recurring_stat_curroff_collapse"  v-if="is_Support">
+          <b-collapse id="confirm_delete_recurring_stat_curroff_collapse"  v-if="isSupport">
             <b-form-row>
               <b-form-group>
                 <label
@@ -172,7 +172,7 @@
               </b-form-group>
             </b-form-row>
           </b-collapse>
-          <b-collapse id="confirm_delete_recurring_stat_collapse"  v-if="is_Support">
+          <b-collapse id="confirm_delete_recurring_stat_collapse"  v-if="isSupport">
             <b-form-row>
               <b-form-group>
                 <label
@@ -346,7 +346,7 @@
                 <label>Invigilator</label><br />
                 <b-select
                   v-model="invigilator"
-                  :options="invigilator_dropdown"
+                  :options="invigilatorDropdown"
                   id="invigilator"
                   :value="invigilator"
                   @change="setInvigilator"
@@ -441,7 +441,7 @@
                         selectable
                         select-mode="single"
                         :fields="shadowFields"
-                        :items="shadow_invigilator_options"
+                        :items="shadowInvigilatorOptions"
                         @row-selected="rowSelectedShadow"
                         responsive
                         selected-variant="success"
@@ -655,9 +655,9 @@ export default class EditBooking extends Vue {
   @State('shadowInvigilators') private shadowInvigilators!: any
   @State('editDeleteSeries') private editDeleteSeries!: any
 
-  @Getter('invigilator_dropdown') private invigilator_dropdown!: any;
-  @Getter('shadow_invigilators') private shadow_invigilators!: any;
-  @Getter('shadow_invigilator_options') private shadow_invigilator_options!: any;
+  @Getter('invigilatorDropdown') private invigilatorDropdown!: any;
+  @Getter('shadowInvigilators') private shadowInvigilators!: any;
+  @Getter('shadowInvigilatorOptions') private shadowInvigilatorOptions!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('deleteBooking') public deleteBooking: any
@@ -682,7 +682,7 @@ export default class EditBooking extends Vue {
   
   @appointmentsModule.Action('deleteRecurringAppointments') public deleteRecurringAppointments: any
   @appointmentsModule.Action('deleteRecurringStatAppointments') public deleteRecurringStatAppointments: any
-  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
   public minimized: any = false
   public confirm: any = false
@@ -1043,7 +1043,7 @@ export default class EditBooking extends Vue {
     if (this.event.exam && this.event.exam.booking) {
       const currentID = this.currentShadowInvigilator = this.event.exam.booking.shadow_invigilator_id || null
       let currentName = ''
-      this.shadow_invigilators.forEach(function (invigilator) {
+      this.shadowInvigilators.forEach(function (invigilator) {
         if (invigilator.id === currentID) {
           currentName = invigilator.name
         }
@@ -1261,7 +1261,7 @@ export default class EditBooking extends Vue {
             })
           }
         } else {
-          if (this.is_Support){
+          if (this.isSupport){
             const stat_payload: any = {
               id: this.event.id,
               changes : { blackout_notes: this.blackout_notes}

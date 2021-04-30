@@ -30,7 +30,6 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Video from './video.vue'
 import MarqueeText from './marquee-text.vue'

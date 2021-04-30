@@ -16,7 +16,7 @@ limitations under the License. */ -->
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import config from './../../config'
-import io from 'socket.io-client'
+const io = require('socket.io-client')
 let socket
 
 const appointmentsModule = namespace('appointmentsModule')

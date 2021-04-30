@@ -34,7 +34,7 @@ limitations under the License.*/
           </div>
           <div v-bind:style="{width:'100%', height:`${qLengthH}px`}">
             <div style="display: flex; width: 100%; justify-content: space-between;">
-              <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+              <div class="font-900-rem">Citizens on Hold: {{onHoldQueue.length}}</div>
               <b-button variant="link" v-dragged="onDrag" class="m-0 p-0">
                 <font-awesome-icon icon="sort" class="m-0 p-0" style="font-size: 1.5rem;"></font-awesome-icon>
               </b-button>
@@ -45,7 +45,7 @@ limitations under the License.*/
           </div>
         </template>
         <template v-else-if="!reception && isLoggedIn">
-          <div class="font-900-rem">Citizens on Hold: {{on_hold_queue.length}}</div>
+          <div class="font-900-rem">Citizens on Hold: {{onHoldQueue.length}}</div>
           <div class="dash-table-holder" v-bind:style="{width:'100%',height:`${fullHoldH}px`}">
             <DashHoldTable></DashHoldTable>
           </div>
@@ -63,7 +63,6 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import AgendaScreen from './../agenda-screen/agenda-screen.vue'
@@ -98,8 +97,8 @@ export default class Dash extends Vue {
   @State('user') private user!: any
   @State('userLoadingFail') private userLoadingFail!: any
 
-  @Getter('citizens_queue') private citizens_queue!: any;
-  @Getter('on_hold_queue') private on_hold_queue!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
+  @Getter('onHoldQueue') private onHoldQueue!: any;
   @Getter('reception') private reception!: any;
 
   @Action('clickAddCitizen') public clickAddCitizen: any
@@ -136,13 +135,11 @@ export default class Dash extends Vue {
   }
 
   get queueLength () {
-    return this.citizens_queue.length
+    return this.citizensQueue.length
   }
 
   get dashH () {
     if (!this.isDragged) return this.availH / 2
-    // TODO removed if condtion
-    // if (this.isDragged)
     return this.availH + this.offset
   }
 

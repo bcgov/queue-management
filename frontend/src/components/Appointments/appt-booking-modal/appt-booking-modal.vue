@@ -32,7 +32,7 @@
         <b-button
           class="btn-primary ml-2"
           @click="submitSingleStat"
-          v-if="(submitStat) && (is_Support)"
+          v-if="(submitStat) && (isSupport)"
           >Submit</b-button
         >
         <b-button @click="cancel()">Cancel</b-button>
@@ -289,7 +289,7 @@
         <b-col >
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Note</label><br />
-            <b-form-input v-if="is_Support" v-model="comments" maxlength="255"/>
+            <b-form-input v-if="isSupport" v-model="comments" maxlength="255"/>
             <b-form-input v-else :value="comments" disabled/>
           </b-form-group>
         </b-col>
@@ -297,7 +297,7 @@
       <!--  End of the Time and Date row. -->
 
       <!--  The Date/Time row -->
-      <b-form-row v-if="is_Support">
+      <b-form-row v-if="isSupport">
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
           <b-form-group class="mb-0 mt-2">
@@ -382,7 +382,7 @@ export default class ApptBookingModal extends Vue {
 
   @appointmentsModule.Getter('services') private services!: any
   @appointmentsModule.Getter('appointment_events') private appointment_events!: any
-  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
 
   @appointmentsModule.Action('clearAddModal') public clearAddModal: any
@@ -533,7 +533,7 @@ export default class ApptBookingModal extends Vue {
 
   get service_name () {
     this.$store.commit('setDisplayServices', 'Dashboard')
-    const services = this.$store.getters.filtered_services
+    const services = this.$store.getters.filteredServices
       if (services && services.length > 0) {
         if (this.selectedService) {
           this.selectedServiceObj = services.find(srv => srv.service_id === this.selectedService)
@@ -775,9 +775,9 @@ export default class ApptBookingModal extends Vue {
         this.length = this.clickedAppt.end.clone().diff(this.clickedAppt.start, 'minutes')
         this.online_flag = this.clickedAppt.online_flag
         this.stat_flag = this.clickedAppt.stat_flag
-        const { service_id } = this.clickedAppt
-        this.setSelectedService(service_id)
-        this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+        const { serviceId } = this.clickedAppt
+        this.setSelectedService(serviceId)
+        this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
       }
 
       return
@@ -822,9 +822,9 @@ export default class ApptBookingModal extends Vue {
       // this.length = this.clickedAppt.end.clone().diff(this.start, 'minutes')
       this.online_flag = this.clickedAppt.online_flag
       this.stat_flag = this.clickedAppt.stat_flag
-      const { service_id } = this.clickedAppt
-      this.setSelectedService(service_id)
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      const { serviceId } = this.clickedAppt
+      this.setSelectedService(serviceId)
+      this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
     } else {
       this.citizen_name = ''
       this.comments = ''
@@ -906,7 +906,7 @@ export default class ApptBookingModal extends Vue {
       this.toggleSubmitClicked(true)
       this.$store.commit('toggleServeCitizenSpinner', true)
       this.clearMessage()
-      const service_id = this.selectedService
+      const serviceId = this.selectedService
       const startDateObj = start_time
       if (!moment.isMoment(start_time)) {
         this.start = moment(start_time)
@@ -918,7 +918,7 @@ export default class ApptBookingModal extends Vue {
       const e: any = {
         start_time: moment.utc(start).format(),
         end_time: moment.utc(end).format(),
-        service_id,
+        serviceId,
         citizen_name: this.citizen_name,
         contact_information: this.contact_information
       }

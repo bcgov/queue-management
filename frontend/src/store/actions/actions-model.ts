@@ -773,7 +773,7 @@ export const commonActions: any = {
   },
 
   cancelAddCitizensModal (context) {
-    const { citizen_id } = context.getters.form_data.citizen
+    const { citizen_id } = context.getters.formData.citizen
 
     context.dispatch('postCitizenLeft', citizen_id).then(() => {
       context.commit('toggleAddModal', false)
@@ -843,19 +843,19 @@ export const commonActions: any = {
             context.commit('switchAddModalMode', 'add_mode')
             context.commit('updateAddModalForm', {
               type: 'citizen',
-              value: context.getters.invited_citizen
+              value: context.getters.invitedCitizen
             })
             context.commit('updateAddModalForm', {
               type: 'channel',
-              value: context.getters.active_service.channel_id
+              value: context.getters.activeService.channel_id
             })
             context.commit('updateAddModalForm', {
               type: 'counter',
-              value: context.getters.invited_citizen.counter_id
+              value: context.getters.invitedCitizen.counter_id
             })
             context.commit('updateAddModalForm', {
               type: 'priority',
-              value: context.getters.invited_citizen.priority
+              value: context.getters.invitedCitizen.priority
             })
             context.commit('toggleAddModal', true)
             context.commit('toggleServiceModal', false)
@@ -896,7 +896,7 @@ export const commonActions: any = {
   },
 
   clickAddToQueue (context) {
-    const { citizen_id } = context.getters.form_data.citizen
+    const { citizen_id } = context.getters.formData.citizen
     context.commit('setPerformingAction', true)
     context
       .dispatch('putCitizen')
@@ -1002,7 +1002,7 @@ export const commonActions: any = {
   clickBeginService (context, payload) {
     context.commit('setPerformingAction', true)
     context.commit('toggleServeCitizenSpinner', true)
-    const { citizen_id } = context.getters.form_data.citizen
+    const { citizen_id } = context.getters.formData.citizen
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -1122,8 +1122,8 @@ export const commonActions: any = {
 
     const setupChannels = () => {
       let index = -1
-      const { channel_options } = context.getters
-      channel_options.forEach((opt, i) => {
+      const { channelOptions } = context.getters
+      channelOptions.forEach((opt, i) => {
         if (opt.text.toLowerCase() === 'back office') {
           index = i
         }
@@ -1131,7 +1131,7 @@ export const commonActions: any = {
       if (index >= 0) {
         context.commit('updateAddModalForm', {
           type: 'channel',
-          value: channel_options[index].value
+          value: channelOptions[index].value
         })
       } else {
         context.commit('setDefaultChannel')
@@ -1193,8 +1193,8 @@ export const commonActions: any = {
 
     const setupChannels = () => {
       let index = -1
-      const { channel_options } = context.getters
-      channel_options.forEach((opt, i) => {
+      const { channelOptions } = context.getters
+      channelOptions.forEach((opt, i) => {
         if (opt.text.toLowerCase() === 'back office') {
           index = i
         }
@@ -1202,7 +1202,7 @@ export const commonActions: any = {
       if (index >= 0) {
         context.commit('updateAddModalForm', {
           type: 'channel',
-          value: channel_options[index].value
+          value: channelOptions[index].value
         })
       } else {
         context.commit('setDefaultChannel')
@@ -1239,7 +1239,7 @@ export const commonActions: any = {
   },
 
   clickCitizenLeft (context) {
-    const { citizen_id } = context.getters.invited_citizen
+    const { citizen_id } = context.getters.invitedCitizen
     context.commit('setPerformingAction', true)
 
     context.dispatch('postCitizenLeft', citizen_id).finally(() => {
@@ -1481,7 +1481,7 @@ export const commonActions: any = {
   },
 
   clickReturnToQueue (context) {
-    const { citizen_id } = context.getters.invited_citizen
+    const { citizen_id } = context.getters.invitedCitizen
     context.commit('setPerformingAction', true)
 
     context
@@ -1511,7 +1511,7 @@ export const commonActions: any = {
   },
 
   clickUnCheckIn (context) {
-    const { citizen_id } = context.getters.invited_citizen
+    const { citizen_id } = context.getters.invitedCitizen
     context.commit('setPerformingAction', true)
 
     Axios(context)
@@ -1603,9 +1603,9 @@ export const commonActions: any = {
 
   clickServiceFinish (context) {
     const { citizen_id } = context.state.serviceModalForm
-    const { accurate_time_ind } = context.state.serviceModalForm
+    const { accurateTimeInd } = context.state.serviceModalForm
     let inaccurate_flag = 'true'
-    if (accurate_time_ind === null || accurate_time_ind === 1) {
+    if (accurateTimeInd === null || accurateTimeInd === 1) {
       inaccurate_flag = 'false'
     }
     context.commit('setPerformingAction', true)
@@ -2219,14 +2219,14 @@ export const commonActions: any = {
   },
 
   postServiceReq (context) {
-    const { form_data } = context.getters
-    const { citizen_id } = form_data.citizen
-    const { priority } = form_data.priority
+    const { formData } = context.getters
+    const { citizen_id } = formData.citizen
+    const { priority } = formData.priority
     const service_request = {
-      service_id: form_data.service,
+      service_id: formData.service,
       citizen_id: citizen_id,
       quantity: 1,
-      channel_id: form_data.channel,
+      channel_id: formData.channel,
       priority: priority
     }
 
@@ -2256,13 +2256,13 @@ export const commonActions: any = {
 
     if (context.state.serviceModalForm.citizen_id) {
       const {
-        accurate_time_ind,
+        accurateTimeInd,
         citizen_comments
       } = context.state.serviceModalForm
       counter = context.state.serviceModalForm.counter
       priority = context.state.serviceModalForm.priority
       citizen_id = context.state.serviceModalForm.citizen_id
-      const prevCitizen = context.getters.invited_citizen
+      const prevCitizen = context.getters.invitedCitizen
       notification_phone = context.state.serviceModalForm.notification_phone
       notification_email = context.state.serviceModalForm.notification_email
       walkin_unique_id =  context.state.serviceModalForm.walkin_unique_id
@@ -2278,10 +2278,10 @@ export const commonActions: any = {
           data.priority = priority
         }
         if (
-          accurate_time_ind !== null &&
-          accurate_time_ind !== prevCitizen.accurate_time_ind
+          accurateTimeInd !== null &&
+          accurateTimeInd !== prevCitizen.accurateTimeInd
         ) {
-          data.accurate_time_ind = accurate_time_ind
+          data.accurateTimeInd = accurateTimeInd
         }
         if (notification_phone !== prevCitizen.notification_phone) {
           data.notification_phone = notification_phone
@@ -2294,14 +2294,14 @@ export const commonActions: any = {
         }
       }
     } else {
-      const { form_data } = context.getters
-      citizen_id = form_data.citizen.citizen_id
-      data.counter_id = form_data.counter
-      data.priority = form_data.priority
-      data.citizen_comments = form_data.comments
-      data.notification_phone = form_data.notification_phone
-      data.notification_email = form_data.notification_email
-      data.walkin_unique_id = form_data.walkin_unique_id
+      const { formData } = context.getters
+      citizen_id = formData.citizen.citizen_id
+      data.counter_id = formData.counter
+      data.priority = formData.priority
+      data.citizen_comments = formData.comments
+      data.notification_phone = formData.notification_phone
+      data.notification_email = formData.notification_email
+      data.walkin_unique_id = formData.walkin_unique_id
     }
 
     if (Object.keys(data).length === 0) {
@@ -2343,7 +2343,7 @@ export const commonActions: any = {
 
   putServiceRequest (context) {
     const { activeQuantity } = context.state.serviceModalForm
-    const compareService = context.getters.active_service
+    const compareService = context.getters.activeService
     const { sr_id } = compareService
 
     const data: any = {}
@@ -2363,13 +2363,13 @@ export const commonActions: any = {
     }
 
     const setup = context.state.addModalSetup
-    const { form_data } = context.getters
+    const { formData } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
-      if (form_data.channel !== compareService.channel_id) {
-        data.channel_id = form_data.channel
+      if (formData.channel !== compareService.channel_id) {
+        data.channel_id = formData.channel
       }
-      if (form_data.service !== compareService.service_id) {
-        data.service_id = form_data.service
+      if (formData.service !== compareService.service_id) {
+        data.service_id = formData.service
       }
     }
     if (Object.keys(data).length === 0) {
@@ -2512,8 +2512,8 @@ export const commonActions: any = {
 
   setAddModalData (context) {
     const data = {
-      citizen: context.getters.invited_citizen,
-      active_service: context.getters.active_service
+      citizen: context.getters.invitedCitizen,
+      activeService: context.getters.activeService
     }
     context.commit('setAddModalData', data)
   },

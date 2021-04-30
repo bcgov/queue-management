@@ -15,7 +15,7 @@
         <b-select
           id="add_citizen_catagories_select"
           style="height: 38px; font-size: .8rem;"
-          :options="categories_options"
+          :options="categoriesOptions"
           v-model="category"
           size="sm"
           placeholder="Filter by category"
@@ -37,9 +37,8 @@ export default class Filters extends Vue {
   @State('suspendFilter') private suspendFilter!: boolean | undefined
   @State('selectedItem') private selectedItem!: string | undefined
 
-  @Getter('form_data') private formData!: any;
-  // eslint-disable-next-line camelcase
-  @Getter('categories_options') private categories_options!: any;
+  @Getter('formData') private formData!: any;
+  @Getter('categoriesOptions') private categoriesOptions!: any;
 
   @Mutation('updateAddModalForm') public updateAddModalForm: any
   @Mutation('setDisplayServices') public setDisplayServices: any
@@ -49,8 +48,8 @@ export default class Filters extends Vue {
   onCategoriesChange (newVal: any, oldVal: any) {
     if (newVal && newVal.length > 0) {
       if (['/booking', '/exams'].includes(this.$route.path)) {
-        const { service_id } = newVal.find((cat: any) => cat.service_name === 'Exams')
-        this.updateAddModalForm({ type: 'category', value: service_id })
+        const { serviceId } = newVal.find((cat: any) => cat.service_name === 'Exams')
+        this.updateAddModalForm({ type: 'category', value: serviceId })
       }
     }
   }
@@ -95,8 +94,8 @@ export default class Filters extends Vue {
       if (this.categories && this.categories.length > 0) {
         if (['/booking', '/exams'].includes(this.$route.path)) {
           this.setDisplayServices('All')
-          const { service_id } = this.categories.find((cat: any) => cat.service_name === 'Exams')
-          this.updateAddModalForm({ type: 'category', value: service_id })
+          const { serviceId } = this.categories.find((cat: any) => cat.service_name === 'Exams')
+          this.updateAddModalForm({ type: 'category', value: serviceId })
         }
       }
     })

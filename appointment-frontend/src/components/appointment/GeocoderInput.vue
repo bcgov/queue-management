@@ -34,7 +34,6 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable no-console */
 import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'

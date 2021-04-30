@@ -114,10 +114,7 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
-// import axios from 'axios'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
 import config from '../../../config'

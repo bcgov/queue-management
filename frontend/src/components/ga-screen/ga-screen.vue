@@ -67,8 +67,8 @@ export default class GAScreen extends Vue {
   @State('citizens') private citizens!: any
   @State('csr_states') private csr_states!: any
 
-  @Getter('citizens_queue') private citizens_queue!: any;
-  @Getter('on_hold_queue') private on_hold_queue!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
+  @Getter('onHoldQueue') private onHoldQueue!: any;
   @Getter('reception') private reception!: any;
 
   @Action('closeGAScreenModal') public closeGAScreenModal: any
@@ -129,11 +129,11 @@ export default class GAScreen extends Vue {
   }
 
   public ga_citizens_waiting () {
-    return this.citizens_queue.length
+    return this.citizensQueue.length
   }
 
   public ga_citizens_on_hold () {
-    return this.on_hold_queue.length
+    return this.onHoldQueue.length
   }
 
   public ga_total_csrs () {

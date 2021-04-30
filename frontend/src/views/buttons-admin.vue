@@ -58,7 +58,7 @@ export default class ButtonsAdmin extends Vue {
   @State('user') private user!: any
   @State('adminNavigation') private adminNavigation!: any
 
-  @Getter('admin_navigation_nonblank') private admin_navigation_nonblank!: any;
+  @Getter('adminNavigationNonblank') private adminNavigationNonblank!: any;
 
   @Action('changeAdminView') public changeAdminView: any
 
@@ -90,7 +90,7 @@ export default class ButtonsAdmin extends Vue {
   public view: any;
 
   get currentOption () {
-    return this.admin_navigation_nonblank
+    return this.adminNavigationNonblank
   }
 
   get currentName () {

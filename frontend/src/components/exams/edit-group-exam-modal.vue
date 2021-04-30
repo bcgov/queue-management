@@ -374,7 +374,7 @@
                   selectable
                   select-mode="multi"
                   :fields="invigilatorFields"
-                  :items="invigilator_multi_select"
+                  :items="invigilatorMultiSelect"
                   responsive
                   selected-variant="success"
                   style="height: 110px; width: 250px"
@@ -566,7 +566,7 @@
                         selectable
                         select-mode="single"
                         :fields="shadowFields"
-                        :items="shadow_invigilator_options"
+                        :items="shadowInvigilatorOptions"
                         @row-selected="rowSelectedShadow"
                         responsive
                         selected-variant="success"
@@ -719,11 +719,11 @@ export default class EditGroupExamBookingModal extends Vue {
   @State('user') private user!: any
 
   @Getter('roleCode') private roleCode!: any;
-  @Getter('invigilator_dropdown') private invigilatorDropdown!: any;
+  @Getter('invigilatorDropdown') private invigilatorDropdown!: any;
   @Getter('isIta2Designate') private isIta2Designate!: any;
-  @Getter('invigilator_multi_select') private invigilatorMultiSelect!: any;
-  @Getter('shadow_invigilator_options') private shadowInvigilatorOptions!: any;
-  @Getter('shadow_invigilators') private shadowInvigilators!: any;
+  @Getter('invigilatorMultiSelect') private invigilatorMultiSelect!: any;
+  @Getter('shadowInvigilatorOptions') private shadowInvigilatorOptions!: any;
+  @Getter('shadowInvigilators') private shadowInvigilators!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('getExams') public getExams: any

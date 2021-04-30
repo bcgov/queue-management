@@ -13,6 +13,7 @@
 
 import { StateModelIF } from '@/interfaces'
 import Vue from 'vue'
+
 let _default_counter_id = null
 
 export const commonMutation: any = {
@@ -93,14 +94,14 @@ export const commonMutation: any = {
   },
 
   setAddModalData (state, data) {
-    const { citizen, active_service } = data
+    const { citizen, activeService } = data
 
     const formData = {
       comments: citizen.citizen_comments,
       priority: citizen.priority,
       citizen: citizen,
-      channel: active_service.channel_id,
-      service: active_service.service_id,
+      channel: activeService.channel_id,
+      service: activeService.service_id,
       notification_phone: citizen.notification_phone,
       notification_email: citizen.notification_email,
       walkin_unique_id: citizen.walkin_unique_id
@@ -228,11 +229,11 @@ export const commonMutation: any = {
   },
 
   setEventWarning (state, payload) {
-    state.event_id_warning = payload
+    state.eventIdWarning = payload
   },
 
   setExamEventIDs (state, payload) {
-    state.event_ids = payload
+    state.eventIds = payload
   },
 
   setExamTypes (state, payload) {

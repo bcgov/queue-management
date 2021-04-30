@@ -96,8 +96,8 @@ const appointmentsModule = namespace('appointmentsModule')
 })
 export default class AgendaScreen extends Vue {
   @State('showGAScreenModal') private showGAScreenModal!: any
-  @Getter('citizens_queue') private citizens_queue!: any;
-  @Getter('on_hold_queue') private on_hold_queue!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
+  @Getter('onHoldQueue') private onHoldQueue!: any;
   @Getter('reception') private reception!: any;
   @Action('closeGAScreenModal') public closeGAScreenModal: any
 

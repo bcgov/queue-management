@@ -10,7 +10,9 @@
  * and import in index.ts
  *
  */
+
 import { Axios, searchNestedObject } from './../helpers'
+
 import moment from 'moment'
 
 const serviceColor = (blackColor, serviceList, serviceId) => {
@@ -120,13 +122,13 @@ export default {
       }
       return false
     },
-    is_Support (state, getters, rootState) {
+    isSupport (state, getters, rootState) {
       if (rootState.user && rootState.user.role && rootState.user.role.role_code === 'SUPPORT') {
         return true
       }
       return false
     },
-    is_recurring_enabled (state, getters, rootState) {
+    isRecurringEnabled (state, getters, rootState) {
       if (rootState.recurringFeatureFlag === 'On') {
         return true
       }

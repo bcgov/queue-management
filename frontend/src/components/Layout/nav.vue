@@ -277,10 +277,8 @@ export default class Nav extends Vue {
 
   get isGAorCSR () {
     if (this.user && this.user.role) {
-      // eslint-disable-next-line camelcase
-      const { role_code } = this.user.role
-      // eslint-disable-next-line camelcase
-      if (role_code === 'CSR' || role_code === 'GA') {
+      const { roleCode } = this.user.role
+      if (roleCode === 'CSR' || roleCode === 'GA') {
         return true
       }
     }

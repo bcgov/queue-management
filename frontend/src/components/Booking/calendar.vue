@@ -183,8 +183,8 @@ export default class Calendar extends Vue {
   @State('showExamInventoryModal') private showExamInventoryModal!: any
   @State('showStartDateModal') private showStartDateModal!: any
 
-  @Getter('filtered_calendar_events') private filtered_calendar_events!: any;
-  @Getter('show_scheduling_indicator') private show_scheduling_indicator!: any;
+  @Getter('filteredCalendarEvents') private filteredCalendarEvents!: any;
+  @Getter('showSchedulingIndicator') private showSchedulingIndicator!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('getRooms') public getRooms: any
@@ -335,7 +335,7 @@ export default class Calendar extends Vue {
 
   get events () {
     if (this.searchTerm) {
-      return this.filtered_calendar_events(this.searchTerm)
+      return this.filteredCalendarEvents(this.searchTerm)
     }
 
     if (!this.offsiteVisible) {
@@ -701,7 +701,9 @@ export default class Calendar extends Vue {
     this.$root.$on('initialize', () => { this.initialize() })
     this.$root.$on('month', () => { this.month() })
     this.$root.$on('next', () => { this.next() })
-    this.$root.$on('options', (option) => { this.options(option) })
+    // Compiler is complaining about "this.options(option)" and I can't find any reference
+    // to an "options" method, so I'm going to try removing it.
+    // this.$root.$on('options', (option) => { this.options(option) })
     this.$root.$on('prev', () => { this.prev() })
     this.$root.$on('removeSavedSelection', () => { this.removeSavedSelection() })
     this.$root.$on('today', () => { this.today() })

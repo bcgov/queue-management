@@ -36,7 +36,7 @@ import { Getter } from 'vuex-class'
 
 @Component
 export default class NotificationFields extends Vue {
-  @Getter('form_data') private formData!: any;
+  @Getter('formData') private formData!: any;
 
   private notificationPhoneValidation: any = null
   private notificationEmailValidation: any = null

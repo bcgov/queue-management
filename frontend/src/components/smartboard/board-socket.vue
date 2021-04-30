@@ -15,7 +15,7 @@ limitations under the License.*/
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import config from '../../../config'
-import io from 'socket.io-client'
+const io = require('socket.io-client')
 let socket
 
 @Component({})

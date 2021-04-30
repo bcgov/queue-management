@@ -1,5 +1,5 @@
 <template>
-  <div class="scheduling-indicator" v-if="show_scheduling_indicator">
+  <div class="scheduling-indicator" v-if="showSchedulingIndicator">
     <div style="display: flex; justify-content: flex-start; border-radius: 24">
       <div
         class="m-2 flex-min"
@@ -84,7 +84,7 @@ export default class SchedulingIndicator extends Vue {
   @State('showOtherBookingModal') private showOtherBookingModal!: any
   @State('isAppointmentEditMode') private isAppointmentEditMode!: any
 
-  @Getter('show_scheduling_indicator') private show_scheduling_indicator!: any;
+  @Getter('showSchedulingIndicator') private showSchedulingIndicator!: any;
 
   @Action('finishBooking') public finishBooking: any
   @Action('finishAppointment') public finishAppointment: any

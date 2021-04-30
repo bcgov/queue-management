@@ -123,7 +123,6 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
@@ -142,7 +141,7 @@ export default class DashButtons extends Vue {
   @State('showInviteCitizenSpinner') private showInviteCitizenSpinner!: any
 
   @Getter('reception') private reception!: any;
-  @Getter('citizens_queue') private citizens_queue!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
 
   @Action('clickInvite') public clickInvite: any
   @Action('clickAddCitizen') public clickAddCitizen: any
@@ -158,7 +157,7 @@ export default class DashButtons extends Vue {
   @Mutation('setAddModalSelectedItem') public setAddModalSelectedItem: any
 
   get queueLength () {
-    return this.citizens_queue.length
+    return this.citizensQueue.length
   }
 
   private addCitizen () {
@@ -166,33 +165,33 @@ export default class DashButtons extends Vue {
   }
 
   private quickServeCitizen (e: any) {
-    const service_id = e.target.dataset.id
-    const service_name = e.target.innerText.trim()
+    const serviceId = e.target.dataset.id
+    const serviceName = e.target.innerText.trim()
 
     //  If CSR is on reception, and a reception office, bring up add citizen form with defaults.
     if (this.user.receptionist_ind && this.user.office.sb.sb_type !== 'nocallonsmartboard') {
       this.clickAddCitizen()
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
-      this.$store.commit('updateAddModalForm', { type: 'search', value: service_name })
+      this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
+      this.$store.commit('updateAddModalForm', { type: 'search', value: serviceName })
       //  If CSR NOT on reception or NOT a reception office just serve the citizen.
     } else {
-      this.setAddModalSelectedItem(service_name)
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      this.setAddModalSelectedItem(serviceName)
+      this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
       this.clickQuickServe()
     }
   }
 
   private quickBackOffice (e: any) {
-    const service_id = e.target.dataset.id
-    const service_name = e.target.innerText.trim()
+    const serviceId = e.target.dataset.id
+    const serviceName = e.target.innerText.trim()
 
     if (this.user.receptionist_ind && this.user.office.sb.sb_type !== 'nocallonsmartboard') {
       this.clickBackOffice()
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
-      this.$store.commit('updateAddModalForm', { type: 'search', value: service_name })
+      this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
+      this.$store.commit('updateAddModalForm', { type: 'search', value: serviceName })
     } else {
-      this.setAddModalSelectedItem(service_name)
-      this.$store.commit('updateAddModalForm', { type: 'service', value: service_id })
+      this.setAddModalSelectedItem(serviceName)
+      this.$store.commit('updateAddModalForm', { type: 'service', value: serviceId })
       this.clickQuickBackOffice()
     }
   }

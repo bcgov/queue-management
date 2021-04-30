@@ -138,7 +138,7 @@
                 id="counter-selection-serve"
                 v-show="reception && !simplifiedModal"
                 class="custom-select"
-                v-model="counter_selection"
+                v-model="counterSelection"
               >
                 <option
                   v-for="counter in user.office.counters"
@@ -151,7 +151,7 @@
               <select
                 id="priority-selection"
                 class="custom-select px-1"
-                v-model="priority_selection"
+                v-model="prioritySelection"
                 style="margin-right: 8px"
               >
                 <option value="1">High Priority</option>
@@ -177,7 +177,7 @@
               style="display: flex; flex-direction: column; margin-left: 10px"
             >
               <b-form-checkbox
-                v-model="accurate_time_ind"
+                v-model="accurateTimeInd"
                 v-if="serviceBegun === true"
                 value="0"
                 style="color: white; margin: 0 0 8px"
@@ -253,7 +253,6 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 import ServeCitizenTable from './serve-citizen-table.vue'
@@ -272,9 +271,9 @@ export default class ServeCitizen extends Vue {
   @State('serveModalAlert') private serveModalAlert!: any
   @State('user') private user!: any
 
-  @Getter('invited_citizen') private invited_citizen!: any;
-  @Getter('active_service') private active_service!: any;
-  @Getter('invited_service_reqs') private invited_service_reqs!: any;
+  @Getter('invitedCitizen') private invitedCitizen!: any;
+  @Getter('activeService') private activeService!: any;
+  @Getter('invitedServiceReqs') private invitedServiceReqs!: any;
   @Getter('reception') private reception!: any;
 
   @Action('clickAddCitizen') public clickAddCitizen: any
@@ -362,10 +361,10 @@ export default class ServeCitizen extends Vue {
   }
 
   get citizen () {
-    if (!this.invited_citizen) {
+    if (!this.invitedCitizen) {
       return { ticket_number: '' }
     }
-    return this.invited_citizen
+    return this.invitedCitizen
   }
 
   get commentsTooLong () {
@@ -400,34 +399,34 @@ export default class ServeCitizen extends Vue {
     }
   }
 
-  get accurate_time_ind () {
-    return this.serviceModalForm.accurate_time_ind
+  get accurateTimeInd () {
+    return this.serviceModalForm.accurateTimeInd
   }
 
-  set accurate_time_ind (value) {
+  set accurateTimeInd (value) {
     this.editServiceModalForm({
-      type: 'accurate_time_ind',
+      type: 'accurateTimeInd',
       value
     })
   }
 
   get channel () {
-    if (!this.active_service) {
+    if (!this.activeService) {
       return { channel_name: '', channel_id: '' }
     }
-    return this.active_service.channel
+    return this.activeService.channel
   }
 
-  get priority_selection () {
+  get prioritySelection () {
     return this.serviceModalForm.priority
   }
 
-  set priority_selection (value) {
+  set prioritySelection (value) {
     this.editServiceModalForm({ type: 'priority', value })
   }
 
-  get counter_selection () { return this.serviceModalForm.counter }
-  set counter_selection (value) {
+  get counterSelection () { return this.serviceModalForm.counter }
+  set counterSelection (value) {
     this.editServiceModalForm({ type: 'counter', value })
   }
 
@@ -494,8 +493,8 @@ export default class ServeCitizen extends Vue {
     this.left = (this.left || 0) + deltaX
     this.top = (this.top || 0) + deltaY
 
-    var serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
-    serve_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
+    var serveModal: any = document.getElementsByClassName('serve-modal-content')[0]
+    serveModal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
 
   updated () {

@@ -69,7 +69,7 @@ export default class ButtonsExams extends Vue {
   @State('showGenFinReportModal') private showGenFinReportModal!: any
   @State('user') private user!: any
 
-  @Getter('is_financial_designate') private isFinancialDesignate!: any;
+  @Getter('isFinancialDesignate') private isFinancialDesignate!: any;
   @Getter('isOfficeManager') private isOfficeManager!: any;
   @Getter('isIta2Designate') private isIta2Designate!: any;
   @Getter('isPesticideDesignate') private isPesticideDesignate!: any;

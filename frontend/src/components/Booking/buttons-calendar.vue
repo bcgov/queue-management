@@ -39,7 +39,6 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 

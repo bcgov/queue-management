@@ -32,7 +32,7 @@ import config from './../../config'
 
 @Component({})
 export default class Admin extends Vue {
-  @Getter('admin_navigation_nonblank') private admin_navigation_nonblank!: false;
+  @Getter('adminNavigationNonblank') private adminNavigationNonblank!: false;
   @State('iframeLogedIn') private iframeLogedIn!: false;
   @State('adminNavigation') private adminNavigation!: false;
   @State('user') private user!: false;
@@ -56,7 +56,7 @@ export default class Admin extends Vue {
 
   get url () {
     //  The default admin edit URL is for GA csr view.
-    return config.SOCKET_URL + '/admin/' + this.admin_navigation_nonblank + '/'
+    return config.SOCKET_URL + '/admin/' + this.adminNavigationNonblank + '/'
   }
 
   created () {

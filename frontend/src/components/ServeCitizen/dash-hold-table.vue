@@ -16,7 +16,7 @@ limitations under the License.*/-->
 <template>
   <div id="client-hold-table">
     <b-table
-      :items="on_hold_queue"
+      :items="onHoldQueue"
       :fields="getFields"
       head-variant="light"
       small
@@ -109,11 +109,11 @@ export default class DashHoldTable extends Vue {
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('user') private user!: any
 
-  @Getter('on_hold_queue') private on_hold_queue!: any;
-  @Getter('citizens_queue') private citizens_queue!: any;
-  @Getter('active_service') private active_service!: any;
-  @Getter('active_index') private active_index!: any;
-  @Getter('active_service_id') private active_service_id!: any;
+  @Getter('onHoldQueue') private onHoldQueue!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
+  @Getter('activeService') private activeService!: any;
+  @Getter('activeIndex') private activeIndex!: any;
+  @Getter('activeServiceId') private activeServiceId!: any;
   @Getter('reception') private reception!: any;
 
   @Action('clickRowHoldQueue') public clickRowHoldQueue: any
@@ -212,7 +212,7 @@ export default class DashHoldTable extends Vue {
   }
 
   private showCSR (id: any) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }
@@ -221,7 +221,7 @@ export default class DashHoldTable extends Vue {
   }
 
   private showCategory (id: any) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }
@@ -229,7 +229,7 @@ export default class DashHoldTable extends Vue {
   }
 
   private showService (id: any) {
-    const service = this.active_service_id(id)
+    const service = this.activeServiceId(id)
     if (!service) {
       return null
     }
@@ -237,7 +237,6 @@ export default class DashHoldTable extends Vue {
   }
 
   private showPriority (priority: any) {
-    // eslint-disable-next-line eqeqeq
     return priority === 1 ? 'High' : priority === 2 ? 'Default' : priority === 3 ? 'Low' : null
   }
 

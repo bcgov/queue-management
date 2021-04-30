@@ -111,13 +111,9 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
-// import Vue from 'vue'
 
 @Component({})
 export default class Agenda extends Vue {
@@ -125,8 +121,8 @@ export default class Agenda extends Vue {
   @State('calendarSetup') private calendarSetup!: any
   @State('invigilators') private invigilators!: any
 
-  @Getter('invigilator_multi_select') private invigilator_multi_select!: any;
-  @Getter('all_invigilator_options') private all_invigilator_options!: any;
+  @Getter('invigilatorMultiSelect') private invigilatorMultiSelect!: any;
+  @Getter('allInvigilatorOptions') private allInvigilatorOptions!: any;
 
   @Action('initializeAgenda') public initializeAgenda: any
   @Action('getInvigilators') public getInvigilators: any
@@ -260,7 +256,7 @@ export default class Agenda extends Vue {
     const self = this
     const invigilatorNameList: any = []
     exam.booking.invigilators.forEach(function (invigilator: any) {
-      const i = self.invigilator_multi_select.filter((i: any) => i.value === invigilator)
+      const i = self.invigilatorMultiSelect.filter((i: any) => i.value === invigilator)
       if (i[0] && i[0].name) {
         invigilatorNameList.push(i[0].name)
       }
@@ -276,9 +272,9 @@ export default class Agenda extends Vue {
 
   private showShadowInvigilator (data: any) {
     const { exam } = data
-    const shadow_invigilator = this.all_invigilator_options.filter((i: any) => i.id === exam.booking.shadow_invigilator_id)
-    if (shadow_invigilator[0] && shadow_invigilator[0].name) {
-      return shadow_invigilator[0].name
+    const shadowInvigilator = this.allInvigilatorOptions.filter((i: any) => i.id === exam.booking.shadow_invigilator_id)
+    if (shadowInvigilator[0] && shadowInvigilator[0].name) {
+      return shadowInvigilator[0].name
     } else { return false }
   }
 

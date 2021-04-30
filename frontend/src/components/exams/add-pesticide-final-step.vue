@@ -124,7 +124,7 @@ export default class AddPesticideFinalStep extends Vue {
   @State('offices') private offices!: any
   @State('examBcmpJobId') private examBcmpJobId!: any
 
-  @Getter('exam_object') private examObject!: any;
+  @Getter('examObject') private examObject!: any;
   @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
 
   @Action('clickPesticideRequestExam') public clickPesticideRequestExam: any

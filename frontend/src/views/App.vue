@@ -30,7 +30,6 @@ limitations under the License.
 <script lang="ts">
 
 import { Component, Vue } from 'vue-property-decorator'
-// eslint-disable-next-line sort-imports
 import { Getter, State } from 'vuex-class'
 import AddExamModal from '@/components/exams/add-exam-modal.vue'
 import Alert from './alert.vue'
@@ -62,37 +61,11 @@ import SuccessExamAlert from '@/components/exams/success-exam-alert.vue'
     Socket,
     SuccessExamAlert
   }
-  // computed: {
-  //   ...mapGetters([
-  //     'show_scheduling_indicator'
-  //   ]),
-  //   ...mapState(['isLoggedIn', 'user'])
-  // }
-  // methods: {
-  //   ...mapActions('account', ['loadUserInfo', 'getUser']),
-  //   ...mapActions('auth', ['syncWithSessionStorage'])
-  // }
 })
 export default class App extends Vue {
-  // eslint-disable-next-line camelcase
-  // private readonly show_scheduling_indicator!: boolean
-  // private readonly isLoggedIn!: boolean
-  // private readonly user!: any
-
-  @Getter('show_scheduling_indicator') private showSchedulingIndicator!: false;
+  @Getter('showSchedulingIndicator') private showSchedulingIndicator!: false;
   @State('isLoggedIn') private isLoggedIn!: string | undefined
   @State('user') private user!: string | undefined
-  // updated () {
-  //   console.log('user', this.user)
-  //   console.log('isLoggedIn', this.isLoggedIn)
-  //   console.log('showSchedulingIndicator', this.showSchedulingIndicator)
-  // }
-
-  // mounted () {
-  //   console.log('user', this.user)
-  //   console.log('isLoggedIn', this.isLoggedIn)
-  //   console.log('showSchedulingIndicator', this.showSchedulingIndicator)
-  // }
 
   get style () {
     const output: any = { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' }

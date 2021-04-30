@@ -31,7 +31,7 @@ import { Getter } from 'vuex-class'
 
 @Component({})
 export default class Comments extends Vue {
-  @Getter('form_data') private formData!: any;
+  @Getter('formData') private formData!: any;
   @Getter('commentsTooLong') private commentsTooLong!: any;
 
   get comments () { return this.formData.comments }

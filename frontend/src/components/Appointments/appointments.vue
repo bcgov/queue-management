@@ -95,23 +95,14 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable */
-// /* eslint-disable sort-imports */
 import { Component, Vue } from 'vue-property-decorator'
-
 import AddCitizen from '../AddCitizen/add-citizen.vue'
-
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.vue'
-
-import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
-
-import LoadingModal from './appt-booking-modal/loading.vue'
-
-import CheckInModal from './checkin-modal.vue'
 import AppointmentsFilter from './appointmentsFilter.vue'
-
+import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
+import CheckInModal from './checkin-modal.vue'
+import LoadingModal from './appt-booking-modal/loading.vue'
 import moment from 'moment'
-
 import { namespace } from 'vuex-class'
 import { formatedStartTime } from '@/utils/helpers'
 import { showFlagBus, ShowFlagBusEvents } from '../../events/showFlagBus'

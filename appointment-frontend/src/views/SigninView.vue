@@ -49,7 +49,6 @@ export default class SigninView extends Vue {
         // tell KeycloakServices to load the user info
         this.loadUserInfo()
         await this.postCreateUser()
-        // eslint-disable-next-line no-console
         console.info('[SignIn.vue]Logged in User.Starting refreshTimer')
         const tokenService = new TokenService()
         await tokenService.init()

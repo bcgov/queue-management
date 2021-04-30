@@ -23,14 +23,9 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
 import 'video.js/dist/video-js.css'
-
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
-
-// import axios from 'axios'
-
 import { videoPlayer } from 'vue-video-player'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
@@ -71,7 +66,6 @@ export default class Video extends Vue {
   }
 
   getOfficeVideoUrl () {
-    // eslint-disable-next-line eqeqeq
     if (this.getParameterByName('localvideo') === 1) {
       this.playerOptions.sources[0].src = localVideoFile
     } else {

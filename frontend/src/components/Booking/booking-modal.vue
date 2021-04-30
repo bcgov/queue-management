@@ -127,7 +127,7 @@
             <b-form-row>
               <b-col>
                 <b-table
-                  :items="invigilator_multi_select"
+                  :items="invigilatorMultiSelect"
                   :fields="fields"
                   outlined
                   inverse
@@ -228,7 +228,7 @@ export default class BookingModal extends Vue {
   @State('addExamModule') private module!: any
   @State('capturedExam') private capturedExam!: any
 
-  @Getter('invigilator_multi_select') private invigilator_multi_select!: any;
+  @Getter('invigilatorMultiSelect') private invigilatorMultiSelect!: any;
 
   @Action('finishBooking') public finishBooking: any
   @Action('getExams') public getExams: any

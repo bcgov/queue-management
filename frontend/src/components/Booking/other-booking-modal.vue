@@ -96,7 +96,7 @@
                 Create Single Event
               </b-button>
             </b-col>
-            <b-col v-if="is_recurring_enabled" class="w-50">
+            <b-col v-if="isRecurringEnabled" class="w-50">
               <b-button
                 variant="primary"
                 class="w-100 mb-2"
@@ -612,7 +612,7 @@ export default class OtherBookingModal extends Vue {
   @State('showOtherBookingModal') private showModal!: any
   @State('selectionIndicator') private selectionIndicator!: any
 
-  @Getter('is_recurring_enabled') private is_recurring_enabled!: any;
+  @Getter('isRecurringEnabled') private isRecurringEnabled!: any;
 
   @Action('postBooking') public postBooking: any
   @Action('finishBooking') public finishBooking: any

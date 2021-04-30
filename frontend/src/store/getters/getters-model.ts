@@ -15,7 +15,7 @@ import { searchNestedObject } from '../helpers'
 
 export const commonGetters: any = {
 
-  admin_navigation_nonblank (state) {
+  adminNavigationNonblank (state) {
     if (state.adminNavigation !== '') {
       return state.adminNavigation
     } else {
@@ -47,7 +47,7 @@ export const commonGetters: any = {
     return state.addModalForm.comments.length > 1000
   },
 
-  invigilator_dropdown (state) {
+  invigilatorDropdown (state) {
     const invigilators = [
       { value: null, text: 'unassigned', shadow_count: 2 },
       { value: 'sbc', text: 'SBC Staff', shadow_count: 2 }
@@ -62,7 +62,7 @@ export const commonGetters: any = {
     return invigilators.filter(i => i.shadow_count === 2)
   },
 
-  shadow_invigilator_options (state) {
+  shadowInvigilatorOptions (state) {
     const invigilators: any = []
     state.invigilators.forEach(i => {
       invigilators.push({
@@ -74,7 +74,7 @@ export const commonGetters: any = {
     return invigilators.filter(i => i.shadow_count < 2)
   },
 
-  shadow_invigilators (state) {
+  shadowInvigilators (state) {
     const invigilators: any = []
     state.invigilators.forEach(i => {
       invigilators.push({
@@ -86,7 +86,7 @@ export const commonGetters: any = {
     return invigilators
   },
 
-  all_invigilator_options (state) {
+  allInvigilatorOptions (state) {
     const invigilators: any = []
     state.invigilators.forEach(i => {
       invigilators.push({ id: i.invigilator_id, name: i.invigilator_name })
@@ -94,7 +94,7 @@ export const commonGetters: any = {
     return invigilators
   },
 
-  invigilator_multi_select (state) {
+  invigilatorMultiSelect (state) {
     const invigilators: any = []
     state.invigilators.forEach(i => {
       invigilators.push({
@@ -106,7 +106,7 @@ export const commonGetters: any = {
     return invigilators.filter(i => i.shadow_count === 2)
   },
 
-  show_scheduling_indicator: state => {
+  showSchedulingIndicator: state => {
     if (state.scheduling || state.rescheduling) {
       if (
         !state.showOtherBookingModal &&
@@ -120,7 +120,7 @@ export const commonGetters: any = {
     return false
   },
 
-  filtered_calendar_events: (state, getters) => search => {
+  filteredCalendarEvents: (state, getters) => search => {
     return state.calendarEvents.filter(event =>
       searchNestedObject(event, search)
     )
@@ -139,7 +139,7 @@ export const commonGetters: any = {
     return state.exams
   },
 
-  exam_object_id: (state, getters) => examId => {
+  examObjectId: (state, getters) => examId => {
     return state.examTypes.find(type => type.exam_type_id === examId)
   },
 
@@ -170,7 +170,7 @@ export const commonGetters: any = {
     return false
   },
 
-  add_exam_modal_navigation_buttons (state) {
+  addExamModalNavigationButtons (state) {
     // controls disabled/enabled state of and current classes applied to the 'next' button in AddExamFormModal
     const setup = state.captureITAExamTabSetup
     if (setup.stepsValidated.indexOf(setup.step) === -1) {
@@ -199,7 +199,7 @@ export const commonGetters: any = {
     return false
   },
 
-  is_financial_designate (state) {
+  isFinancialDesignate (state) {
     if (state.user.finance_designate) {
       return true
     }
@@ -220,7 +220,7 @@ export const commonGetters: any = {
     return false
   },
 
-  is_recurring_enabled (state) {
+  isRecurringEnabled (state) {
     if (state.recurringFeatureFlag === 'On') {
       return true
     }
@@ -239,36 +239,36 @@ export const commonGetters: any = {
     }
   },
 
-  active_index (state, getters) {
-    const { service_citizen } = state.serviceModalForm
+  activeIndex (state, getters) {
+    const { serviceCitizen } = state.serviceModalForm
 
     if (
-      !service_citizen ||
-      !service_citizen.service_reqs ||
-      service_citizen.service_reqs.length === 0
+      !serviceCitizen ||
+      !serviceCitizen.service_reqs ||
+      serviceCitizen.service_reqs.length === 0
     ) {
       return 0
     }
-    return service_citizen.service_reqs.findIndex(sr =>
+    return serviceCitizen.service_reqs.findIndex(sr =>
       sr.periods.some(p => p.time_end === null)
     )
   },
 
-  active_service: (state, getters) => {
-    const { service_citizen } = state.serviceModalForm
+  activeService: (state, getters) => {
+    const { serviceCitizen } = state.serviceModalForm
     if (
-      !service_citizen ||
-      !service_citizen.service_reqs ||
-      service_citizen.service_reqs.length === 0
+      !serviceCitizen ||
+      !serviceCitizen.service_reqs ||
+      serviceCitizen.service_reqs.length === 0
     ) {
       return null
     }
-    return service_citizen.service_reqs.filter(sr =>
+    return serviceCitizen.service_reqs.filter(sr =>
       sr.periods.some(p => p.time_end === null)
     )[0]
   },
 
-  active_service_id: state => citizen_id => {
+  activeServiceId: state => citizen_id => {
     const { citizens } = state
     const citizen = citizens.find(c => c.citizen_id === citizen_id)
 
@@ -277,28 +277,28 @@ export const commonGetters: any = {
     )
   },
 
-  invited_service_reqs: (state, getters) => {
-    const { service_citizen } = state.serviceModalForm
+  invitedServiceReqs: (state, getters) => {
+    const { serviceCitizen } = state.serviceModalForm
 
     if (
-      !service_citizen ||
-      !service_citizen.service_reqs ||
-      service_citizen.service_reqs.length === 0
+      !serviceCitizen ||
+      !serviceCitizen.service_reqs ||
+      serviceCitizen.service_reqs.length === 0
     ) {
       return []
     }
 
-    return service_citizen.service_reqs.sort((a, b) => {
+    return serviceCitizen.service_reqs.sort((a, b) => {
       return b.sr_id - a.sr_id
     })
   },
 
-  invited_citizen: state => {
-    const { service_citizen } = state.serviceModalForm
-    return service_citizen
+  invitedCitizen: state => {
+    const { serviceCitizen } = state.serviceModalForm
+    return serviceCitizen
   },
 
-  on_hold_queue (state) {
+  onHoldQueue (state) {
     const { citizens } = state
     if (!citizens || citizens.length === 0) {
       return []
@@ -318,7 +318,7 @@ export const commonGetters: any = {
     return list
   },
 
-  citizens_queue (state) {
+  citizensQueue (state) {
     const { citizens } = state
     if (!citizens || citizens.length === 0) {
       return []
@@ -338,24 +338,24 @@ export const commonGetters: any = {
     return list
   },
 
-  form_data: state => {
+  formData: state => {
     return state.addModalForm
   },
 
-  channel_options: state => {
+  channelOptions: state => {
     return state.channels.map(ch => ({
       value: ch.channel_id,
       text: ch.channel_name
     }))
   },
 
-  categories_options: (state, getters) => {
+  categoriesOptions: (state, getters) => {
     let services = state.services
     if (state.displayServices === 'Dashboard') {
-      services = getters.services_dashboard
+      services = getters.servicesDashboard
     }
     if (state.displayServices === 'BackOffice') {
-      services = getters.services_backoffice
+      services = getters.servicesBackoffice
     }
     const opts = state.categories.filter(o =>
       services.some(s => s.parent_id === o.service_id)
@@ -369,7 +369,7 @@ export const commonGetters: any = {
     return blankOpt.concat(mappedOpts)
   },
 
-  services_dashboard: state => {
+  servicesDashboard: state => {
     let services = state.services
     services = services.filter(
       service => service.display_dashboard_ind === 1
@@ -377,7 +377,7 @@ export const commonGetters: any = {
     return services
   },
 
-  services_backoffice: state => {
+  servicesBackoffice: state => {
     let services = state.services
     services = services.filter(
       service => service.display_dashboard_ind === 0
@@ -385,7 +385,7 @@ export const commonGetters: any = {
     return services
   },
 
-  filtered_services: (state, getters) => {
+  filteredServices: (state, getters) => {
     let services = state.services
     if (state.displayServices === 'Dashboard') {
       services = services.filter(
@@ -398,16 +398,16 @@ export const commonGetters: any = {
       )
     }
 
-    if (getters.form_data.category) {
+    if (getters.formData.category) {
       return services.filter(
-        service => service.parent_id === getters.form_data.category
+        service => service.parent_id === getters.formData.category
       )
     } else {
       return services
     }
   },
 
-  receptionist_status (state) {
+  receptionistStatus (state) {
     if (state.user.receptionist_ind === 1) {
       return true
     } else if (state.user.receptionist_ind === 0) {

@@ -103,7 +103,7 @@
                 Create Single Blackout
               </b-button>
             </b-col>
-            <b-col v-if="is_recurring_enabled" class="w-50">
+            <b-col v-if="isRecurringEnabled" class="w-50">
               <b-button
                 variant="primary"
                 class="w-100 mb-1"
@@ -116,7 +116,7 @@
             </b-col>
           </b-form-row>
           <b-form-row>
-            <b-col v-if="is_Support" class="w-50">
+            <b-col v-if="isSupport" class="w-50">
               <b-button
                 variant="primary"
                 class="w-100 mb-1"
@@ -711,8 +711,8 @@ export default class AppointmentBlackoutModal extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
   @appointmentsModule.State('appointments') private myappointments!: any
 
-  @appointmentsModule.Getter('is_recurring_enabled') private is_recurring_enabled!: any;
-  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  @appointmentsModule.Getter('isRecurringEnabled') private isRecurringEnabled!: any;
+  @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('postAppointment') public postAppointment: any

@@ -127,10 +127,10 @@ export default class Login extends Vue {
   @State('offices') private offices!: any
 
   @Getter('roleCode') private roleCode!: any;
-  @Getter('quick_trans_status') private quick_trans_status!: any;
+  @Getter('quickTransStatus') private quickTransStatus!: any;
   @Getter('reception') private reception!: any;
-  @Getter('receptionist_status') private receptionist_status!: any;
-  @Getter('citizens_queue') private citizens_queue!: any;
+  @Getter('receptionistStatus') private receptionistStatus!: any;
+  @Getter('citizensQueue') private citizensQueue!: any;
 
   @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
   @Action('updateCSRState') public updateCSRState: any
@@ -148,7 +148,7 @@ export default class Login extends Vue {
   officeQuery = '';
 
   get counterSelection () {
-    if (this.receptionist_status === true) {
+    if (this.receptionistStatus === true) {
       return 'receptionist'
     } else {
       return this.user.counter_id
@@ -195,7 +195,7 @@ export default class Login extends Vue {
   }
 
   get queueLength () {
-    return this.citizens_queue.length
+    return this.citizensQueue.length
   }
 
   get citizenSBType () {

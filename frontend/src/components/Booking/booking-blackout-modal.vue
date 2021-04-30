@@ -137,7 +137,7 @@
                 Create Single Blackout
               </b-button>
             </b-col>
-            <b-col v-if="is_recurring_enabled" class="w-50">
+            <b-col v-if="isRecurringEnabled" class="w-50">
               <b-button
                 variant="primary"
                 class="w-100"
@@ -150,7 +150,7 @@
             </b-col>
           </b-form-row>
           <b-form-row>
-            <b-col v-if="is_Support" class="w-50">
+            <b-col v-if="isSupport" class="w-50">
               <b-button
                 variant="primary"
                 class="w-100"
@@ -793,8 +793,8 @@ export default class BookingBlackoutModal extends Vue {
   @State('rooms') private rooms!: any
   @State('roomResources') private roomResources!: any
 
-  @Getter('is_recurring_enabled') private is_recurring_enabled!: any;
-  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  @Getter('isRecurringEnabled') private isRecurringEnabled!: any;
+  @appointmentsModule.Getter('isSupport') private isSupport!: any;
   
 
   @Action('getBookings') public getBookings: any
