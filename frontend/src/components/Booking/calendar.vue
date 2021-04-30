@@ -873,9 +873,6 @@ export default class Calendar extends Vue {
     this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.toggleOffsite(false) // initial show only onsite rooms
-    if (this.scheduling || this.rescheduling) {
-      this.toggleOffsite(false)
-    }
   }
 
   async getCategoryList (flag) {
