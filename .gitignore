@@ -165,3 +165,5 @@ keys-generated
 .env-Chris
 .env-Omid
 
+# new config stuff
+/frontend/public/config/configuration.json
