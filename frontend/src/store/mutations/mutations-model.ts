@@ -250,7 +250,7 @@ export const commonMutation: any = {
   },
 
   setPesticideOffsiteInvigilators (state, payload) {
-    state.pesticide_offsite_invigilators = payload
+    state.pesticideOffsiteInvigilators = payload
   },
 
   updateCitizen (state, payload) {

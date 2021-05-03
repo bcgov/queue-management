@@ -51,7 +51,7 @@ export interface StateModelIF {
   inventoryFilters: any,
   invigilators: any,
   pesticideInvigilators: any,
-  pesticide_offsite_invigilators: any,
+  pesticideOffsiteInvigilators: any,
   shadowInvigilators: any,
   isLoggedIn: boolean,
   isUploadingFile: boolean,

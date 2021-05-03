@@ -715,7 +715,7 @@ export default class EditGroupExamBookingModal extends Vue {
   @State('showEditGroupBookingModal') private showModal!: any
   @State('invigilators') private invigilators!: any
   @State('pesticideInvigilators') private pesticideInvigilators!: any
-  @State('pesticide_offsite_invigilators') private pesticideOffsiteInvigilators!: any
+  @State('pesticideOffsiteInvigilators') private pesticideOffsiteInvigilators!: any
   @State('user') private user!: any
 
   @Getter('roleCode') private roleCode!: any;

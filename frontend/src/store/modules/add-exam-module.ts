@@ -355,7 +355,7 @@ export const addExamModule = {
       ]
     },
     pesticideStep1 (state, getters, rootState) {
-      const { capturedExam, pesticide_offsite_invigilators } = rootState
+      const { capturedExam, pesticideOffsiteInvigilators } = rootState
       const pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Pesticide Exam',
@@ -383,7 +383,7 @@ export const addExamModule = {
           key: 'invigilator_id',
           text: 'Invigilator',
           kind: 'select',
-          options: pesticide_offsite_invigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
+          options: pesticideOffsiteInvigilators.map(invigilator => ({ text: invigilator.invigilator_name, value: parseInt(invigilator.invigilator_id) })),
           minLength: 1,
           digit: true
         }
