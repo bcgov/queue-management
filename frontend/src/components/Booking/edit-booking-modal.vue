@@ -652,7 +652,8 @@ export default class EditBooking extends Vue {
   @State('showEditBookingModal') private showModal!: any
   @State('invigilators') private invigilators!: any
   @State('selectedExam') private selectedExam!: any
-  @State('shadowInvigilators') private shadowInvigilators!: any
+  // code uses same variable for @State and @Getter, so renaming this one
+  @State('shadowInvigilatorsState') private shadowInvigilatorsState!: any
   @State('editDeleteSeries') private editDeleteSeries!: any
 
   @Getter('invigilatorDropdown') private invigilatorDropdown!: any;

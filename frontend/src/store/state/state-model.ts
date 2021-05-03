@@ -107,7 +107,7 @@ export const stateModel: StateModelIF = {
   invigilators: [],
   pesticideInvigilators: [],
   pesticideOffsiteInvigilators: [],
-  shadowInvigilators: [],
+  shadowInvigilatorsState: [],
   isLoggedIn: false,
   isUploadingFile: false,
   isAppointmentEditMode: false,

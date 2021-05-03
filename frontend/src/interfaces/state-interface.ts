@@ -52,7 +52,7 @@ export interface StateModelIF {
   invigilators: any,
   pesticideInvigilators: any,
   pesticideOffsiteInvigilators: any,
-  shadowInvigilators: any,
+  shadowInvigilatorsState: any,
   isLoggedIn: boolean,
   isUploadingFile: boolean,
   isAppointmentEditMode: boolean,
