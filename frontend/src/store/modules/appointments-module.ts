@@ -394,9 +394,6 @@ export default {
 
     toggleAddModal ({ commit }, payload) {
       commit('toggleAddModal', payload, { root: true })
-      if (payload) {
-        commit('switchAddModalMode', 'add_mode', { root: true })
-      }
     },
 
     // toggleApptBookingModalWithDraft ({ commit }, payload) {
