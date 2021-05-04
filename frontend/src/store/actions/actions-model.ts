@@ -2368,6 +2368,9 @@ export const commonActions: any = {
     const setup = context.state.addModalSetup
     const { form_data } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
+      if (form_data.channel === '') {
+        form_data.channel = compareService.channel_id
+      }
       if (form_data.channel != compareService.channel_id) {
         data.channel_id = form_data.channel
       }
