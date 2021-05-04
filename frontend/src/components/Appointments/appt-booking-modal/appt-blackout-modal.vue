@@ -536,12 +536,12 @@
         <b-card class="mb-2">
           <b-form-group>
             <b-form-row style="justify-content: center">
-              <h4 v-if="!is_stat">Recurring Event</h4>
+              <h4 v-if="!isStat">Recurring Event</h4>
               <h4 v-else>Recurring STAT</h4>
             </b-form-row>
             <b-form-row class="mb-2">
               <label stlye="font-weight: bold;"
-                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Dates</label
+                v-if="!isStat">Step 2 (continued): Confirm Recurring Event Dates</label
               >
               <label stlye="font-weight: bold;"
                 v-else>Step 2 (continued): Confirm Recurring STAT Dates</label
@@ -554,7 +554,7 @@
                   class="w-100 mb-2"
                   v-b-toggle.recurring-rule-collapse
                 >
-                  <span v-if="!is_stat">View Recurring Event Info</span>
+                  <span v-if="!isStat">View Recurring Event Info</span>
                   <span v-else>View Recurring Event Info</span>
                 </b-button>
               </b-col>
@@ -565,7 +565,7 @@
                 class="mb-2 ml-2"
                 visible
               >
-               <span v-if="!is_stat">{{ this.rrule_text }}</span>
+               <span v-if="!isStat">{{ this.rrule_text }}</span>
                <span v-else>All selected dates for all office</span>
               </b-collapse>
             </b-form-row>
@@ -582,7 +582,7 @@
             </b-form-row>
             <b-form-row>
               <b-collapse id="recurring-dates-collapse" class="mb-2">
-                <div style="height: 75px; overflow-y: scroll; margin: 0px" v-if="!is_stat">
+                <div style="height: 75px; overflow-y: scroll; margin: 0px" v-if="!isStat">
                   <ul
                     class="list-group"
                     v-for="date in this.rrule_array"
@@ -771,7 +771,7 @@ export default class AppointmentBlackoutModal extends Vue {
   public show_next: boolean = true
   public stat_dates: any = [{note:""}]
   public show_stat_next: boolean = false
-  public is_stat: boolean = false
+  public isStat: boolean = false
   public stat_submit: boolean = false
   public only_this_office: any = []
   public only_appointments: any = []
@@ -845,7 +845,7 @@ export default class AppointmentBlackoutModal extends Vue {
     this.stat_dates = [{note:""}]
     this.toggleAppointmentBlackoutModal(false)
     this.show_stat_next = false
-    this.is_stat = false
+    this.isStat = false
     this.stat_submit = false
   }
 
@@ -1386,7 +1386,7 @@ export default class AppointmentBlackoutModal extends Vue {
         this.rrule_array.push(item)
       }
     })
-    this.is_stat = true
+    this.isStat = true
     this.showCollapse('collapse-information-audit')
     this.show_stat_next = false
     this.stat_submit = true
@@ -1558,7 +1558,7 @@ export default class AppointmentBlackoutModal extends Vue {
   this.hideCollapse('collapse-blackout-notes')
   this.hideCollapse('date-limit')
   this.hideCollapse('collapse-recurring-stat')
-  this.is_stat = false
+  this.isStat = false
   this.hideCollapse('collapse-information-audit')
   this.show_stat_next = false
   this.stat_submit = false

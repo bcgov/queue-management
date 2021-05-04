@@ -87,25 +87,25 @@
           </v-sheet>
         </div>
       </div>
-      <ApptBookingModal v-if="!is_stat" :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
+      <ApptBookingModal v-if="!isStat" :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
       <AppointmentBlackoutModal />
       <CheckInModal :clickedAppt="clickedAppt" />
-      <LoadingModal v-if="show_loading" />
+      <LoadingModal v-if="showLoading" />
     </v-app>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { ShowFlagBusEvents, showFlagBus } from '../../events/showFlagBus'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import AppointmentBlackoutModal from './appt-booking-modal/appt-blackout-modal.vue'
 import AppointmentsFilter from './appointmentsFilter.vue'
 import ApptBookingModal from './appt-booking-modal/appt-booking-modal.vue'
 import CheckInModal from './checkin-modal.vue'
 import LoadingModal from './appt-booking-modal/loading.vue'
+import { formatedStartTime } from '@/utils/helpers'
 import moment from 'moment'
 import { namespace } from 'vuex-class'
-import { formatedStartTime } from '@/utils/helpers'
-import { showFlagBus, ShowFlagBusEvents } from '../../events/showFlagBus'
 
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -130,9 +130,10 @@ export default class Appointments extends Vue {
 
   @appointmentsModule.State('apptRescheduling') private apptRescheduling!: any
 
-  @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any
-  @appointmentsModule.Getter('appointment_events') private appointment_events!: any
-  @appointmentsModule.Getter('filtered_appointment_events') private filtered_appointment_events!: any
+  // "calender" is purposely misspelled because there's already a method with that name
+  @appointmentsModule.Getter('calenderSetup') private calenderSetup!: any
+  @appointmentsModule.Getter('appointmentEvents') private appointmentEvents!: any
+  @appointmentsModule.Getter('filteredAppointmentEvents') private filteredAppointmentEvents!: any
 
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('getChannels') public getChannels: any
@@ -154,7 +155,7 @@ export default class Appointments extends Vue {
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
   @appointmentsModule.Mutation('setToggleAppCalenderView') public setToggleAppCalenderView: any
 
-  show_loading = false
+  showLoading = false
   // vuetify calender
   listView: any = false
   searchTerm: string = ''
@@ -165,26 +166,26 @@ export default class Appointments extends Vue {
   value: any = ''
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
-  is_stat: boolean = false
+  isStat: boolean = false
   _keyListenerNewApp: any = null
   _keyListenerWeek: any = null
   _keyListenerDay: any = null
 
   get events () {
     if (this.searchTerm) {
-      return this.filtered_appointment_events(this.searchTerm)
+      return this.filteredAppointmentEvents(this.searchTerm)
     }
-    return this.appointment_events
+    return this.appointmentEvents
   }
 
-  clearSearch() {
+  clearSearch () {
     this.searchTerm = ''
     this.filter(false)
   }
 
   // to remove
   getEvents ({ start, end }) {
-    return this.appointment_events
+    return this.appointmentEvents
   }
 
   getEventColor (event) {
@@ -253,7 +254,6 @@ export default class Appointments extends Vue {
     this.calendarSetup()
   }
 
-
   // If  working on  localhost and you get "TypeError: Cannot read property 'next' of undefined"
   // Just restart `npm run serve`, as it glitches out.
   next () {
@@ -281,28 +281,28 @@ export default class Appointments extends Vue {
    * Returns the # of days to move to skip the weekend
    * used with `this.$refs.calendar.move()`
    */
-  getDaysToMove(direction: 'next' | 'prev'): number {
-    if (this.type  !== 'day') {
+  getDaysToMove (direction: 'next' | 'prev'): number {
+    if (this.type !== 'day') {
       // Just move one week forward/back, simple.
       return direction === 'next' ? 1 : -1
     } else {
       if (this.$refs.calendar) {
-      // For days, we have to handle jumping of weekends.
-      const viewedDate = this.$refs.calendar.value
-      const dayOfWeek = moment(viewedDate).day()
-      let daysToMove = 1
-      if (direction === 'next') {    
-        if ((dayOfWeek + 1) === SATURDAY ) {
-          daysToMove = 3
+        // For days, we have to handle jumping of weekends.
+        const viewedDate = this.$refs.calendar.value
+        const dayOfWeek = moment(viewedDate).day()
+        let daysToMove = 1
+        if (direction === 'next') {
+          if ((dayOfWeek + 1) === SATURDAY) {
+            daysToMove = 3
+          }
+        } else if (direction === 'prev') {
+          daysToMove = -1
+          if ((dayOfWeek) === SUNDAY) {
+            // Value must be negative for prev
+            daysToMove = -3
+          }
         }
-      } else if (direction === 'prev') {
-        daysToMove = -1
-        if ((dayOfWeek) === SUNDAY ) {
-          // Value must be negative for prev
-          daysToMove = -3
-        }
-      }
-      return daysToMove
+        return daysToMove
       }
       return 1
     }
@@ -329,11 +329,11 @@ export default class Appointments extends Vue {
   }
 
   selectEvent (event) {
-    this.is_stat = false
+    this.isStat = false
     this.getAppointments().then((each) => {
-      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)))
       if (bb) {
-        this.is_stat = true
+        this.isStat = true
       }
     })
     this.checkRescheduleCancel()
@@ -342,7 +342,7 @@ export default class Appointments extends Vue {
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
-      if (this.appointment_events.find(event => moment(event.start).isBetween(start, testEnd))) {
+      if (this.appointmentEvents.find(event => moment(event.start).isBetween(start, testEnd))) {
         break
       }
       end = testEnd
@@ -387,7 +387,7 @@ export default class Appointments extends Vue {
     let end = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
     if (event.end) {
       end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    } 
+    }
     const e: any = {
       start,
       end,
@@ -399,7 +399,7 @@ export default class Appointments extends Vue {
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
-      // setting end time aftger 15 min of start to fix over appoinment time      
+      // setting end time aftger 15 min of start to fix over appoinment time
       end_time: moment(start).clone().add(15, 'minutes')
     }
 
@@ -416,13 +416,13 @@ export default class Appointments extends Vue {
     const name = this.type
     // This happens when user has typed in search field and selected a result
     // It effectively looks like Day View, but we lose the calendar ref.
-    if (name === 'day' && this.$refs.calendar === undefined ) {
+    if (name === 'day' && this.$refs.calendar === undefined) {
       title = 'Search Results'
     }
 
     // This happens when clearing a search result w/o selecting
-    if (name === 'week' && this.$refs.calendar === undefined ) {
-      return this.setCalendarSetup({ title, name, titleRef: this.calendar_setup.titleRef })
+    if (name === 'week' && this.$refs.calendar === undefined) {
+      return this.setCalendarSetup({ title, name, titleRef: this.calenderSetup.titleRef })
     }
     this.setCalendarSetup({ title, name, titleRef: this.$refs.calendar })
   }
@@ -445,56 +445,59 @@ export default class Appointments extends Vue {
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
 
-    showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) =>{
-      this.show_loading = flag
+    showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) => {
+      this.showLoading = flag
     }
     )
-     this._keyListenerNewApp = function(e) {
-            if (e.key === "A" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                this.setAgendaClickedTime(null)
-                this.setAgendaClickedAppt(null)
-                this.toggleApptBookingModal(true)
-            }
-        };
-       this._keyListenerWeek = function(e) {
-            if (e.key === "M" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                this.$root.$emit('agendaWeek')
-                 this.setToggleAppCalenderView(false)
-            }
-        };
-       this._keyListenerDay = function(e) {
-            if (e.key === "D" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                this.$root.$emit('agendaDay')
-                 this.setToggleAppCalenderView(true)
-            }
-        };
-        document.addEventListener('keydown', this._keyListenerNewApp.bind(this));
-        document.addEventListener('keydown', this._keyListenerWeek.bind(this));
-        document.addEventListener('keydown', this._keyListenerDay.bind(this));
+    this._keyListenerNewApp = function (e) {
+      if (e.key === 'A' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        this.setAgendaClickedTime(null)
+        this.setAgendaClickedAppt(null)
+        this.toggleApptBookingModal(true)
+      }
+    }
+    this._keyListenerWeek = function (e) {
+      if (e.key === 'M' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        this.$root.$emit('agendaWeek')
+        this.setToggleAppCalenderView(false)
+      }
+    }
+    this._keyListenerDay = function (e) {
+      if (e.key === 'D' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        this.$root.$emit('agendaDay')
+        this.setToggleAppCalenderView(true)
+      }
+    }
+    document.addEventListener('keydown', this._keyListenerNewApp.bind(this))
+    document.addEventListener('keydown', this._keyListenerWeek.bind(this))
+    document.addEventListener('keydown', this._keyListenerDay.bind(this))
   }
-  beforeDestroy() {
-      document.removeEventListener('keydown', this._keyListenerNewApp);
-      document.removeEventListener('keydown', this._keyListenerWeek);
-      document.removeEventListener('keydown', this._keyListenerDay);
+
+  beforeDestroy () {
+    document.removeEventListener('keydown', this._keyListenerNewApp)
+    document.removeEventListener('keydown', this._keyListenerWeek)
+    document.removeEventListener('keydown', this._keyListenerDay)
   }
+
   intervalStyle (interval) {
-    if (interval.minute === '0' || interval.minute === '30')  {
-      interval['background-color'] = "#ebebeb"
+    if (interval.minute === '0' || interval.minute === '30') {
+      interval['background-color'] = '#ebebeb'
     }
     return interval
   }
+
   showIntervalLabel(interval) {
     if (interval.minute === '0' || interval.minute === '30')  {
       if (interval.minute === '30' && interval.hour === '8') {
-        return 
-        }
-        return interval
+        return
+      }
+      return interval
     }
   }
-} 
+}
 
 </script>
 <style scoped>

@@ -558,12 +558,12 @@
       <b-collapse id="collapse-information-audit">
         <b-card class="mb-2">
           <b-form-row style="justify-content: center">
-            <h4 v-if="!is_stat">Recurring Event</h4>
+            <h4 v-if="!isStat">Recurring Event</h4>
             <h4 v-else>Recurring STAT</h4>
           </b-form-row>
           <b-form-row class="mb-2">
               <label stlye="font-weight: bold;"
-                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Information</label
+                v-if="!isStat">Step 2 (continued): Confirm Recurring Event Information</label
               >
               <label stlye="font-weight: bold;"
                 v-else>Step 2 (continued): Confirm Recurring STAT Dates</label
@@ -576,14 +576,14 @@
                 class="w-100 mb-2"
                 v-b-toggle.recurring-rule-collapse
               >
-                <span v-if="!is_stat">View Recurring Event Info</span>
+                <span v-if="!isStat">View Recurring Event Info</span>
                   <span v-else>View Recurring Event Info</span>
               </b-button>
             </b-col>
           </b-form-row>
           <b-form-row class="mb-0">
             <b-collapse id="recurring-rule-collapse" class="mb-2 ml-2" visible>
-              <span v-if="!is_stat">{{ this.booking_rrule_text }}</span>
+              <span v-if="!isStat">{{ this.booking_rrule_text }}</span>
                <span v-else>All selected dates for all office</span>
             </b-collapse>
           </b-form-row>
@@ -600,7 +600,7 @@
           </b-form-row>
           <b-form-row>
             <b-collapse id="recurring-dates-collapse" class="mb-2">
-              <div style="height: 75px; overflow-y: scroll; margin: 0px" v-if="!is_stat">
+              <div style="height: 75px; overflow-y: scroll; margin: 0px" v-if="!isStat">
                 <ul
                   class="list-group mb-0"
                   v-for="date in this.booking_rrule_array"
@@ -850,7 +850,7 @@ export default class BookingBlackoutModal extends Vue {
   public stat_user_name: string = ''
   public stat_submit: boolean = false
   public show_stat_next: boolean = false
-  public is_stat: boolean = false
+  public isStat: boolean = false
   public show_next: boolean = true
   public only_this_office: any = []
   public only_bookings: any =[]
@@ -911,7 +911,7 @@ export default class BookingBlackoutModal extends Vue {
     this.toggleBookingBlackoutModal(false)
     this.stat_dates = [{note:""}]
     this.show_stat_next = false
-    this.is_stat = false
+    this.isStat = false
     this.stat_submit = false
   }
 
@@ -1468,7 +1468,7 @@ export default class BookingBlackoutModal extends Vue {
         this.booking_rrule_array.push(item)
       }
     })
-    this.is_stat = true
+    this.isStat = true
     this.showCollapse('collapse-information-audit')
     this.show_stat_next = false
     this.stat_submit = true
@@ -1644,7 +1644,7 @@ export default class BookingBlackoutModal extends Vue {
 
     this.hideCollapse('collapse-information-audit')
     this.hideCollapse('collapse-recurring-stat')
-    this.is_stat = false
+    this.isStat = false
     this.hideCollapse('collapse-information-audit')
     this.show_stat_next = false
     this.stat_submit = false

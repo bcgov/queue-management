@@ -28,8 +28,8 @@
       </div>
       <div class="align-center">
         <span class="q-inline-title">
-          {{ calendar_setup.title }}
-          {{ calendar_setup.titleRef && calendar_setup.titleRef.title }}
+          {{ calenderSetup.title }}
+          {{ calenderSetup.titleRef && calenderSetup.titleRef.title }}
         </span>
       </div>
       <div class="align-center-arrow">
@@ -67,7 +67,7 @@ const appointmentsModule = namespace('appointmentsModule')
 })
 export default class ButtonsAppointments extends Vue {
   @appointmentsModule.State('showAppointmentBlackoutModal') private showAppointmentBlackoutModal!: any
-  @appointmentsModule.Getter('calendar_setup') private calendar_setup!: any;
+  @appointmentsModule.Getter('calenderSetup') private calenderSetup!: any;
   @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
   @appointmentsModule.Action('beginAppointment') public beginAppointment: any
@@ -87,10 +87,10 @@ export default class ButtonsAppointments extends Vue {
   @appointmentsModule.Mutation('setToggleAppCalenderView') public setToggleAppCalenderView: any
 
   get dropdownText () {
-    if (this.calendar_setup.name === 'day') {
+    if (this.calenderSetup.name === 'day') {
       return 'Day View'
     }
-    if (this.calendar_setup.name === 'week') {
+    if (this.calenderSetup.name === 'week') {
       return 'Week View'
     }
     return 'Week View'

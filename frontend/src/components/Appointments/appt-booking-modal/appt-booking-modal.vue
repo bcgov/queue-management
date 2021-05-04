@@ -381,7 +381,7 @@ export default class ApptBookingModal extends Vue {
   @appointmentsModule.State('submitClicked') private submitClicked!: any
 
   @appointmentsModule.Getter('services') private services!: any
-  @appointmentsModule.Getter('appointment_events') private appointment_events!: any
+  @appointmentsModule.Getter('appointmentEvents') private appointmentEvents!: any
   @appointmentsModule.Getter('isSupport') private isSupport!: any;
 
 
@@ -443,8 +443,8 @@ export default class ApptBookingModal extends Vue {
 
   get appointments () {
     if (this.clickedAppt) {
-      const appointments = Object.assign([], this.appointment_events)
-      const i = this.appointment_events.indexOf(this.clickedAppt)
+      const appointments = Object.assign([], this.appointmentEvents)
+      const i = this.appointmentEvents.indexOf(this.clickedAppt)
       appointments.splice(i, 1)
       return appointments
     }

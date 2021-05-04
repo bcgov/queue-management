@@ -121,7 +121,7 @@
         <BookingBlackoutModal
           v-if="showBookingBlackoutModal"
         ></BookingBlackoutModal>
-        <LoadingModal v-if="show_loading" />
+        <LoadingModal v-if="showLoading" />
       </div>
     </div>
   </v-app>
@@ -243,7 +243,7 @@ export default class Calendar extends Vue {
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   categories: any = [] // [] // 'Boardroom 1'
-  show_loading: boolean = false
+  showLoading: boolean = false
 
   updated () {
     this.disableSatSun();
@@ -740,7 +740,7 @@ export default class Calendar extends Vue {
 
   created () {
     showBookingFlagBus.$on(ShowBookingFlagBusEvents.ShowBookingFlagEvent, (flag: boolean) =>{
-      this.show_loading = flag
+      this.showLoading = flag
     })
   }
 }

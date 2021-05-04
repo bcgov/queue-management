@@ -68,7 +68,7 @@ export default {
       return 'Please choose a service'
     },
 
-    appointment_events (state, rootState) {
+    appointmentEvents (state, rootState) {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
@@ -95,9 +95,9 @@ export default {
       }
       return []
     },
-    calendar_setup (state) {
-      if ((state.calendarSetup || {}).name) {
-        const { title, name, titleRef } = state.calendarSetup
+    calenderSetup (state) {
+      if ((state.calenderSetup || {}).name) {
+        const { title, name, titleRef } = state.calenderSetup
         return {
           name,
           title,
@@ -135,8 +135,8 @@ export default {
       return false
     },
 
-    filtered_appointment_events: (state, getters) => search => {
-      return getters.appointment_events.filter(event => {
+    filteredAppointmentEvents: (state, getters) => search => {
+      return getters.appointmentEvents.filter(event => {
         return searchNestedObject(event, search)
       }
       )
