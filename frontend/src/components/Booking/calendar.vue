@@ -277,7 +277,6 @@ export default class Calendar extends Vue {
    * Called on every `updated()` CD.
    */
   disableSatSun() {
-    console.log('ARC - disableSatSun called')
     const headerElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-daily_head-weekday')
     const columnElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-category__columns')
     const numberElements: NodeListOf<HTMLElement> = document.querySelectorAll('.v-calendar-daily_head-day-label')
@@ -293,9 +292,7 @@ export default class Calendar extends Vue {
       const elText = el.textContent!.replace('\u200e', '').toUpperCase();
       if (WEEKEND_STRINGS.includes(elText)) {
         disableCalendarElement(el)
-        // There are 2 columnElements per headerElement, we only care about second one.
-        // For example, if Sat is index 1, we want to update index 8 of columnElements.
-        disableCalendarElement(columnElements[index + headerElements.length])
+        disableCalendarElement(columnElements[index])
         disableCalendarElement(numberElements[index])
       }
     })
@@ -599,7 +596,6 @@ export default class Calendar extends Vue {
 
     // not allowd if past date
     if (!this.selectAllow(event)) {
-      console.info('cannot book past date')
       return false
     }
     // setting default end time
@@ -877,9 +873,6 @@ export default class Calendar extends Vue {
     this.$root.$on('updateEvent', (event, params) => { this.updateEvent(event, params) })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.toggleOffsite(false) // initial show only onsite rooms
-    if (this.scheduling || this.rescheduling) {
-      this.toggleOffsite(false)
-    }
   }
 
   async getCategoryList (flag) {
