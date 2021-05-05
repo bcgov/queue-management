@@ -493,7 +493,7 @@ export default class ServeCitizen extends Vue {
     this.left = (this.left || 0) + deltaX
     this.top = (this.top || 0) + deltaY
 
-    var serveModal: any = document.getElementsByClassName('serve-modal-content')[0]
+    const serveModal: any = document.getElementsByClassName('serve-modal-content')[0]
     serveModal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
 

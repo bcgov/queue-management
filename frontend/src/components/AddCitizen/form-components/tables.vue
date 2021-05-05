@@ -249,7 +249,7 @@ export default class Tables extends Vue {
       // remove continue button in service flow
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
-    } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
+    } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup === 'reception' || this.addModalSetup === 'non_reception')) {
       this.clickBeginService({ simple: false })
     } else {
       console.log('==> No service selected.')

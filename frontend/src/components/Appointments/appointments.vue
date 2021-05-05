@@ -388,13 +388,6 @@ export default class Appointments extends Vue {
     if (event.end) {
       end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
     }
-    const e: any = {
-      start,
-      end,
-      title: 'Unconfirmed Booking',
-      color: 'pink',
-      id: '_tempEvent'
-    }
 
     // for draft
     const data: any = {
@@ -489,8 +482,8 @@ export default class Appointments extends Vue {
     return interval
   }
 
-  showIntervalLabel(interval) {
-    if (interval.minute === '0' || interval.minute === '30')  {
+  showIntervalLabel (interval) {
+    if (interval.minute === '0' || interval.minute === '30') {
       if (interval.minute === '30' && interval.hour === '8') {
         return
       }

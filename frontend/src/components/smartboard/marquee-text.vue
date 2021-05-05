@@ -15,18 +15,18 @@ limitations under the License.*/
 <template>
   <div class="marquee-container1" v-if="isMessageEnabled">
     <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
-      <span v-if="msg_1">{{msg_1}}
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
+      <span v-if="msg1">{{msg1}}
+        &nbsp; &nbsp; &nbsp; &nbsp;
         |
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp;
         </span>
-      <span v-if="msg_2">{{msg_2}}
-      &nbsp;	&nbsp;	&nbsp;	&nbsp;
+      <span v-if="msg2">{{msg2}}
+      &nbsp; &nbsp; &nbsp; &nbsp;
       |
-      &nbsp;	&nbsp;	&nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp;
       </span>
-      <span v-if="msg_3">{{msg_3}}
-      &nbsp;	&nbsp; 	&nbsp;	&nbsp;
+      <span v-if="msg3">{{msg3}}
+      &nbsp; &nbsp; &nbsp; &nbsp;
       </span>
     </marquee>
   </div>
@@ -59,9 +59,9 @@ export default class MarqueeText extends Vue {
   private maxVideoHeight: string | number = ''
   private msg:string = 'This is a sample scrolling text that has scrolls texts to left.'
 
-  private msg_1: string = ''
-  private msg_2: string = ''
-  private msg_3: string = ''
+  private msg1: string = ''
+  private msg2: string = ''
+  private msg3: string = ''
   private isMessageEnabled: boolean = false
 
   get url () {
@@ -108,16 +108,16 @@ export default class MarqueeText extends Vue {
   created () {
     this.office = this.office.office
     if (this.office.office) {
-      if(this.office.office.digital_signage_message == 1) {
+      if (this.office.office.digital_signage_message === 1) {
         this.isMessageEnabled = true
-        if(this.office.office.digital_signage_message_1) {
-          this.msg_1 = this.office.office.digital_signage_message_1
+        if (this.office.office.digital_signage_message_1) {
+          this.msg1 = this.office.office.digital_signage_message_1
         }
-        if(this.office.office.digital_signage_message_2) {
-          this.msg_2 = this.office.office.digital_signage_message_2
+        if (this.office.office.digital_signage_message_2) {
+          this.msg2 = this.office.office.digital_signage_message_2
         }
-        if(this.office.office.digital_signage_message_3) {
-          this.msg_3 = this.office.office.digital_signage_message_3
+        if (this.office.office.digital_signage_message_3) {
+          this.msg3 = this.office.office.digital_signage_message_3
         }
       }
     }

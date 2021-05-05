@@ -31,8 +31,8 @@ limitations under the License.*/
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import Video from './video.vue'
 import MarqueeText from './marquee-text.vue'
+import Video from './video.vue'
 
 @Component({
   components: {
@@ -53,7 +53,6 @@ export default class NonReception extends Vue {
   @Prop({ default: {} })
   private isMessageEnabled!: any
 
-  
   private office_number: string = this.smartboardData.office_number
   private networkDown: boolean = false
 

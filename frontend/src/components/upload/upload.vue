@@ -123,11 +123,11 @@ export default class Upload extends Vue {
     if (this.filesCount === 0) {
       this.setMainAlert('Select a file to upload before pressing Upload File')
     } else {
-      const file_size = this.file.size / Math.pow(2, 20)
-      const space_left = this.diskspace.freespace
-      if (space_left < file_size) {
-        this.setMainAlert('File too large (' + file_size.toFixed(1) +
-          'Mb) to upload to disk (' + space_left.toFixed(1) + 'Mb free)')
+      const fileSize = this.file.size / Math.pow(2, 20)
+      const spaceLeft = this.diskspace.freespace
+      if (spaceLeft < fileSize) {
+        this.setMainAlert('File too large (' + fileSize.toFixed(1) +
+          'Mb) to upload to disk (' + spaceLeft.toFixed(1) + 'Mb free)')
       } else {
         const request = { file: this.file, data: this.userdata, newname: this.newfilename }
         this.isLoading = true

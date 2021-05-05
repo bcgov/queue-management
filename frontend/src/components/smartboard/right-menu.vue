@@ -23,7 +23,7 @@ limitations under the License.*/
             <b-row  v-for="(each, index) in citizenInQ" :key="each.start_time">
               <b-col>
                 <!-- for booked app -->
-                <b-button 
+                <b-button
                   v-if="each.flag=='booked_app'"
                   variant="success"
                   size="lg"
@@ -34,7 +34,7 @@ limitations under the License.*/
                 </b-button>
                 <p  v-if="(each.flag=='booked_app')"><b>Appointment</b></p>
                 <!-- jus for walkin -->
-                <b-button 
+                <b-button
                   v-if="((each.flag=='walkin_app')  && (isNew(each)))"
                   variant="info"
                   size="lg"
@@ -42,12 +42,12 @@ limitations under the License.*/
                   <font-awesome-icon
                     animation="cylon"
                     icon="walking"
-                    pulse 
+                    pulse
                   />
                 </b-button>
                 <p v-if="((each.flag=='walkin_app') && (isNew(each)))"><b>Walk In</b></p>
                 <!-- walk in   -->
-                <b-button 
+                <b-button
                   v-if="((each.flag=='walkin_app') && !(isNew(each)))"
                   variant="info"
                   size="lg"
@@ -89,7 +89,7 @@ limitations under the License.*/
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
             <b-col>
-              <b-button 
+              <b-button
                 variant="secondary"
                 size="lg"
                 >
@@ -117,7 +117,6 @@ limitations under the License.*/
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
 
 @Component({
   components: {
@@ -156,7 +155,7 @@ export default class RightMenu extends Vue {
   get waitingClass () {
     if ((this.citizenInQ.length > 0) && (this.bookedNotcheckIn.length > 0)) {
       return 'container-height-menu-half'
-    } else if ((this.citizenInQ.length > 0) && (this.bookedNotcheckIn.length == 0)) {
+    } else if ((this.citizenInQ.length > 0) && (this.bookedNotcheckIn.length === 0)) {
       return 'container-height-menu-full'
     } else {
       return 'container-height-menu-half'
@@ -187,7 +186,7 @@ export default class RightMenu extends Vue {
   }
 
   getCurrentlyWaiting () {
-    const url = '/smardboard/Q-details/waiting/'+this.smartboardData.office_number
+    const url = '/smardboard/Q-details/waiting/' + this.smartboardData.office_number
     Axios.get(url).then(resp => {
       if (resp.data) {
         this.citizenInQ = resp.data.citizen_in_q
@@ -197,7 +196,7 @@ export default class RightMenu extends Vue {
   }
 
   getUpcomming () {
-    const url = '/smardboard/Q-details/upcoming/'+this.smartboardData.office_number
+    const url = '/smardboard/Q-details/upcoming/' + this.smartboardData.office_number
     Axios.get(url).then(resp => {
       if (resp.data) {
         this.bookedNotcheckIn = resp.data.booked_not_checkin
@@ -227,22 +226,22 @@ export default class RightMenu extends Vue {
 
   private getAppTime (Q) {
     if (Q.start_time) {
-      return new Date(Q.start_time).toLocaleTimeString().replace(/:\d{2}\s/,' ');
+      return new Date(Q.start_time).toLocaleTimeString().replace(/:\d{2}\s/, ' ')
     }
     return Q.start_time
   }
 
   private isNew (Q) {
     if (Q.created_at) {
-      var t1 = new Date(Q.created_at);
-      var t2 = new Date();
-      var dif = t1.getTime() - t2.getTime();
+      const t1 = new Date(Q.created_at)
+      const t2 = new Date()
+      const dif = t1.getTime() - t2.getTime()
 
-      var Seconds_from_T1_to_T2 = dif / 1000;
-      var Seconds_Between_Dates = Math.abs(Seconds_from_T1_to_T2);
-      if ((Seconds_Between_Dates/60) <= 3) {
+      const secondsFromT1ToT2 = dif / 1000
+      const secondsBetweenDates = Math.abs(secondsFromT1ToT2)
+      if ((secondsBetweenDates / 60) <= 3) {
         return true
-      }else{
+      } else {
         return false
       }
     }

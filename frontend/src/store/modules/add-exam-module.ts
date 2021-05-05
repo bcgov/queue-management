@@ -240,6 +240,7 @@ export const addExamModule = {
             resolve(resp)
           })
           .catch(error => {
+            // eslint-disable-next-line
             console.log(error)
             reject(error)
           })
@@ -257,12 +258,14 @@ export const addExamModule = {
             resolve()
           })
           .catch(error => {
+            // eslint-disable-next-line
             console.log(error)
             reject(error)
           })
       })
     },
     getPesticideExamTypes ({ commit, rootState }) {
+      // eslint-disable-next-line
       console.log('getPesticideExamTypes')
       return new Promise<void>((resolve, reject) => {
         const url = '/exam_types/'
@@ -270,24 +273,29 @@ export const addExamModule = {
         Axios(rootState.bearer).get(url)
           .then(resp => {
             const pesticideExams = resp.data.exam_types.filter(exam_type => exam_type.pesticide_exam_ind)
+            // eslint-disable-next-line
             console.log('pesticideExams', pesticideExams)
             commit('setPesticideExamTypes', pesticideExams)
             resolve()
           })
           .catch(error => {
+            // eslint-disable-next-line
             console.log(error)
             reject(error)
           })
       })
     },
     submitExam (context, payload) {
+      // eslint-disable-next-line
       console.log(context)
+      // eslint-disable-next-line
       console.log(payload)
       return new Promise((resolve, reject) => {
         const url = `/exams/${payload.exam.exam_id}/upload/`
 
         Axios(context.rootState.bearer).get(url)
           .then((resp) => {
+            // eslint-disable-next-line
             console.log(resp)
             const putUrl = resp.data.url
 
@@ -304,23 +312,28 @@ export const addExamModule = {
 
             axios.put(putUrl, payload.file, config)
               .then((putResponse) => {
+                // eslint-disable-next-line
                 console.log(putResponse)
                 const bcmpUrl = `/exams/${payload.exam.exam_id}/transfer/`
 
                 Axios(context.rootState.bearer).post(bcmpUrl)
                   .then((transferResponse) => {
+                    // eslint-disable-next-line
                     console.log(transferResponse)
                     resolve(transferResponse)
                   })
                   .catch((error) => {
+                    // eslint-disable-next-line
                     console.error(error)
                   })
               })
               .catch((error) => {
+                // eslint-disable-next-line
                 console.error(error)
               })
           })
           .catch((error) => {
+            // eslint-disable-next-line
             console.error(error)
             reject(error)
           })

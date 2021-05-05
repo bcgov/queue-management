@@ -15,10 +15,10 @@ export default class ConfigHelper {
     }
   }
 
-  static  getValue (key: any) {
+  static getValue (key: any) {
     // @ts-ignore
     if (this.config === '') {
-       this.fetchConfig()
+      this.fetchConfig()
     }
     return this.config[key] || false
   }

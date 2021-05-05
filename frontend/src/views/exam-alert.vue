@@ -31,8 +31,8 @@ limitations under the License.*/
 
 <script lang="ts">
 
-import { Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
+import { Getter, Mutation, State } from 'vuex-class'
 
 @Component
 export default class ExamAlert extends Vue {

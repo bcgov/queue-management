@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-/* eslint-disable indent */
+/* eslint-disable */
 (function (window, undefined) {
     var Keycloak = function (config) {
         if (!(this instanceof Keycloak)) {

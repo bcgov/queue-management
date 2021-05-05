@@ -165,8 +165,7 @@
 
 <script lang="ts">
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator';
-
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
 import ServeCitizen from '../ServeCitizen/serve-citizen.vue'
 import config from '../../../config'
@@ -208,12 +207,12 @@ export default class Nav extends Vue {
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
     dropdownPopperOpts = {
-    modifiers: {
-      computeStyle: {
-        gpuAcceleration: false
+      modifiers: {
+        computeStyle: {
+          gpuAcceleration: false
+        }
       }
     }
-  };
 
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
   $route: any;

@@ -111,9 +111,9 @@ limitations under the License.*/
 <script lang="ts">
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import config from '../../../config'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import _ from 'lodash'
+import config from '../../../config'
 
 @Component({
   components: {

@@ -39,9 +39,8 @@
 </template>
 
 <script lang="ts">
-import { Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-
+import { Mutation, State } from 'vuex-class'
 import DropdownCalendar from './dropdown-calendar.vue'
 
 @Component({

@@ -20,26 +20,26 @@ limitations under the License.*/
       <div></div>
       <div v-if="reception">
         <h5>Citizens Waiting</h5>
-        <h6>{{ this.ga_citizens_waiting() }}</h6>
+        <h6>{{ this.gaCitizensWaiting() }}</h6>
       </div>
       <div v-if="!reception">
         <h5>Citizens on Hold</h5>
-        <h6>{{ this.ga_citizens_on_hold() }}</h6>
+        <h6>{{ this.gaCitizensOnHold() }}</h6>
       </div>
       <div>
         <h5>Total CSRs</h5>
-        <h6>{{ this.ga_total_csrs() }}</h6>
+        <h6>{{ this.gaTotalCsrs() }}</h6>
       </div>
       <div>
         <h5>Serving CSRs</h5>
-        <h6>{{ this.ga_serving_csrs() }}</h6>
+        <h6>{{ this.gaServingCsrs() }}</h6>
       </div>
       <div></div>
     </div>
     <b-table
       small
       head-variant="light"
-      :items="this.computed_csrs()"
+      :items="this.computedCsrs()"
       :fields="fields"
       outlined
       class="p-0 m-0 w-100"
@@ -108,7 +108,7 @@ export default class GAScreen extends Vue {
     }
   ]
 
-  private time_now: any = 'Sometime'
+  private timeNow: any = 'Sometime'
   private timer: any = null
   interval: any
 
@@ -121,44 +121,44 @@ export default class GAScreen extends Vue {
   }
 
   public time () {
-    this.time_now = moment.utc()
+    this.timeNow = moment.utc()
   }
 
   public clickEnd (citizen_id) {
     this.finishServiceFromGA(citizen_id)
   }
 
-  public ga_citizens_waiting () {
+  public gaCitizensWaiting () {
     return this.citizensQueue.length
   }
 
-  public ga_citizens_on_hold () {
+  public gaCitizensOnHold () {
     return this.onHoldQueue.length
   }
 
-  public ga_total_csrs () {
+  public gaTotalCsrs () {
     return this.csrs.length
   }
 
-  public ga_serving_csrs () {
-    const serving_csrs: any = []
+  public gaServingCsrs () {
+    const servingCsrs: any = []
     this.citizens.forEach(c => {
       c.service_reqs.forEach(sr => {
         sr.periods.forEach((p: any) => {
           if (p.time_end === null) {
             if (p.ps.ps_name === 'Invited' || p.ps.ps_name === 'Being Served') {
-              if (serving_csrs.indexOf(p.csr_id) === -1) {
-                serving_csrs.push(p.csr_id)
+              if (servingCsrs.indexOf(p.csr_id) === -1) {
+                servingCsrs.push(p.csr_id)
               }
             }
           }
         })
       })
     })
-    return serving_csrs.length
+    return servingCsrs.length
   }
 
-  public get_citizen_for_csr (csr) {
+  public getCitizenForCsr (csr) {
     for (let i = 0; i < this.citizens.length; i++) {
       for (let j = 0; j < this.citizens[i].service_reqs.length; j++) {
         const activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
@@ -172,13 +172,13 @@ export default class GAScreen extends Vue {
     return null
   }
 
-  public computed_csrs () {
-    const computed_csrs: any = []
-    const inactive_csrs: any = []
-    const currentDate = this.time_now
+  public computedCsrs () {
+    const computedCsrs: any = []
+    const inactiveCsrs: any = []
+    const currentDate = this.timeNow
     const breakStateID = this.csr_states.Break
     this.sortedCsrs.forEach(csr => {
-      const activeCitizen = this.get_citizen_for_csr(csr)
+      const activeCitizen = this.getCitizenForCsr(csr)
       if (activeCitizen === null) {
         csr.csr_state_id === breakStateID ? csr.wait_time = 'ON BREAK' : csr.wait_time = null
         csr.serving_time = null
@@ -186,7 +186,7 @@ export default class GAScreen extends Vue {
         csr.service_request = null
         csr.end_service = null
 
-        if (csr.csr_state_id === breakStateID) { computed_csrs.push(csr) } else { inactive_csrs.push(csr) }
+        if (csr.csr_state_id === breakStateID) { computedCsrs.push(csr) } else { inactiveCsrs.push(csr) }
       } else {
         const activeServiceRequest = activeCitizen.service_reqs.filter(sr => sr.periods.some(p => p.time_end === null))[0]
 
@@ -213,8 +213,6 @@ export default class GAScreen extends Vue {
             waitDate.setSeconds(waitTime / 1000)
           }
           const firstServedPeriod = sortedSRs[0].periods.filter(p => p.ps.ps_name === 'Being Served')[0]
-          const citizenStartDate: any = new Date(activeCitizen.start_time)
-          const firstServedPeriodDate: any = new Date(firstServedPeriod.time_start)
           let timeServeClosed = 0
           let timeServeOpen = timeServeClosed
           activeServiceRequest.periods.forEach(p => {
@@ -246,19 +244,19 @@ export default class GAScreen extends Vue {
         csr.citizen = activeCitizen
         csr.service_request = activeServiceRequest
         csr.end_service = { label: 'End Service', id: activeCitizen.citizen_id }
-        computed_csrs.push(csr)
+        computedCsrs.push(csr)
       }
     })
 
     //  Add inactive CSRs to bottom of list of computed CSRs.
-    inactive_csrs.forEach(csr => {
-      computed_csrs.push(csr)
+    inactiveCsrs.forEach(csr => {
+      computedCsrs.push(csr)
     })
 
-    return computed_csrs
+    return computedCsrs
   }
 
-  public fetch_csrs () {
+  public fetchCsrs () {
     this.getCsrs()
   }
 

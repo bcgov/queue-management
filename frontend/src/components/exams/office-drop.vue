@@ -160,7 +160,7 @@ export default class OfficeDrop extends Vue {
 
       this.officeChoices = this.offices.filter(item => {
         const telephone = item.telephone === undefined || item.telephone === null ? '' : item.telephone
-        const officeAppointmentMessage =  item.office_appointment_message === undefined || item.office_appointment_message === null ? '' : item.office_appointment_message
+        const officeAppointmentMessage = item.office_appointment_message === undefined || item.office_appointment_message === null ? '' : item.office_appointment_message
         const civicAddress = item.civic_address === undefined || item.civic_address === null ? '' : item.civic_address
         const officeName = item.office_name === undefined || item.office_name === null ? '' : item.office_name
         const longitude = item.longitude === undefined || item.longitude === null ? '' : item.longitude + ''

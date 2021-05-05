@@ -40,7 +40,7 @@ limitations under the License.*/
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
        <template #cell(reminder_flag)="row">
-        <b-button 
+        <b-button
           v-if="((row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           @click="sentReminder(row.item.citizen_id, 'first')"
           variant="secondary"
@@ -49,7 +49,7 @@ limitations under the License.*/
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           v-if="(row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)  && (isNotificationEnabled === 1))"
           variant="primary"
           @click="sentReminder(row.item.citizen_id, 'second')"
@@ -58,7 +58,7 @@ limitations under the License.*/
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           disabled
           v-if="(row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           variant="danger"
@@ -78,7 +78,7 @@ limitations under the License.*/
         </b-row>
       </template>
       <template #cell(notification_sent_time)="row">
-         <b-button 
+         <b-button
           disabled
           v-if="((row.item.notification_sent_time) && (isNotificationEnabled === 1))"
           variant="info"

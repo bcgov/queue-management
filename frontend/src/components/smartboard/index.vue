@@ -113,11 +113,9 @@ export default class Smartboard extends Vue {
   }
 
   private time: any = ''
-  
   private isMessageEnabled: boolean = false
   private isRightMenuEnabled: boolean = false
   private office: any = {}
-
 
   get url () {
     return `/smartboard/?office_number=${this.office_number}`
@@ -143,8 +141,8 @@ export default class Smartboard extends Vue {
     url = window.location.href
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-    var results = regex.exec(url)
+    const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+    const results = regex.exec(url)
     if (!results) return null
     if (!results[2]) return ''
     return decodeURIComponent(results[2].replace(/\+/g, ' '))
@@ -158,7 +156,7 @@ export default class Smartboard extends Vue {
     this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
-    var fetchNetworkStatus = () => {
+    const fetchNetworkStatus = () => {
       axios
         .get('http://localhost/health')
         .then(response => {
@@ -183,19 +181,19 @@ export default class Smartboard extends Vue {
   private getOffice () {
     this.isMessageEnabled = false
     this.isRightMenuEnabled = false
-    const url = '/smardboard/side-menu/'+this.office_number
+    const url = '/smardboard/side-menu/' + this.office_number
     Axios.get(url).then(resp => {
       if (resp.data) {
         this.office = resp.data.office
         if (this.office) {
-          if(this.office.digital_signage_message == 1) {
+          if (this.office.digital_signage_message === 1) {
             this.isMessageEnabled = true
           }
-          if(this.office.currently_waiting == 1) {
+          if (this.office.currently_waiting === 1) {
             this.isRightMenuEnabled = true
           }
         }
-        }
+      }
     })
   }
 }
