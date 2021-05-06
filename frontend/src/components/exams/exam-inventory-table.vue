@@ -1252,8 +1252,8 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkExpiryDate (date, exam_returned_date) {
-    if (exam_returned_date != null) {      
+  checkExpiryDate (date, examReturnedDate) {
+    if (examReturnedDate != null) {
       return false
     }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
@@ -1262,8 +1262,8 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkStartDate (date, exam_returned_date) {    
-    if (exam_returned_date != null) {      
+  checkStartDate (date, examReturnedDate) {
+    if (examReturnedDate != null) {
       return false
     }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
@@ -1666,32 +1666,28 @@ export default class ExamInventoryTable extends Vue {
         val2 = parseInt(b.exam_id)
       }
       return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
-    }
-    else if (key === 'start_time') {      
-      if (a.booking == null && b.booking == null) {        
+    } else if (key === 'start_time') {
+      if (a.booking == null && b.booking == null) {
         return 0
-      }     
-      else if (a.booking == null) {
+      } else if (a.booking == null) {
         return 1
-      }
-      else if (b.booking == null) {
+      } else if (b.booking == null) {
         return -1
-      } else {        
+      } else {
         let val1, val2
-        if(a.booking.start_time != null) {
+        if (a.booking.start_time != null) {
           val1 = parseInt((new Date(a.booking.start_time).getTime() / 1000).toFixed(0))
         }
-        if(b.booking.start_time != null) {
+        if (b.booking.start_time != null) {
           val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
         }        
         return val1 - val2
       }
-      
     }
 
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {      
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
       return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-    } else {      
+    } else {
       return toString(a[key]).localeCompare(toString(b[key]), undefined, {
         numeric: true
       })
