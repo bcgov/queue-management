@@ -357,7 +357,7 @@
         <template #cell(start_time)="row">
           <span v-if="!row.item.booking">-</span>
           <span
-            v-else-if="checkStartDate(row.item.booking.start_time)"
+            v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
             class="expired"
             >{{ formatDate(row.item.booking.start_time) }}</span
           >
@@ -370,19 +370,19 @@
           <span
             v-if="
               row.item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-              !checkExpiryDate(row.item.expiry_date)
+              !checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)
             "
             >–</span
           >
           <span
             v-else-if="
               row.item.exam_type.group_exam_ind &&
-              !checkExpiryDate(row.item.expiry_date)
+              !checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)
             "
             >–</span
           >
           <span
-            v-else-if="checkExpiryDate(row.item.expiry_date)"
+            v-else-if="checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)"
             class="expired"
             >{{ formatDate(row.item.expiry_date) }}</span
           >
@@ -1258,14 +1258,20 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkExpiryDate (date) {
+  checkExpiryDate (date, exam_returned_date) {
+    if (exam_returned_date != null) {      
+      return false
+    }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
       return true
     }
     return false
   }
 
-  checkStartDate (date) {
+  checkStartDate (date, exam_returned_date) {    
+    if (exam_returned_date != null) {      
+      return false
+    }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
       return true
     }
@@ -1669,9 +1675,31 @@ export default class ExamInventoryTable extends Vue {
       }
       return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
     }
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+    else if (key === 'start_time') {      
+      if (a.booking == null && b.booking == null) {        
+        return 0
+      }     
+      else if (a.booking == null) {
+        return 1
+      }
+      else if (b.booking == null) {
+        return -1
+      } else {        
+        let val1, val2
+        if(a.booking.start_time != null) {
+          val1 = parseInt((new Date(a.booking.start_time).getTime() / 1000).toFixed(0))
+        }
+        if(b.booking.start_time != null) {
+          val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
+        }        
+        return val1 - val2
+      }
+      
+    }
+
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {      
       return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-    } else {
+    } else {      
       return toString(a[key]).localeCompare(toString(b[key]), undefined, {
         numeric: true
       })
