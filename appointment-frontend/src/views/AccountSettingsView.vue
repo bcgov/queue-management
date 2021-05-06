@@ -47,11 +47,13 @@
                 inset
                 v-model="enableEmailReminder"
                 label="Send me appointment reminders via email"
+                class="vswitch_z"
               ></v-switch>
               <v-switch v-if="isSmsEnabled"
                 inset
                 v-model="enableSmsReminder"
                 label="Send me appointment reminders via SMS text message"
+                class="vswitch_z"
               ></v-switch>
             </v-form>
             <v-row>
@@ -61,6 +63,7 @@
                   large
                   :disabled="!isFormUpdated"
                   @click="updateProfile"
+                  style="z-index: 6"
                 >
                   Update
                 </v-btn>

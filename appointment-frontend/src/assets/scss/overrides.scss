@@ -79,6 +79,10 @@
 .theme--light.v-card >.v-card__text {
   color: rgba($gray9, 0.8);
 }
+// v-switch in AccountSettingsView
+.vswitch_z .v-input__control {
+  z-index: 6;
+}
 
 // Form Inputs
 
