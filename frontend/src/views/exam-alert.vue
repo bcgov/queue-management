@@ -61,7 +61,7 @@ export default class ExamAlert extends Vue {
   }
 
   onDismissedExam () {
-    this.examDismissCountDown(999)
+    this.examDismissCountDown(0)
   }
 }
 </script>

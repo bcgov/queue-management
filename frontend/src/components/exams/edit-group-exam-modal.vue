@@ -730,6 +730,7 @@ export default class EditGroupExamBookingModal extends Vue {
   @Action('postBooking') public postBooking: any
   @Action('putRequest') public putRequest: any
   @Action('downloadExam') public downloadExam: any
+  @Action('getUserAttentionForExam') public getUserAttentionForExam: any
 
   @Mutation('toggleEditGroupBookingModal') public toggleEditGroupBookingModal: any
 
@@ -1222,6 +1223,7 @@ export default class EditGroupExamBookingModal extends Vue {
     Promise.all(promises).then(() => {
       this.getBookings().then(() => {
         this.getExams().then(() => {
+          this.getUserAttentionForExam()
           this.cancel()
         })
       })

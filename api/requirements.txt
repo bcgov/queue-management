@@ -14,7 +14,7 @@ flask-jwt-oidc
 Flask-Script
 Flask-SQLAlchemy
 certifi
-eventlet
+eventlet==0.30.2
 filelock
 Flask-Caching
 Flask-Compress

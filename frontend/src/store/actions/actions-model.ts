@@ -772,6 +772,36 @@ export const commonActions: any = {
     })
   },
 
+  getUserAttentionForExam (context) {
+    return new Promise((resolve, reject) => {
+      const url = '/csrs/me/'
+      Axios(context)
+        .get(url)
+        .then(
+          resp => {
+            const examManagerBoolean = resp.data.attention_needed            
+            if (examManagerBoolean === true) {
+              context.commit(
+                'setExamAlert',
+                'Office Exam Manager Action Items are present'
+              )
+            } else {
+              context.commit('setExamAlert', '')
+            }
+ 
+            resolve(resp)
+          },
+          error => {
+            context.commit(
+              'setExamAlert',
+              'There is an error while setting an exam alert'
+            )
+            reject(error)
+          }
+        )
+    })
+  },
+
   cancelAddCitizensModal (context) {
     const { citizen_id } = context.getters.formData.citizen
 
@@ -1880,6 +1910,7 @@ export const commonActions: any = {
         .then(() => {
           context.dispatch('getExams').then(() => {
             context.commit('setEditExamSuccess', 3)
+            context.dispatch('getUserAttentionForExam')
             resolve()
           })
         })
@@ -1917,6 +1948,7 @@ export const commonActions: any = {
     context.commit('setEditedBooking', null)
     context.commit('toggleEditBookingModal', false)
     context.commit('toggleEditGroupBookingModal', false)
+    context.dispatch('getUserAttentionForExam')
   },
   finishAppointment (context) {
     context.commit('setSelectionIndicator', false)
@@ -2365,7 +2397,10 @@ export const commonActions: any = {
     const setup = context.state.addModalSetup
     const { formData } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
-      if (formData.channel !== compareService.channel_id) {
+      if (formData.channel === '') {
+        formData.channel = compareService.channel_id
+      }
+      if (formData.channel !+= compareService.channel_id) {
         data.channel_id = formData.channel
       }
       if (formData.service !== compareService.service_id) {
