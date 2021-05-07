@@ -775,6 +775,36 @@ export const commonActions: any = {
     })
   },
 
+  getUserAttentionForExam (context) {
+    return new Promise((resolve, reject) => {
+      const url = '/csrs/me/'
+      Axios(context)
+        .get(url)
+        .then(
+          resp => {
+            const examManagerBoolean = resp.data.attention_needed            
+            if (examManagerBoolean === true) {
+              context.commit(
+                'setExamAlert',
+                'Office Exam Manager Action Items are present'
+              )
+            } else {
+              context.commit('setExamAlert', '')
+            }
+ 
+            resolve(resp)
+          },
+          error => {
+            context.commit(
+              'setExamAlert',
+              'There is an error while setting an exam alert'
+            )
+            reject(error)
+          }
+        )
+    })
+  },
+
   cancelAddCitizensModal (context) {
     const { citizen_id } = context.getters.form_data.citizen
 
@@ -1883,6 +1913,7 @@ export const commonActions: any = {
         .then(() => {
           context.dispatch('getExams').then(() => {
             context.commit('setEditExamSuccess', 3)
+            context.dispatch('getUserAttentionForExam')
             resolve()
           })
         })
@@ -1920,6 +1951,7 @@ export const commonActions: any = {
     context.commit('setEditedBooking', null)
     context.commit('toggleEditBookingModal', false)
     context.commit('toggleEditGroupBookingModal', false)
+    context.dispatch('getUserAttentionForExam')
   },
   finishAppointment (context) {
     context.commit('setSelectionIndicator', false)
@@ -2368,6 +2400,9 @@ export const commonActions: any = {
     const setup = context.state.addModalSetup
     const { form_data } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
+      if (form_data.channel === '') {
+        form_data.channel = compareService.channel_id
+      }
       if (form_data.channel != compareService.channel_id) {
         data.channel_id = form_data.channel
       }
