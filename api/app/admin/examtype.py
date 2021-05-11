@@ -29,6 +29,7 @@ class ExamTypeConfig(Base):
 
     create_modal = False
     edit_modal = False
+    can_delete = False
 
     column_list = [
         'exam_type_name',
@@ -38,7 +39,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     ]
 
     column_labels = {
@@ -50,6 +52,7 @@ class ExamTypeConfig(Base):
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'deleted': 'Deleted',
     }
 
     column_searchable_list = {'exam_type_name'}
@@ -66,7 +69,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     )
 
     form_edit_rules = {
@@ -78,6 +82,7 @@ class ExamTypeConfig(Base):
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'deleted': 'Deleted',
     }
     form_choices = {
         'ita_ind': [
@@ -98,7 +103,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     ]
 
     column_default_sort = 'exam_type_name'
