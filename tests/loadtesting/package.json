@@ -22,7 +22,6 @@
   "contributors": [
     "Faiz Shabeeb <faiz.shabeeb@aot-technologies.com> (https://github.com/shabeeb-aot)"
   ],
-  "dependencies": {},
   "devDependencies": {
     "artillery": "^1.6.1",
     "node-fetch": "^2.6.1"
