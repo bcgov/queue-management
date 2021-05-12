@@ -100,7 +100,7 @@ class ExamPost(Resource):
         else:
             logging.info("For Group Exams")
 
-            exam_type = ExamType.query.filter_by(exam_type_name="Group Pesticide Exam").first()
+            exam_type = ExamType.query.filter_by(exam_type_name="Group Environment Exam").first()
             if exam_type:
                 exam.exam_type_id = exam_type.exam_type_id
                 exam.exam_type = exam_type
