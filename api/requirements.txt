@@ -4,7 +4,7 @@ flask-restx
 #  with inviting Citizens expected to be fixed with Release 1.3.14
 SQLAlchemy<1.4
 snowplow-tracker
-Flask
+Flask==1.1.2
 Flask-Admin
 Flask-Cache
 Flask-Login

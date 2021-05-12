@@ -1680,7 +1680,7 @@ export default class ExamInventoryTable extends Vue {
         }
         if (b.booking.start_time != null) {
           val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
-        }        
+        }
         return val1 - val2
       }
     }
