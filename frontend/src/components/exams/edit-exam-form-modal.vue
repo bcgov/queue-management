@@ -546,6 +546,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable camelcase */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
@@ -623,7 +624,7 @@ export default class EditExamModal extends Vue {
   ]
 
   public examReceived: any = this.actionedExam.exam_received_date !== null
-  public officeNumber: any = null
+  public office_number: any = null
   public officeChoices: any = []
   public showMessage: any = false
   public search: string = ''
@@ -906,12 +907,12 @@ export default class EditExamModal extends Vue {
       this.fields.exam_received_date = moment(exam.exam_received_date).format('YYYY-MM-DD')
       this.examReceived = true
     }
-    this.officeNumber = exam.office.office_number
+    this.office_number = exam.office.office_number
   }
 
-  setOffice (officeNumber) {
-    this.officeNumber = officeNumber
-    this.fields.office_id = this.offices.find(office => office.office_number === officeNumber).office_id
+  setOffice (office_number) {
+    this.office_number = office_number
+    this.fields.office_id = this.offices.find(office => office.office_number === office_number).office_id
   }
 
   removeError () {
@@ -929,7 +930,7 @@ export default class EditExamModal extends Vue {
     this.lengthError = false
     this.clickedMenu = false
     this.message = null
-    this.officeNumber = null
+    this.office_number = null
     this.examReceived = false
     this.search = ''
     this.searching = false

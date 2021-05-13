@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Getter, Mutation, State } from 'vuex-class'
 import DatePicker from 'vue2-datepicker'
@@ -982,7 +983,7 @@ export class SelectOffice extends Vue {
   @Prop()
   private exam!: any
 
-  get officeNumber () {
+  get office_number () {
     return this.addExamModal.office_number
   }
 
@@ -1000,11 +1001,11 @@ export class SelectOffice extends Vue {
     return '(Start typing to search or enter Office #)'
   }
 
-  setOffice (officeNumber) {
-    officeNumber = parseInt(officeNumber)
-    this.setAddExamModalSetting({ officeNumber })
+  setOffice (office_number) {
+    office_number = parseInt(office_number)
+    this.setAddExamModalSetting({ office_number })
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number === officeNumber) || null
+      const office = this.offices.find(office => office.office_number === office_number) || null
       if (office) {
         const { officeId } = office
         this.handleInput({

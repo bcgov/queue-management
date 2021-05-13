@@ -41,7 +41,7 @@
         <b-form-row>
           <OfficeDrop
             columnW="8"
-            :office_number="officeNumber"
+            :office_number="office_number"
             :setOffice="setOfficeFilter"
           />
         </b-form-row>
@@ -718,6 +718,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable camelcase */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
@@ -916,12 +917,12 @@ export default class ExamInventoryTable extends Vue {
     if (this.showAllPesticide) {
       return 'Exams from All Offices'
     }
-    return 'Office # ' + this.officeNumber + ' - ' + this.officeName
+    return 'Office # ' + this.office_number + ' - ' + this.officeName
   }
 
   get officeName () {
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number === this.officeNumber)
+      const office = this.offices.find(office => office.office_number === this.office_number)
       if (office) {
         return office.office_name
       }
@@ -933,14 +934,14 @@ export default class ExamInventoryTable extends Vue {
     return ''
   }
 
-  get officeNumber () {
+  get office_number () {
     if (this.inventoryFilters && this.inventoryFilters.office_number) {
-      const { officeNumber } = this.inventoryFilters
+      const { office_number } = this.inventoryFilters
       if (this.inventoryFilters.office_number === 'pesticide_offsite') {
         const office = (this.offices.find(office => office.office_name === 'Pesticide Offsite'))
         return office.office_number
-      } else if (officeNumber !== 'default') {
-        return officeNumber
+      } else if (office_number !== 'default') {
+        return office_number
       }
     }
     if (this.user && this.user.office_id) {
@@ -1274,11 +1275,11 @@ export default class ExamInventoryTable extends Vue {
 
   filteredExams () {
     const examInventory: any = this.examInventory
-    let officeNumber = this.inventoryFilters.office_number === 'default'
+    let office_number = this.inventoryFilters.office_number === 'default'
       ? this.user.office.office_number : this.inventoryFilters.office_number
     if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-      officeNumber = (this.offices.find(office => office.office_name === 'Pesticide Offsite')).office_number
-      this.inventoryFilters.office_number = officeNumber
+      office_number = (this.offices.find(office => office.office_name === 'Pesticide Offsite')).office_number
+      this.inventoryFilters.office_number = office_number
     }
     let filtered = []
     if (examInventory.length > 0) {
@@ -1291,7 +1292,7 @@ export default class ExamInventoryTable extends Vue {
       }
 
       const exams = this.showAllPesticide ? examInventory
-        : examInventory.filter((ex: any) => ex.office.office_number === officeNumber)
+        : examInventory.filter((ex: any) => ex.office.office_number === office_number)
 
       if (this.inventoryFilters.requireAttentionFilter === 'both') {
         return exams.filter(ex => this.checkAllAttention(ex))
@@ -1643,8 +1644,8 @@ export default class ExamInventoryTable extends Vue {
     }
   }
 
-  setOfficeFilter (officeNumber) {
-    this.setFilter({ type: 'office_number', value: officeNumber })
+  setOfficeFilter (office_number) {
+    this.setFilter({ type: 'office_number', value: office_number })
     this.$store.commit('toggleShowAllPesticideExams', false)
   }
 

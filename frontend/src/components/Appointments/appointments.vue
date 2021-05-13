@@ -1,4 +1,3 @@
-
 <template>
     <v-app>
       <div class="v-application">
@@ -95,6 +94,7 @@
 </template>
 
 <script lang="ts">
+
 import { Component, Vue } from 'vue-property-decorator'
 import { ShowFlagBusEvents, showFlagBus } from '../../events/showFlagBus'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
@@ -108,7 +108,6 @@ import moment from 'moment'
 import { namespace } from 'vuex-class'
 
 const appointmentsModule = namespace('appointmentsModule')
-
 // For MOMENT, not the calendar
 const SATURDAY = 6
 const SUNDAY = 1
@@ -129,32 +128,25 @@ export default class Appointments extends Vue {
   };
 
   @appointmentsModule.State('apptRescheduling') private apptRescheduling!: any
-
   // "calender" is purposely misspelled because there's already a method with that name
   @appointmentsModule.Getter('calenderSetup') private calenderSetup!: any
   @appointmentsModule.Getter('appointmentEvents') private appointmentEvents!: any
   @appointmentsModule.Getter('filteredAppointmentEvents') private filteredAppointmentEvents!: any
-
   @appointmentsModule.Action('getAppointments') public getAppointments: any
   @appointmentsModule.Action('getChannels') public getChannels: any
   @appointmentsModule.Action('getServices') public getServices: any
-
   @appointmentsModule.Action('postDraftAppointment') public postDraftAppointment: any
   @appointmentsModule.Action('deleteDraftAppointment') public deleteDraftAppointment: any
-
   @appointmentsModule.Mutation('setCalendarSetup') public setCalendarSetup: any
   @appointmentsModule.Mutation('setEditedStatus') public setEditedStatus: any
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
   @appointmentsModule.Mutation('toggleCheckInModal') public toggleCheckInModal: any
   @appointmentsModule.Mutation('setRescheduling') public setRescheduling: any
-
   @appointmentsModule.State('clickedAppt') public clickedAppt: any
   @appointmentsModule.Mutation('setAgendaClickedAppt') public setAgendaClickedAppt: any
-
   @appointmentsModule.State('clickedTime') public clickedTime: any
   @appointmentsModule.Mutation('setAgendaClickedTime') public setAgendaClickedTime: any
   @appointmentsModule.Mutation('setToggleAppCalenderView') public setToggleAppCalenderView: any
-
   showLoading = false
   // vuetify calender
   listView: any = false
@@ -162,15 +154,12 @@ export default class Appointments extends Vue {
   type: any = 'week'
   mode: any = 'stack'
   weekday: any = [1, 2, 3, 4, 5]
-
   value: any = ''
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
-
   isStat: boolean = false
   _keyListenerNewApp: any = null
   _keyListenerWeek: any = null
   _keyListenerDay: any = null
-
   get events () {
     if (this.searchTerm) {
       return this.filteredAppointmentEvents(this.searchTerm)
@@ -209,9 +198,7 @@ export default class Appointments extends Vue {
   }
 
   // vuetify calender end
-
   public blockEventSelect: any = false
-
   agendaDay () {
     this.type = 'day'
     this.calendarSetup()
@@ -233,7 +220,6 @@ export default class Appointments extends Vue {
     }
     let clickedEvent = event
     clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
-    // this.clickedAppt = clickedEvent
     this.setAgendaClickedAppt(clickedEvent)
     this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
@@ -384,14 +370,12 @@ export default class Appointments extends Vue {
   setTempEvent (event) {
     this.removeTempEvent()
     const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
       // setting end time aftger 15 min of start to fix over appoinment time
       end_time: moment(start).clone().add(15, 'minutes')
     }
-
     this.postDraftAppointment(data).then((resp) => {
     })
   }
@@ -408,7 +392,6 @@ export default class Appointments extends Vue {
     if (name === 'day' && this.$refs.calendar === undefined) {
       title = 'Search Results'
     }
-
     // This happens when clearing a search result w/o selecting
     if (name === 'week' && this.$refs.calendar === undefined) {
       return this.setCalendarSetup({ title, name, titleRef: this.calenderSetup.titleRef })
@@ -420,7 +403,6 @@ export default class Appointments extends Vue {
     this.getAppointments()
     this.getServices()
     this.getChannels()
-
     this.$root.$on('clear-clicked-appt', () => { this.clearClickedAppt() })
     this.$root.$on('clear-clicked-time', () => { this.clearClickedTime() })
     this.$root.$on('agendaDay', () => { this.agendaDay() })
@@ -433,7 +415,6 @@ export default class Appointments extends Vue {
     this.$root.$on('removeTempEvent', () => { this.removeTempEvent() })
     this.$root.$on('goToDate', (date) => { this.goToDate(date) })
     this.calendarSetup()
-
     showFlagBus.$on(ShowFlagBusEvents.ShowFlagEvent, (flag: boolean) => {
       this.showLoading = flag
     }
@@ -472,23 +453,26 @@ export default class Appointments extends Vue {
   }
 
   intervalStyle (interval) {
-    if (interval.minute === '0' || interval.minute === '30') {
+    // eslint-disable-next-line eqeqeq
+    if (interval.minute == '0' || interval.minute == '30') {
       interval['background-color'] = '#ebebeb'
     }
     return interval
   }
 
   showIntervalLabel (interval) {
-    if (interval.minute === '0' || interval.minute === '30') {
-      if (interval.minute === '30' && interval.hour === '8') {
-        return
+    // eslint-disable-next-line eqeqeq
+    if (interval.minute == '0' || interval.minute == '30')  {
+      // eslint-disable-next-line eqeqeq
+      if (interval.minute == '30' && interval.hour == '8') {
+        return 
       }
       return interval
     }
   }
 }
-
 </script>
+
 <style scoped>
 .label-text {
   font-size: 0.9rem;

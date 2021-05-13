@@ -62,6 +62,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable camelcase */
 
 import { Action, Getter, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
@@ -72,7 +73,7 @@ export default class OfficeDrop extends Vue {
   private columnW!: any
 
   @Prop()
-  private officeNumber!: any
+  private office_number!: any
 
   @Prop()
   private setOffice!: any
@@ -120,14 +121,14 @@ export default class OfficeDrop extends Vue {
 
   get numberSearch () {
     if (!this.searchingNumber) {
-      return this.officeNumber
+      return this.office_number
     }
     this.searchNumber // What does this do??
   }
 
   get officeSearch () {
-    if (!this.searching && this.officeNumber && this.offices.length > 0) {
-      return this.offices.find(office => office.office_number === this.officeNumber).office_name
+    if (!this.searching && this.office_number && this.offices.length > 0) {
+      return this.offices.find(office => office.office_number === this.office_number).office_name
     }
     return this.search
   }

@@ -492,13 +492,20 @@ class Bootstrap(Command):
             day_of_week="{Tuesday,Wednesday,Thursday}",
             office_id=office_100.office_id
         )
+        timeslot4 = theq.TimeSlot(
+            start_time="07:00:00-07:00",
+            end_time="23:00:00-07:00",
+            no_of_slots=3,
+            day_of_week="{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday}",
+            office_id=office_test.office_id
+        )
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")
         cfms_postman_operator = theq.CSR(
             username="cfms-postman-operator",
             office_id=office_test.office_id,
-            role_id=role_csr.role_id,
+            role_id=role_ga.role_id,
             counter_id=qt_counter.counter_id,
             receptionist_ind=1,
             deleted=None,
