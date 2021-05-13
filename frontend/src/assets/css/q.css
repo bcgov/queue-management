@@ -258,7 +258,7 @@ input#app_timepicker_id {
 
 .formio-component.formio-component-table.table-responsive {
   overflow-x: hidden !important;
-  padding-right: 3vh !important;
-  padding-left: 3vh !important;
+  padding-right: 4vh !important;
+  padding-left: 4vh !important;
   overflow-y: hidden !important;
 }
