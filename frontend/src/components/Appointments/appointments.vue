@@ -462,10 +462,10 @@ export default class Appointments extends Vue {
 
   showIntervalLabel (interval) {
     // eslint-disable-next-line eqeqeq
-    if (interval.minute == '0' || interval.minute == '30')  {
+    if (interval.minute == '0' || interval.minute == '30') {
       // eslint-disable-next-line eqeqeq
       if (interval.minute == '30' && interval.hour == '8') {
-        return 
+        return
       }
       return interval
     }
