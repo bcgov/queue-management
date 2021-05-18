@@ -31,7 +31,7 @@ class ExamTypeList(Resource):
     def get(self):
 
         try:
-            exam_types = ExamType.query.order_by(asc(ExamType.exam_type_name))
+            exam_types = ExamType.query.filter(ExamType.deleted.is_(None)).order_by(asc(ExamType.exam_type_name))
             result = self.exam_type_schema.dump(exam_types)
             return {'exam_types': result,
                     'errors': self.exam_type_schema.validate(exam_types)}, 200
