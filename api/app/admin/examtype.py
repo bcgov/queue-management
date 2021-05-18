@@ -51,7 +51,7 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
-        'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'pesticide_exam_ind': 'Environment Exam Flag',
         'deleted': 'Deleted',
     }
 
@@ -81,7 +81,7 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
-        'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'pesticide_exam_ind': 'Environment Exam Flag',
         'deleted': 'Deleted',
     }
     form_choices = {
@@ -92,7 +92,7 @@ class ExamTypeConfig(Base):
             ("0", 'No - this is not a Group exam'), ("1", 'Yes - this is a Group exam')
         ],
         'pesticide_exam_ind': [
-            ("0", 'No - this is not a Pesticide exam'), ("1", 'Yes - this is a Pesticide exam')
+            ("0", 'No - this is not an Environment exam'), ("1", 'Yes - this is an Environment exam')
         ]
     }
 

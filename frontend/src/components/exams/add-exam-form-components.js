@@ -218,7 +218,7 @@ export const DropdownQuestion = Vue.component('dropdown-question', {
       <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
       <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
       <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
-      <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
+      <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
       <label>Exam Type</label><br>
         <div @click="clickInput" id="exam_type_dropdown">
           <b-input read-only

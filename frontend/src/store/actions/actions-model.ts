@@ -2099,6 +2099,7 @@ export const commonActions: any = {
   postITAIndividualExam (context, isRequestExam) {
     const isRequestExamReq = isRequestExam || false
     const responses = Object.assign({}, context.state.capturedExam)
+    console.log('====>  requesting BCMP exam',responses)
     if (responses.on_or_off) {
       if (responses.on_or_off === 'off') {
         responses.offsite_location = '_offsite'
@@ -2141,7 +2142,7 @@ export const commonActions: any = {
     }
 
     if (context.state.addExamModal.setup === 'pesticide') {
-      responses.exam_name = responses.exam_name || 'pesticide'
+      responses.exam_name = 'Environment'
       responses.is_pesticide = 1
     }
 
