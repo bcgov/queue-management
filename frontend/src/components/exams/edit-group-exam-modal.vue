@@ -39,6 +39,14 @@
                   <div>Writers:</div>
                   <div>{{ actionedExam.number_of_students }}</div>
                 </div>
+                <div class="q-id-grid-col">
+                  <div>Exam Date:</div>
+                  <div>{{ originalDate }}</div>
+                </div>
+                <div class="q-id-grid-col">
+                  <div>Exam Time:</div>
+                  <div>{{ originalTime }}</div>
+                </div>
               </div>
             </div>
           </b-col>
@@ -801,6 +809,19 @@ export default class EditGroupExamBookingModal extends Vue {
       default:
         return 'Other'
     }
+  }
+
+  get originalDate () {
+    const { start_time } = this.actionedExam.booking
+    const { timezone_name } = this.actionedExam.booking.office.timezone
+    return zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD').toString()
+  }
+
+  get originalTime () {
+    const { start_time } = this.actionedExam.booking
+    const { timezone_name } = this.actionedExam.booking.office.timezone
+    const time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
+    return moment(time).format('HH:mm').toString()
   }
 
   get editedTimezone () {
