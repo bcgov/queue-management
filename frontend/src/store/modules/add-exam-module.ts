@@ -360,7 +360,7 @@ export const addExamModule = {
       const { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
       const pesticideTypeQ = {
         key: 'exam_type_id',
-        text: 'Type of Pesticide Exam',
+        text: 'Type of Environment Exam',
         kind: 'select',
         options: state.pesticideExamTypes.map(type => ({ text: type.exam_type_name, value: type.exam_type_id })),
         minLength: 1,

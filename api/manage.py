@@ -908,7 +908,7 @@ class Bootstrap(Command):
         )
         
         exam_type_twenty_four = bookings.ExamType(
-            exam_type_name="Group Pesticide Exam",
+            exam_type_name="Group Environment Exam",
             exam_color="#FFFFFF",
             number_of_hours=0,
             method_type="written",

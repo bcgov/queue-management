@@ -27,6 +27,7 @@ class ExamType(Base):
     ita_ind = db.Column(db.Integer, nullable=False)
     group_exam_ind = db.Column(db.Integer,  nullable=False)
     pesticide_exam_ind = db.Column(db.Integer, nullable=False)
+    deleted = db.Column(db.DateTime, nullable=True)
 
     # TODO changed lazy=false to lazy=raise
     exam = db.relationship("Exam", lazy='raise')
