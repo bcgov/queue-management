@@ -29,6 +29,7 @@ class ExamTypeConfig(Base):
 
     create_modal = False
     edit_modal = False
+    can_delete = False
 
     column_list = [
         'exam_type_name',
@@ -38,7 +39,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     ]
 
     column_labels = {
@@ -49,7 +51,8 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
-        'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'pesticide_exam_ind': 'Environment Exam Flag',
+        'deleted': 'Deleted',
     }
 
     column_searchable_list = {'exam_type_name'}
@@ -66,7 +69,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     )
 
     form_edit_rules = {
@@ -77,7 +81,8 @@ class ExamTypeConfig(Base):
         'method_type': 'Method Type',
         'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
-        'pesticide_exam_ind': 'Pesticide Exam Flag',
+        'pesticide_exam_ind': 'Environment Exam Flag',
+        'deleted': 'Deleted',
     }
     form_choices = {
         'ita_ind': [
@@ -87,7 +92,7 @@ class ExamTypeConfig(Base):
             ("0", 'No - this is not a Group exam'), ("1", 'Yes - this is a Group exam')
         ],
         'pesticide_exam_ind': [
-            ("0", 'No - this is not a Pesticide exam'), ("1", 'Yes - this is a Pesticide exam')
+            ("0", 'No - this is not an Environment exam'), ("1", 'Yes - this is an Environment exam')
         ]
     }
 
@@ -98,7 +103,8 @@ class ExamTypeConfig(Base):
         'method_type',
         'ita_ind',
         'group_exam_ind',
-        'pesticide_exam_ind'
+        'pesticide_exam_ind',
+        'deleted'
     ]
 
     column_default_sort = 'exam_type_name'

@@ -36,10 +36,10 @@
       >
       <b-button
         v-if="isPesticideDesignate"
-        class="mr-1 btn-primary"
+        class="mr-3 btn-primary"
         id="add_pesticide"
         @click="handleClick('pesticide')"
-        >Add Pesticide Exam</b-button
+        >Add Environment Exam</b-button
       >
       <b-button
         v-if="isFinancialDesignate || roleCode === 'GA' || isOfficeManager"

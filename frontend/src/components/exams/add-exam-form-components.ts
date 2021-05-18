@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
+
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Getter, Mutation, State } from 'vuex-class'
+
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import { mapState } from 'vuex'
@@ -193,7 +195,7 @@ export class DateQuestion extends Vue {
         <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
         <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
         <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
-        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
+        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
       </b-col>
       <b-col>
         <label>Exam Type</label><br>
@@ -289,7 +291,7 @@ export class DropdownQuestion extends Vue {
     }
     if (this.addExamModal.setup === 'group') {
       const exams = this.examTypes.filter(type =>
-        (type.group_exam_ind === 1 && type.exam_type_name !== 'Group Pesticide Exam' && type.exam_type_name !== 'Pesticide Group Exam')
+        (type.group_exam_ind === 1 && type.exam_type_name != 'Group Environment Exam')
       )
       return exams.sort((a, b) => sorter(a, b))
     }

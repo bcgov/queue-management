@@ -221,6 +221,8 @@ class LocalConfig(BaseConfig):
     )
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
+
 
     MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
     MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
@@ -242,6 +244,7 @@ class DevelopmentConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 class TestConfig(BaseConfig):
@@ -253,6 +256,7 @@ class TestConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 class ProductionConfig(BaseConfig):
@@ -264,6 +268,7 @@ class ProductionConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 def configure_app(app):
