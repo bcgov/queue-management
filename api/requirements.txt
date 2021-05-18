@@ -8,7 +8,7 @@ Flask==1.1.2
 Flask-Admin
 Flask-Cache
 Flask-Login
-Flask-Migrate
+Flask-Migrate==2.7.0
 Flask-Moment
 flask-jwt-oidc
 Flask-Script
