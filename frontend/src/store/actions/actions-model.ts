@@ -306,7 +306,7 @@ export const commonActions: any = {
             booking.id = b.booking_id
             booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
-              context.state.exams.find(ex => ex.booking_id === b.booking_id) ||
+              context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
             booking.booking_contact_information =
               b.booking_contact_information
@@ -803,9 +803,9 @@ export const commonActions: any = {
   },
 
   cancelAddCitizensModal (context) {
-    const { citizen_id } = context.getters.formData.citizen
+    const { citizenId } = context.getters.formData.citizen
 
-    context.dispatch('postCitizenLeft', citizen_id).then(() => {
+    context.dispatch('postCitizenLeft', citizenId).then(() => {
       context.commit('toggleAddModal', false)
       context.commit('resetAddModalForm')
     })
@@ -926,7 +926,7 @@ export const commonActions: any = {
   },
 
   clickAddToQueue (context) {
-    const { citizen_id } = context.getters.formData.citizen
+    const { citizenId } = context.getters.formData.citizen
     context.commit('setPerformingAction', true)
     context
       .dispatch('putCitizen')
@@ -935,7 +935,7 @@ export const commonActions: any = {
           .dispatch('postServiceReq')
           .then(() => {
             context
-              .dispatch('postAddToQueue', citizen_id)
+              .dispatch('postAddToQueue', citizenId)
               .then(resp => {
                 context.dispatch('resetAddCitizenModal')
                 context.commit('toggleBegunStatus', false)
@@ -1032,7 +1032,7 @@ export const commonActions: any = {
   clickBeginService (context, payload) {
     context.commit('setPerformingAction', true)
     context.commit('toggleServeCitizenSpinner', true)
-    const { citizen_id } = context.getters.formData.citizen
+    const { citizenId } = context.getters.formData.citizen
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -1040,7 +1040,7 @@ export const commonActions: any = {
           .dispatch('postServiceReq')
           .then(() => {
             context
-              .dispatch('postBeginService', citizen_id)
+              .dispatch('postBeginService', citizenId)
               .then(() => {
                 context.commit('toggleAddModal', false)
                 context.commit('toggleBegunStatus', true)
@@ -1418,7 +1418,6 @@ export const commonActions: any = {
         context.commit('toggleServiceModal', true)
       })
       .catch(() => {
-        // context.commit('setMainAlert', '(index) There are no citizens waiting.')
         context.commit('toggleInviteCitizenSpinner', false)
       })
       .finally(() => {
@@ -2096,6 +2095,7 @@ export const commonActions: any = {
   postITAIndividualExam (context, isRequestExam) {
     const isRequestExamReq = isRequestExam || false
     const responses = Object.assign({}, context.state.capturedExam)
+    console.log('====>  requesting BCMP exam',responses)
     if (responses.on_or_off) {
       if (responses.on_or_off === 'off') {
         responses.offsite_location = '_offsite'
@@ -2138,7 +2138,7 @@ export const commonActions: any = {
     }
 
     if (context.state.addExamModal.setup === 'pesticide') {
-      responses.exam_name = responses.exam_name || 'pesticide'
+      responses.exam_name = 'Environment'
       responses.is_pesticide = 1
     }
 
@@ -2310,10 +2310,10 @@ export const commonActions: any = {
           data.priority = priority
         }
         if (
-          accurateTimeInd !== null &&
-          accurateTimeInd !== prevCitizen.accurateTimeInd
+          accurateTimeInd != null &&
+          accurateTimeInd !== prevCitizen.accurate_time_ind
         ) {
-          data.accurateTimeInd = accurateTimeInd
+          data.accurate_time_ind = accurateTimeInd
         }
         if (notification_phone !== prevCitizen.notification_phone) {
           data.notification_phone = notification_phone
@@ -2379,7 +2379,7 @@ export const commonActions: any = {
     const { sr_id } = compareService
 
     const data: any = {}
-    if (activeQuantity !== compareService.quantity) {
+    if (activeQuantity != compareService.quantity) {
       data.quantity = activeQuantity
     }
 
@@ -2400,10 +2400,10 @@ export const commonActions: any = {
       if (formData.channel === '') {
         formData.channel = compareService.channel_id
       }
-      if (formData.channel !+= compareService.channel_id) {
+      if (formData.channel != compareService.channel_id) {
         data.channel_id = formData.channel
       }
-      if (formData.service !== compareService.service_id) {
+      if (formData.service != compareService.service_id) {
         data.service_id = formData.service
       }
     }
