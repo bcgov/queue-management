@@ -726,8 +726,9 @@ export default class EditGroupExamBookingModal extends Vue {
   @Getter('role_code') private role_code!: any;
   @Getter('invigilator_dropdown') private invigilator_dropdown!: any;
   @Getter('is_ita2_designate') private is_ita2_designate!: any;
+  @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
+  @Getter('is_office_manager') private is_office_manager!: any;
   @Getter('invigilator_multi_select') private invigilator_multi_select!: any;
-  // @Getter('is_ita2_designate') private is_ita2_designate!: any;
   @Getter('shadow_invigilator_options') private shadow_invigilator_options!: any;
   @Getter('shadow_invigilators') private shadow_invigilators!: any;
 
@@ -851,9 +852,28 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get fieldDisabled () {
-    if ((this.role_code !== 'GA' && !this.is_ita2_designate) && this.examType != 'other') {
-      return true
+    console.log('fieldDisabled ==> this.role_code', this.role_code)
+    console.log('fieldDisabled ==> this.examType', this.examType)
+    console.log('fieldDisabled ==> this.is_ita2_designate', this.is_ita2_designate)
+    console.log('fieldDisabled ==> this.is_pesticide_designate', this.is_pesticide_designate)
+    console.log('fieldDisabled ==> this.is_office_manager', this.is_office_manager)
+   
+    if (this.role_code === 'SUPPORT') {
+      return false
     }
+    if (this.examType === 'challenger') {
+      if (this.role_code !== 'GA' && !this.is_ita2_designate && !this.is_office_manager) {
+        console.log('RETURN True BECAUSE YOU ARE NOT A GA or ITA LIASON or OFFICE MANAGER')
+        return true
+      }
+    }
+    if (this.examType === 'group') {
+      if (!this.is_ita2_designate && !this.is_pesticide_designate) {
+        console.log('RETURN TRUE BECAUSE YOU ARE NOT AN ITA LIASON OR PESTICIDE LIASON')
+        return true
+      }
+    }
+    console.log('RETURN FALSE BY DEFAULT')
     return false
   }
 
