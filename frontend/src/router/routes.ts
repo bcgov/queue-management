@@ -102,30 +102,6 @@ export const routes = [
           buttons: ButtonTasklist
         },
         meta: { hideCitizenWaiting: false }
-      },
-      {
-        path: 'form/:form_id/submission/:submission_id',
-        components: {
-          default: FormView,
-          buttons: ButtonTasklist
-        },
-        meta: { hideCitizenWaiting: false }
-      },
-      {
-        path: 'form/:form_id/submission/:submission_id',
-        components: {
-          default: FormView,
-          buttons: ButtonTasklist
-        },
-        meta: { hideCitizenWaiting: false }
-      },
-      {
-        path: 'form/:form_id/submission/:submission_id',
-        components: {
-          default: FormView,
-          buttons: ButtonTasklist
-        },
-        meta: { hideCitizenWaiting: false }
       }
     ]
   },

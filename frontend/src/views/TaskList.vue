@@ -12,13 +12,14 @@
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
+      :getTaskId="getTaskId"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue ,Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/TaskList.vue'
 import { State } from 'vuex-class'
 import configMap from '../utils/config-helper'
@@ -35,6 +36,7 @@ export default class TaskList extends Vue {
   public token:any = sessionStorage.getItem('token')
   public configs = configMap.getconfig()
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+  public getTaskId: string = this.$route.params.taskId
 
   mounted () {
     this.getTaskId = this.$route.params.taskId
