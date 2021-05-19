@@ -39,14 +39,6 @@
                   <div>Writers:</div>
                   <div>{{ actionedExam.number_of_students }}</div>
                 </div>
-                <div class="q-id-grid-col">
-                  <div>Exam Date:</div>
-                  <div>{{ originalDate }}</div>
-                </div>
-                <div class="q-id-grid-col">
-                  <div>Exam Time:</div>
-                  <div>{{ originalTime }}</div>
-                </div>
               </div>
             </div>
           </b-col>
@@ -72,7 +64,7 @@
             <b-form-group>
               <label>Exam Date</label><br />
               <DatePicker
-                :value="date"
+                v-model="date"
                 style="color: black"
                 :disabled="fieldDisabled"
                 name="date"
@@ -80,6 +72,7 @@
                 class="w-100 date-time-fields"
                 @input="checkDate"
                 lang="en"
+                type="date"
               >
               </DatePicker>
             </b-form-group>
@@ -748,8 +741,8 @@ export default class EditGroupExamBookingModal extends Vue {
   @Mutation('toggleEditGroupBookingModal') public toggleEditGroupBookingModal: any
 
   public invigilator_id: any = ''
-  public date: any = ''
-  public time: any = ''
+  public date: any = null
+  public time: any = null
   public offsite_location: any = ''
   public notes: any = ''
   public eventId: any = ''
@@ -809,19 +802,6 @@ export default class EditGroupExamBookingModal extends Vue {
       default:
         return 'Other'
     }
-  }
-
-  get originalDate () {
-    const { start_time } = this.actionedExam.booking
-    const { timezone_name } = this.actionedExam.booking.office.timezone
-    return zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD').toString()
-  }
-
-  get originalTime () {
-    const { start_time } = this.actionedExam.booking
-    const { timezone_name } = this.actionedExam.booking.office.timezone
-    const time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
-    return moment(time).format('HH:mm').toString()
   }
 
   get editedTimezone () {
@@ -913,11 +893,7 @@ export default class EditGroupExamBookingModal extends Vue {
     // JSTOTS INFO removed new from moment. no need to use new with moment
     const date = moment(this.itemCopy.booking.start_time)
     // JSTOTS INFO removed new from moment. no need to use new with moment
-    const event = moment(e)
-    if (event.isBefore(moment(), 'day')) {
-      return
-    }
-    this.date = event
+    this.date = new Date(e)
     this.showMessage = false
     if (!this.itemCopy.booking) {
       if (!this.editedFields.includes('date')) {
@@ -1286,8 +1262,9 @@ export default class EditGroupExamBookingModal extends Vue {
       const { start_time } = tempItem.booking
       const { timezone_name } = this.actionedExam.booking.office.timezone
       const time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
-      this.time = moment(time).format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
-      this.date = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+      this.time = new Date(time)
+      const date = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+      this.date = new Date(date)
       if (tempItem.booking.sbc_staff_invigilated) {
         this.invigilator_id = 'sbc'
       } else {
