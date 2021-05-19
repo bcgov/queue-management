@@ -12,6 +12,7 @@
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
+      :getTaskId="getTaskId"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
