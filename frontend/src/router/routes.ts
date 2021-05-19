@@ -87,11 +87,12 @@ export const routes = [
         meta: { hideCitizenWaiting: false }
       },
       {
-        path: 'service-flow',
+        path: 'service-flow/:taskId?',
         components: {
           default: Tasklist,
           buttons: ButtonTasklist
         },
+        props: true,
         meta: { hideCitizenWaiting: false }
       },
       {
