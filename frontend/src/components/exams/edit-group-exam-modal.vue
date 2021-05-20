@@ -852,28 +852,19 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get fieldDisabled () {
-    console.log('fieldDisabled ==> this.role_code', this.role_code)
-    console.log('fieldDisabled ==> this.examType', this.examType)
-    console.log('fieldDisabled ==> this.is_ita2_designate', this.is_ita2_designate)
-    console.log('fieldDisabled ==> this.is_pesticide_designate', this.is_pesticide_designate)
-    console.log('fieldDisabled ==> this.is_office_manager', this.is_office_manager)
-   
     if (this.role_code === 'SUPPORT') {
       return false
     }
     if (this.examType === 'challenger') {
       if (this.role_code !== 'GA' && !this.is_ita2_designate && !this.is_office_manager) {
-        console.log('RETURN True BECAUSE YOU ARE NOT A GA or ITA LIASON or OFFICE MANAGER')
         return true
       }
     }
     if (this.examType === 'group') {
       if (!this.is_ita2_designate && !this.is_pesticide_designate) {
-        console.log('RETURN TRUE BECAUSE YOU ARE NOT AN ITA LIASON OR PESTICIDE LIASON')
         return true
       }
     }
-    console.log('RETURN FALSE BY DEFAULT')
     return false
   }
 
