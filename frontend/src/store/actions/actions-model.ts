@@ -803,9 +803,9 @@ export const commonActions: any = {
   },
 
   cancelAddCitizensModal (context) {
-    const { citizenId } = context.getters.formData.citizen
+    const { citizen_id } = context.getters.formData.citizen
 
-    context.dispatch('postCitizenLeft', citizenId).then(() => {
+    context.dispatch('postCitizenLeft', citizen_id).then(() => {
       context.commit('toggleAddModal', false)
       context.commit('resetAddModalForm')
     })
@@ -926,7 +926,7 @@ export const commonActions: any = {
   },
 
   clickAddToQueue (context) {
-    const { citizenId } = context.getters.formData.citizen
+    const { citizen_id } = context.getters.formData.citizen
     context.commit('setPerformingAction', true)
     context
       .dispatch('putCitizen')
@@ -935,7 +935,7 @@ export const commonActions: any = {
           .dispatch('postServiceReq')
           .then(() => {
             context
-              .dispatch('postAddToQueue', citizenId)
+              .dispatch('postAddToQueue', citizen_id)
               .then(resp => {
                 context.dispatch('resetAddCitizenModal')
                 context.commit('toggleBegunStatus', false)
@@ -1032,7 +1032,7 @@ export const commonActions: any = {
   clickBeginService (context, payload) {
     context.commit('setPerformingAction', true)
     context.commit('toggleServeCitizenSpinner', true)
-    const { citizenId } = context.getters.formData.citizen
+    const { citizen_id } = context.getters.formData.citizen
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -1040,7 +1040,7 @@ export const commonActions: any = {
           .dispatch('postServiceReq')
           .then(() => {
             context
-              .dispatch('postBeginService', citizenId)
+              .dispatch('postBeginService', citizen_id)
               .then(() => {
                 context.commit('toggleAddModal', false)
                 context.commit('toggleBegunStatus', true)

@@ -58,10 +58,9 @@ class RoomConfig(Base):
     create_modal = False
     edit_modal = False
     can_delete = False
-    office_name = 'office.office_name'
 
     column_list = [
-        office_name,
+        'office.office_name',
         'room_name',
         'capacity',
         'color',
@@ -73,7 +72,7 @@ class RoomConfig(Base):
         'booking'
     ]
 
-    column_labels = {office_name: 'Office Name',
+    column_labels = {'office.office_name': 'Office Name',
                      'deleted': 'Deleted'}
 
     form_create_rules = (
@@ -97,11 +96,11 @@ class RoomConfig(Base):
         'capacity',
         'color',
         'deleted',
-        office_name
+        'office.office_name'
     ]
 
     column_searchable_list = {
-        office_name
+        'office.office_name'
     }
     
 

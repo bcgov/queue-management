@@ -24,8 +24,6 @@ from app.models.bookings import Appointment
 from app.models.theq import Citizen, Office
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
-line_break = '<br />'
-
 
 def get_cancel_email_contents(appt: Appointment, user, office, timezone):
     """Send cancellation email"""

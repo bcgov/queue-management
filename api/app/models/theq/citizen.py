@@ -43,7 +43,6 @@ class Citizen(Base):
     # for walk-in notification
     notification_phone = db.Column(db.String(100), nullable=True)
     notification_email = db.Column(db.String(100), nullable=True)
-    # notification_sent_time = db.Column(UtcDateTime, nullable=True)
     notification_sent_time = db.Column(db.DateTime, nullable=True)
     reminder_flag = db.Column(db.Integer, nullable=True)
     walkin_unique_id = db.Column(db.String(500), nullable=True)

@@ -94,8 +94,7 @@ class OfficeConfig(Base):
             ("1", 'On - Show Currently Waiting  from bottom in SmartBoard')
         ],
     }
-    timezone_name = 'timezone.timezone_name'
-    column_labels = {'sb': 'Smartboard', timezone_name: 'Timezone Name'}
+    column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
     column_searchable_list = ('office_name',)
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
     column_list = ['office_name',
@@ -105,7 +104,7 @@ class OfficeConfig(Base):
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
                    'counters',
-                   timezone_name,
+                   'timezone.timezone_name',
                    'latitude',
                    'longitude',
                    'office_appointment_message',
@@ -227,7 +226,7 @@ class OfficeConfig(Base):
     }
 
     column_labels = {'sb': 'Smartboard',
-                     timezone_name: 'Timezone Name',
+                     'timezone.timezone_name': 'Timezone Name',
                      'exams_enabled_ind': 'Exams Enabled',
                      'appointments_enabled_ind': 'Appointments Enabled',
                      'office_appointment_message': 'Online Appointment Message',

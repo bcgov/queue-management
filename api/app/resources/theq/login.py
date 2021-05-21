@@ -27,7 +27,6 @@ class Login(Resource):
     @jwt.requires_auth_cookie
     def get(self):
         claims = g.jwt_oidc_token_info
-        admin_index = "admin.index"
 
         if claims["preferred_username"]:
             csr = CSR.find_by_username(claims["preferred_username"])
@@ -42,11 +41,11 @@ class Login(Resource):
 
                 login_user(csr)
                 if application.config['USE_HTTPS']:
-                    return redirect(url_for(admin_index,
+                    return redirect(url_for("admin.index",
                                             _scheme=application.config['PREFERRED_URL_SCHEME'],
                                             _external=application.config['USE_HTTPS']))
                 else:
-                    return redirect(url_for(admin_index))
+                    return redirect(url_for("admin.index"))
             else:
                 return abort(401, self.auth_string)
         else:
@@ -60,8 +59,8 @@ class Logout(Resource):
     def get(self):
         logout_user()
         if application.config['USE_HTTPS']:
-            return redirect(url_for(admin_index,
+            return redirect(url_for("admin.index",
                             _scheme=application.config['PREFERRED_URL_SCHEME'],
                             _external=application.config['USE_HTTPS']))
         else:
-            return redirect(url_for(admin_index))
+            return redirect(url_for("admin.index"))

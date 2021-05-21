@@ -22,7 +22,6 @@ from pprint import pprint
 
 class MultipleSelect2Field(Select2Field):
     """Extends select2 field to make it work with postgresql arrays and using choices.
-
     It is far from perfect and it should be tweaked it a bit more.
     """
 
@@ -80,25 +79,24 @@ class TimeslotConfig(Base):
 
     create_modal = False
     edit_modal = False
-    office_name = 'office.office_name'
 
     column_list = [
-        office_name,
+        'office.office_name',
         'start_time',
         'end_time',
         'day_of_week',
         'no_of_slots'
     ]
     column_labels = {
-        office_name: 'Office Name',
+        'office.office_name': 'Office Name',
         'start_time': 'Start Time (HH:MM format)',
         'end_time': 'End Time (HH:MM format)',
         'day_of_week': 'Day of week',
         'no_of_slots': 'No of appointment available per slot'
     }
-    column_searchable_list = (office_name,)
+    column_searchable_list = ('office.office_name',)
     column_sortable_list = [
-        office_name,
+        'office.office_name',
         'start_time',
         'end_time',
         'day_of_week',
