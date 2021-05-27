@@ -64,7 +64,7 @@
             <b-form-group>
               <label>Exam Date</label><br />
               <DatePicker
-                :value="date"
+                v-model="date"
                 style="color: black"
                 :disabled="fieldDisabled"
                 name="date"
@@ -72,6 +72,7 @@
                 class="w-100 date-time-fields"
                 @input="checkDate"
                 lang="en"
+                type="date"
               >
               </DatePicker>
             </b-form-group>
@@ -724,6 +725,8 @@ export default class EditGroupExamBookingModal extends Vue {
   @Getter('invigilatorMultiSelect') private invigilatorMultiSelect!: any;
   @Getter('shadowInvigilatorOptions') private shadowInvigilatorOptions!: any;
   @Getter('shadowInvigilators') private shadowInvigilators!: any;
+  @Getter('isPesticideDesignate') private isPesticideDesignate!: any;
+  @Getter('isOfficeManager') private isOfficeManager!: any;
 
   @Action('getBookings') public getBookings: any
   @Action('getExams') public getExams: any
@@ -735,9 +738,9 @@ export default class EditGroupExamBookingModal extends Vue {
   @Mutation('toggleEditGroupBookingModal') public toggleEditGroupBookingModal: any
 
   public invigilatorId: any = ''
-  public date: any = ''
-  public time: any = ''
   public offsiteLocation: any = ''
+  public date: any = null
+  public time: any = null
   public notes: any = ''
   public eventId: any = ''
   public editedFields: any = []
@@ -845,8 +848,18 @@ export default class EditGroupExamBookingModal extends Vue {
   }
 
   get fieldDisabled () {
-    if ((this.roleCode !== 'GA' && !this.isIta2Designate) && this.examType !== 'other') {
-      return true
+    if (this.roleCode === 'SUPPORT') {
+      return false
+    }
+    if (this.examType === 'challenger') {
+      if (this.roleCode !== 'GA' && !this.isIta2Designate && !this.isOfficeManager) {
+        return true
+      }
+    }
+    if (this.examType === 'group') {
+      if (!this.isIta2Designate && !this.isPesticideDesignate) {
+        return true
+      }
     }
     return false
   }
@@ -887,11 +900,7 @@ export default class EditGroupExamBookingModal extends Vue {
     // JSTOTS INFO removed new from moment. no need to use new with moment
     const date = moment(this.itemCopy.booking.start_time)
     // JSTOTS INFO removed new from moment. no need to use new with moment
-    const event = moment(e)
-    if (event.isBefore(moment(), 'day')) {
-      return
-    }
-    this.date = event
+    this.date = new Date(e)
     this.showMessage = false
     if (!this.itemCopy.booking) {
       if (!this.editedFields.includes('date')) {
@@ -1260,8 +1269,9 @@ export default class EditGroupExamBookingModal extends Vue {
       const { startTime } = tempItem.booking
       const { timezoneName } = this.actionedExam.booking.office.timezone
       const time = zone.tz(startTime, timezoneName).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
-      this.time = moment(time).format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
-      this.date = zone.tz(startTime, timezoneName).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+      this.time = new Date(time)
+      const date = zone.tz(startTime, timezoneName).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
+      this.date = new Date(date)
       if (tempItem.booking.sbc_staff_invigilated) {
         this.invigilatorId = 'sbc'
       } else {
