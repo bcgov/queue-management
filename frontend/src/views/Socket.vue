@@ -12,6 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */ -->
 
+<template>
+  <div></div>
+</template>
+
 <script lang="ts">
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
@@ -28,7 +32,6 @@ export default class Socket extends Vue {
   @appointmentsModule.Action('updateAppointments') public updateAppointments: any
 
   public reconnectInterval: any = null
-  $route: any
 
   mounted () {
     this.$root.$on('socketConnect', () => {
