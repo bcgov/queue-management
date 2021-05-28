@@ -726,7 +726,7 @@
             Schedule Exam
           </v-card-title>
           <v-card-text>
-            This exam has expired. Scheduling is not allowed.
+            This exam has expired on {{ examExpiryDateScheduling }}. Scheduling is not allowed.
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -807,6 +807,7 @@ export default class ExamInventoryTable extends Vue {
   private readonly showPesticideModal!: any
 
   private expiryNotificationDialog: boolean = false
+  private examExpiryDateScheduling: string = ''
 
   //   ...mapState ({
   //   showAllPesticide: state => state.addExamModule.showAllPesticideExams,
@@ -999,6 +1000,7 @@ export default class ExamInventoryTable extends Vue {
 
   checkExpiryDateAndAddCalendarBooking (item) {
     if (moment(item.expiry_date).isValid() && moment(item.expiry_date).isBefore(moment(), 'day')) {
+      this.examExpiryDateScheduling = moment(item.expiry_date).format('MMMM DD, YYYY')
       this.expiryNotificationDialog = true
     } else {
       this.addCalendarBooking(item)
