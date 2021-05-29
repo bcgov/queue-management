@@ -262,3 +262,7 @@ input#app_timepicker_id {
   padding-left: 13vh !important;
   overflow-y: hidden !important;
 }
+
+.tabs .form-render ul.list-group.list-group-striped {
+  align-items: unset !important;
+}
