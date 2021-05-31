@@ -76,10 +76,10 @@ objects:
           maxUnavailable: 0
         resources:
             limits:
-              cpu: 100m
+              cpu: 50m
               memory: 512Mi
             requests:
-              cpu: 50m
+              cpu: 20m
               memory: 256Mi
         activeDeadlineSeconds: 3600
       template:

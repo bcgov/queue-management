@@ -86,6 +86,7 @@ objects:
         metadata:
           labels:
             app: "${API_NAME}"
+            app-group: "${APP_GROUP}"
             name: "${API_NAME}"
         spec:
           containers:
@@ -505,6 +506,10 @@ parameters:
     value: ""
   - name: APPOINTMENT_PORTAL_URL
     description: ""
+    required: true
+    value: ""
+  - name: APP_GROUP
+    description: "For EDB NSP identification"
     required: true
     value: ""
 

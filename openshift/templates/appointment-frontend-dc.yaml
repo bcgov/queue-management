@@ -85,10 +85,10 @@ objects:
           maxUnavailable: 0
         resources:
           limits:
-            cpu: 100m
+            cpu: 50m
             memory: 512Mi
           requests:
-            cpu: 50m
+            cpu: 20m
             memory: 256Mi
         activeDeadlineSeconds: 3600
       template:
@@ -243,15 +243,15 @@ parameters:
     required: true
     value: "true"
   - name: VUE_APP_FEEDBACK_API
-    description: "API details for the feedback channel"
+    description: "Feedback API url"
     required: true
     value: ""
   - name: FEEDBACK_SERVICE_CHANNEL
-    description: "channel name for feedback"
+    description: "Camunda value for feedback channel name"
     required: true
     value: ""
   - name: FEEDBACK_ENABLE
-    description: "Flag to decide if Feedback is enabled"
+    description: "Feature flag to enable feedback display"
     required: true
     value: ""
 
