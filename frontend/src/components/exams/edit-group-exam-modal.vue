@@ -861,6 +861,9 @@ export default class EditGroupExamBookingModal extends Vue {
       }
     }
     if (this.examType === 'group') {
+      if (this.actionedExam.is_pesticide && !this.is_pesticide_designate) {
+        return true
+      }
       if (!this.is_ita2_designate && !this.is_pesticide_designate) {
         return true
       }
