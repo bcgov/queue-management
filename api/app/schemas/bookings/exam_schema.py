@@ -13,14 +13,14 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 from marshmallow import fields
-import toastedmarshmallow
+
 from app.models.bookings import Exam
+from app.schemas import BaseSchema
 from app.schemas.bookings import BookingSchema, ExamTypeSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
-from qsystem import ma
 
 
-class CandidateSchema(ma.SQLAlchemySchema):
+class CandidateSchema(BaseSchema):
     examinee_name = fields.String()
     examinee_email = fields.String()
     exam_type_id = fields.String()
@@ -32,13 +32,11 @@ class CandidateSchema(ma.SQLAlchemySchema):
     payee_email = fields.String()
 
 
-class ExamSchema(ma.SQLAlchemySchema):
+class ExamSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Exam
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
 
     booking_id = fields.Int(allow_none=True)
     deleted_date = fields.Str(allow_none=True)
@@ -48,7 +46,7 @@ class ExamSchema(ma.SQLAlchemySchema):
     exam_method = fields.Str()
     exam_name = fields.Str()
     exam_received = fields.Int()
-    exam_received_date = fields.DateTime(allow_none=True)
+    exam_received_date = fields.DateTime(allow_none=True, datetimeformat='%Y-%m-%dT%H:%M:%SZ')
     exam_type_id = fields.Int()
     examinee_name = fields.Str(allow_none=True)
     examinee_phone = fields.Str(allow_none=True)

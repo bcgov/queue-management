@@ -142,18 +142,18 @@ input:-webkit-autofill:active {
   word-break: break-word !important; 
 }
 
-#appointment-datepicker button.v-btn.v-btn--flat.v-btn--icon.v-btn--round.theme--light.v-size--default {
+#appointment-datepicker button.v-btn.v-btn--icon.v-btn--round.v-size--default {
   position: relative;
   top: 120px;
   background-color: #003366 !important;
 }
 
-#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-right.theme--light{
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi-chevron-right{
   color: rgb(255, 255, 255) !important;
   position: absolute;
   z-index: 1;
 }
-#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi.mdi-chevron-left.theme--light {
+#appointment-datepicker .v-btn> .v-btn__content> i.v-icon.notranslate.mdi-chevron-left {
   color: rgb(255, 255, 255) !important;
   position: absolute;
   z-index: 1;
@@ -187,4 +187,8 @@ input:-webkit-autofill:active {
   font-weight: bold;
   -left: 35px;
 
+}
+.pa-md-4.mx-lg-auto.v-card.v-sheet.theme--light {
+  border-color: #1773cc;
+  border-style: solid;
 }

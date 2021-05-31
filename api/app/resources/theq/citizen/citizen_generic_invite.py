@@ -54,7 +54,7 @@ def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
         .join(ServiceReq.periods) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
-        .order_by(Citizen.priority, Citizen.citizen_id) \
+        .order_by(Citizen.priority, Citizen.start_time) \
         .first()
     return citizen
 
@@ -143,12 +143,10 @@ class CitizenGenericInvite(Resource):
                 counter_id = int(csr.counter_id)
 
             citizen = find_citizen(counter_id,active_citizen_state, csr, waiting_period_state)
-            #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen:", citizen)
 
             # If no matching citizen with the same counter type, get next one
             if citizen is None:
                 citizen = find_citizen2(active_citizen_state, csr, waiting_period_state)
-                #print("DATETIME:", datetime.now(), "==>Key : ", key, "===>AFTER CALL TO find_citizen2:", citizen)
 
             if citizen is None:
                 return {"message": "There is no citizen to invite"}, 400
@@ -177,12 +175,12 @@ class CitizenGenericInvite(Resource):
             socketio.emit('update_customer_list', {}, room=csr.office_id)
             socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
             result = self.citizen_schema.dump(citizen)
-            socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+            socketio.emit('update_active_citizen', result, room=csr.office_id)
 
             #print("DATETIME:", datetime.now(), "end loop:     ", y , "==>Key : ", key)
 
-        return {'citizen': result.data,
-                'errors': result.errors}, 200
+        return {'citizen': result,
+                'errors': self.citizen_schema.validate(citizen)}, 200
 
 try:
     citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()

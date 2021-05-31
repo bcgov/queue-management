@@ -35,7 +35,7 @@ class UserAppointments(Resource):
             appointments = PublicUser.find_appointments_by_username(g.jwt_oidc_token_info['username'])
 
             result = self.appointments_schema.dump(appointments)
-            return {'appointments': result.data}
+            return {'appointments': result}
 
         except exc.SQLAlchemyError as e:
             print(e)

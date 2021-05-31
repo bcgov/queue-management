@@ -19,8 +19,11 @@ from flask_socketio import SocketIO
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
+from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
+from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
+from sqlalchemy_continuum import make_versioned
 
 
 def my_print(my_data):
@@ -72,6 +75,8 @@ cache.init_app(application)
 
 ma = Marshmallow(application)
 
+make_versioned(user_cls=None, plugins=[])
+
 #   Set up socket io and rabbit mq.
 socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=ping_timeout_seconds,ping_interval=ping_interval_seconds,
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
@@ -79,6 +84,7 @@ socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout
 if application.config['ACTIVE_MQ_URL'] is not None:
     socketio.init_app(application, async_mode='eventlet',
                       message_queue=application.config['ACTIVE_MQ_URL'],
+                      redis_options={'REDIS_OPTIONS'},
                       path='/api/v1/socket.io')
 else:
     socketio.init_app(application, path='/api/v1/socket.io')
@@ -290,6 +296,7 @@ import app.resources.theq.websocket
 import app.resources.theq.user.user
 import app.resources.theq.user.user_appointments
 
+import app.resources.bookings.appointment.all_recurring_stat_delete
 import app.resources.bookings.appointment.appointment_availability
 import app.resources.bookings.appointment.appointment_detail
 import app.resources.bookings.appointment.appointment_list
@@ -308,6 +315,7 @@ import app.resources.bookings.booking.booking_post
 import app.resources.bookings.booking.booking_put
 import app.resources.bookings.booking.booking_recurring_delete
 import app.resources.bookings.booking.booking_recurring_put
+import app.resources.bookings.booking.booking_recurring_stat_delete
 import app.resources.bookings.exam.exam_bcmp
 import app.resources.bookings.exam.exam_bulk_status
 import app.resources.bookings.exam.exam_delete
@@ -327,6 +335,7 @@ import app.resources.bookings.invigilator.invigilator_put
 import app.resources.bookings.room.room_list
 import app.resources.bookings.exam_type.exam_type_list
 import app.resources.bookings.appointment.appointment_reminder_get
+import app.resources.bookings.walkin.walkin
 
 
 # Hostname for debug purposes
@@ -350,6 +359,18 @@ def error_handler(e):
 @application.errorhandler(AuthError)
 @api.errorhandler(AuthError)
 def handle_auth_error(ex):
+    return {}, 401
+
+
+@application.errorhandler(JwtAuthError)
+@api.errorhandler(JwtAuthError)
+def handle_jwt_auth_error(error):
+    return error.error, error.status_code
+
+
+@application.errorhandler(JOSEError)
+@api.errorhandler(JOSEError)
+def handle_jose_jwt_error(error):
     return {}, 401
 
 

@@ -23,7 +23,7 @@ from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, has_any_role
-from app.utilities.email import send_email, get_confirmation_email_contents, generate_ches_token
+from app.utilities.email import send_email, get_confirmation_email_contents
 from pprint import pprint
 from app.services import AvailabilityService
 from dateutil.parser import parse
@@ -93,7 +93,8 @@ class AppointmentPut(Resource):
             if citizen.user_id != user.user_id:
                 abort(403)
 
-        appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+        appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
+        warning = self.appointment_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -104,8 +105,7 @@ class AppointmentPut(Resource):
 
         # Send confirmation email
         try:
-            pprint('Sending email for appointment update')
-            send_email(generate_ches_token(), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+            send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
         except Exception as exc:
             pprint(f'Error on token generation - {exc}')
 
@@ -125,8 +125,8 @@ class AppointmentPut(Resource):
             if "checked_in_time" in json_data:
                 socketio.emit('appointment_delete', id)
             else:
-                socketio.emit('appointment_update', result.data)
+                socketio.emit('appointment_update', result)
         
 
-        return {"appointment": result.data,
-                "errors": result.errors}, 200
+        return {"appointment": result,
+                "errors": self.appointment_schema.validate(appointment)}, 200

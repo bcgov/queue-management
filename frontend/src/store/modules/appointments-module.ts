@@ -51,7 +51,8 @@ export default {
     showCheckInModal: false,
     services: [],
     submitClicked: false,
-    draftAppointment: {}
+    draftAppointment: {},
+    toggleAppCalenderView: false,
 
   },
   getters: {
@@ -78,13 +79,14 @@ export default {
             name: apt.citizen_name,
             contact_information: apt.contact_information,
             comments: apt.comments,
-            color: serviceColor(apt.is_draft || apt.blackout_flag === 'Y', rootState.services, parseInt(apt.service_id)), // apt.is_draft || apt.blackout_flag === 'Y' ? 'grey darken-1 white--text' : 'cal-events-default', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
+            color: serviceColor(apt.is_draft || apt.blackout_flag === 'Y' || apt.stat_flag, rootState.services, parseInt(apt.service_id)), // apt.is_draft || apt.blackout_flag === 'Y' ? 'grey darken-1 white--text' : 'cal-events-default', //  apt.is_draft ? 'rgb(239, 212, 105)' : 'grey darken-1', // '#B5E0B8',
             blackout_flag: apt.blackout_flag,
             is_draft: apt.is_draft,
             recurring_uuid: apt.recurring_uuid,
             online_flag: apt.online_flag,
             timed: true,
-            serviceName: serviceName(rootState.services, parseInt(apt.service_id))
+            serviceName: serviceName(rootState.services, parseInt(apt.service_id)),
+            stat_flag: apt.stat_flag,
 
           })
         )
@@ -118,6 +120,12 @@ export default {
       }
       return false
     },
+    is_Support (state, getters, rootState) {
+      if (rootState.user && rootState.user.role && rootState.user.role.role_code === 'SUPPORT') {
+        return true
+      }
+      return false
+    },
     is_recurring_enabled (state, getters, rootState) {
       if (rootState.recurringFeatureFlag === 'On') {
         return true
@@ -130,6 +138,9 @@ export default {
         return searchNestedObject(event, search)
       }
       )
+    },
+    getApiTotalCount (state) {
+      return state.apiCallTotal
     }
   },
   actions: {
@@ -140,7 +151,7 @@ export default {
 
     deleteAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).delete(`/appointments/${payload}/`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
@@ -151,8 +162,19 @@ export default {
 
     deleteRecurringAppointments ({ dispatch, rootState }, payload) {
       const state = rootState
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).delete(`/appointments/recurring/${payload}`).then(() => {
+          dispatch('getAppointments').then(() => {
+            resolve()
+          })
+        })
+      })
+    },
+
+    deleteRecurringStatAppointments ({ dispatch, rootState }, payload) {
+      const state = rootState
+      return new Promise<void>((resolve, reject) => {
+        Axios({ state }).delete(`/appointments/all-stat/${payload}`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
           })
@@ -219,6 +241,26 @@ export default {
       })
     },
 
+    async createAxioObject ({ rootState }, payload) {
+      const state = rootState
+      payload.office_id = rootState.user.office_id
+      payload.appointment_draft_id = 1
+      return Axios({ state }).post('/appointments/', payload)
+    },
+
+    async createStatAxioObject ({ rootState }, payload) {
+      const state = rootState
+      payload.appointment_draft_id = 1
+      return Axios({ state }).post('/appointments/', payload)
+    },
+
+    async callBulkAxios({ rootState }, payload) {
+      let flag =  false
+      await Promise.all(payload.axiosArray).then(function() {
+        flag = payload['flag']
+      })
+      return flag
+    },
     postCheckIn ({ commit, dispatch, rootState }, payload) {
       const state = rootState
       const data = {
@@ -227,9 +269,12 @@ export default {
         service_id: payload.service_id,
         citizen_name: payload.title
       }
-      payload.start_time = data.checked_in_time
+      if (!payload.hasOwnProperty('start_time'))
+      {
+        payload.start_time = data.checked_in_time
+      }
       payload.snowplow_addcitizen = true
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${payload.appointment_id}/`, data).then(() => {
           if (state.officeType != 'nocallonsmartboard') {
             dispatch('sendToQueue', payload)
@@ -267,7 +312,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()
@@ -279,7 +324,7 @@ export default {
       const state = rootState
       const uuid = payload.recurring_uuid
 
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/recurring/${uuid}`, payload.data).then(resp => {
           dispatch('getAppointments')
           resolve()
@@ -299,7 +344,7 @@ export default {
         priority: 1,
         citizen_comments: `${start}|||${payload.comments}`,
         citizen_name: payload.title,
-        start_time: payload.start_time,
+        start_time: payload.start_time.replace('+00:00', 'Z'),
         snowplow_addcitizen: payload.snowplow_addcitizen
       }
 
@@ -347,9 +392,6 @@ export default {
 
     toggleAddModal ({ commit }, payload) {
       commit('toggleAddModal', payload, { root: true })
-      if (payload) {
-        commit('switchAddModalMode', 'add_mode', { root: true })
-      }
     },
 
     // toggleApptBookingModalWithDraft ({ commit }, payload) {
@@ -434,6 +476,10 @@ export default {
     toggleAppointmentBlackoutModal: (state, payload) => state.showAppointmentBlackoutModal = payload,
     setDraftAppointments: (state, payload) => state.draftAppointment = payload,
     setAgendaClickedAppt: (state, payload) => state.clickedAppt = payload,
-    setAgendaClickedTime: (state, payload) => state.clickedTime = payload
+    setAgendaClickedTime: (state, payload) => state.clickedTime = payload,
+    setApiTotalCount: (state, payload) => {
+      state.apiCallTotal = payload
+    },
+    setToggleAppCalenderView: (state, payload) => state.toggleAppCalenderView = payload,
   }
 }

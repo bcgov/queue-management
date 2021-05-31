@@ -77,7 +77,7 @@ class CitizenLeft(Resource):
 
             for p in service_request.periods:
                 if p.time_end is None:
-                    p.time_end = datetime.now()
+                    p.time_end = datetime.utcnow()
 
             #  Make snowplow calls to finish any stopped services
             if service_request.sr_id != active_sr:
@@ -89,10 +89,11 @@ class CitizenLeft(Resource):
         citizen.cs = CitizenState.query.filter_by(cs_state_name='Left before receiving services').first()
         if self.clear_comments_flag:
             citizen.citizen_comments = None
-
         if citizen.start_time.date() != datetime.now().date():
             citizen.accurate_time_ind = 0
 
+        # remove walkin unique id when, citizen leave
+        citizen.walkin_unique_id = None
         my_print("    ++> Time before updating citizen database: " + str(datetime.now()))
         db.session.add(citizen)
         my_print("    ++> Time before database commit: " + str(datetime.now()))
@@ -103,11 +104,11 @@ class CitizenLeft(Resource):
         my_print("    ++> Time before creating the result: " + str(datetime.now()))
         result = self.citizen_schema.dump(citizen)
         my_print("    ++> Time before socket io update call: " + str(datetime.now()))
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office_id)
 
         my_print("    ++> Time before return result call: " + str(datetime.now()))
-        return {'citizen': result.data,
-                'errors': result.errors}, 200
+        return {'citizen': result,
+                'errors': self.citizen_schema.validate(citizen)}, 200
 
     def get_citizen_string(self, citizen):
         if citizen is not None:

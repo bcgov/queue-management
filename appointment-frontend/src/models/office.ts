@@ -18,7 +18,16 @@ export interface Office {
   timeslots: TimeSlots[]
   timezone: TimeZone
   online_status: string
-  external_map_link: string
+  external_map_link: string,
+  check_in_notification: number,
+  check_in_reminder_msg: Text,
+  automatic_reminder_at: number,
+  currently_waiting: number,
+  digital_signage_message: number,
+  digital_signage_message_1: Text,
+  digital_signage_message_2: Text,
+  digital_signage_message_3: Text,
+  show_currently_waiting_bottom: number,
 }
 
 export interface Offices {

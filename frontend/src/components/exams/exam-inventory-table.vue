@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <template v-if="showPesticideModal">
       <UploadPesticideModal
         :actionedExam="actionedExam"
@@ -348,16 +348,16 @@
       >
         <!--  Field 1 - Event id??? Don't see it.  -->
         <!--  Field 2 - Exam Type -->
-        <template slot="exam_type_name" slot-scope="row">{{
+        <template #cell(exam_type_name)="row">{{
           row.item.exam_type.exam_type_name
         }}</template>
 
         <!--  Field 3 - Exam name??? Don't see it.  -->
         <!--  Field 4 - Scheduled Date -->
-        <template slot="start_time" slot-scope="row">
+        <template #cell(start_time)="row">
           <span v-if="!row.item.booking">-</span>
           <span
-            v-else-if="checkStartDate(row.item.booking.start_time)"
+            v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
             class="expired"
             >{{ formatDate(row.item.booking.start_time) }}</span
           >
@@ -366,23 +366,23 @@
 
         <!--  Field 5 - Exam method??? Don't see it.  -->
         <!--  Field 6 - Expiry Date. -->
-        <template slot="expiry_date" slot-scope="row">
+        <template #cell(expiry_date)="row">
           <span
             v-if="
               row.item.exam_type.exam_type_name === 'Monthly Session Exam' &&
-              !checkExpiryDate(row.item.expiry_date)
+              !checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)
             "
             >–</span
           >
           <span
             v-else-if="
               row.item.exam_type.group_exam_ind &&
-              !checkExpiryDate(row.item.expiry_date)
+              !checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)
             "
             >–</span
           >
           <span
-            v-else-if="checkExpiryDate(row.item.expiry_date)"
+            v-else-if="checkExpiryDate(row.item.expiry_date,row.item.exam_returned_date)"
             class="expired"
             >{{ formatDate(row.item.expiry_date) }}</span
           >
@@ -390,18 +390,18 @@
         </template>
 
         <!--  Field 7 - Exam Received -->
-        <template slot="exam_received" slot-scope="row">{{
+        <template #cell(exam_received)="row">{{
           row.item.exam_received_date ? 'Yes' : 'No'
         }}</template>
 
         <!--  Field 8 - Candidate name??? Don't see it.  -->
         <!--  Field 9 - Notes??? Don't see it.  -->
         <!--  Field 10 - The Status column/flag -->
-        <template slot="scheduled" slot-scope="row">
+        <template #cell(scheduled)="row">
           <font-awesome-icon
             v-if="!row.detailsShowing"
             :icon="statusIcon(row.item).icon"
-            @click.stop="row.toggleDetails()"
+            @click="row.toggleDetails"
             class="m-0 p-0 icon-cursor-hover"
             :style="statusIcon(row.item).style"
           />
@@ -409,13 +409,13 @@
             v-if="row.detailsShowing"
             variant="link"
             style="padding: 0px"
-            @click.stop="row.toggleDetails()"
+            @click="row.toggleDetails"
             >Hide</b-button
           >
         </template>
 
         <!--  Expanded row - Details and still required. -->
-        <template slot="row-details" slot-scope="row">
+        <template #row-details="row">
           <!--  If no items to be done, display some (debugging?) info. -->
           <template v-if="stillRequires(row.item).length === 0">
             <div class="details-slot-div">
@@ -456,7 +456,7 @@
         </template>
 
         <!--  Field 11 - the actions column.-->
-        <template slot="actions" slot-scope="row">
+        <template #cell(actions)="row">
           <!--  The various dropdown actions allowed.  -->
           <b-dropdown
             variant="link"
@@ -707,7 +707,7 @@
             </template>
           </b-dropdown>
         </template>
-        <template slot="office" slot-scope="row">{{
+        <template #cell(office)="row">{{
           row.item.office.office_name
         }}</template>
       </b-table>
@@ -716,7 +716,7 @@
       </div>
     </div>
     <!--  End of exam display.  -->
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
@@ -1258,14 +1258,20 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkExpiryDate (date) {
+  checkExpiryDate (date, exam_returned_date) {
+    if (exam_returned_date != null) {      
+      return false
+    }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
       return true
     }
     return false
   }
 
-  checkStartDate (date) {
+  checkStartDate (date, exam_returned_date) {    
+    if (exam_returned_date != null) {      
+      return false
+    }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
       return true
     }
@@ -1669,9 +1675,31 @@ export default class ExamInventoryTable extends Vue {
       }
       return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
     }
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+    else if (key === 'start_time') {      
+      if (a.booking == null && b.booking == null) {        
+        return 0
+      }     
+      else if (a.booking == null) {
+        return 1
+      }
+      else if (b.booking == null) {
+        return -1
+      } else {        
+        let val1, val2
+        if(a.booking.start_time != null) {
+          val1 = parseInt((new Date(a.booking.start_time).getTime() / 1000).toFixed(0))
+        }
+        if(b.booking.start_time != null) {
+          val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
+        }        
+        return val1 - val2
+      }
+      
+    }
+
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {      
       return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-    } else {
+    } else {      
       return toString(a[key]).localeCompare(toString(b[key]), undefined, {
         numeric: true
       })

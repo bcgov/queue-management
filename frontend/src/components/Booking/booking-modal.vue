@@ -137,7 +137,7 @@
                   class="mr-3 mt-1 mb-0 pr-3 pl-3"
                   small
                 >
-                  <template slot="invigilator_name" slot-scope="row">
+                  <template #cell(invigilator_name)="row">
                     <div class="table-pointer">{{ row.item.name }}</div>
                     <div style="display: none">
                       {{
@@ -203,9 +203,9 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import DataSummaryTable from './../exams/data-summary-table.vue'
@@ -486,14 +486,16 @@ export default class BookingModal extends Vue {
       }
       // TOCHECK removed new keyword in moment. not needed
       // const start = new moment(this.date.start).utc()
-      // const end = new moment(this.endTime).utc()
-      const start = moment(this.date.start).utc()
       const end = moment(this.endTime).utc()
+      const start = moment.tz(this.date.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+      if (this.endTime) {
+      const end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+      }
 
       const booking: any = {
         room_id: this.date.resource.id,
-        start_time: start.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
-        end_time: end.format('DD-MMM-YYYY[T]HH:mm:ssZ'),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ssZ'),
         fees: 'false',
         booking_name: this.exam.exam_name,
         sbc_staff_invigilated: 0,

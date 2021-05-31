@@ -46,7 +46,7 @@ class CSRConfig(Base):
         'username': 'Username',
         'office.office_name': 'Office',
         'office_manager': 'Office Exam Manager',
-        'pesticide_designate': 'Pesticide Client Liaison/Program Specialist',
+        'pesticide_designate': 'Environment Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
         'ita2_designate': 'ITA Liaison/Program Specialist',
         'role.role_desc': 'Role',
@@ -70,7 +70,7 @@ class CSRConfig(Base):
             ("0", 'No - not an Exam Manager'), ("1", 'Yes - an Exam Manager')
         ],
         'pesticide_designate': [
-            ("0", 'No - not a Pesticide Specialist'), ("1", 'Yes - a Pesticide Specialist')
+            ("0", 'No - not an Environment Specialist'), ("1", 'Yes - an Environment Specialist')
         ],
         'finance_designate': [
             ("0", 'No - not in Finance team'), ("1", 'Yes - for Finance team reporting')
@@ -209,7 +209,7 @@ CSRGAModelView = CSRConfigGA(CSR, db.session, endpoint='csrga')
 def check_uservalues(updated_csr):
 
     #  Assume data does not need to be updated
-    update_data = False;
+    update_data = False
 
     #  See if spaces at start or end of user name.
     if updated_csr.username != updated_csr.username.strip():

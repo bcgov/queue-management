@@ -20,7 +20,7 @@ import "core-js/stable"; // For IE11 compat
 
 import Vue from 'vue'
 import vuetify from './plugins/vuetify';
-
+import Buefy from 'buefy';
 import 'es6-promise/auto'
 import store from './store/index'
 import BootstrapVue from 'bootstrap-vue'
@@ -32,6 +32,7 @@ import {
   faAngleRight,
   faBars,
   faCalendar,
+  faCalendarAlt,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
@@ -40,6 +41,7 @@ import {
   faClipboardCheck,
   faClock,
   faDollarSign,
+  faEdit,
   faEraser,
   faExclamation,
   faExclamationTriangle,
@@ -48,6 +50,7 @@ import {
   faHandsHelping,
   faLifeRing,
   faMinus,
+  faPhone,
   faPlus,
   faShareSquare,
   faShippingFast,
@@ -57,23 +60,28 @@ import {
   faUserAlt,
   faUserCheck,
   faUserCircle,
+  faWalking,
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VDragged from 'v-dragged'
-
+import 'buefy/dist/buefy.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/css/q.css'
 import './assets/css/bc-gov-style.css'
 import MainApp from './MainApp.vue'
+
+import ConfigHelper from '@/utils/config-helper'
+
+
 require('es6-shim')
 // require('Keycloak')
 require('../static/keycloak.js')
 // import * as Keycloak from "../static/keycloak.js";
 const Keycloak = window && (window as any).Keycloak;
-
+Vue.use(Buefy)
 Vue.use(VDragged)
 Vue.use(Plugin)
 library.add(
@@ -107,11 +115,14 @@ library.add(
   faUserAlt,
   faUserCircle,
   faWindowMaximize,
-  faWindowRestore
+  faWindowRestore,
+  faEdit,
+  faPhone,
+  faCalendarAlt,
+  faWalking
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(BootstrapVue)
-
 var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL)
 Vue.prototype.$keycloak = keycloak
 Vue.config.productionTip = false
@@ -125,6 +136,7 @@ Vue.config.productionTip = false
 // });
 /* eslint-disable no-new */
 
+ConfigHelper.fetchConfig()
 
 new Vue({
   router,

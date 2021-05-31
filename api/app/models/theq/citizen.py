@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from qsystem import db
 from app.models.theq import Base
+from sqlalchemy_utc import UtcDateTime, utcnow
 
 
 class Citizen(Base):
@@ -38,6 +39,19 @@ class Citizen(Base):
     office = db.relationship('Office', lazy='joined')
     counter = db.relationship('Counter', lazy='joined')
     user = db.relationship('PublicUser', lazy='joined')
+
+    # for walk-in notification
+    notification_phone = db.Column(db.String(100), nullable=True)
+    notification_email = db.Column(db.String(100), nullable=True)
+    # notification_sent_time = db.Column(UtcDateTime, nullable=True)
+    notification_sent_time = db.Column(db.DateTime, nullable=True)
+    reminder_flag = db.Column(db.Integer, nullable=True)
+    walkin_unique_id = db.Column(db.String(500), nullable=True)
+    automatic_reminder_flag = db.Column(db.Integer, nullable=True)
+
+    # digital signage
+    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
+
 
     def __repr__(self):
         return '<Citizen Name:(name={self.citizen_name!r})>'.format(self=self)

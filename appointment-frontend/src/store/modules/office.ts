@@ -1,6 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
-import { Appointment } from './../../models/appointment'
+import { Appointment, AppointmentRequestBody, AppointmentSlot } from '@/models/appointment'
 import AppointmentService from '@/services/appointment.services'
 import CommonUtils from '@/utils/common-util'
 import { Office } from '@/models/office'
@@ -24,6 +23,8 @@ export default class OfficeModule extends VuexModule {
   currentAppointmentSlot: AppointmentSlot
   currentAppointment: Appointment
   currentDraftAppointment: Appointment
+  spStatus: string
+  spLastStep: number
 
   /**
     Mutations in this Module
@@ -80,6 +81,10 @@ export default class OfficeModule extends VuexModule {
     this.currentDraftAppointment = appointment
   }
 
+  @Mutation
+  public setSPStatus (status: string) {
+    this.spStatus = status
+  }
   /**
     Actions in this Module
   **/
@@ -112,8 +117,8 @@ export default class OfficeModule extends VuexModule {
       // Sort alphabetically on displayed external_service_name
       services = services.sort((a, b) => {
         // If external_service_name is null, sort it to last of list.
-        let aName = a.external_service_name || 'zzz'
-        let bName = b.external_service_name || 'zzz'
+        const aName = a.external_service_name || 'zzz'
+        const bName = b.external_service_name || 'zzz'
         return aName.localeCompare(bName)
       })
     }
@@ -235,5 +240,49 @@ export default class OfficeModule extends VuexModule {
     response = await AppointmentService.createDraftAppointment(appointmentBody)
     // }
     return response?.data?.appointment || {}
+  }
+
+  @Action({ rawError: true })
+  public callSnowplowClick (mySP: any): void {
+    if (!mySP.loggedIn) {
+      mySP.clientID = null
+    }
+    if (!mySP.url) {
+      mySP.url = null
+    }
+    (window as any).snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.cfmspoc/appointment_click/jsonschema/1-0-0',
+      data: {
+        label: mySP.label,
+        appointment_step: mySP.step,
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
+        location: mySP.loc,
+        service: mySP.serv,
+        url: mySP.url
+      }
+    }
+    )
+  }
+
+  @Action({ rawError: true })
+  public callSnowplow (mySP: any): void {
+    if (!mySP.loggedIn) {
+      mySP.clientID = null
+    }
+    (window as any).snowplow('trackSelfDescribingEvent', {
+      schema: 'iglu:ca.bc.gov.cfmspoc/appointment_step/jsonschema/1-0-0',
+      data: {
+        appointment_step: mySP.step,
+        status: this.context.state['spStatus'],
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
+        location: mySP.loc,
+        service: mySP.serv
+      }
+    }
+    )
   }
 }

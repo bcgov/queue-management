@@ -52,12 +52,12 @@ limitations under the License.*/
       class="p-0 m-0 w-100"
       sort-by='start_time'
     >
-      <template slot="comments" slot-scope="data">
+      <template #cell(comments)="data">
         <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
           {{ data.value }}
         </div>
       </template>
-      <template slot="check_in" slot-scope="data">
+      <template #cell(check_in)="data">
         <button
           @click.stop="handleClickCheckIn(data.value.appt)"
           class="ga-close btn btn-success btn-sm"
@@ -76,6 +76,7 @@ limitations under the License.*/
   </div>
 </template>
 <script lang="ts">
+ /* eslint-disable */
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'
@@ -255,8 +256,7 @@ export default class AgendaScreen extends Vue {
     this.toggleApptBookingModal(true);
   }
 
-  handleClickCheckIn(  appt ) {
-  
+  handleClickCheckIn(  appt ) {  
     // Copied this check over from check-in  modal
     // Essentially, we do not want to  allow the user to check in a user if  another user
     // is actively being served but minimized. They must instead be put on hold by CSR.
@@ -277,7 +277,7 @@ export default class AgendaScreen extends Vue {
   // A map of appointment_ids with true/false to show the loading spinner
   private loadingButtons = {}
   checkIn( appt ) {
-    const tempEvent = {
+    const tempEvent  = {
       title: appt.citizen_name,
       contact_information: appt.contact_information,
       online_flag: appt.online_flag,
@@ -288,7 +288,9 @@ export default class AgendaScreen extends Vue {
       appointment_id: appt.appointment_id,
       recurring_uuid: null,
       blackout_flag: 'N',
-      citizen_id: appt.citizen_id
+      citizen_id: appt.citizen_id,
+      //for invite fix
+      start_time: appt.start_time
     }
     this.setAgendaClickedAppt(tempEvent)
     this.clickedTime =  {

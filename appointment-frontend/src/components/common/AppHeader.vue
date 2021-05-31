@@ -5,27 +5,35 @@
     height="64"
   >
     <v-img
+      v-if="!isWalkin"
       class="mx-2 bc-logo"
       :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
       max-width="132"
       contain
       @click="goTo('home')"
     ></v-img>
-    <v-toolbar-title>Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
+    <v-img
+      v-else
+      class="mx-2 bc-logo"
+      :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
+      :max-width="($vuetify.breakpoint.xs) ? 60 : 132"
+      contain
+      @click="goTo('home')"
+    ></v-img>
+    <v-toolbar-title v-if="!isWalkin">Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
 
     <v-spacer></v-spacer>
 
     <v-btn
-      href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services"
-      target="_blank"
       outlined
       alt='Help - opens in new window'
-      class='mx-3'>
+      class='mx-3'
+      @click="goTo('help')">
       <v-icon small class="mr-2">mdi-open-in-new</v-icon>
       Help
     </v-btn>
 
-    <template v-if="!isAuthenticated">
+    <template v-if="((!isAuthenticated) && (!isWalkin))">
       <div class='d-flex'>
         <v-btn
           dark
@@ -46,45 +54,120 @@
       </div>
     </template>
     <template v-else>
-      <SignedUser :username="username"></SignedUser>
+      <SignedUser v-if="(!isWalkin)" :username="username"></SignedUser>
     </template>
   </v-app-bar>
 </template>
 
 <script lang="ts">
-import { AccountModule, AuthModule } from '@/store/modules'
+import { AccountModule, AuthModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 import SignedUser from './SignedUser.vue'
+import { User } from '@/models/user'
 
 @Component({
   components: {
     SignedUser
   },
   computed: {
-    ...mapGetters('auth', ['isAuthenticated']),
-    ...mapGetters('account', ['username'])
+    ...mapState('office', [
+      'currentOffice',
+      'currentService',
+      'currentSnowPlow'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
+    ...mapGetters('auth', [
+      'isAuthenticated'
+    ]),
+    ...mapGetters('account', [
+      'username'
+    ])
+  },
+  methods: {
+    ...mapActions('office', [
+      'callSnowplowClick'
+    ])
   }
 })
 export default class AppHeader extends Vue {
   private readonly isAuthenticated!: boolean
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly currentUserProfile!: User
+  private readonly callSnowplowClick!: (mySP: any) => any
   private readonly username!: string
+  private curService: string
+  private curOffice: string
+  private isWalkin:boolean = false
 
   async mounted () {
+    this.isWalkin = window.location.href.includes('walk-in-Q')
+  }
+
+  private callsp () {
+    (window as any).snowplow('trackPageView')
   }
 
   login () {
     this.$router.push('/login')
+    this.callsp()
   }
+
   register () {
     this.$router.push('/login')
+    this.callsp()
   }
+
   private goTo (page) {
+    let currStep = ''
+    let theloc = null
+    let theserv = null
+    switch (this.$store.state.spLastStep) {
+      case 1:
+        currStep = 'Location Selection'
+        break
+      case 2:
+        currStep = 'Select Service'
+        theloc = this.currentOffice?.office_name
+        break
+      case 3:
+        currStep = 'Select Date'
+        theloc = this.currentOffice?.office_name
+        theserv = this.currentService?.external_service_name
+        break
+      case 4:
+        currStep = 'Login to Confirm Appointment'
+        break
+      default:
+        break
+    }
+    let mySP = {}
     switch (page) {
       case 'register':
-      case 'login': this.$router.push('/login')
+        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        this.callSnowplowClick(mySP)
+        this.$router.push('/login')
+        this.callsp()
         break
-      case 'home': this.$router.push('/')
+      case 'login':
+        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        this.callSnowplowClick(mySP)
+        this.$router.push('/login')
+        this.callsp()
+        break
+      case 'home':
+        this.$router.push('/')
+        this.callsp()
+        break
+      case 'help':
+        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
+        this.callSnowplowClick(mySP)
+        window.open('https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services', '_blank')
         break
     }
   }

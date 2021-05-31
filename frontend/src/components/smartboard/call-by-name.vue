@@ -18,9 +18,18 @@ limitations under the License.*/
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>
-      <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
+      <div v-if="((!networkStatus.networkDown) && (office.office.show_currently_waiting_bottom === 1))" class="bottom-flex-div">
         <div class="flex-title">Currently waiting: {{ waiting }}</div>
       </div>
+      <span v-else>
+        <br/><br/>
+      </span>
+      <MarqueeText
+      v-if="isMessageEnabled.isMessageEnabled"
+        :smartboardData="{ office_number }"
+        :networkStatus="{ networkDown }"
+        :office="{office}"
+      />
     </div>
   </div>
 </template>
@@ -33,10 +42,12 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
 import config from '../../../config'
+import MarqueeText from './marquee-text.vue'
 
 @Component({
   components: {
-    Video
+    Video,
+    MarqueeText
   }
 })
 export default class CallByName extends Vue {
@@ -46,9 +57,17 @@ export default class CallByName extends Vue {
   @Prop({ default: '' })
   private networkStatus!: string
 
+  @Prop({ default: [] })
+  private office!: any
+
+  @Prop({ default: false })
+  private isMessageEnabled!: boolean
+
   private citizens: any = ''
   private officeType: string = ''
   private maxVideoHeight: string | number = ''
+  private office_number: string = this.smartboardData.office_number
+  private networkDown: boolean = false
 
   get url () {
     return `/smartboard/?office_number=${this.smartboardData.office_number}`

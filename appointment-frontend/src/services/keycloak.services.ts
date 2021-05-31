@@ -80,10 +80,10 @@ class KeyCloakService {
   }
 
   async logout (redirectUrl?: string) {
-    let token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
+    const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
     if (token) {
       this.kc = Keycloak(ConfigHelper.getKeycloakConfigUrl())
-      let kcOptions :KeycloakInitOptions = {
+      const kcOptions :KeycloakInitOptions = {
         onLoad: 'login-required',
         checkLoginIframe: false,
         timeSkew: 0,
@@ -96,7 +96,7 @@ class KeyCloakService {
       // putting tokens back in from returning async calls  (see #2341)
       ConfigHelper.clearSession()
       // ConfigHelper.addToSession(SessionStorageKeys.PreventStorageSync, true)
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         this.kc && this.kc.init(kcOptions)
           .then(authenticated => {
             if (!authenticated) {
@@ -133,7 +133,7 @@ class KeyCloakService {
     if (!this.kc || !this.kc.tokenParsed || !this.kc.tokenParsed.exp || !this.kc.timeSkew) {
       return
     }
-    let tokenExpiresIn = this.kc.tokenParsed.exp - Math.ceil(new Date().getTime() / 1000) + this.kc.timeSkew + 100
+    const tokenExpiresIn = this.kc.tokenParsed.exp - Math.ceil(new Date().getTime() / 1000) + this.kc.timeSkew + 100
     this.kc && this.kc.updateToken(tokenExpiresIn)
       .then(refreshed => {
         if (refreshed) {
@@ -147,7 +147,7 @@ class KeyCloakService {
 
   decodeToken () {
     try {
-      let token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
+      const token = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
       if (token) {
         const base64Url = token.split('.')[1]
         const base64 = decodeURIComponent(window.atob(base64Url).split('').map(function (c) {

@@ -13,18 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-import copy
-import json
 from flask import request, g
 from flask_restx import Resource
-from app.models.theq import CSR, Office
-from app.models.bookings import ExamType, Invigilator
-from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, my_print
-from app.utilities.bcmp_service import BCMPService
 
-from app.resources.bookings.exam.exam_post import ExamPost
 from app.auth.auth import jwt
+from app.models.bookings import Invigilator
+from app.models.theq import CSR
+from app.resources.bookings.exam.exam_post import ExamPost
+from app.schemas.bookings import ExamSchema
+from app.utilities.bcmp_service import BCMPService
+from qsystem import api, api_call_with_retry
 
 
 @api.route("/exams/bcmp/", methods=["POST"])
@@ -46,7 +44,8 @@ class ExamBcmpPost(Resource):
         else:
             booking = None
 
-        exam, warning = self.exam_schema.load(json_data)
+        exam = self.exam_schema.load(json_data)
+        warning = self.exam_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -72,7 +71,7 @@ class ExamBcmpPost(Resource):
 
         else:
 
-            logging.info("Creating Group pesticide exam")
+            logging.info("Creating Group Environment exam")
             bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.jwt_oidc_token_info)
             
             
@@ -82,3 +81,4 @@ class ExamBcmpPost(Resource):
         else:
             return {"message": "create_group_exam_bcmp failed",
                 "error": bcmp_response}, 403
+

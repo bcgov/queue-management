@@ -42,7 +42,7 @@ export class checkmark extends Vue {
 
   },
   template: `
-  <fragment>
+  <div>
     <b-row no-gutters class="mx-2">
       <b-col cols="2">
         <b-form-group>
@@ -57,7 +57,7 @@ export class checkmark extends Vue {
         <span style="color: red">Number of selected exams does not equal the number of candidates</span>
       </b-col>
     </b-row>
-  </fragment>
+  </div>
 `
 })
 export class AddExamCounter extends Vue {
@@ -199,35 +199,41 @@ export class DateQuestion extends Vue {
   },
   template: `
   <b-row no-gutters>
-    <b-col class="dropdown">
-    <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
-    <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
-    <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
-    <h5 v-if="addExamModal.setup === 'pesticide' ">Add Pesticide Exam</h5>
-    <label>Exam Type</label><br>
-      <div @click="clickInput" id="exam_type_dropdown">
-        <b-input read-only
-                 autocomplete="off"
-                 :value="inputText"
-                 placeholder="click here to see options"
-                 :style="inputStyle" />
-      </div>
-      <div :class="dropclass"
-           style="border: 1px solid grey"
-           @click="clickInput">
-        <template v-for="type in dropItems">
-          <b-dd-header v-if="type.header"
-                       :style="{backgroundColor: type.exam_color}"
-                       :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-          <b-dd-item v-else :style="{backgroundColor: type.exam_color}"
-                     @click="preHandleInput(type.exam_type_id)"
-                     :name="type.exam_type_id"
-                     autocomplete="off"
-                     :id="type.exam_type_id"
-                     :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-        </template>
-      </div>
-    </b-col>
+    <b-row>
+      <b-col class="dropdown">
+        <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
+        <h5 v-if="addExamModal.setup === 'individual' ">Add Individual ITA Exam</h5>
+        <h5 v-if="addExamModal.setup === 'other' ">Add Non-ITA Exam</h5>
+        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
+      </b-col>
+      <b-col>
+        <label>Exam Type</label><br>
+        <div @click="clickInput" id="exam_type_dropdown">
+          <b-input read-only
+                  autocomplete="off"
+                  :value="inputText"
+                  placeholder="click here to see options"
+                  :style="inputStyle" />
+        </div>
+      </b-col>
+    </b-row
+  <b-row>
+    <div :class="dropclass"
+          style="border: 1px solid grey"
+          @click="clickInput">
+      <template v-for="type in dropItems">
+        <b-dd-header v-if="type.header"
+                      :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
+                      :class="type.class">{{ type.exam_type_name }}</b-dd-header>
+        <b-dd-item v-else :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
+                    @click="preHandleInput(type.exam_type_id)"
+                    :name="type.exam_type_id"
+                    autocomplete="off"
+                    :id="type.exam_type_id"
+                    :class="type.class">{{ type.exam_type_name }}</b-dd-item>
+      </template>
+    </div>
+    </b-row>
   </b-row>
 `
 })
@@ -267,8 +273,8 @@ export class DropdownQuestion extends Vue {
 
   get dropItems () {
     const sorter = (a, b) => {
-      var typeA = a.exam_type_name
-      var typeB = b.exam_type_name
+      const typeA = a.exam_type_name
+      const typeB = b.exam_type_name
       if (typeA < typeB) {
         return -1
       }
@@ -295,7 +301,7 @@ export class DropdownQuestion extends Vue {
     }
     if (this.addExamModal.setup === 'group') {
       const exams = this.examTypes.filter(type =>
-        (type.group_exam_ind === 1 && type.exam_type_name != 'Group Pesticide Exam' && type.exam_type_name != 'Pesticide Group Exam')
+        (type.group_exam_ind === 1 && type.exam_type_name != 'Group Environment Exam')
       )
       return exams.sort((a, b) => sorter(a, b))
     }
@@ -326,7 +332,7 @@ export class DropdownQuestion extends Vue {
       return 'dropdown-menu'
     }
     if (this.addExamModal.step1MenuOpen) {
-      return 'dropdown-menu dropdown-menu-right show py-0 my-0 w-100'
+      return 'dropdownmenu dropdown-menu-right show py-0 my-0 w-100'
     }
   }
 
@@ -476,7 +482,7 @@ export class ExamReceivedQuestion extends Vue {
 
   },
   template: `
-  <fragment v-if="q.key === 'exam_name' && setup === 'challenger'">
+  <div v-if="q.key === 'exam_name' && setup === 'challenger'">
     <b-row no-gutters>
       <b-col cols="11"><h5>Adding a Monthly Session Exam</h5></b-col>
     </b-row>
@@ -496,8 +502,8 @@ export class ExamReceivedQuestion extends Vue {
       </b-col>
     <checkmark :validated="validationObj[q.key].valid"  />
   </b-row>
-  </fragment>
-  <fragment v-else>
+  </div>
+  <div v-else>
     <b-row no-gutters>
       <b-col cols="11">
         <b-form-group>
@@ -514,7 +520,7 @@ export class ExamReceivedQuestion extends Vue {
       </b-col>
       <checkmark v-if="setup !=='challenger' " :validated="validationObj[q.key].valid"  />
     </b-row>
-  </fragment>
+  </div>
 `
 })
 export class InputQuestion extends Vue {
@@ -554,7 +560,7 @@ export class InputQuestion extends Vue {
     })
   },
   template: `
-    <fragment>
+    <div>
       <b-row no-gutters>
         <b-col cols="3">
           <label>{{q.text}}
@@ -576,7 +582,7 @@ export class InputQuestion extends Vue {
 
         <checkmark :validated="validationObj[q.key].valid" />
       </b-row>
-    </fragment>
+    </div>
   `
 })
 
@@ -639,7 +645,7 @@ export class InputQuestion2 extends Vue {
 
   },
   template: `
-    <fragment>
+    <div>
       <template v-if="capturedExam.on_or_off === 'off' || setup === 'pesticide' || setup === 'group' ">
         <b-row no-gutters>
           <b-col cols="11">
@@ -691,7 +697,7 @@ export class InputQuestion2 extends Vue {
           </b-col>
         </b-row>
       </template>
-      </fragment>
+      </div>
   `
 })
 

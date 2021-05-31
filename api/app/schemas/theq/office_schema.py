@@ -12,20 +12,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import toastedmarshmallow
 from marshmallow import fields
 from app.models.theq import Office
 from app.schemas.theq import SmartBoardSchema, CounterSchema, ServiceSchema, TimezoneSchema, TimeslotSchema
 from qsystem import ma
+from app.schemas import BaseSchema
 
 
-class OfficeSchema(ma.SQLAlchemySchema):
+class OfficeSchema(BaseSchema):
 
-    class Meta:
+    class Meta(BaseSchema.Meta):
         model = Office
         include_relationships = True
-        load_instance = True
-        jit = toastedmarshmallow.Jit
         # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
@@ -54,5 +52,15 @@ class OfficeSchema(ma.SQLAlchemySchema):
     online_status = fields.Str()
     external_map_link = fields.Str()
 
+    # for walk-in notifications
+    check_in_notification = fields.Int()
+    check_in_reminder_msg = fields.Str()
+    automatic_reminder_at = fields.Int()
 
-
+    # for Digital Signage
+    currently_waiting = fields.Int()
+    digital_signage_message = fields.Int()
+    digital_signage_message_1 = fields.Str()
+    digital_signage_message_2 = fields.Str()
+    digital_signage_message_3 = fields.Str()
+    show_currently_waiting_bottom = fields.Int()

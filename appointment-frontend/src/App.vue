@@ -2,17 +2,8 @@
   <v-app id="app">
     <div class="app-body" :class="{'app-mobile': $vuetify.breakpoint.xs}">
       <app-header :key="$store.state.refreshKey"></app-header>
+      <feedback v-if="(isFeedbackEnabled && (!isWalkin))"></feedback>
       <main class="main-block container">
-        <v-btn
-          color="secondary"
-          fixed
-          bottom
-          right
-          fab
-          @click="scrollTo"
-        >
-          <v-icon color="black">{{(isScrolled) ? 'mdi-chevron-double-up' : 'mdi-chevron-double-down'}}</v-icon>
-        </v-btn>
         <router-view />
       </main>
       <app-footer id="footer"></app-footer>
@@ -28,6 +19,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
 import CommonUtils from './utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
+import { Feedback } from './components/feedback'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import { SessionStorageKeys } from '@/utils'
@@ -38,7 +30,8 @@ import { getModule } from 'vuex-module-decorators'
 @Component({
   components: {
     AppHeader,
-    AppFooter
+    AppFooter,
+    Feedback
   },
   computed: {
     ...mapGetters('auth', [
@@ -59,6 +52,8 @@ export default class App extends Vue {
   private readonly isAuthenticated!: boolean
   private tokenService = new TokenService()
   private isScrolled = false
+  private isFeedbackEnabled: boolean = ConfigHelper.isFeedbackEnabled()
+  private isWalkin:boolean = false
 
   private async beforeMount () {
     await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
@@ -73,6 +68,7 @@ export default class App extends Vue {
       await this.initSetup()
       callback()
     })
+    this.isWalkin = window.location.href.includes('walk-in-Q')
   }
 
   private getAccountFromSession (): User {
@@ -101,15 +97,6 @@ export default class App extends Vue {
 
   private destroyed () {
     this.$root.$off('signin-complete')
-  }
-
-  private scrollTo () {
-    if (this.isScrolled) {
-      this.$vuetify.goTo(0)
-    } else {
-      this.$vuetify.goTo('#footer')
-    }
-    this.isScrolled = !this.isScrolled
   }
 }
 </script>

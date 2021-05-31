@@ -280,6 +280,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Room"
+                
   /appointments/:
     get:
       tags:

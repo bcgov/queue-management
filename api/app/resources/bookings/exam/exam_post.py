@@ -12,19 +12,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import logging
 import copy
-import json
+
+import logging
 from flask import request, g
 from flask_restx import Resource
-from app.models.theq import CSR, Office
-from flask_restx import Resource
-from app.models.bookings import ExamType, Invigilator
-from app.schemas.bookings import ExamSchema, CandidateSchema
-from qsystem import api, api_call_with_retry, db, my_print
-from app.utilities.auth_util import Role, has_any_role
-from app.utilities.bcmp_service import BCMPService
+
 from app.auth.auth import jwt
+from app.models.bookings import ExamType
+from app.models.theq import CSR, Office
+from app.schemas.bookings import ExamSchema
+from app.utilities.auth_util import Role
+from app.utilities.bcmp_service import BCMPService
+from qsystem import api, api_call_with_retry, db, my_print
 
 
 @api.route("/exams/", methods=["POST"])
@@ -46,7 +46,8 @@ class ExamPost(Resource):
 
         json_data = request.get_json()
 
-        exam, warning = self.exam_schema.load(json_data)
+        exam = self.exam_schema.load(json_data)
+        warning = self.exam_schema.validate(json_data)
 
         my_print("json_data: ")
         my_print(json_data)
@@ -71,8 +72,8 @@ class ExamPost(Resource):
 
         result = self.exam_schema.dump(exam)
 
-        return {"exam": result.data,
-                "errors": result.errors}, 201
+        return {"exam": result,
+                "errors": self.exam_schema.validate(exam)}, 201
 
 
 
@@ -99,7 +100,7 @@ class ExamPost(Resource):
         else:
             logging.info("For Group Exams")
 
-            exam_type = ExamType.query.filter_by(exam_type_name="Group Pesticide Exam").first()
+            exam_type = ExamType.query.filter_by(exam_type_name="Group Environment Exam").first()
             if exam_type:
                 exam.exam_type_id = exam_type.exam_type_id
                 exam.exam_type = exam_type

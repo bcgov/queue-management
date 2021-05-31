@@ -86,7 +86,6 @@ export default class AppointmentsFilter extends Vue {
   events: any
 
   get getEvents () {
-    console.log('events', this.events)
     const filterEvents = {}
     const eventsList: any = [...this.events]
     eventsList.sort(function (a: any, b: any) {

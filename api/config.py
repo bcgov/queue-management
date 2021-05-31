@@ -34,6 +34,13 @@ class BaseConfig(object):
 
     #   Set up OIDC variables.
     SECRET_KEY = os.getenv('SECRET_KEY')
+    
+    # #   Set up OIDC variables.
+    # SECRET_KEY = os.getenv('SECRET_KEY')
+    # OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
+    # OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE','client_secrets/secrets.json')
+    # OIDC_USER_INFO_ENABLED = True
+    # OIDC_SCOPES = ['openid', 'email', 'profile']
 
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400
@@ -44,11 +51,13 @@ class BaseConfig(object):
         CORS_ALLOWED_ORIGINS = ["https://" + SESSION_COOKIE_DOMAIN]
 
     #   Set up RabbitMQ variables.
+    ACTIVE_MQ_TYPE = os.getenv('ACTIVE_MQ_TYPE','amqp')
     ACTIVE_MQ_USER = os.getenv('ACTIVE_MQ_USER', '')
     ACTIVE_MQ_PASSWORD = os.getenv('ACTIVE_MQ_PASSWORD', '')
     ACTIVE_MQ_HOST = os.getenv('ACTIVE_MQ_HOST', '')
     ACTIVE_MQ_PORT = os.getenv('ACTIVE_MQ_PORT', '')
-    ACTIVE_MQ_URL = 'amqp://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
+    ACTIVE_MQ_URL = '{amq_type}://{amq_user}:{amq_password}@{amq_host}:{amq_port}'.format(
+        amq_type=ACTIVE_MQ_TYPE,
         amq_user=ACTIVE_MQ_USER,
         amq_password=ACTIVE_MQ_PASSWORD,
         amq_host=ACTIVE_MQ_HOST,
@@ -56,7 +65,6 @@ class BaseConfig(object):
     )
 
 
-    MARSHMALLOW_SCHEMA_DEFAULT_JIT = "toastedmarshmallow.Jit"
     DB_LONG_RUNNING_QUERY = float(os.getenv("DATABASE_LONG_RUNNING_QUERY", '0.5'))
 
     DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
@@ -157,8 +165,8 @@ class BaseConfig(object):
     SOCKETIO_PING_INTERVAL = int(os.getenv('SOCKETIO_PING_INTERVAL', 25))
     
     THEQ_FEEDBACK = (os.getenv('THEQ_FEEDBACK','')).upper().replace(" ","").split(",")
-    SLACK_URL = os.getenv('SLACK_URL', '')
-    ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL')
+    TEAMS_URL = os.getenv('TEAMS_URL', '')
+    ROCKET_CHAT_URL = os.getenv('ROCKET_CHAT_URL','')
     SERVICENOW_INSTANCE = os.getenv('SERVICENOW_INSTANCE', '')
     SERVICENOW_USER = os.getenv('SERVICENOW_USER', '')
     SERVICENOW_PASSWORD = os.getenv('SERVICENOW_PASSWORD', '')
@@ -194,18 +202,12 @@ class BaseConfig(object):
     # Email variables
     EMAIL_APPOINTMENT_APP_URL = os.getenv('EMAIL_APPOINTMENT_APP_URL', None)
 
-    # CHES variables
-    CHES_SSO_TOKEN_URL = os.getenv('CHES_SSO_TOKEN_URL', None)
-    CHES_SSO_CLIENT_ID = os.getenv('CHES_SSO_CLIENT_ID', None)
-    CHES_SSO_CLIENT_SECRET = os.getenv('CHES_SSO_CLIENT_SECRET', None)
-    CHES_POST_EMAIL_ENDPOINT = os.getenv('CHES_POST_EMAIL_ENDPOINT', None)
-
     # Cache timeout
     CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '300'))
 
     # Auto-refresh application configuration
     DISABLE_AUTO_REFRESH = (os.getenv("DISABLE_AUTO_REFRESH","FALSE")).upper() == "TRUE"
-
+    
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
@@ -216,8 +218,14 @@ class BaseConfig(object):
 
     # Notifications endpoint configuration
     NOTIFICATIONS_ENDPOINT = os.getenv('NOTIFICATIONS_ENDPOINT')
+    NOTIFICATIONS_EMAIL_ENDPOINT = os.getenv('NOTIFICATIONS_EMAIL_ENDPOINT')
 
+    # show estimate time to users accessing the walkin url
+    SHOW_ESTIMATE_TIME_WALKIN = os.getenv('SHOW_ESTIMATE_TIME_WALKIN', False)
+    # get appointment portal URL
+    APPOINTMENT_PORTAL_URL = os.getenv('APPOINTMENT_PORTAL_URL', '')
 
+    
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False
@@ -252,6 +260,8 @@ class LocalConfig(BaseConfig):
     )
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
+
 
     MINIO_HOST = os.getenv('MINIO_HOST', 'localhost:9000')
     MINIO_BUCKET = os.getenv('MINIO_BUCKET', 'exams')
@@ -273,6 +283,7 @@ class DevelopmentConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 class TestConfig(BaseConfig):
@@ -284,6 +295,7 @@ class TestConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 class ProductionConfig(BaseConfig):
@@ -295,6 +307,7 @@ class ProductionConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
     BCMP_AUTH_TOKEN = os.getenv('BCMP_AUTH_TOKEN')
+    BCMP_USER = os.getenv('BCMP_USER')
 
 
 def configure_app(app):

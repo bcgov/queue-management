@@ -40,7 +40,8 @@ class BookingPut(Resource):
             return {"message": "No input data received for updating a ooking"}
 
         booking = Booking.query.filter_by(booking_id=id).first_or_404()
-        booking, warning = self.booking_schema.load(json_data, instance=booking, partial=True)
+        booking = self.booking_schema.load(json_data, instance=booking, partial=True)
+        warning = self.booking_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
@@ -78,8 +79,8 @@ class BookingPut(Resource):
 
             result = self.booking_schema.dump(booking)
 
-            return {"booking": result.data,
-                    "errors": result.errors}, 200
+            return {"booking": result,
+                    "errors": self.booking_schema.validate(booking)}, 200
 
         else:
             return {"The Booking Office ID and the CSR Office ID do not match!"}, 403

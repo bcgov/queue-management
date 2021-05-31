@@ -56,10 +56,10 @@
             </v-form>
             <v-row>
               <v-col class="d-flex">
-                <v-spacer></v-spacer>
                 <v-btn
                   color="primary"
                   large
+                  :disabled="!isFormUpdated"
                   @click="updateProfile"
                 >
                   Update
@@ -112,9 +112,13 @@ export default class AccountSettingsView extends Vue {
   private maxChars = 20
   private name:string = ''
   private email:string = ''
+  private emailCopy:string = ''
   private phoneNumber:string = ''
+  private phoneNumberCopy:string = ''
   private enableEmailReminder:boolean = false
   private enableSmsReminder:boolean = false
+  private emailReminderCopy:boolean
+  private smsReminderCopy:boolean
   private showMsg = {
     isShow: false,
     msgText: '',
@@ -141,6 +145,7 @@ export default class AccountSettingsView extends Vue {
   ]
 
   private async beforeMount () {
+    this.$store.commit('setNonStepperLocation', 'Account Settings')
     if (!this.currentUserProfile.user_id) {
       await this.getUser()
     }
@@ -150,6 +155,10 @@ export default class AccountSettingsView extends Vue {
       this.phoneNumber = this.currentUserProfile.telephone
       this.enableEmailReminder = this.currentUserProfile.send_email_reminders
       this.enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      this.emailCopy = this.email
+      this.phoneNumberCopy = this.phoneNumber
+      this.emailReminderCopy = this.enableEmailReminder
+      this.smsReminderCopy = this.enableSmsReminder
     }
   }
 
@@ -174,12 +183,25 @@ export default class AccountSettingsView extends Vue {
     }
   }
 
+  private callsp () {
+    (window as any).snowplow('trackPageView')
+  }
+
   private goToAppointments () {
     this.$router.push('/booked-appointments')
+    this.callsp()
   }
 
   private get isSmsEnabled (): boolean {
     return ConfigHelper.isEmsEnabled()
+  }
+
+  private get isFormUpdated (): boolean {
+    const isEmailUpdated = (this.email !== undefined && this.email !== this.emailCopy)
+    const isPhoneUpdate = (this.phoneNumber !== undefined && this.phoneNumber !== this.phoneNumberCopy)
+    const isEmailNotifyUpdated = (this.enableEmailReminder !== undefined && this.enableEmailReminder !== this.emailReminderCopy)
+    const isSMSNotifyUpdated = (this.enableSmsReminder !== undefined && this.enableSmsReminder !== this.smsReminderCopy)
+    return (isEmailUpdated || isPhoneUpdate || isEmailNotifyUpdated || isSMSNotifyUpdated)
   }
 }
 </script>

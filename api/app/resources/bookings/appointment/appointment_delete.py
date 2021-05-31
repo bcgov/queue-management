@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from pprint import pprint
 
-from flask import abort, g
+from flask import request, abort, g
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
@@ -22,7 +22,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_cancel_email_contents, send_email, generate_ches_token
+from app.utilities.email import get_cancel_email_contents, send_email
 from app.utilities.snowplow import SnowPlow
 from qsystem import application
 from qsystem import api, db, socketio
@@ -53,12 +53,6 @@ class AppointmentDelete(Resource):
         if not appointment.is_draft:
             SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
-        db.session.delete(appointment)
-        db.session.commit()
-
-        if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_delete', id)
-
         # Do not log snowplow events or send emails if it's a draft.
         if not appointment.is_draft:
 
@@ -68,9 +62,14 @@ class AppointmentDelete(Resource):
 
                 # Send blackout email
                 try:
-                    pprint('Sending email for appointment cancellation')
-                    send_email(generate_ches_token(), *get_cancel_email_contents(appointment, user, office, office.timezone))
+                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
                 except Exception as exc:
                     pprint(f'Error on token generation - {exc}')
+
+        db.session.delete(appointment)
+        db.session.commit()
+
+        if not application.config['DISABLE_AUTO_REFRESH']:
+            socketio.emit('appointment_delete', id)
 
         return {}, 204

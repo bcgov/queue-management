@@ -43,8 +43,8 @@ class CitizenList(Resource):
                 .order_by(Citizen.priority) \
                 .join(Citizen.service_reqs).all()
             result = self.citizens_schema.dump(citizens)
-            return {'citizens': result.data,
-                    'errors': result.errors}, 200
+            return {'citizens': result,
+                    'errors': self.citizens_schema.validate(citizens)}, 200
 
         except exc.SQLAlchemyError as e:
             print(e)
@@ -65,9 +65,9 @@ class CitizenList(Resource):
             raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:
-            citizen = self.citizen_schema.load(json_data).data
+            citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
-            citizen.start_time = datetime.now()
+            citizen.start_time = datetime.utcnow()
 
         except ValidationError as err:
             print(err)
@@ -82,8 +82,8 @@ class CitizenList(Resource):
 
         result = self.citizen_schema.dump(citizen)
 
-        return {'citizen': result.data,
-                'errors': result.errors}, 201
+        return {'citizen': result,
+                'errors': self.citizen_schema.validate(citizen)}, 201
 
 try:
     key = get_key()

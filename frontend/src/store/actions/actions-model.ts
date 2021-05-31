@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 /**
  *
  * Notes
@@ -19,8 +19,8 @@ import AppointmentsModule from '../modules/appointments-module';
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
-const getEventColor = (isBlackout, room) => {
-  if (isBlackout && isBlackout === 'Y') {
+const getEventColor = (isBlackout, room, isStat) => {
+  if (isBlackout && isBlackout === 'Y' || isStat) {
     return 'grey darken-1 white--text'
   }
   return room && room.color ? room.color : 'cal-events-default'
@@ -149,6 +149,32 @@ export const commonActions: any = {
     })
   },
 
+  deleteRecurringStatBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/current-office/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
+  deleteRecurringStatAllOfficeBooking (context, id) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .delete(`/bookings/recurring/stat/${id}`)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  },
+
   deleteExam (context, id) {
     return new Promise((resolve, reject) => {
       Axios(context)
@@ -163,7 +189,7 @@ export const commonActions: any = {
   },
 
   putRequest (context, payload) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .put(payload.url, payload.data)
         .then(() => {
@@ -246,7 +272,7 @@ export const commonActions: any = {
   },
 
   getBookings (context) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .get('/bookings/')
         .then(resp => {
@@ -273,10 +299,13 @@ export const commonActions: any = {
               booking.invigilator = b.invigilator
               booking.invigilator_id = b.invigilator_id
             }
-            booking.start = new Date(b.start_time)
-            booking.end = new Date(b.end_time)
-            booking.title = b.booking_name
-            booking.name = b.booking_name
+            booking.start = new Date(new Date(b.start_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
+            booking.end = new Date(new Date(b.end_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
+            if ( b.stat_flag && b.blackout_notes) {
+              booking.name = b.blackout_notes
+            } else {
+              booking.name = b.booking_name
+            }
             booking.id = b.booking_id
             booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
             booking.exam =
@@ -290,11 +319,12 @@ export const commonActions: any = {
             booking.is_draft = b.is_draft
             booking.blackout_notes = b.blackout_notes
             booking.recurring_uuid = b.recurring_uuid
-            booking.color = getEventColor(b.blackout_flag, b.room)
+            booking.color = getEventColor(b.blackout_flag, b.room, b.stat_flag)
             booking.timed = true
+            booking.stat_flag = b.stat_flag
             calendarEvents.push(booking)
           })
-          
+
           context.commit('setEvents', calendarEvents)
           resolve()
         })
@@ -306,7 +336,7 @@ export const commonActions: any = {
 
   getAllCitizens (context) {
     const url = '/citizens/'
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .get(url)
         .then(resp => {
@@ -626,6 +656,32 @@ export const commonActions: any = {
     })
   },
 
+  getOfficeRooms (context, data) {
+    return new Promise((resolve, reject) => {
+    Axios(context)
+      .get(`/rooms/?office_id=${data['office_id']}`)
+      .then(resp => {
+        let resources: any = []
+          if (resp.data.rooms.length > 0) {
+            resources = resp.data.rooms.map(room => ({
+              id: room.room_id,
+              title: room.room_name,
+              eventColor: room.color
+            }))
+          }
+          resources.push({
+            id: '_offsite',
+            title: 'Offsite',
+            eventColor: '#F58B4C'
+          })
+          resolve(resources)
+      })
+      .catch(error => {
+        reject(error)
+      })
+      })
+  },
+
   getServices (context) {
     const office_id = context.state.user.office_id
     Axios(context)
@@ -712,6 +768,36 @@ export const commonActions: any = {
             context.commit(
               'setLoginAlert',
               'You are not setup in TheQ, please contact RMSHelp to be setup.'
+            )
+            reject(error)
+          }
+        )
+    })
+  },
+
+  getUserAttentionForExam (context) {
+    return new Promise((resolve, reject) => {
+      const url = '/csrs/me/'
+      Axios(context)
+        .get(url)
+        .then(
+          resp => {
+            const examManagerBoolean = resp.data.attention_needed            
+            if (examManagerBoolean === true) {
+              context.commit(
+                'setExamAlert',
+                'Office Exam Manager Action Items are present'
+              )
+            } else {
+              context.commit('setExamAlert', '')
+            }
+ 
+            resolve(resp)
+          },
+          error => {
+            context.commit(
+              'setExamAlert',
+              'There is an error while setting an exam alert'
             )
             reject(error)
           }
@@ -845,7 +931,6 @@ export const commonActions: any = {
   clickAddToQueue (context) {
     const { citizen_id } = context.getters.form_data.citizen
     context.commit('setPerformingAction', true)
-
     context
       .dispatch('putCitizen')
       .then(() => {
@@ -1191,6 +1276,14 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context.dispatch('postCitizenLeft', citizen_id).finally(() => {
+      // send reminder for nth citizen in line
+      context
+      .dispatch('sendWalkinLineReminder', {
+        citizen_id: citizen_id
+      })
+      .then(() => {
+        context.dispatch('getAllCitizens')
+      })
       context.commit('setPerformingAction', false)
     })
     context.commit('toggleServiceModal', false)
@@ -1291,10 +1384,10 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postHold', citizen_id)
@@ -1425,10 +1518,10 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postAddToQueue', citizen_id)
@@ -1508,15 +1601,23 @@ export const commonActions: any = {
     const { citizen_id } = context.state.serviceModalForm
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(() => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postBeginService', citizen_id)
               .then(() => {
                 context.commit('toggleBegunStatus', true)
+                // send reminder for nth citizen in line
+                context
+                .dispatch('sendWalkinLineReminder', {
+                  citizen_id: citizen_id
+                })
+                .then(() => {
+                  context.dispatch('getAllCitizens')
+                })
               })
               .finally(() => {
                 context.commit('setPerformingAction', false)
@@ -1544,10 +1645,10 @@ export const commonActions: any = {
     context.commit('toggleServeCitizenSpinner', true)
 
     context
-      .dispatch('putCitizen')
+      .dispatch('putServiceRequest')
       .then(resp => {
         context
-          .dispatch('putServiceRequest')
+          .dispatch('putCitizen')
           .then(() => {
             context
               .dispatch('postFinishService', {
@@ -1589,7 +1690,7 @@ export const commonActions: any = {
   },
 
   initializeAgenda (context) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       context.dispatch('getExams').then(() => {
         context.dispatch('getBookings').then(() => resolve())
       })
@@ -1771,7 +1872,7 @@ export const commonActions: any = {
   },
 
   scheduleExam (context, payload) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       context.dispatch('postBooking', payload).then(booking_id => {
         context.dispatch('putExam', booking_id).then(() => {
           resolve()
@@ -1805,13 +1906,14 @@ export const commonActions: any = {
   putExamInfo (context, payload) {
     const id = payload.exam_id.valueOf()
     delete payload.exam_id
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const url = `/exams/${id}/`
       Axios(context)
         .put(url, payload)
         .then(() => {
           context.dispatch('getExams').then(() => {
             context.commit('setEditExamSuccess', 3)
+            context.dispatch('getUserAttentionForExam')
             resolve()
           })
         })
@@ -1834,6 +1936,10 @@ export const commonActions: any = {
     })
   },
 
+  postBookingStat (context, payload) {
+    return Axios(context).post('/bookings/', payload)
+  },
+
   finishBooking (context) {
     context.dispatch('getBookings')
     context.commit('setSelectionIndicator', false)
@@ -1845,6 +1951,7 @@ export const commonActions: any = {
     context.commit('setEditedBooking', null)
     context.commit('toggleEditBookingModal', false)
     context.commit('toggleEditGroupBookingModal', false)
+    context.dispatch('getUserAttentionForExam')
   },
   finishAppointment (context) {
     context.commit('setSelectionIndicator', false)
@@ -1909,7 +2016,7 @@ export const commonActions: any = {
     }
     const postData = { ...responses, ...defaultValues }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/', postData)
         .then(examResp => {
@@ -1957,7 +2064,7 @@ export const commonActions: any = {
     }
     const postData = { ...responses, ...defaultValues }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/', postData)
         .then(examResp => {
@@ -1992,6 +2099,7 @@ export const commonActions: any = {
   postITAIndividualExam (context, isRequestExam) {
     const isRequestExamReq = isRequestExam || false
     const responses = Object.assign({}, context.state.capturedExam)
+    console.log('====>  requesting BCMP exam',responses)
     if (responses.on_or_off) {
       if (responses.on_or_off === 'off') {
         responses.offsite_location = '_offsite'
@@ -2034,14 +2142,14 @@ export const commonActions: any = {
     }
 
     if (context.state.addExamModal.setup === 'pesticide') {
-      responses.exam_name = responses.exam_name || 'pesticide'
+      responses.exam_name = 'Environment'
       responses.is_pesticide = 1
     }
 
     responses.receipt = responses.receipt_number
-    responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee
+    responses.payee_ind = context.state.captureITAExamTabSetup.capturePayee ? 1 : 0
     responses.receipt_sent_ind =
-      context.state.captureITAExamTabSetup.payeeSentReceipt
+      context.state.captureITAExamTabSetup.payeeSentReceipt ? 1 : 0
     responses.sbc_managed_ind = responses.sbc_managed === 'sbc' ? 1 : 0
 
     const postData = { ...responses, ...defaultValues }
@@ -2133,7 +2241,7 @@ export const commonActions: any = {
     console.log(responses)
     const postData = { ...responses }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/request', postData)
         .then(examResp => {
@@ -2178,6 +2286,9 @@ export const commonActions: any = {
     let citizen_id
     let priority
     let counter
+    let notification_phone
+    let notification_email
+    let walkin_unique_id
 
     if (context.state.serviceModalForm.citizen_id) {
       const {
@@ -2188,6 +2299,9 @@ export const commonActions: any = {
       priority = context.state.serviceModalForm.priority
       citizen_id = context.state.serviceModalForm.citizen_id
       const prevCitizen = context.getters.invited_citizen
+      notification_phone = context.state.serviceModalForm.notification_phone
+      notification_email = context.state.serviceModalForm.notification_email
+      walkin_unique_id =  context.state.serviceModalForm.walkin_unique_id
 
       if (!context.state.showAddModal) {
         if (citizen_comments !== prevCitizen.citizen_comments) {
@@ -2205,6 +2319,15 @@ export const commonActions: any = {
         ) {
           data.accurate_time_ind = accurate_time_ind
         }
+        if (notification_phone !== prevCitizen.notification_phone) {
+          data.notification_phone = notification_phone
+        }
+        if (notification_email !== prevCitizen.notification_email) {
+          data.notification_email = notification_email
+        }
+        if (walkin_unique_id !== prevCitizen.walkin_unique_id) {
+          data.walkin_unique_id = walkin_unique_id
+        }
       }
     } else {
       const { form_data } = context.getters
@@ -2212,6 +2335,9 @@ export const commonActions: any = {
       data.counter_id = form_data.counter
       data.priority = form_data.priority
       data.citizen_comments = form_data.comments
+      data.notification_phone = form_data.notification_phone
+      data.notification_email = form_data.notification_email
+      data.walkin_unique_id = form_data.walkin_unique_id
     }
 
     if (Object.keys(data).length === 0) {
@@ -2219,12 +2345,27 @@ export const commonActions: any = {
         resolve(' ')
       })
     }
-
     return new Promise((resolve, reject) => {
       const url = `/citizens/${citizen_id}/`
 
       Axios(context)
         .put(url, data)
+        .then(
+          resp => {
+            resolve(resp)
+          },
+          error => {
+            reject(error)
+          }
+        )
+    })
+  },
+
+  sentNotificationReminder (context, payload) {
+    return new Promise((resolve, reject) => {
+      const url = `/citizens/${payload['citizen_id']}/`
+      Axios(context)
+        .put(url, payload)
         .then(
           resp => {
             resolve(resp)
@@ -2260,6 +2401,9 @@ export const commonActions: any = {
     const setup = context.state.addModalSetup
     const { form_data } = context.getters
     if (setup === 'add_mode' || setup === 'edit_mode') {
+      if (form_data.channel === '') {
+        form_data.channel = compareService.channel_id
+      }
       if (form_data.channel != compareService.channel_id) {
         data.channel_id = form_data.channel
       }
@@ -2272,7 +2416,7 @@ export const commonActions: any = {
         resolve(' ')
       })
     }
-
+    
     return new Promise((resolve, reject) => {
       const url = `/service_requests/${sr_id}/`
       Axios(context)
@@ -2425,7 +2569,7 @@ export const commonActions: any = {
     const csr_id = context.state.user.csr_id
     Axios(context).put(`/csrs/${csr_id}/`, {
       counter_id: context.state.user.counter_id,
-      receptionist_ind: context.state.user.receptionist_ind
+      receptionist_ind: context.state.user.receptionist_ind ? 1 : 0
     })
   },
 
@@ -2444,10 +2588,26 @@ export const commonActions: any = {
       console.log('Axios complete. commiting changeCSROffice w/', { newOffice });
       context.commit('changeCSROffice', newOffice)
     })
-    
+
   },
 
   restoreSavedModalAction ({ commit }, payload) {
     commit('restoreSavedModal', payload)
-  }
+  },
+
+  sendWalkinLineReminder (context, payload) {
+    return new Promise((resolve, reject) => {
+      Axios(context)
+        .post(`/send-reminder/line-walkin/`, {'previous_citizen_id':payload.citizen_id})
+        .then(
+          resp => {
+            console.log('send reminder')
+            resolve(resp)
+          },
+          error => {
+            reject(error)
+          }
+        )
+      })
+  },
 }

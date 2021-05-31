@@ -242,7 +242,7 @@ export default class Dash extends Vue {
       next()
       return
     }
-    if (to.path === '/exams' || to.path === '/booking') {
+    if (to.path === '/exams' || to.path === '/booking' || to.path === '/service-flow') {
       this.clickAddCitizen()
       next()
     }
@@ -271,6 +271,7 @@ export default class Dash extends Vue {
   padding-left: 1%;
   padding-right: 1%;
   padding-top: 8px;
+  overflow-x: auto;
 }
 #dash-flex-button-container {
   display: flex;

@@ -108,10 +108,14 @@ import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, Servi
 import { Component, Vue } from 'vue-property-decorator'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Appointment } from '@/models/appointment'
 import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
+import { Office } from '@/models/office'
+import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
+import { User } from '@/models/user'
 
 @Component({
   components: {
@@ -122,26 +126,50 @@ import StepperMixin from '@/mixins/StepperMixin.vue'
     LocationsList
   },
   computed: {
+    ...mapState('office', [
+      'currentOffice',
+      'currentService'
+    ]),
+    ...mapState('auth', [
+      'currentUserProfile'
+    ]),
     ...mapGetters('auth', ['isAuthenticated'])
   },
   methods: {
     ...mapActions('geo', [
-      'getCurrentLocation'
+      'getCurrentLocation',
+      'appointment'
+    ]),
+    ...mapActions('office', [
+      'callSnowplow'
+    ]),
+    ...mapMutations('office', [
+      'setCurrentOffice',
+      'setCurrentService',
+      'setSPStatus'
     ])
   }
 })
 
 export default class AppointmentBookingView extends Vue {
   private readonly isAuthenticated!: boolean
+   private readonly currentUserProfile!: User
+  private readonly currentOffice!: Office
+  private readonly currentService!: Service
+  private readonly currentAppointment!: Appointment
   private userBrowser = {
     is_allowed: true,
     current_browser: '',
     current_version: '',
     allowed_browsers: ''
   }
+
   private stepCounter = 1
+  private stepName = ''
   private updateViewCounter = 0
   private readonly getCurrentLocation!: () => Promise<GeolocatorSuccess>
+  private readonly callSnowplow!: (mySP: any) => any
+  private readonly setSPStatus!: (status: string) => void
   private bookingSteppers = [
     {
       step: 1,
@@ -149,8 +177,8 @@ export default class AppointmentBookingView extends Vue {
       title: 'Book an Appointment',
       subTitle: '',
       icon: 'mdi-map-marker-radius',
-      beforeIconText: `Click the`,
-      afterIconText: `to find your closest Service BC Centre`,
+      beforeIconText: 'Click the',
+      afterIconText: 'to find your closest Service BC Centre',
       code: 'location',
       component: LocationsList,
       componentProps: {}
@@ -159,7 +187,7 @@ export default class AppointmentBookingView extends Vue {
       step: 2,
       label: 'Select Service',
       title: 'Service Selection',
-      subTitle: `Please select the service you'd like to receive`,
+      subTitle: 'Please select the service you\'d like to receive',
       code: 'service',
       component: ServiceSelection,
       componentProps: {}
@@ -169,8 +197,8 @@ export default class AppointmentBookingView extends Vue {
       label: 'Select Date',
       title: 'Select a Date',
       icon: 'mdi-chevron-right',
-      beforeIconText: `Available days are highlighted in the calendar, use the`,
-      afterIconText: `arrow to go to the next month`,
+      beforeIconText: 'Available days are highlighted in the calendar, use the',
+      afterIconText: 'arrow to go to the next month',
       code: 'date',
       component: DateSelection,
       componentProps: {}
@@ -179,7 +207,7 @@ export default class AppointmentBookingView extends Vue {
       step: 4,
       label: 'Login to Confirm Appointment',
       title: 'Login',
-      subTitle: `To complete your appointment booking, please login using one of the following`,
+      subTitle: 'To complete your appointment booking, please login using one of the following',
       code: 'login',
       component: LoginToConfirm,
       componentProps: {
@@ -223,9 +251,14 @@ export default class AppointmentBookingView extends Vue {
 
   private async updated () {
     this.$store.commit('setStepperCurrentStep', this.stepCounter)
+    if (this.stepCounter !== this.$store.state.spLastStep) {
+      this.makesnowplow(this.stepCounter)
+      this.$store.state.spLastStep = this.stepCounter
+    }
   }
 
   private async mounted () {
+    this.$store.commit('setNonStepperLocation', undefined)
     if (this.isAuthenticated) {
       this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
@@ -247,6 +280,40 @@ export default class AppointmentBookingView extends Vue {
 
   private async fetchCurrentLocation () {
     locationBus.$emit(locationBusEvents.ClosestLocationEvent)
+  }
+
+  private makesnowplow (theStep) {
+    let mySP = {}
+    switch (theStep) {
+      case 1:
+        this.setSPStatus('new')
+        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
+        this.callSnowplow(mySP)
+        break
+      case 2:
+        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
+        this.callSnowplow(mySP)
+        break
+      case 3:
+        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        this.callSnowplow(mySP)
+        break
+      case 4:
+        if (this.isAuthenticated) {
+          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          this.callSnowplow(mySP)
+        } else {
+          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          this.callSnowplow(mySP)
+        }
+        break
+      case 5:
+        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        this.callSnowplow(mySP)
+        break
+      default:
+        break
+    }
   }
 }
 </script>

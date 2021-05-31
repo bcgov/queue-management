@@ -59,6 +59,9 @@ class CitizenFinishService(Resource):
         pending_service_state = SRState.get_state_by_name("Complete")
         active_service_request.sr_state_id = pending_service_state.sr_state_id
 
+        # remove walkin unique id when service is finished
+        citizen.walkin_unique_id = None
+
         db.session.add(citizen)
         db.session.commit()
 
@@ -72,7 +75,7 @@ class CitizenFinishService(Resource):
 
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', result.data, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office_id)
 
-        return {'citizen': result.data,
-                'errors': result.errors}, 200
+        return {'citizen': result,
+                'errors': self.citizen_schema.validate(citizen)}, 200

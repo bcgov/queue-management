@@ -23,6 +23,15 @@
         >
           Submit
         </b-button>
+        <b-button
+          v-else-if="this.stat_submit"
+          variant="primary"
+          class="ml-2"
+          size="md"
+          @click="statSubmit"
+        >
+          Submit</b-button
+        >
         <b-button v-else class="ml-2" size="md" id="disabled-submit" disabled>
           Submit
         </b-button>
@@ -50,7 +59,7 @@
           Next
         </b-button>
         <b-button
-          v-if="this.recurring_form_state === 'rule_generated'"
+          v-if="(this.recurring_form_state === 'rule_generated') && (this.show_next)"
           variant="primary"
           class="ml-2"
           size="md"
@@ -97,11 +106,20 @@
         >
           Next
         </b-button>
+        <b-button
+          v-else-if="(this.show_stat_next)"
+          variant="primary"
+          class="w-100 ml-2"
+          size="md"
+          @click="nextStat"
+        >
+          Next
+        </b-button>
         <b-button @click="cancel"> Cancel </b-button>
       </div>
     </template>
     <span style="font-size: 1.75rem">Schedule Booking Blackout</span><br />
-    <b-form>
+    <b-form class="blackout_form">
       <b-collapse id="collapse-booking-event-selection">
         <b-card>
           <b-form-row class="mb-2">
@@ -114,6 +132,7 @@
                 class="w-100"
                 v-b-toggle.collapse-single-booking
                 @click="setRecurring"
+                size="lg"
               >
                 Create Single Blackout
               </b-button>
@@ -124,15 +143,30 @@
                 class="w-100"
                 @click="setSingle"
                 v-b-toggle.collapse-recurring-booking
+                size="lg"
               >
                 Create Recurring Blackout
+              </b-button>
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+            <b-col v-if="is_Support" class="w-50">
+              <b-button
+                variant="primary"
+                class="w-100"
+                @click="setSTAT"
+                v-b-toggle.collapse-recurring-stat
+                size="lg"
+              >
+                Create STAT
               </b-button>
             </b-col>
           </b-form-row>
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-single-booking" class="mt-2 mb-2">
-        <b-card>
+        <v-card>
+          <v-container>
           <b-form-row style="justify-content: center">
             <h4>Single Event</h4>
           </b-form-row>
@@ -183,7 +217,23 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <vue-timepicker
+                      v-model="start_time"
+                      id="appointment_blackout_start_time"
+                      icon="clock"
+                      editable
+                      format="hh:mm A"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @input="checkSingleInput"
+                      @clear="checkSingleInput"
+                      @change="checkSingleInput"
+                      manual-input>
+                  </vue-timepicker>
+                  <br/>
+                  <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
+
+                <!-- <DatePicker
                   v-model="start_time"
                   id="appointment_blackout_start_time"
                   :time-picker-options="{
@@ -202,7 +252,7 @@
                   @change="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -213,7 +263,23 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <vue-timepicker
+                      v-model="end_time"
+                      id="appointment_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      format="hh:mm A"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @input="checkSingleInput"
+                      @clear="checkSingleInput"
+                      @change="checkSingleInput"
+                      manual-input>
+                  </vue-timepicker>
+                  <br/>
+                  <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="end_time"
                   id="appointment_blackout_end_time"
                   :time-picker-options="{
@@ -232,11 +298,121 @@
                   @change="checkSingleInput"
                   @clear="checkSingleInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
-        </b-card>
+          </v-container>
+        </v-card>
+      </b-collapse>
+      <b-collapse id="collapse-recurring-stat">
+        <v-card class="mt-2">
+          <v-container>
+          <b-form-row style="justify-content: center">
+            <h4>Recurring STAT</h4>
+          </b-form-row>
+          <b-form-row class="mb-2">
+            <label style="font-weight: bold">Step 2: STAT Information</label>
+          </b-form-row>
+          <b-form-row class="mb-2">
+            <b-col cols="6">
+              <label>Booking Name</label><br />
+              <b-form-input v-model="this.stat_user_name" disabled />
+            </b-col>
+            <b-col cols="6">
+              <label>Contact Information (optional)</label>
+              <b-form-input v-model="this.user_contact_info" />
+            </b-col>
+          </b-form-row>
+          <b-form-row>
+              <b-form-group>
+                <label>STAT Date/s:</label>
+                <div
+                  v-for="(input, index) in stat_dates"
+                  :key="`stat_dates-${index}`"
+                >
+                <b-form-row>
+                  <b-col cols="6">
+                    <DatePicker
+                        v-model="input.value"
+                        id="appointment_stat_date"
+                        type="date"
+                        lang="en"
+                        class="w-100"
+                        @change="checkStatInput"
+                        @input="checkStatInput"
+                        @clear="checkStatInput"
+                      >
+                      </DatePicker>
+                  </b-col>
+                  <b-col cols="6">
+                    <b-form-input maxlength="255" v-model="input.note" placeholder="Note"/>
+                  </b-col>
+                </b-form-row>
+                <b-form-row>
+                  <b-col cols="1">
+                    <font-awesome-icon
+                      v-if="input.value"
+                      icon="check"
+                      style="fontsize: 1rem; color: green"
+                    />
+                  </b-col>
+                  <b-col cols="1">
+                    <!--   Remove Icon-->
+                    <b-button
+                    variant="outline-danger"
+                    pill
+                    size="sm"
+                    v-show="stat_dates.length > 1"
+                    @click="removeField(index, stat_dates)"
+                    >
+                      <font-awesome-icon
+                          icon="eraser"
+                          style="fontsize: 1rem; color: red"
+                        />
+                    </b-button>
+                  </b-col>
+                  <b-col cols="1">
+                    <!--   Add Icon-->
+                    <b-button
+                    variant="outline-primary"
+                    pill
+                    size="sm"
+                    v-show="(stat_dates.length === (index+1))"
+                     @click="addField(input, stat_dates)"
+                    >
+                      <font-awesome-icon
+                          icon="plus"
+                          style="fontsize: 1rem; color: blue"
+                        />
+                    </b-button>
+                  </b-col>
+                </b-form-row>
+                <b-form-row v-if="(show_stat_next) && ((stat_dates.length === (index+1)))">
+                  <!-- only add to current office -->
+                  <b-col>
+                    <b-form-checkbox-group
+                        v-model="only_this_office"
+                        @input="checkRecurringInput"
+                      >
+                        <b-form-checkbox :value="true">Only this Office</b-form-checkbox>
+                    </b-form-checkbox-group>
+                  </b-col>
+                  <b-col>
+                    <b-form-checkbox-group
+                      v-if="only_this_office.length"
+                        v-model="only_bookings"
+                        @input="checkRecurringInput"
+                      >
+                        <b-form-checkbox :value="true">Only bookings</b-form-checkbox>
+                    </b-form-checkbox-group>
+                  </b-col>
+                </b-form-row>
+              </div>
+              </b-form-group>
+          </b-form-row>
+          </v-container>
+        </v-card>
       </b-collapse>
       <b-collapse id="collapse-recurring-booking" class="mt-2">
         <b-card class="mb-2">
@@ -266,13 +442,30 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <vue-timepicker
+                      v-model="recurring_booking_start_time"
+                      id="recurring_blackout_start_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      format="hh:mm A"
+                      locale="en-US"
+                      placeholder="Select Start Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      @change="checkRecurringInput"
+                      manual-input>
+                  </vue-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="recurring_booking_start_time"
                   id="recurring_blackout_start_time"
                   :time-picker-options="{
                     start: '8:00',
-                    step: '00:30',
                     end: '17:30',
+                    step:'00:01',
+                    format: 'hh:mm a'
                   }"
                   lang="en"
                   format="h:mm a"
@@ -284,7 +477,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
               <b-col cols="6">
                 <label>Blackout End Time</label>
@@ -293,13 +486,30 @@
                   icon="check"
                   style="fontsize: 1rem; color: green"
                 />
-                <DatePicker
+                <vue-timepicker
+                      v-model="recurring_booking_end_time"
+                      id="recurring_blackout_end_time"
+                      class="w-100"
+                      icon="clock"
+                      editable
+                      format="hh:mm A"
+                      locale="en-US"
+                      placeholder="Select End Time"
+                      @input="checkRecurringInput"
+                      @clear="checkRecurringInput"
+                      @change="checkRecurringInput"
+                      manual-input>
+                  </vue-timepicker>
+                  <br/>
+                  <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
+                <!-- <DatePicker
                   v-model="recurring_booking_end_time"
                   id="recurring_blackout_end_time"
                   :time-picker-options="{
                     start: '8:30',
-                    step: '00:30',
                     end: '18:00',
+                    step:'00:01',
+                    format: 'hh:mm a'
                   }"
                   lang="en"
                   format="h:mm a"
@@ -311,7 +521,7 @@
                   @input="checkRecurringInput"
                   @clear="checkRecurringInput"
                 >
-                </DatePicker>
+                </DatePicker> -->
               </b-col>
             </b-form-row>
             <b-form-row class="mb-2">
@@ -431,13 +641,17 @@
       <b-collapse id="collapse-information-audit">
         <b-card class="mb-2">
           <b-form-row style="justify-content: center">
-            <h4>Recurring Event</h4>
+            <h4 v-if="!is_stat">Recurring Event</h4>
+            <h4 v-else>Recurring STAT</h4>
           </b-form-row>
-          <b-form-row>
-            <label style="font-weight: bold"
-              >Step 2 (continued): Confirm Recurring Event Information</label
-            >
-          </b-form-row>
+          <b-form-row class="mb-2">
+              <label stlye="font-weight: bold;"
+                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Information</label
+              >
+              <label stlye="font-weight: bold;"
+                v-else>Step 2 (continued): Confirm Recurring STAT Dates</label
+              >
+            </b-form-row>
           <b-form-row>
             <b-col cols="12">
               <b-button
@@ -445,13 +659,15 @@
                 class="w-100 mb-2"
                 v-b-toggle.recurring-rule-collapse
               >
-                View Recurring Event Info
+                <span v-if="!is_stat">View Recurring Event Info</span>
+                  <span v-else>View Recurring Event Info</span>
               </b-button>
             </b-col>
           </b-form-row>
           <b-form-row class="mb-0">
             <b-collapse id="recurring-rule-collapse" class="mb-2 ml-2" visible>
-              {{ this.booking_rrule_text }}
+              <span v-if="!is_stat">{{ this.booking_rrule_text }}</span>
+               <span v-else>All selected dates for all office</span>
             </b-collapse>
           </b-form-row>
           <b-form-row>
@@ -467,7 +683,7 @@
           </b-form-row>
           <b-form-row>
             <b-collapse id="recurring-dates-collapse" class="mb-2">
-              <div style="height: 75px; overflow-y: scroll; margin: 0px">
+              <div style="height: 75px; overflow-y: scroll; margin: 0px" v-if="!is_stat">
                 <ul
                   class="list-group mb-0"
                   v-for="date in this.booking_rrule_array"
@@ -480,8 +696,32 @@
                   </li>
                 </ul>
               </div>
+              <div style="height: 75px; overflow-y: scroll; margin: 0px" v-else>
+                  <ul
+                    class="list-group mb-0"
+                    v-for="(value, index) in this.booking_rrule_array"
+                    style="justify-content: center"
+                    :key="index"
+                  >
+                    <li class="list-group-item">
+                      <b>STAT:</b> {{ formatDate(value.value) }} whole Day for all office.
+                    </li>
+                  </ul>
+                </div>
             </b-collapse>
           </b-form-row>
+        </b-card>
+      </b-collapse>
+      <b-collapse id="date-limit">
+        <b-card class="mb-2">
+          <b-card-body>
+            <b-form-row class="mb-2">
+              <label stlye="font-weight: bold;" class="danger"
+              >Cannot blackout more that 1 year at Once.
+              </label
+              >
+            </b-form-row>
+          </b-card-body>
         </b-card>
       </b-collapse>
       <b-collapse id="collapse-room-selection">
@@ -523,7 +763,7 @@
                 striped
                 @row-selected="onRowSelected"
               >
-                <template slot="selected" slot-scope="{ rowSelected }">
+                <template #cell(selected)="{ rowSelected }">
                   <template v-if="rowSelected">
                     <span aria-hidden="true">&check;</span>
                     <span class="sr-only" Selected></span>
@@ -610,17 +850,28 @@
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
-import { Action, Getter, Mutation, State } from 'vuex-class'
+/* eslint-disable */
+import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
+
+import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
+import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
+import VueTimepicker from 'vue2-timepicker'
+import 'vue2-datepicker/index.css'
+import 'vue2-timepicker/dist/VueTimepicker.css'
 import moment from 'moment'
 import { RRule } from 'rrule'
+
+
+const appointmentsModule = namespace('appointmentsModule')
+
 @Component({
   components: {
-    DatePicker
+    DatePicker,
+    VueTimepicker
   }
 })
 export default class BookingBlackoutModal extends Vue {
@@ -629,12 +880,23 @@ export default class BookingBlackoutModal extends Vue {
   @State('roomResources') private roomResources!: any
 
   @Getter('is_recurring_enabled') private is_recurring_enabled!: any;
+  @appointmentsModule.Getter('is_Support') private is_Support!: any;
+  
 
   @Action('getBookings') public getBookings: any
   @Action('postBooking') public postBooking: any
+  @Action('postBookingStat') public postBookingStat: any
   @Action('finishBooking') public finishBooking: any
+  @Action('getOffices') public getOffices: any
+  @Action('getOfficeRooms') public getOfficeRooms: any
 
   @Mutation('toggleBookingBlackoutModal') public toggleBookingBlackoutModal: any
+  
+  @appointmentsModule.Mutation('setApiTotalCount') public setApiTotalCount: any
+  
+  @appointmentsModule.Action('createStatAxioObject') public createStatAxioObject: any
+  @appointmentsModule.Action('callBulkAxios') public callBulkAxios: any
+  @appointmentsModule.Action('getAppointments') public getAppointments: any
 
   public blackout_date: any = null
   public start_time: any = null
@@ -670,6 +932,18 @@ export default class BookingBlackoutModal extends Vue {
   public recurring_input_boolean: any = false
   public recurring_form_state: string = ''
   public single_form_state: string = ''
+  public stat_dates: any = [{note:""}]
+  public stat_user_name: string = ''
+  public stat_submit: boolean = false
+  public show_stat_next: boolean = false
+  public is_stat: boolean = false
+  public show_next: boolean = true
+  public only_this_office: any = []
+  public only_bookings: any =[]
+  public reccuring_start_time_msg: any = ''
+  public reccuring_end_time_msg: any = ''
+  public start_time_msg: any = ''
+  public end_time_msg: any = ''
 
   get modal () {
     return this.showBookingBlackoutModal
@@ -696,7 +970,6 @@ export default class BookingBlackoutModal extends Vue {
       }
     }
   }
-
   show () {
     this.showCollapse('collapse-booking-event-selection')
     this.hideCollapse('collapse-single-booking')
@@ -722,6 +995,10 @@ export default class BookingBlackoutModal extends Vue {
 
   cancel () {
     this.toggleBookingBlackoutModal(false)
+    this.stat_dates = [{note:""}]
+    this.show_stat_next = false
+    this.is_stat = false
+    this.stat_submit = false
   }
 
   onRowSelected (roomResources) {
@@ -775,27 +1052,37 @@ export default class BookingBlackoutModal extends Vue {
 
   submit (e) {
     e.preventDefault()
+    this.setApiTotalCount(0)
+    this.setApiTotalCount(this.booking_rrule_array.length)
+    showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, true)
+    // this is the number of api in a group- for bulk api call
+    const limit = 50
+    let rrule_ind = 0
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
-    const start = moment(this.start_time).clone().format('HH:mm:ss')
+    const start = moment(start_time).clone().format('HH:mm:ss')
     const start_date = moment(date + ' ' + start).format()
-    const end = moment(this.end_time).clone().format('HH:mm:ss')
+    const end = moment(end_time).clone().format('HH:mm:ss')
     const end_date = moment(date + ' ' + end).format()
-    const uuidv4 = require('uuid/v4')
+    const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
+    const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
+    const uuidv4 = require('uuid').v4
+    let axiosArray: any = []
     const recurring_uuid = uuidv4()
-
     if (this.booking_rrule_array.length === 0) {
       if (this.room_id_list.length === 1) {
         const blackout_booking: any = {}
         if (this.selected[0].id === '_offsite') {
-          blackout_booking.start_time = start_date
-          blackout_booking.end_time = end_date
+          blackout_booking.start_time = start_date_office
+          blackout_booking.end_time = end_date_office
           blackout_booking.booking_name = this.blackout_name
           blackout_booking.booking_contact_information = this.user_contact_info
           blackout_booking.blackout_flag = 'Y'
           blackout_booking.blackout_notes = this.notes
         } else {
-          blackout_booking.start_time = start_date
-          blackout_booking.end_time = end_date
+          blackout_booking.start_time = start_date_office
+          blackout_booking.end_time = end_date_office
           blackout_booking.booking_name = this.blackout_name
           blackout_booking.booking_contact_information = this.user_contact_info
           blackout_booking.room_id = this.selected[0].id
@@ -805,6 +1092,7 @@ export default class BookingBlackoutModal extends Vue {
         this.postBooking(blackout_booking).then(() => {
           this.finishBooking()
           this.toggleBookingBlackoutModal(false)
+          showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, false)
         })
         this.getBookings
       } else if (this.room_id_list.length > 1) {
@@ -812,15 +1100,15 @@ export default class BookingBlackoutModal extends Vue {
         this.room_id_list.forEach(function (room) {
           const blackout_booking: any = {}
           if (room == '_offsite') {
-            blackout_booking.start_time = start_date
-            blackout_booking.end_time = end_date
+            blackout_booking.start_time = start_date_office
+            blackout_booking.end_time = end_date_office
             blackout_booking.booking_name = self.blackout_name
             blackout_booking.booking_contact_information = self.user_contact_info
             blackout_booking.blackout_flag = 'Y'
             blackout_booking.blackout_notes = self.notes
           } else {
-            blackout_booking.start_time = start_date
-            blackout_booking.end_time = end_date
+            blackout_booking.start_time = start_date_office
+            blackout_booking.end_time = end_date_office
             blackout_booking.booking_name = self.blackout_name
             blackout_booking.booking_contact_information = self.user_contact_info
             blackout_booking.room_id = room
@@ -829,6 +1117,7 @@ export default class BookingBlackoutModal extends Vue {
           }
           self.postBooking(blackout_booking).then(() => {
             self.getBookings()
+            showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, false)
           })
         })
       }
@@ -838,21 +1127,32 @@ export default class BookingBlackoutModal extends Vue {
       if (this.room_id_list.length === 1) {
         if (this.selected[0].id === '_offsite') {
           this.booking_rrule_array.forEach(date => {
+            rrule_ind += 1
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const booking: any = {}
-            booking.start_time = date.start
-            booking.end_time = date.end
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
             booking.blackout_notes = self.notes
             booking.recurring_uuid = recurring_uuid
             booking_array.push(booking)
+            axiosArray.push(self.postBooking(booking))
           })
         } else {
           this.booking_rrule_array.forEach(date => {
+            rrule_ind += 1
             const booking: any = {}
-            booking.start_time = date.start
-            booking.end_time = date.end
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
@@ -860,15 +1160,21 @@ export default class BookingBlackoutModal extends Vue {
             booking.room_id = self.selected[0].id
             booking.recurring_uuid = recurring_uuid
             booking_array.push(booking)
+            axiosArray.push(self.postBooking(booking))
           })
         }
       } else if (this.room_id_list.length > 1) {
         this.room_id_list.forEach(room => {
           this.booking_rrule_array.forEach(date => {
+            rrule_ind += 1
             const booking: any = {}
+            let st = moment(date.start).clone()
+            let ed = moment(date.end).clone()
+            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             booking.room_id = room
-            booking.start_time = date.start
-            booking.end_time = date.end
+            booking.start_time = startOffice
+            booking.end_time = endOffice
             booking.booking_name = self.blackout_name
             booking.booking_contact_information = self.user_contact_info
             booking.blackout_flag = 'Y'
@@ -877,39 +1183,125 @@ export default class BookingBlackoutModal extends Vue {
             if (booking.room_id === '_offsite') {
               delete booking.room_id
             }
-
             booking_array.push(booking)
+            axiosArray.push(self.postBooking(booking))
           })
         })
       }
-      booking_array.forEach(booking => {
-        self.postBooking(booking).then(() => {
-          self.getBookings()
-        })
-      })
+
+      // booking_array.forEach(booking => {
+      //   self.postBooking(booking).then(() => {
+      //     self.getBookings()
+      //   })
+      // })
+      if ((axiosArray.length == limit)) {
+              this.bulkApiCall(axiosArray)
+              axiosArray = []
+              // this.api_count = this.api_count + limit
+          } else if (rrule_ind ==  this.booking_rrule_array.length*this.room_id_list.length) {
+            this.bulkApiCall(axiosArray, true)
+            axiosArray = []
+          } 
+
       this.toggleBookingBlackoutModal(false)
     }
+    this.toggleBookingBlackoutModal(false)
   }
 
   generateRule () {
+    let validate_flag =false
+    this.reccuring_start_time_msg = ''
+    this.reccuring_end_time_msg = ''
+    let recurring_booking_start_time = this.convertTimePickerValue(this.recurring_booking_start_time)
+    let recurring_booking_end_time = this.convertTimePickerValue(this.recurring_booking_end_time)
+
+    if (recurring_booking_start_time) {
+      if ((new Date(recurring_booking_start_time).getHours() <= 8) || (new Date(recurring_booking_start_time).getHours() >= 17)){
+        if ((new Date(recurring_booking_start_time).getHours() === 8)) {
+          if ((new Date(recurring_booking_start_time).getMinutes() < 30)) {
+              this.reccuring_start_time_msg = "Time not allowed"
+              this.recurring_booking_start_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(recurring_booking_start_time).getHours() === 17) {
+          if ((new Date(recurring_booking_start_time).getMinutes() > 0)) {
+              this.recurring_booking_start_time = null
+              this.reccuring_start_time_msg = "Time not allowed"
+              validate_flag = true
+          } else {
+            this.reccuring_start_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.reccuring_start_time_msg = "Time not allowed"
+          this.recurring_booking_start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (recurring_booking_end_time) {
+      if ((new Date(recurring_booking_end_time).getHours() <= 8) || (new Date(recurring_booking_end_time).getHours() >= 17)){
+        if ((new Date(recurring_booking_end_time).getHours() === 8)) {
+          if ((new Date(recurring_booking_end_time).getMinutes() < 30)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(recurring_booking_end_time).getHours() === 17) {
+          if ((new Date(recurring_booking_end_time).getMinutes() > 0)) {
+              this.reccuring_end_time_msg = "Time not allowed"
+              this.recurring_booking_end_time = null
+              validate_flag = true
+          } else {
+            this.reccuring_end_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.reccuring_end_time_msg = "Time not allowed"
+          this.recurring_booking_end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.recurring_form_state = ''
+      return false
+    }
     this.hideCollapse('collapse-booking-event-selection')
     this.hideCollapse('collapse-recurring-booking')
     this.single_booking_blackout_boolean = true
     this.recurring_booking_blackout_boolean = true
+    //365 DAYS VALIDATION
+    const a = moment(this.recurring_booking_start_date)
+    const b = moment(this.recurring_booking_end_date)
+    const diffDays = b.diff(a, 'days')
+    if (diffDays > 365) {
+      this.recurring_booking_start_date = null
+      this.recurring_booking_end_date = null
+      this.showCollapse('date-limit')
+      this.show_next = false
+      return false
+    }
     // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
     // Removed these variables from the date_start and until variable declarations
     const start_year = parseInt(moment(this.recurring_booking_start_date).clone().format('YYYY'))
     const start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
     const start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
     // let start_hour = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('HH'))
-    const local_start_hour = parseInt(moment(this.recurring_booking_start_time).clone().format('HH'))
-    const start_minute = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('mm'))
+    const local_start_hour = parseInt(moment(recurring_booking_start_time).clone().format('HH'))
+    const start_minute = parseInt(moment(recurring_booking_start_time).utc().clone().format('mm'))
     const end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
     const end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
     const end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
     // let end_hour = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('HH'))
     // let end_minute = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('mm'))
-    const duration = moment.duration(moment(this.recurring_booking_end_time).diff(moment(this.recurring_booking_start_time)))
+    const duration = moment.duration(moment(recurring_booking_end_time).diff(moment(recurring_booking_start_time)))
     const duration_minutes = duration.asMinutes()
     let booking_input_frequency: any = null
     const local_booking_dates_array: any = []
@@ -966,6 +1358,7 @@ export default class BookingBlackoutModal extends Vue {
     this.recurring_booking_end_time = null
     this.recurring_form_state = 'audit'
     this.showCollapse('collapse-information-audit')
+    this.show_next = true
   }
 
   setSingle () {
@@ -976,7 +1369,13 @@ export default class BookingBlackoutModal extends Vue {
     this.end_time = null
     this.recurring_form_state = ''
     this.single_form_state = ''
+
+    this.stat_dates = [{note:""}]
+    this.stat_submit = false
+    this.show_stat_next = false
+
     this.hideCollapse('collapse-single-booking')
+    this.hideCollapse('collapse-recurring-stat')
   }
 
   setRecurring () {
@@ -991,6 +1390,37 @@ export default class BookingBlackoutModal extends Vue {
     this.recurring_booking_end_time = null
     this.recurring_form_state = ''
     this.single_form_state = ''
+    
+    this.stat_dates = [{note:""}]
+    this.stat_submit = false
+    this.show_stat_next = false
+
+    this.hideCollapse('collapse-recurring-booking')
+    this.hideCollapse('collapse-recurring-stat')
+  }
+
+  setSTAT () {
+    this.recurring_booking_blackout_boolean = !this.recurring_booking_blackout_boolean
+    this.single_input_boolean = false
+    this.selected_booking_count = ''
+    this.selected_booking_frequency = []
+    this.selected_booking_weekdays = []
+    this.recurring_booking_start_date = null
+    this.recurring_booking_start_time = null
+    this.recurring_booking_end_date = null
+    this.recurring_booking_end_time = null
+    this.recurring_form_state = ''
+    this.single_form_state = ''
+
+    this.single_booking_blackout_boolean = !this.single_booking_blackout_boolean
+    this.single_input_boolean = false
+    this.blackout_date = null
+    this.start_time = null
+    this.end_time = null
+    this.recurring_form_state = ''
+    this.single_form_state = ''
+
+    this.hideCollapse('collapse-single-booking')
     this.hideCollapse('collapse-recurring-booking')
   }
 
@@ -1005,6 +1435,8 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   checkRecurringInput () {
+    this.reccuring_start_time_msg = ''
+    this.reccuring_end_time_msg = ''
     if (this.selected_booking_frequency.length > 0 && this.recurring_booking_start_date !== null &&
       this.recurring_booking_start_time !== null && this.recurring_booking_end_date !== null &&
       this.recurring_booking_end_time !== null) {
@@ -1013,9 +1445,76 @@ export default class BookingBlackoutModal extends Vue {
     } else {
       this.recurring_input_boolean = false
     }
+    if (this.only_this_office.length === 0){
+      this.only_bookings = []
+    }
   }
 
   nextRoomSingleSelection () {
+    let validate_flag =false
+    this.start_time_msg = ''
+    this.end_time_msg = ''
+    const start_time = this.convertTimePickerValue(this.start_time)
+    const end_time = this.convertTimePickerValue(this.end_time)
+
+    if (start_time) {
+      if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
+        if ((new Date(start_time).getHours() === 8)) {
+          if ((new Date(start_time).getMinutes() < 30)) {
+              this.start_time_msg = "Time not allowed"
+              this.start_time = null
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(start_time).getHours() === 17) {
+          if ((new Date(start_time).getMinutes() > 0)) {
+              this.start_time = null
+              this.start_time_msg = "Time not allowed"
+              validate_flag = true
+          } else {
+            this.start_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.start_time_msg = "Time not allowed"
+          this.start_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (end_time) {
+      if ((new Date(end_time).getHours() <= 8) || (new Date(end_time).getHours() >= 17)){
+        if ((new Date(end_time).getHours() === 8)) {
+          if ((new Date(end_time).getMinutes() < 30)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+            validate_flag = false
+          }
+        } else if (new Date(end_time).getHours() === 17) {
+          if ((new Date(end_time).getMinutes() > 0)) {
+              this.end_time_msg = "Time not allowed"
+              this.end_time = null
+              validate_flag = true
+          } else {
+            this.end_time_msg = ''
+            validate_flag = false
+          }
+        } else {
+          this.end_time_msg = "Time not allowed"
+          this.end_time = null
+          validate_flag = true
+        }
+      }
+    }
+    if (validate_flag) {
+      this.single_form_state = ''
+      return false
+    }
     this.hideCollapse('collapse-single-booking')
     this.hideCollapse('collapse-booking-event-selection')
     this.showCollapse('collapse-room-selection')
@@ -1043,10 +1542,261 @@ export default class BookingBlackoutModal extends Vue {
 
   created () {
     this.blackout_name = 'BLACKOUT PERIOD'
+    this.stat_user_name = 'STAT PERIOD'
     this.user_contact_info = this.$store.state.user.username
+  }
+
+  addField(value, fieldType) {
+    fieldType.push({ value: "" });
+  }
+  
+  removeField(index, fieldType) {
+    fieldType.splice(index, 1);
+  }
+  
+  nextStat () {
+    this.hideCollapse('collapse-information-audit')
+    this.hideCollapse('collapse-recurring-stat')
+    this.booking_rrule_array = []
+    this.stat_dates.forEach(item => {
+      if (item.value) { 
+        this.booking_rrule_array.push(item)
+      }
+    })
+    this.is_stat = true
+    this.showCollapse('collapse-information-audit')
+    this.show_stat_next = false
+    this.stat_submit = true
+    
+    
+    this.hideCollapse('collapse-single-booking')
+    this.hideCollapse('collapse-booking-event-selection')
+  }
+
+  // async created () {
+  //   this.user_name = 'BLACKOUT PERIOD'
+  //   this.stat_user_name = 'STAT PERIOD'
+  //   this.user_contact_info = this.$store.state.user.username
+  // }
+
+  mounted () {
+    this.blackout_name = 'BLACKOUT PERIOD'
+    this.stat_user_name = 'STAT PERIOD'
+  }
+
+  
+  private delay(ms: number) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  async bulkApiCall(axiosArray, flag=false) {
+    const res = await this.callBulkAxios({'axiosArray': axiosArray, 'flag': flag})
+    if (res) {
+      apiProgressBus.$emit(APIProgressBusEvents.APIProgressEvent, axiosArray.length)
+      await this.delay(3000)
+      showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, false)
+      this.getAppointments()
+      this.getBookings()
+      this.setApiTotalCount(0)
+    } else {
+      apiProgressBus.$emit(APIProgressBusEvents.APIProgressEvent, axiosArray.length)
+      await this.delay(50000)
+    }
+  }
+
+  async statSubmit () {
+    this.setApiTotalCount(0)
+    this.setApiTotalCount(this.booking_rrule_array.length)
+    showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, true)
+    // const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+    // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+    const uuidv4 = require('uuid').v4
+    const recurring_uuid = uuidv4()
+    let axiosArray: any = []
+    let rrule_ind = 0
+    const all_offices = await this.getOffices('force')
+    const stat_user_name = this.stat_user_name
+    const user_contact_info = this.user_contact_info
+    // const notes = this.notes
+    const createStatAxioObject = this.createStatAxioObject
+    const booking_rrule_array = this.booking_rrule_array
+    const stat_dates = this.stat_dates
+    const bulkApiCall = this.bulkApiCall
+    const getOfficeRooms =  this.getOfficeRooms
+    const postBooking = this.postBooking
+    this.booking_rrule_array = this.stat_dates
+    const self = this
+    if (this.booking_rrule_array.length > 0) {
+      const limit = 10
+      this.booking_rrule_array.forEach(async function (item) { 
+        if (item.value) {
+          rrule_ind += 1
+          const date = moment(item.value).clone().format('YYYY-MM-DD')
+          const start = moment(item.value).clone().format('HH:mm:ss')
+          const end =  moment(item.value).add(59, 'minutes').add(23, 'hours').add(59, 'seconds').clone().format('HH:mm:ss')
+          
+          if (self.only_this_office.length == 1){
+            if (self.only_this_office[0]){
+              // stat for appointments
+               if (self.only_bookings.length === 0) {
+                  const e: any = {
+                      start_time: moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      end_time: moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      citizen_name: stat_user_name+'_'+self.$store.state.user.office.office_name,
+                      contact_information: user_contact_info,
+                      stat_flag: true,
+                      office_id: self.$store.state.user.office.office_id,
+                      recurring_uuid: recurring_uuid,
+                      comments : item.note
+                    }
+                    await axiosArray.push(await createStatAxioObject(e))
+               }
+              // stat for rooms
+              const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
+              office_room.forEach(function (room) {
+                const blackout_booking: any = {}
+                if (room.id == '_offsite') {
+                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                  blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
+                  blackout_booking.booking_contact_information = user_contact_info,
+                  blackout_booking.stat_flag = true,
+                  blackout_booking.blackout_notes = item.note,
+                  blackout_booking.office_id = self.$store.state.user.office.office_id,
+                  blackout_booking.recurring_uuid = recurring_uuid
+                  blackout_booking.for_stat = true
+                } else {
+                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                  blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
+                  blackout_booking.booking_contact_information = user_contact_info,
+                  blackout_booking.room_id = room.id
+                  blackout_booking.stat_flag = true,
+                  blackout_booking.blackout_notes = item.note,
+                  blackout_booking.office_id = self.$store.state.user.office.office_id,
+                  blackout_booking.recurring_uuid = recurring_uuid
+                  blackout_booking.for_stat = true
+                }
+                axiosArray.push(self.postBookingStat(blackout_booking))
+              })
+            }
+
+          }
+          //if ends
+          else if (self.only_this_office.length == 0) {
+              all_offices.forEach(async function(office) {
+                  const e: any = {
+                      start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      citizen_name: stat_user_name+'_'+office.office_name,
+                      contact_information: user_contact_info,
+                      stat_flag: true,
+                      office_id: office.office_id,
+                      recurring_uuid: recurring_uuid,
+                      comments : item.note
+                    }
+                    await axiosArray.push(await createStatAxioObject(e))
+
+                  // stat for rooms
+                  const office_room = await getOfficeRooms({'office_id': office.office_id})
+                  office_room.forEach(function (room) {
+                    const blackout_booking: any = {}
+                    if (room.id == '_offsite') {
+                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
+                      blackout_booking.booking_contact_information = user_contact_info,
+                      blackout_booking.stat_flag = true,
+                      blackout_booking.blackout_notes = item.note,
+                      blackout_booking.office_id = office.office_id,
+                      blackout_booking.recurring_uuid = recurring_uuid
+                      blackout_booking.for_stat = true
+                    } else {
+                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
+                      blackout_booking.booking_contact_information = user_contact_info,
+                      blackout_booking.room_id = room.id
+                      blackout_booking.stat_flag = true,
+                      blackout_booking.blackout_notes = item.note,
+                      blackout_booking.office_id = office.office_id,
+                      blackout_booking.recurring_uuid = recurring_uuid
+                      blackout_booking.for_stat = true
+                    }
+                    axiosArray.push(self.postBookingStat(blackout_booking))
+                    // this.postBooking(blackout_booking)
+                    // .then(() => {
+                    //   this.getBookings()
+                    // })
+                  }) 
+                }) 
+                //end of office list
+            }
+            //bulk call
+            if ((axiosArray.length == limit)) {
+                bulkApiCall(axiosArray)
+                axiosArray = []
+                // this.api_count = this.api_count + limit
+            } else if (rrule_ind == booking_rrule_array.length) {
+              bulkApiCall(axiosArray, true)
+              axiosArray = []
+            }
+          }
+
+        })
+        //end of items
+
+    }
+    // this.recurring_blackout_boolean = true
+    // this.single_blackout_boolean = true
+    this.getAppointments()
+    this.booking_rrule_text = ''
+    this.booking_rrule_array = []
+    // this.recurring_input_state = ''
+    this.single_input_boolean = ''
+
+    this.toggleBookingBlackoutModal(false)
+
+    this.hideCollapse('collapse-information-audit')
+    this.hideCollapse('collapse-recurring-stat')
+    this.is_stat = false
+    this.hideCollapse('collapse-information-audit')
+    this.show_stat_next = false
+    this.stat_submit = false
+  }
+  
+  checkStatInput () {
+    if (this.stat_dates[0].value) {
+        this.show_stat_next = true
+    } else {
+        this.show_stat_next = false
+    }
+  }
+  
+  formatDate (value) {
+    const formatted_date = moment(value).format('DD MMM, YYYY')
+    return formatted_date
+  }
+
+  convertTimePickerValue(model:any){
+    const hh = model ? model.hh : '00'
+    const mm = model ? model.mm : '00'
+    const aa = model ? model.A : 'AM'
+    const currentDate = new Date()
+    const fullformat = moment(hh + ':' + mm + ' ' + aa ,'hh:mm A').format('HH:mm:ss')
+    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
+    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const year = currentDate.getFullYear()
+    return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
   }
 }
 </script>
-
 <style scoped>
+.danger {
+  color: red !important;
+}
+.vue__time-picker input.display-time{
+  width: 213px;
+  height: 40px;
+}
 </style>
