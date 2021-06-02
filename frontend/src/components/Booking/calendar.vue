@@ -646,7 +646,7 @@ export default class Calendar extends Vue {
       // this.unselect()
       this.removeSavedSelection()
       const booking = this.editedBookingOriginal     
-      // Checking if scheduled date is past expiry date of the exam
+      // Checking if re-scheduled date is past expiry date of the exam
       if(this.selectedExam) {
         if (moment(this.selectedExam.expiry_date).isValid() && moment(this.selectedExam.expiry_date).isBefore(moment(event.start), 'day')) {          
           console.log('expiry date in the past!')
