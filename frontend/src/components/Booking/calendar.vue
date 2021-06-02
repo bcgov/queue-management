@@ -642,11 +642,19 @@ export default class Calendar extends Vue {
       return
     }
     // category
-
     if (this.rescheduling) {
       // this.unselect()
       this.removeSavedSelection()
-      const booking = this.editedBookingOriginal
+      const booking = this.editedBookingOriginal     
+      // Checking if scheduled date is past expiry date of the exam
+      if(this.selectedExam) {
+        if (moment(this.selectedExam.expiry_date).isValid() && moment(this.selectedExam.expiry_date).isBefore(moment(event.start), 'day')) {          
+          console.log('expiry date in the past!')
+          this.examExpiryDateScheduling = moment(this.selectedExam.expiry_date).format('MMMM DD, YYYY')
+          this.expiryNotificationDialog = true
+          return
+        }
+      }
       if (this.selectedExam && (Object.keys(this.selectedExam) as any) > 0) {
         const { number_of_hours, number_of_minutes } = this.selectedExam.exam_type
         // TOCHECK removed new keyword in moment. not needed
@@ -732,10 +740,12 @@ export default class Calendar extends Vue {
     }
 
     if (this.scheduling) {
-      if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {                
+      if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
+        // Checking if scheduled date is past expiry date of the exam  
         if (moment(this.selectedExam.expiry_date).isValid() && moment(this.selectedExam.expiry_date).isBefore(selection.start, 'day')) {          
           this.examExpiryDateScheduling = moment(this.selectedExam.expiry_date).format('MMMM DD, YYYY')
           this.expiryNotificationDialog = true
+          return
         } else {          
           // this.unselect()
           // TOCHECK removed new keyword in moment.not needed
