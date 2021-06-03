@@ -107,7 +107,7 @@ def send_reminders(app):
                 time.sleep(60)
                 email_count = 0
                 # To handle token expiry, get a new token when the task resumes.
-                access_token = get_access_token()
+                access_token = get_access_token(app)
 
     app.logger.debug('Ending job>>>')
 
