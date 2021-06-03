@@ -23,6 +23,7 @@
           @click="showFieldErrors = false"
           >Submit</b-btn
         >
+        <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
         <!-- <b-btn
           v-if="!okButton.disabled"
           :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
@@ -159,13 +160,11 @@
 </template>
 
 <script lang="ts">
-
+/* eslint-disable camelcase */
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
 import DatePicker from 'vue2-datepicker'
 import FailureExamAlert from './failure-exam-alert.vue'
-
 import moment from 'moment'
 
 @Component({
@@ -218,6 +217,7 @@ export default class ReturnExamModal extends Vue {
       const fields = ['exam_returned_tracking_number', 'exam_written_ind', 'notes', 'exam_returned_date']
       let result = false
       fields.forEach(field => {
+        // eslint-disable-next-line eqeqeq
         if (this[field] != this.exam[field]) {
           result = true
         }
@@ -255,6 +255,7 @@ export default class ReturnExamModal extends Vue {
   }
 
   handleActionInput (e) {
+    // eslint-disable-next-line eqeqeq
     if (e.keyCode == 8 || e.keyCode == 46) {
       this.removeError()
       return true
