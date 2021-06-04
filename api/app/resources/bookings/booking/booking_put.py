@@ -60,7 +60,7 @@ class BookingPut(Resource):
 
             elif type(i_id_list) == list:
 
-                if len(i_id_list) == 0:
+                if len(i_id_list) == 0 or i_id_list == [None]:
 
                     db.session.add(booking)
                     db.session.commit()
