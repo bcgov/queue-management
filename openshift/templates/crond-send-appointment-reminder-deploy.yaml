@@ -9,9 +9,9 @@ objects:
   - kind: Role
     apiVersion: rbac.authorization.k8s.io/v1
     metadata:
-      name: ${NAME}-${TAG_NAME}
+      name: ${NAME}
       labels:
-        app: ${NAME}-${TAG_NAME}
+        app: ${NAME}
         app-group: ${APP_GROUP}
     rules:
       - apiGroups:
@@ -23,16 +23,16 @@ objects:
   - kind: ServiceAccount
     apiVersion: v1
     metadata:
-      name: ${NAME}-${TAG_NAME}
+      name: ${NAME}
       labels:
-        app: ${NAME}-${TAG_NAME}
+        app: ${NAME}
         app-group: ${APP_GROUP}
   - kind: RoleBinding
     apiVersion: rbac.authorization.k8s.io/v1
     metadata:
-      name: ${NAME}-${TAG_NAME}
+      name: ${NAME}
       labels:
-        app: ${NAME}-${TAG_NAME}
+        app: ${NAME}
         app-group: ${APP_GROUP}
     roleRef:
       apiGroup: rbac.authorization.k8s.io
@@ -111,7 +111,7 @@ objects:
             deploymentconfig: '${NAME}-${TAG_NAME}'
             template: '${NAME}-deploy'
         spec:
-          serviceAccountName: ${NAME}-${TAG_NAME}
+          serviceAccountName: ${NAME}
           volumes:
             - name: cron-config
               configMap:

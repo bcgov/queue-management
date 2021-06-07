@@ -21,7 +21,7 @@
 #  - Name of the statefulset, such as "redis-theq". This script relies on pods
 #    being named "redis-theq-0" through "redis-theq-5"
 #  - Hostname of the Redis service, such as "$REDIS_THEQ_SERVICE_HOST"
-#  - Port number of the Redis service, such as "$REDIS_THEQ_SERVICE_PORT_REDIS"
+#  - Port number of the Redis service, such as "$REDIS_THEQ_SERVICE_PORT"
 #  - Password for authenticating to the Redis nodes, such as the "password"
 #    value in the "redis-theq-secret" secret.
 
@@ -58,7 +58,7 @@ api_certificate_file = "/run/secrets/kubernetes.io/serviceaccount/" + \
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((redis_host, int(redis_port)))
 s.send(("HELLO 3 AUTH default " + redis_password + "\n").encode())
-print(s.recv(1024).decode())
+# print(s.recv(1024).decode())
 
 # CLUSTER MEET with every IP, including itself (for code simplicity).
 for i in range(0, 6):
@@ -67,6 +67,6 @@ for i in range(0, 6):
                             verify=api_certificate_file)
     ip = json.loads(response.content)["status"]["podIP"]
     s.send(("CLUSTER MEET " + format(ip) + " " + redis_port + "\n").encode())
-    print(s.recv(1024).decode())
+    # print(s.recv(1024).decode())
 
 s.close()
