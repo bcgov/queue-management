@@ -37,10 +37,10 @@ objects:
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: Role
-      name: ${NAME}-${TAG_NAME}
+      name: ${NAME}
     subjects:
       - kind: ServiceAccount
-        name: ${NAME}-${TAG_NAME}
+        name: ${NAME}
   - kind: ConfigMap
     apiVersion: v1
     metadata:
