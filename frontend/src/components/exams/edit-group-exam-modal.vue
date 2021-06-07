@@ -213,7 +213,7 @@
       <!-- End of data needed for pesticide exam -->
 
       <!-- Start of data needed for all non-pesticide exams -->
-      <template v-else>
+      <template v-else-if="user.office_id === actionedExam.office.office_id">
         <!-- You don't have any invigilators, and need to add some. -->
         <template>
           <b-button
@@ -498,7 +498,7 @@
         <!-- Start of changing invigilators, by adding some -->
 
         <!-- Start of Shadow Invigilator -->
-        <b-form-group>
+        <b-form-group v-if="user.office_id === actionedExam.office.office_id">
           <b-form-row>
             <template v-if="this.currentShadowInvigilator != null">
               <b-row style="display: flex" class="w-100 ml-0 mb-2">
@@ -861,6 +861,9 @@ export default class EditGroupExamBookingModal extends Vue {
       }
     }
     if (this.examType === 'group') {
+      if (this.actionedExam.is_pesticide && !this.is_pesticide_designate) {
+        return true
+      }
       if (!this.is_ita2_designate && !this.is_pesticide_designate) {
         return true
       }
@@ -1259,7 +1262,7 @@ export default class EditGroupExamBookingModal extends Vue {
     this.changeState = true
     this.selectedShadow = null
     this.removeFlag = false
-    if (this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
+    if ((this.user.office_id === this.actionedExam.office.office_id) && this.actionedExam.booking && this.actionedExam.booking.invigilators && !this.actionedExam.is_pesticide && !this.actionedExam.sbc_managed_ind) {
       this.actionedExam.booking.invigilators.forEach(function (invigilator) {
         const indexOfInvigilator = self.invigilators.findIndex(x => x.invigilator_id == invigilator)
         const index_invigilator_id = self.invigilators[indexOfInvigilator].invigilator_id
