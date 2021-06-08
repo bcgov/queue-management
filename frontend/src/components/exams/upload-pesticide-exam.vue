@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <!-- removed shown -->
-    <!-- @shown="showModal" -->
+  <div data-app>
     <b-modal
       v-model="modalVisible"
       :no-close-on-backdrop="true"
@@ -14,7 +12,11 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
+          <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
+          <!-- <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
+            >Submit</b-btn
+          > -->
+          <b-btn class="btn-primary" v-if="!submitted" @click.once="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -122,26 +124,52 @@
         <div class="text-center" v-if="isLoading">
           <b-spinner variant="primary" label="Loading"></b-spinner>
         </div>
+        <v-dialog
+           v-model="confirmDialog"
+           max-width="400"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Confirm
+             </v-card-title>
+             <v-card-text>
+               {{ this.warningText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmExam(false)"
+               >
+                 No
+               </v-btn>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmExam(true)"
+               >
+                 Yes
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
       </b-form>
     </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable camelcase */
+/* eslint-disable no-console */
 
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Action, Mutation } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
-// import { mapActions, mapMutations, mapState } from 'vuex'
-
-const addExamModule = namespace('addExamModule')
 
 @Component({
 
   computed: {
-    // ...mapGetters('auth', ['isAuthenticated'])
-
     ...mapState({
       showModal: (state: any) => state.addExamModule.uploadPesticideModalVisible
     })
@@ -155,11 +183,6 @@ export default class UploadPesticideModal extends Vue {
   private resetExam!: any
 
   private readonly showModal!: any
-  // @State('addExamModule.uploadPesticideModalVisible') private showModal
-
-  //   ...mapState ({
-  //   showModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Action('putExamInfo') public putExamInfo: any
   @Action('getExams') public getExams: any
@@ -175,6 +198,8 @@ export default class UploadPesticideModal extends Vue {
   public destroyed: any = this.actionedExam.exam_destroyed_date !== null
   public submitted: any = false
   public exam_printed: any = this.actionedExam.exam_received_date !== null
+  public warningText: any = 'Are you sure you want to upload this exam?'
+  private confirmDialog: any = false
   public statusOptions: any = this.exam_printed ? [
     { value: 'unwritten', text: 'Unwritten' },
     { value: 'written', text: 'Written' },
@@ -207,6 +232,17 @@ export default class UploadPesticideModal extends Vue {
   resetModal () {
     this.resetExam()
     this.toggleUploadExamModal(false)
+  }
+
+  examStatus () {
+    this.confirmDialog = true
+  }
+
+  private async confirmExam (isAgree: boolean) {
+    if (isAgree) {
+      this.submit()
+    }
+    this.confirmDialog = false
   }
 
   submit () {
