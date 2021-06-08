@@ -25,48 +25,72 @@
 #  - Password for authenticating to the Redis nodes, such as the "password"
 #    value in the "redis-theq-secret" secret.
 
-import json
 import requests
 import socket
 import sys
+
+VERBOSE = False
 
 redis_statefulset = sys.argv[1]
 redis_host = sys.argv[2]
 redis_port = sys.argv[3]
 redis_password = sys.argv[4]
 
-# The location of the authorization token needed to make Kubernetes API calls,
-# particularly pod get.
-auth_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-auth_token = open(auth_token_file).read()
 
-# The location of the file that tells us what namespace we're running in. Used
-# for Kubernetes API calls.
-namespace_file = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
-namespace = open(namespace_file).read()
+def get_pod_ip(pod_name):
+    # The location of the authorization token needed to make Kubernetes API
+    # calls, particularly pod get.
+    auth_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    auth_token = open(auth_token_file).read()
 
-# The Kubernetes API endpoint that will be used to get the information for the
-# Redis pods.
-api_endpoint = "https://kubernetes.default.svc/api/v1/namespaces/" + \
-               namespace + "/pods/"
+    # The location of the file that tells us what namespace we're running in.
+    # Used for Kubernetes API calls.
+    namespace_file = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+    namespace = open(namespace_file).read()
 
-# The self-signed certificate that is used by the Kubernetes API.
-api_certificate_file = "/run/secrets/kubernetes.io/serviceaccount/" + \
-                       "service-ca.crt"
+    # The Kubernetes API endpoint that will be used to get the information for
+    # the Redis pods.
+    api_endpoint = "https://kubernetes.default.svc/api/v1/namespaces/" + \
+                   namespace + "/pods/"
 
-# Open a socket to whatever Redis pod is on the load balancer.
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((redis_host, int(redis_port)))
-s.send(("HELLO 3 AUTH default " + redis_password + "\n").encode())
-# print(s.recv(1024).decode())
+    # The self-signed certificate that is used by the Kubernetes API.
+    api_certificate_file = "/run/secrets/kubernetes.io/serviceaccount/" + \
+                           "service-ca.crt"
 
-# CLUSTER MEET with every IP, including itself (for code simplicity).
-for i in range(0, 6):
-    response = requests.get(api_endpoint + redis_statefulset + "-" + str(i),
+    response = requests.get(api_endpoint + pod_name,
                             headers={"Authorization": "Bearer " + auth_token},
                             verify=api_certificate_file)
-    ip = json.loads(response.content)["status"]["podIP"]
-    s.send(("CLUSTER MEET " + format(ip) + " " + redis_port + "\n").encode())
-    # print(s.recv(1024).decode())
+
+    if response.status_code != 200:
+        print("ERROR: get pod " + pod_name + " failed with status code " +
+              str(response.status_code))
+    elif "status" not in response.json():
+        print("ERROR: get pod " + pod_name + " missing .status in API " +
+              "response")
+    elif "podIP" not in response.json()["status"]:
+        print("ERROR: get pod " + pod_name + " missing .status.podIP in API " +
+              "response")
+    else:
+        return response.json()["status"]["podIP"]
+
+
+# Open a socket to whatever Redis pod is on the load balancer.
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.connect((redis_host, int(redis_port)))
+    s.send(("HELLO 3 AUTH default " + redis_password + "\n").encode())
+
+    if VERBOSE:
+        print(s.recv(1024).decode())
+
+    # CLUSTER MEET with every IP, including itself (for code simplicity).
+    for i in range(0, 6):
+        ip = get_pod_ip(redis_statefulset + "-" + str(i))
+
+        if ip:
+            s.send(("CLUSTER MEET " + format(ip) + " " + redis_port +
+                    "\n").encode())
+
+            if VERBOSE:
+                print(s.recv(1024).decode())
 
 s.close()
