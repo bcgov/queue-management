@@ -235,7 +235,11 @@ export default class UploadPesticideModal extends Vue {
   }
 
   examStatus () {
-    this.confirmDialog = true
+    if (this.status === 'written' && this.file) {
+      this.confirmDialog = true
+    } else {
+      this.submit()
+    }
   }
 
   private async confirmExam (isAgree: boolean) {
@@ -290,9 +294,6 @@ export default class UploadPesticideModal extends Vue {
   updateExam (putData) {
     this.putExamInfo(putData)
       .then(() => {
-        // setTimeout(()=> {
-        //   this.resetModal()
-        // }, 3000)
       })
       .catch((error) => {
         console.error(error)
