@@ -51,6 +51,7 @@ export default class OfficeDropDownFilter extends Vue {
   public searching: any = false
 
   get officeList () {
+    debugger
     if (this.searching === true) {
       if (this.offices && this.offices.length > 0) {
         if (this.search) {

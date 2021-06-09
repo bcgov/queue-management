@@ -11,8 +11,8 @@
  *
  */
 
-import Vue from 'vue'
 import { Axios } from './../helpers'
+import Vue from 'vue'
 import axios from 'axios'
 import config from './../../../config'
 

@@ -14,8 +14,9 @@
 // import { ActionIF } from '@/interfaces/action-interface'
 
 import { Axios, searchNestedObject } from './../helpers'
-import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
+
 import AppointmentsModule from '../modules/appointments-module';
+import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
