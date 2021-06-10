@@ -161,7 +161,7 @@ class OfficeConfig(Base):
                          'external_map_link',
                          'check_in_notification',
                          'check_in_reminder_msg',
-                         'automatic_reminder_at'
+                         'automatic_reminder_at',
                          'currently_waiting',
                          'digital_signage_message',
                          'digital_signage_message_1',
