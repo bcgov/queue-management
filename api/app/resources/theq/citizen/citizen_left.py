@@ -104,7 +104,7 @@ class CitizenLeft(Resource):
         my_print("    ++> Time before creating the result: " + str(datetime.now()))
         result = self.citizen_schema.dump(citizen)
         my_print("    ++> Time before socket io update call: " + str(datetime.now()))
-        socketio.emit('update_active_citizen', result, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office.office_name)
 
         my_print("    ++> Time before return result call: " + str(datetime.now()))
         return {'citizen': result,

@@ -319,7 +319,7 @@ class OfficeConfig(Base):
         socketio.emit('clear_csr_cache', { "id": csr.csr_id})
         socketio.emit('csr_update',
                         {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
-                        room=csr.office_id)
+                        room=csr.office.office_name)
         socketio.emit('digital_signage_msg_update')
 
 

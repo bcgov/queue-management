@@ -109,8 +109,7 @@ class CitizenDetail(Resource):
 
         result = self.citizen_schema.dump(citizen)
         citizen = Citizen.query.filter_by(citizen_id=citizen.citizen_id).first()
-        # socketio.emit('update_active_citizen', result.data, room=csr.office_id)
-        socketio.emit('update_active_citizen', result, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office.office_name)
 
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 200

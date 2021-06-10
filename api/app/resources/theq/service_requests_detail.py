@@ -58,7 +58,7 @@ class ServiceRequestsDetail(Resource):
 
         result = self.service_request_schema.dump(service_request)
         citizen_result = self.citizen_schema.dump(service_request.citizen)
-        socketio.emit('update_active_citizen', citizen_result, room=csr.office_id)
+        socketio.emit('update_active_citizen', citizen_result, room=csr.office.office_name)
 
         return {'service_request': result,
                 'errors': self.service_request_schema.validate(service_request)}, 200
@@ -115,7 +115,7 @@ class ServiceRequestActivate(Resource):
         SnowPlow.snowplow_event(service_request.citizen.citizen_id, csr, "restartservice", current_sr_number=service_request.sr_number)
 
         citizen_result = self.citizen_schema.dump(service_request.citizen)
-        socketio.emit('update_active_citizen', citizen_result, room=csr.office_id)
+        socketio.emit('update_active_citizen', citizen_result, room=csr.office.office_name)
         result = self.service_request_schema.dump(service_request)
 
         return {'service_request': result,
