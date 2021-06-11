@@ -23,6 +23,9 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/TaskList.vue'
 import { State } from 'vuex-class'
 import configMap from '../utils/config-helper'
+// css specific to service flow
+import '../assets/css/service-flow.css'
+
 @Component({
   components: {
     CamundaTasklist
