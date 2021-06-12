@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component,  Vue } from 'vue-property-decorator'
 import FormViewSubmission from 'camunda-formio-tasklist-vue/src/components/FormViewSubmission.vue'
 import configMap from '../utils/config-helper'
 
