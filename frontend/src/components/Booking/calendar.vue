@@ -130,6 +130,29 @@
         <LoadingModal v-if="show_loading" />
       </div>
     </div>
+    <v-dialog
+          v-model="expiryNotificationDialog"
+          max-width="290"
+        >
+      <v-card>
+        <v-card-title class="headline">
+          Schedule Exam
+        </v-card-title>
+        <v-card-text>
+          This exam has expired on {{ examExpiryDateScheduling }}. Scheduling past expiry date is not allowed.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="expiryNotificationDialog = false"
+          >
+            OK
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -349,6 +372,9 @@ export default class Calendar extends Vue {
   private searchTerm: string = ''
   private tempEvent: boolean = false
   public scheduling1: any = false
+
+  private expiryNotificationDialog: boolean = false
+  private examExpiryDateScheduling: string = ''
 
   get events () {
     if (this.searchTerm) {
@@ -616,11 +642,19 @@ export default class Calendar extends Vue {
       return
     }
     // category
-
     if (this.rescheduling) {
       // this.unselect()
       this.removeSavedSelection()
-      const booking = this.editedBookingOriginal
+      const booking = this.editedBookingOriginal     
+      // Checking if re-scheduled date is past expiry date of the exam
+      if(this.selectedExam) {
+        if (moment(this.selectedExam.expiry_date).isValid() && moment(this.selectedExam.expiry_date).isBefore(moment(event.start), 'day')) {          
+          console.log('expiry date in the past!')
+          this.examExpiryDateScheduling = moment(this.selectedExam.expiry_date).format('MMMM DD, YYYY')
+          this.expiryNotificationDialog = true
+          return
+        }
+      }
       if (this.selectedExam && (Object.keys(this.selectedExam) as any) > 0) {
         const { number_of_hours, number_of_minutes } = this.selectedExam.exam_type
         // TOCHECK removed new keyword in moment. not needed
@@ -707,18 +741,25 @@ export default class Calendar extends Vue {
 
     if (this.scheduling) {
       if (this.selectedExam && Object.keys(this.selectedExam).length > 0) {
-        // this.unselect()
-        // TOCHECK removed new keyword in moment.not needed
-        // selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
-        selection.end = moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
-          .add(this.selectedExam.exam_type.number_of_minutes, 'm')
-        // selection.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name)
-        //   .add(this.selectedExam.exam_type.number_of_hours, 'h')
-        //   .add(this.selectedExam.exam_type.number_of_minutes, 'm')
-        selection.title = this.selectedExam.exam_name
-        this.removeSavedSelection()
-        this.toggleBookingModal(true)
-        this.$root.$emit('showbookingmodal')
+        // Checking if scheduled date is past expiry date of the exam  
+        if (moment(this.selectedExam.expiry_date).isValid() && moment(this.selectedExam.expiry_date).isBefore(selection.start, 'day')) {          
+          this.examExpiryDateScheduling = moment(this.selectedExam.expiry_date).format('MMMM DD, YYYY')
+          this.expiryNotificationDialog = true
+          return
+        } else {          
+          // this.unselect()
+          // TOCHECK removed new keyword in moment.not needed
+          // selection.end = new moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
+          selection.end = moment(event.start).add(this.selectedExam.exam_type.number_of_hours, 'h')
+            .add(this.selectedExam.exam_type.number_of_minutes, 'm')
+          // selection.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name)
+          //   .add(this.selectedExam.exam_type.number_of_hours, 'h')
+          //   .add(this.selectedExam.exam_type.number_of_minutes, 'm')
+          selection.title = this.selectedExam.exam_name
+          this.removeSavedSelection()
+          this.toggleBookingModal(true)
+          this.$root.$emit('showbookingmodal')
+        }        
       } else {
         // this.unselect()
         this.toggleOtherBookingModal(true)
