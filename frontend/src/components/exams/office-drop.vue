@@ -149,7 +149,7 @@ export default class OfficeDrop extends Vue {
 
       this.officeChoices = this.offices.filter(item => {
         const office_name = item.office_name === undefined || item.office_name === null ? '' : item.office_name
-        // Why is a name search checking for matches with all these fields? CRG
+        // Why is a name search checking for matches with all these fields? Leaving them commented out for now. CRG
         // const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
         // const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
         // const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
