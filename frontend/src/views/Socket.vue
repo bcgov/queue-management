@@ -23,6 +23,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 // import { mapActions } from 'vuex'
 import config from './../../config'
+import ConfigHelper from '@/utils/config-helper'
 
 const io = require('socket.io-client')
 let socket
@@ -34,7 +35,8 @@ export default class Socket extends Vue {
   @Action('screenIncomingCitizen') public screenIncomingCitizen: any
 
   @appointmentsModule.Action('updateAppointments') public updateAppointments: any
-
+  private socketTimeout: number = ConfigHelper.getSocketTimeout()
+  private socketDelayMax: number = ConfigHelper.getSocketDelayMax()
   public reconnectInterval: any = null
 
   mounted () {
@@ -49,14 +51,15 @@ export default class Socket extends Vue {
 
   connect () {
     socket = io(config.SOCKET_URL, {
-      timeout: '3000',
-      reconnectionDelayMax: '100',
+      timeout: this.socketTimeout,
+      reconnectionDelayMax: this.socketDelayMax,
       path: '/api/v1/socket.io',
       transports: ['websocket']
     })
     socket.on('connect', () => { this.onConnect() })
     socket.on('disconnect', () => { this.onDisconnect() })
-    console.log('socket attempting to connect')
+    console.log('Socket attempting to connect   timeout from config=',this.socketTimeout)
+    console.log('Socket attempting to connect   reconnectionDelayMax from config=',this.socketDelayMax)
     this.addListeners()
   }
 
