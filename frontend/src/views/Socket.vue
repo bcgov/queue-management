@@ -58,8 +58,7 @@ export default class Socket extends Vue {
     })
     socket.on('connect', () => { this.onConnect() })
     socket.on('disconnect', () => { this.onDisconnect() })
-    console.log('Socket attempting to connect   timeout from config=',this.socketTimeout)
-    console.log('Socket attempting to connect   reconnectionDelayMax from config=',this.socketDelayMax)
+    console.log('Socket attempting to connect')
     this.addListeners()
   }
 
