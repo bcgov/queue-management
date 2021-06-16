@@ -23,7 +23,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 // import { mapActions } from 'vuex'
 import config from './../../config'
-import ConfigHelper from '@/utils/config-helper'
+import configMap from '@/utils/config-helper'
 
 const io = require('socket.io-client')
 let socket
@@ -35,8 +35,8 @@ export default class Socket extends Vue {
   @Action('screenIncomingCitizen') public screenIncomingCitizen: any
 
   @appointmentsModule.Action('updateAppointments') public updateAppointments: any
-  private socketTimeout: number = ConfigHelper.getSocketTimeout()
-  private socketDelayMax: number = ConfigHelper.getSocketDelayMax()
+  public socketTimeout : number = 3000
+  public socketDelayMax : number = 100
   public reconnectInterval: any = null
 
   mounted () {
@@ -50,6 +50,10 @@ export default class Socket extends Vue {
   }
 
   connect () {
+    this.socketTimeout = configMap.getSocketTimeout()
+    this.socketDelayMax = configMap.getSocketDelayMax()
+    console.log('Socket Timeout value = ',this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,
@@ -63,13 +67,10 @@ export default class Socket extends Vue {
   }
 
   addListeners () {
-    console.log('Begin Add Listener')
     socket.on('reconnecting', () => { this.onReconnecting() })
     socket.on('joinRoomSuccess', () => { this.onJoinRoom(true) })
     socket.on('joinRoomFail', () => { this.onJoinRoom(false) })
-    console.log('Call get csr State IDS')
     socket.on('get_Csr_State_IDs', () => { this.getCsrStateIDs() })
-    console.log('DO WE SEE THIS MESSAGE BEFORE POP UP')
     socket.on('update_customer_list', () => { this.onUpdateCustomerList() })
     socket.on('update_active_citizen', (citizen) => { this.onUpdateActiveCitizen(citizen) })
     socket.on('csr_update', (data) => { this.onCSRUpdate(data) })

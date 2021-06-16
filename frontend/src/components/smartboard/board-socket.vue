@@ -17,7 +17,7 @@ limitations under the License.*/
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import config from '../../../config'
-import ConfigHelper from '@/utils/config-helper'
+import configMap from '@/utils/config-helper'
 
 const io = require('socket.io-client')
 let socket
@@ -28,10 +28,16 @@ export default class BoardSocket extends Vue {
   private smartboardData!: any
 
   private reconnectInterval: any = null
-  private socketTimeout: number = ConfigHelper.getSocketTimeout()
-  private socketDelayMax: number = ConfigHelper.getSocketDelayMax()
+  public socketTimeout : number = 3000
+  public socketDelayMax : number = 100
+  
 
   connect (data) {
+    this.socketTimeout = configMap.getSocketTimeout()
+    this.socketDelayMax = configMap.getSocketDelayMax()
+    console.log('Socket Timeout value = ',this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
+    
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,
