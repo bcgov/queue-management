@@ -21,3 +21,19 @@
   display: unset !important;
   padding: unset !important;
 }
+.tooltip-inner {
+  height: auto;
+  width: auto;
+  overflow: auto;
+  max-width: auto !important;
+}
+
+.cft-actionable-container .tooltip-inner ul {
+  display: block;
+  margin-left: 25px;
+  text-align: left;
+}
+.cft-actionable-container .tooltip-inner  li {
+  list-style-type: disc;
+  display: list-item !important;
+}
