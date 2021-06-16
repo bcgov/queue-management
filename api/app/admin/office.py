@@ -161,7 +161,7 @@ class OfficeConfig(Base):
                          'external_map_link',
                          'check_in_notification',
                          'check_in_reminder_msg',
-                         'automatic_reminder_at'
+                         'automatic_reminder_at',
                          'currently_waiting',
                          'digital_signage_message',
                          'digital_signage_message_1',
@@ -319,7 +319,7 @@ class OfficeConfig(Base):
         socketio.emit('clear_csr_cache', { "id": csr.csr_id})
         socketio.emit('csr_update',
                         {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
-                        room=csr.office_id)
+                        room=csr.office.office_name)
         socketio.emit('digital_signage_msg_update')
 
 
