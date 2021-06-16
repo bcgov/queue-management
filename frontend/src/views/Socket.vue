@@ -35,8 +35,8 @@ export default class Socket extends Vue {
   @Action('screenIncomingCitizen') public screenIncomingCitizen: any
 
   @appointmentsModule.Action('updateAppointments') public updateAppointments: any
-  public socketTimeout : number = 3000
-  public socketDelayMax : number = 100
+  public socketTimeout : number = 20000
+  public socketDelayMax : number = 5000
   public reconnectInterval: any = null
 
   mounted () {

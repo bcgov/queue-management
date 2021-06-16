@@ -28,8 +28,8 @@ export default class BoardSocket extends Vue {
   private smartboardData!: any
 
   private reconnectInterval: any = null
-  public socketTimeout : number = 3000
-  public socketDelayMax : number = 100
+  public socketTimeout : number = 20000
+  public socketDelayMax : number = 5000
   
 
   connect (data) {
