@@ -6,6 +6,41 @@ metadata:
     tags: '${NAME}-${TAG_NAME}'
   name: '${NAME}-${TAG_NAME}-deploy'
 objects:
+  - kind: Role
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        app-group: ${APP_GROUP}
+    rules:
+      - apiGroups:
+          - ''
+        resources:
+          - pods
+        verbs:
+          - get
+  - kind: ServiceAccount
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        app-group: ${APP_GROUP}
+  - kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        app-group: ${APP_GROUP}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: ${NAME}
+    subjects:
+      - kind: ServiceAccount
+        name: ${NAME}
   - kind: ConfigMap
     apiVersion: v1
     metadata:
@@ -76,6 +111,7 @@ objects:
             deploymentconfig: '${NAME}-${TAG_NAME}'
             template: '${NAME}-deploy'
         spec:
+          serviceAccountName: ${NAME}
           volumes:
             - name: cron-config
               configMap:

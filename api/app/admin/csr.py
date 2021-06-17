@@ -169,7 +169,7 @@ class CSRConfig(Base):
             socketio.emit('clear_csr_cache', { "id": csr_id})
             socketio.emit('csr_update',
                           {"csr_id": csr_id, "receptionist_ind": updated_csr.receptionist_ind},
-                          room=current_user.office_id)
+                          room=current_user.office.office_name)
 
             flash(gettext('''Record was successfully saved.'''), 'success')
 
