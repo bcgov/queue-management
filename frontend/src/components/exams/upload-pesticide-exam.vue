@@ -16,7 +16,7 @@
           <!-- <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
             >Submit</b-btn
           > -->
-          <b-btn class="btn-primary" v-if="!submitted" @click.once="examStatus"
+          <b-btn class="btn-primary" v-if="!submitted" @click="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -105,18 +105,6 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-
-          <!--  Delete the notes field.  Can no longer edit notes when uploading. -->
-          <!--
-        <b-form-row class="mt-2">
-          <b-col>
-            <b-form-group class="mb-0">
-              <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="examNotes"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        -->
           <b-alert class="mt-2" :show="uploadFailed" variant="danger">
             File upload failed, please try again.
           </b-alert>
@@ -127,6 +115,7 @@
         <v-dialog
            v-model="confirmDialog"
            max-width="400"
+           :retain-focus="false"
          >
            <v-card>
              <v-card-title class="headline">
@@ -140,16 +129,40 @@
                <v-btn
                  color="red darken-1"
                  text
-                 @click="confirmExam(false)"
+                 @click="confirmDialog = false"
                >
                  No
                </v-btn>
                <v-btn
                  color="red darken-1"
                  text
-                 @click="confirmExam(true)"
+                 @click="confirmExam()"
                >
                  Yes
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
+        <v-dialog
+           v-model="noFileWarning"
+           max-width="400"
+           :retain-focus="false"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Warning
+             </v-card-title>
+             <v-card-text>
+               {{ this.noFileText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="noFileWarning = false"
+               >
+                 OK
                </v-btn>
              </v-card-actions>
            </v-card>
@@ -199,7 +212,9 @@ export default class UploadPesticideModal extends Vue {
   public submitted: any = false
   public exam_printed: any = this.actionedExam.exam_received_date !== null
   public warningText: any = 'Are you sure you want to upload this exam?'
+  public noFileText: any = 'Please provide a file to upload.'
   private confirmDialog: any = false
+  private noFileWarning: any = false
   public statusOptions: any = this.exam_printed ? [
     { value: 'unwritten', text: 'Unwritten' },
     { value: 'written', text: 'Written' },
@@ -235,18 +250,18 @@ export default class UploadPesticideModal extends Vue {
   }
 
   examStatus () {
-    if (this.status === 'written' && this.file) {
+    if (this.status === 'written' && this.file === null) {
+      this.noFileWarning = true
+    } else if (this.status === 'written' && this.file) {
       this.confirmDialog = true
     } else {
       this.submit()
     }
   }
 
-  private async confirmExam (isAgree: boolean) {
-    if (isAgree) {
-      this.submit()
-    }
+  private async confirmExam () {
     this.confirmDialog = false
+    this.submit()
   }
 
   submit () {
