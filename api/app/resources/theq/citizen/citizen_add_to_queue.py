@@ -100,10 +100,10 @@ class CitizenAddToQueue(Resource):
         db.session.add(citizen)
         db.session.commit()
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
+        socketio.emit('update_customer_list', {}, room=csr.office.office_name)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.citizen_schema.dump(citizen)
-        socketio.emit('update_active_citizen', result, room=csr.office_id)
+        socketio.emit('update_active_citizen', result, room=csr.office.office_name)
         
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 200

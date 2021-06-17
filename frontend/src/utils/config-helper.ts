@@ -27,6 +27,14 @@ export default class ConfigHelper {
     return this.getValue('SERVICEFLOW_ENABLED') || false
   }
 
+  static getSocketTimeout () {
+    return this.getValue('SOCKET_TIMEOUT') || 20000
+  }
+
+  static getSocketDelayMax () {
+    return this.getValue('SOCKET_DELAY_MAX') || 5000
+  }
+
   static getconfig () {
     return this.config
   }
