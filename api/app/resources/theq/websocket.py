@@ -31,7 +31,7 @@ def on_join(message):
             claims["preferred_username"]))
         csr = CSR.find_by_username(claims["preferred_username"])
         if csr:
-            join_room(csr.office_id)
+            join_room(csr.office.office_name)
             print("==> In websocket.py, CSR joinroom, CSR: " + csr.username + "; request sid: " + str(request.sid))
             emit('joinRoomSuccess', {"sucess": True})
             emit('get_Csr_State_IDs', {"success": True})
