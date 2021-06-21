@@ -18,10 +18,6 @@ from app.models.theq import Base
 
 class Role(Base):
 
-    role_permission = db.Table('role_permission',
-            db.Column('role_id', db.Integer, db.ForeignKey('role.role_id'), primary_key=True, nullable=False),
-            db.Column('permission_id', db.Integer, db.ForeignKey('permission.permission_id'), primary_key=True, nullable=False))
-
     role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     role_code = db.Column(db.String(100))
     role_desc = db.Column(db.String(1000))
