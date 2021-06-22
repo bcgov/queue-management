@@ -185,7 +185,7 @@ export default class Upload extends Vue {
   border-radius: 0.25rem;
   padding: 1px 15px 10px 15px;
   margin: 2px;
-  font: 400 13.33px Arial;
+  font: 400 13.33px Arial, sans-serif;
 }
 .file_header {
   font-size: 20px;

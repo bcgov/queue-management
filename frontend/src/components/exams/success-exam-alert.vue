@@ -19,7 +19,7 @@ limitations under the License.*/
       dismissible
       v-model="countdown"
       @dismissed="setEditExamSuccess"
-      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      style="justify-content: center; font-size: 1rem; border-radius: 0px"
     >
       Success!
     </b-alert>

@@ -18,7 +18,7 @@ limitations under the License.*/
       variant="warning"
       dismissible
       :show="loginDismissCount"
-      style="h-align: center; top: 70px; font-size:1rem; border-radius: 0px; z-index: 1041"
+      style="justify-content: center; top: 70px; font-size:1rem; border-radius: 0px; z-index: 1041"
       @dismissed="onDismissedLogin"
     >{{ loginAlertMessage }}</b-alert>
   </div>
