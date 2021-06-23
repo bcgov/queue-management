@@ -40,6 +40,8 @@ watchdog-timeout=15
 END_TEXT
 
 sed -i 's/default.target/multi-user.target/g' /lib/systemd/system/watchdog.service
+sed -i 's/#RuntimeWatchdogSec=0/RuntimeWatchdogSec=10/g' /etc/systemd/system.conf
+sed -i 's/#ShutdownWatchdog/ShutdownWatchdog/g' /etc/systemd/system.conf
 
 # Fix for Exterprise WLAN connection
 sed -i 's/nl80211,wext/wext,nl80211/g' /lib/systemd/system/wpa_supplicant@.service
