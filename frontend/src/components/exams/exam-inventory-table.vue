@@ -1766,27 +1766,27 @@ export default class ExamInventoryTable extends Vue {
     const lifeRing: any = {
       icon: 'life-ring',
       rank: 4,
-      style: { font-size: '1rem', color: 'red' }
+      style: { font: '1rem', color: 'red' }
     }
     const exclamationTriangle: any = {
       icon: 'exclamation-triangle',
       rank: 3,
-      style: { font-size: '.9rem', color: '#FFC32B' }
+      style: { font: '.9rem', color: '#FFC32B' }
     }
     const clipboardCheck: any = {
       icon: 'clipboard-check',
       rank: 2,
-      style: { font-size: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
     const envelopeOpenText: any = {
       icon: 'shipping-fast',
       rank: 1,
-      style: { font-size: '1rem', color: '#4e9de0' }
+      style: { font: '1rem', color: '#4e9de0' }
     }
     const feePending: any = {
       icon: 'dollar-sign',
       rank: 2,
-      style: { font-size: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
 
     // console.log("============= Start of Tests =======================")
