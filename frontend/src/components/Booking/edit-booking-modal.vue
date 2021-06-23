@@ -37,7 +37,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   autocomplete="off"
@@ -287,7 +287,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   autocomplete="off"

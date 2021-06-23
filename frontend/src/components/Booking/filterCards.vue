@@ -6,7 +6,7 @@
           <div v-if="events.length === 0" class="my-5 mx-3">
             No events found
           </div>
-          <table class="fc-list-table" v-else>
+          <table class="fc-list-table" aria-hidden=true  v-else>
             <tbody>
               <template v-for="(eventDetails, date) in getEvents">
                 <tr

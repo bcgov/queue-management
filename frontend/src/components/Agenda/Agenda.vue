@@ -5,9 +5,7 @@
         There are no exams scheduled for the week currently in view.
         <br />Use the Arrow Buttons above to view a
         different week or click
-        <b
-          class="mx-1"
-        >"This Week"</b> to instantly view the current week.
+        <strong class="mx-1">"This Week"</strong> to instantly view the current week.
       </div>
       <template v-for="(date, i) in examDates">
         <b-container fluid style="background-color: white" v-bind:key="{i}">
