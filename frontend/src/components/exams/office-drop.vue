@@ -1,13 +1,6 @@
 <template>
   <b-row>
     <b-col :cols="columnW">
-      <!-- <b-table
-        v-show="false"
-        :items="offices"
-        :fields="[{ key: 'office_name' }]"
-        :filter="search"
-        @filtered="getFilteredOffices"
-      /> -->
       <b-form autocomplete="off">
         <b-form-group>
           <label class="my-0"
@@ -48,7 +41,7 @@
           <label class="my-0">Office #</label>
           <b-form-input
             id="office_number"
-            type="number"
+            type="text"
             class="less-10-mb"
             :value="numberSearch"
             @focus.native="handleOfficeNumberFocus"
@@ -62,7 +55,7 @@
 </template>
 
 <script lang="ts">
-
+/* eslint-disable camelcase */
 import { Action, Getter, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
@@ -122,18 +115,14 @@ export default class OfficeDrop extends Vue {
     if (!this.searchingNumber) {
       return this.office_number
     }
-    this.searchNumber
   }
 
   get officeSearch () {
     if (!this.searching && this.office_number && this.offices.length > 0) {
+      // eslint-disable-next-line eqeqeq
       return this.offices.find(office => office.office_number == this.office_number).office_name
     }
     return this.search
-  }
-
-  getFilteredOffices (offices) {
-    
   }
 
   handleOfficeDropClick (e) {
@@ -159,43 +148,42 @@ export default class OfficeDrop extends Vue {
       this.showSearch = true
 
       this.officeChoices = this.offices.filter(item => {
-        const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
-        const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
-        const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
-        const office_name =  item['office_name'] === undefined || item['office_name'] === null ? '' : item['office_name']
-        const longitude =  item['longitude'] === undefined || item['longitude'] === null ? '' : item['longitude'] + ''
-        const latitude =  item['latitude'] === undefined || item['latitude'] === null ? '' : item['latitude'] + ''
+        const office_name = item.office_name === undefined || item.office_name === null ? '' : item.office_name
+        // Why is a name search checking for matches with all these fields? Leaving them commented out for now. CRG
+        // const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
+        // const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
+        // const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
+        // const longitude =  item['longitude'] === undefined || item['longitude'] === null ? '' : item['longitude'] + ''
+        // const latitude =  item['latitude'] === undefined || item['latitude'] === null ? '' : item['latitude'] + ''
 
-        let searchResult = telephone.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        if (searchResult) {
+        if (office_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
           return true
         }
-        searchResult = office_appointment_message.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        if (searchResult) {
-          return true
-        }
-        searchResult = civic_address.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        if (searchResult) {
-          return true
-        }
-        searchResult = office_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        if (searchResult) {
-          return true
-        }
-
-        searchResult = longitude.indexOf(this.search) > -1
-        if (searchResult) {
-          return true
-        }
-        searchResult = latitude.indexOf(this.search) > -1
-        if (searchResult) {
-          return true
-        }
+        // let searchResult = telephone.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        // if (searchResult) {
+        //   return true
+        // }
+        // searchResult = office_appointment_message.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        // if (searchResult) {
+        //   return true
+        // }
+        // searchResult = civic_address.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+        // if (searchResult) {
+        //   return true
+        // }
+        // searchResult = longitude.indexOf(this.search) > -1
+        // if (searchResult) {
+        //   return true
+        // }
+        // searchResult = latitude.indexOf(this.search) > -1
+        // if (searchResult) {
+        //   return true
+        // }
       })
 
       if (this.officeChoices.length === 0) {
         this.officeChoices = [{ office_number: null, office_name: 'No Offices found' }]
-      } else{
+      } else {
         this.officeChoices = this.officeChoices.length >= 4 ? this.officeChoices.slice(0, 4) : this.officeChoices
       }
     }
@@ -207,6 +195,7 @@ export default class OfficeDrop extends Vue {
   handleOfficeNumberInput (e) {
     this.searchingNumber = true
     this.searchNumber = e.target.value
+    // eslint-disable-next-line eqeqeq
     if (this.offices.find(office => office.office_number == e.target.value)) {
       this.setOffice(e.target.value)
       this.searchingNumber = false

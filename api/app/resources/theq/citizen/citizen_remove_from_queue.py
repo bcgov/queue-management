@@ -67,7 +67,7 @@ class CitizenRemoveFromQueue(Resource):
         #     logging.warning("WARNING: %s", warning)
         #     return {"message": warning}, 422
 
-        socketio.emit('update_customer_list', {}, room=csr.office_id)
+        socketio.emit('update_customer_list', {}, room=csr.office.office_name)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.appointment_schema.dump(appointment)
 
