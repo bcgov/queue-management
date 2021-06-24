@@ -228,6 +228,8 @@ objects:
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"
                 - name: APPOINTMENT_PORTAL_URL
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"                               
+                - name: BCMP_USER
+                  value: "${BCMP_USER}" 
 
               ports:
                 - containerPort: 8080
@@ -495,6 +497,10 @@ parameters:
     value: ""
   - name: APP_GROUP
     description: "For EDB NSP identification"
+    required: true
+    value: ""
+  - name: BCMP_USER
+    description: ""
     required: true
     value: ""
 
