@@ -17,7 +17,7 @@ limitations under the License.'''
 from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
-from flask import flash
+from flask import flash, url_for
 from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
@@ -135,75 +135,75 @@ class OfficeConfig(Base):
                              )
 
     form_create_rules = ('office_name',
-                         'office_number',
-                         'sb',
-                         'services',
-                         'deleted',
-                         'exams_enabled_ind',
-                         'appointments_enabled_ind',
-                         'counters',
-                         'quick_list',
-                         'back_office_list',
-                         'timezone',
-                         'latitude',
-                         'longitude',
-                         'office_appointment_message',
-                         'appointments_days_limit',
-                         'appointment_duration',
-                         'soonest_appointment',
-                         'max_person_appointment_per_day',
-                         'civic_address',
-                         'telephone',
-                         'online_status',
-                         'timeslots',
-                         'number_of_dlkt',
-                         'office_email_paragraph',
-                         'external_map_link',
-                         'check_in_notification',
-                         'check_in_reminder_msg',
-                         'automatic_reminder_at',
-                         'currently_waiting',
-                         'digital_signage_message',
-                         'digital_signage_message_1',
-                         'digital_signage_message_2',
-                         'digital_signage_message_3',
-                         'show_currently_waiting_bottom',
-                         )
+                        'office_number',                       
+                        'services',                       
+                        'exams_enabled_ind',                       
+                        'counters',
+                        'quick_list',
+                        'back_office_list',
+                        'timezone',
+                        'sb',  
+                        'currently_waiting',
+                        'show_currently_waiting_bottom',
+                        'digital_signage_message',
+                        'digital_signage_message_1',
+                        'digital_signage_message_2',
+                        'digital_signage_message_3',    
+                        'check_in_notification',
+                        'check_in_reminder_msg',
+                        'automatic_reminder_at',  
+                        'appointments_enabled_ind',
+                        'appointment_duration',
+                        'office_email_paragraph',
+                        'online_status',
+                        'office_appointment_message',
+                        'latitude',
+                        'longitude',
+                        'civic_address',
+                        'telephone',
+                        'external_map_link',
+                        'appointments_days_limit',
+                        'soonest_appointment',
+                        'max_person_appointment_per_day',                                                                     
+                        'number_of_dlkt',
+                        'timeslots',
+                        'deleted',
+                        )
 
     form_edit_rules = ('office_name',
-                       'office_number',
-                       'sb',
-                       'services',
-                       'deleted',
-                       'exams_enabled_ind',
-                       'appointments_enabled_ind',
+                       'office_number',                       
+                       'services',                       
+                       'exams_enabled_ind',                       
                        'counters',
                        'quick_list',
                        'back_office_list',
                        'timezone',
-                       'latitude',
-                       'longitude',
-                       'office_appointment_message',
-                       'appointments_days_limit',
-                       'appointment_duration',
-                       'soonest_appointment',
-                       'max_person_appointment_per_day',
-                       'civic_address',
-                       'telephone',
-                       'online_status',
-                       'timeslots',
-                       'number_of_dlkt',
-                       'office_email_paragraph',
-                       'external_map_link',
-                       'check_in_notification',
-                       'check_in_reminder_msg',
-                       'automatic_reminder_at',
+                       'sb',  
                        'currently_waiting',
+                       'show_currently_waiting_bottom',
                        'digital_signage_message',
                        'digital_signage_message_1',
                        'digital_signage_message_2',
-                       'digital_signage_message_3',
-                       'show_currently_waiting_bottom',
+                       'digital_signage_message_3',    
+                       'check_in_notification',
+                       'check_in_reminder_msg',
+                       'automatic_reminder_at',  
+                       'appointments_enabled_ind',
+                       'appointment_duration',
+                       'office_email_paragraph',
+                       'online_status',
+                       'office_appointment_message',
+                       'latitude',
+                       'longitude',
+                       'civic_address',
+                       'telephone',
+                       'external_map_link',
+                       'appointments_days_limit',
+                       'soonest_appointment',
+                       'max_person_appointment_per_day',                                                                     
+                       'number_of_dlkt',
+                       'timeslots',
+                       'deleted',
                        )
 
     form_args = {
@@ -322,6 +322,12 @@ class OfficeConfig(Base):
                         room=csr.office.office_name)
         socketio.emit('digital_signage_msg_update')
 
+    def render(self, template, **kwargs):
+        if current_user.role.role_code == 'SUPPORT':
+            self.extra_js = [url_for("static", filename="js/office.js")]
+        elif current_user.role.role_code == 'GA':
+            self.extra_js = [url_for("static", filename="js/officega.js")]
+        return super(OfficeConfig, self).render(template, **kwargs)            
 
 class OfficeConfigGA(OfficeConfig):
 
@@ -342,56 +348,61 @@ class OfficeConfigGA(OfficeConfig):
     #  Change what GAs are allowed to do from what SUPPORT can do.
     form_edit_rules = (
         'office_name',
+        'counters',
         'quick_list',
         'back_office_list',
-        'latitude',
-        'longitude',
-        'office_appointment_message',
-        'appointments_days_limit',
-        'appointment_duration',
-        'soonest_appointment',
-        'max_person_appointment_per_day',
-        'civic_address',
-        'telephone',
-        'online_status',
-        'timeslots',
-        'number_of_dlkt',
-        'office_email_paragraph',
-        'external_map_link',
-        'check_in_notification',
-        'check_in_reminder_msg',
-        'automatic_reminder_at',
+        'sb',
         'currently_waiting',
+        'show_currently_waiting_bottom',
         'digital_signage_message',
         'digital_signage_message_1',
         'digital_signage_message_2',
         'digital_signage_message_3',
-        'show_currently_waiting_bottom'
+        'check_in_notification',
+        'check_in_reminder_msg',
+        'automatic_reminder_at',
+        'appointments_enabled_ind',
+        'appointment_duration',
+        'office_email_paragraph',
+        'online_status',
+        'office_appointment_message',        
+        'civic_address',
+        'telephone',
+        'external_map_link',
+        'appointments_days_limit',        
+        'soonest_appointment',
+        'max_person_appointment_per_day',
+        'number_of_dlkt',        
     )
 
     form_excluded_columns = (
+        'office_number',
+        'services',
+        'exams_enabled_ind',        
+        'latitude',
+        'longitude',
+        'timeslots',
+        'deleted',
+        'timezone',
         'citizens',
         'csrs',
         'exams',
         'rooms',
         'invigilators',
-        'office_number',
-        'sb',
-        'services',
-        'deleted',
-        'exams_enabled_ind',
-        'appointments_enabled_ind',
-        'counters',
-        'timezone'
     )
 
     form_widget_args = {
         'office_name': {
             'readonly': True
         },
+        'appointments_enabled_ind': {
+            'readonly': True
+        },
+        'online_status': {
+            'readyonly': True
+        },
         'office_email_paragraph': { 'rows': 5, 'maxlength': 2000  }
     }
-
 
 OfficeModelView = OfficeConfig(Office, db.session)
 OfficeGAModelView = OfficeConfigGA(Office, db.session, endpoint='officega')
