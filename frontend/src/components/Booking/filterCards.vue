@@ -41,23 +41,23 @@
                       style="display: flex; justify-content: left; width: 100%"
                       v-if="event.exam"
                     >
-                      <div class="ft-wt-600 mr-1"><b>Exam:</b></div>
+                      <div class="ft-wt-600 mr-1"><strong>Exam:</strong></div>
 
                       <div class="ft-wt-400 mr-3">{{ event.title }}</div>
 
-                      <div class="ft-wt-600 mx-1"><b>Event ID:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Event ID:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{ event.exam.event_id }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Writer:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Writer:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{ event.exam.examinee_name }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Received:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Received:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{
@@ -67,7 +67,7 @@
                         }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Expiry:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Expiry:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{
@@ -75,13 +75,13 @@
                         }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Method:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Method:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{ event.exam.exam_method }}
                       </div>
 
-                      <div class="ft-wt-600 mx-1"><b>Invigilator:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>Invigilator:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{

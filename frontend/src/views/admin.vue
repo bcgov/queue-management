@@ -17,7 +17,7 @@
 <template>
   <div>
     <template v-if="iframeLogedIn">
-      <iframe :src="url" ref="iframe1" width="100%" :style="frameStyle" frameborder="0" />
+      <iframe :src="url" ref="iframe1" width="100%" :style="frameStyle" title="Admin" />
     </template>
     <template v-else>
       <div class="loader" style="margin-top: 250px" />

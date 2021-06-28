@@ -691,7 +691,7 @@
                   :key="date.start"
                 >
                   <li class="list-group-item">
-                    <b>Event:</b> {{ formatStartDate(date.start) }} until
+                    <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     {{ formatEndDate(date.end) }}
                   </li>
                 </ul>
@@ -704,7 +704,7 @@
                     :key="index"
                   >
                     <li class="list-group-item">
-                      <b>STAT:</b> {{ formatDate(value.value) }} whole Day for all office.
+                      <strong>STAT:</strong> {{ formatDate(value.value) }} whole Day for all office.
                     </li>
                   </ul>
                 </div>

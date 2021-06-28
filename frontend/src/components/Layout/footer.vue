@@ -7,6 +7,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/disclaimer"
             target="_blank"
+            rel="noopener noreferrer"
             >Disclaimer</a
           >
         </div>
@@ -14,6 +15,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/privacy"
             target="_blank"
+            rel="noopener noreferrer"
             >Privacy</a
           >
         </div>
@@ -29,6 +31,7 @@
           <a
             href="http://www2.gov.bc.ca/gov/content/home/copyright"
             target="_blank"
+            rel="noopener noreferrer"
             >Copyright</a
           >
         </div>
@@ -48,7 +51,7 @@
           class="footer-anchor-item-last"
           style="display: inline-block; color: white; margin-right: 15px"
         >
-          v2.1.9
+          v2.2.0
         </div>
       </div>
     </div>
@@ -58,7 +61,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
-// import * as version from '../../version.GENERATED'
 
 @Component({
   components: {

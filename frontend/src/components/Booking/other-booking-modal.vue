@@ -551,7 +551,7 @@
                   :key="date.start"
                 >
                   <li class="list-group-item">
-                    <b>Event:</b> {{ formatStartDate(date.start) }} until
+                    <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     {{ formatEndDate(date.end) }}
                   </li>
                 </ul>
