@@ -62,30 +62,7 @@
           <p v-if="bookingStep.subTitle" class="step-desc mt-2">{{bookingStep.subTitle}}
           </p>
           <p v-if="bookingStep.beforeIconText|| bookingStep.afterIconText" class="step-desc mt-2">
-            {{bookingStep.beforeIconText}}
-            <v-btn
-                v-if="bookingStep.step == 1"
-                class="ma-2"
-                text
-                icon
-                color="red lighten-2"
-                @click="fetchCurrentLocation()"
-            >
-              <v-icon v-if="bookingStep.icon"
-                    large
-                    color="blue darken-2"
-                  >
-                {{bookingStep.icon}}
-              </v-icon>
-            </v-btn>
-            <span v-else>
-              <v-icon v-if="bookingStep.icon"
-                    large
-                    color="blue darken-2"
-                  >
-                {{bookingStep.icon}}
-              </v-icon>
-            </span>
+            {{bookingStep.beforeIconText}} <br>
             {{bookingStep.afterIconText}}
           </p>
           <component
@@ -174,11 +151,11 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 1,
       label: 'Location Selection',
-      title: 'Book an Appointment',
+      title: 'Book an Appointment at Service BC',
       subTitle: '',
       icon: 'mdi-map-marker-radius',
-      beforeIconText: 'Click the',
-      afterIconText: 'to find your closest Service BC Centre',
+      beforeIconText: 'Choose from our 62 Service BC Centre locations:',
+      afterIconText: '',
       code: 'location',
       component: LocationsList,
       componentProps: {}

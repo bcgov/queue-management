@@ -368,9 +368,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     this.callsp()
   }
 
-  private getMapUrl (location) {
+  /* private getMapUrl (location) {
     return GeocoderService.generateStaticMapURL(location, { height: 200, width: 1200, scale: 2 })
-  }
+  } */
 
   private openToS () {
     (this.$refs.TermsOfServicePopup as TermsOfServicePopup).open()

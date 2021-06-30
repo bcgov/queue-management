@@ -4,23 +4,35 @@
   >
     <v-row justify="center">
       <v-col cols="12" sm="6" md="4">
-        <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
+        <v-combobox
+            v-show="!selectedOffice"
+            :items="locationListData"
+            :item-text="'office_name'"
+            :filter="officeSearchFilter"
+            label="Select Office"
+            outlined
+            color="primary"
+            v-model="selectedOffice"
+            name="office-select"
+            @change="officeSelection"
+            @input="clickSelection"
+            @keyup="setKeyPressed"
+            hide-details
+          >
+          </v-combobox>
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col cols="12" class="location-sorted-msg">
-        <p class="text-center mb-0">Locations sorted by closest to you
-          <!-- <br><br>
-          Coords: {{ this.currentCoordinates() }} -->
-        </p>
       </v-col>
       <v-col
         cols="12"
         sm="10"
-        v-for="(location) in locationListData"
+        v-for="(location) in selectedlocationListData"
         :key="location.office_id"
       >
         <v-card
+          v-show="selectedOffice"
           :disabled="location.online_status === 'Status.DISABLE'"
           :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
           :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
@@ -28,14 +40,13 @@
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
               <v-col cols="12" md="6" align-self="stretch">
-                <h4 class="mb-3 location-name">
-                  {{location.office_name}}
-                  <span class="body-1 ml-2" v-if="location.distance">
-                    {{location.distance}}Km
-                  </span>
-                </h4>
                 <v-row>
-                  <v-col col="12" md="6">
+                  <v-col cols="12" md="6">
+                    <h4 class="mb-3 location-name">
+                  {{location.office_name}}
+                </h4>
+                  </v-col>
+                  <v-col cols="12" md="6">
                     <v-btn
                       block
                       color="primary"
@@ -43,20 +54,7 @@
                       large
                       @click="selectLocation(location)"
                     >
-                      Select Location
-                      <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
-                    </v-btn>
-                  </v-col>
-                  <v-col col="12" md="6">
-                    <v-btn
-                        block
-                        color="primary"
-                        outlined
-                        class='mt-0 mt-md-2 float-right'
-                        large
-                        @click="showLocationServices(location)"
-                      >
-                        View Location Services
+                      Book Appointment
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -86,10 +84,34 @@
                     </v-col>
                   </v-row>
                 </v-alert>
+                <v-row>
+                  <v-col col="12" md="6">
+                    <v-btn
+                        block
+                        color="primary"
+                        outlined
+                        class='mt-0 mt-md-2 float-right'
+                        large
+                        @click="showLocationServices(location)"
+                      >
+                        Available Services
+                    </v-btn>
+                  </v-col>
+                  <v-col col="12" md="6">
+                    <v-btn
+                      id="findnew"
+                      block
+                      color="primary"
+                      class="pl-5 mt-0 mt-md-2"
+                      large
+                      @click="scrollTop()"
+                    >
+                      Find different location
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
-<!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
-<!--                </v-img>-->
                 <template v-if='location.external_map_link'>
                   <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
                     <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
@@ -117,6 +139,18 @@
             </v-row>
           </v-card-text>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        class="text-center container py-2"
+        cols="12"
+      >
+         {{ footerMsg[0] }} <a :href="footerLinks[0]" target="_blank">{{ footerMsg[1] }}</a>
+         {{ footerMsg[2] }} <a :href="footerLinks[1]" target="_blank">{{ footerMsg[3] }}</a>
+         {{ footerMsg[4] }} <a :href="footerLinks[2]" target="_blank">{{ footerMsg[5] }}</a>
+         {{ footerMsg[6] }} <a :href="footerLinks[3]" target="_blank">{{ footerMsg[7] }}</a>
+         {{ footerMsg[8] }} <a :href="footerLinks[4]" target="_blank">{{ footerMsg[9] }}</a>
       </v-col>
     </v-row>
     <!-- Service Model Popup -->
@@ -150,7 +184,8 @@ import { getModule } from 'vuex-module-decorators'
   },
   computed: {
     ...mapState('office', [
-      'currentOffice'
+      'currentOffice',
+      'officeList'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
@@ -190,8 +225,12 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
   private readonly isAuthenticated!: boolean
+  private footerMsg = []
+  private footerLinks = []
   // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
+  private selectedOffice: Office = null
+  private keyPressed = true
 
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
@@ -199,6 +238,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private locationServicesModal = false
 
   private locationListData: Office[] = []
+  private selectedlocationListData: Office[] = []
   private serviceList: Service[] = []
 
   $refs: {
@@ -206,15 +246,20 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async mounted () {
+    let fm = ConfigHelper.getFooterText()
+    let fl = ConfigHelper.getFooterLinks()
+    this.footerMsg = fm.split('{link}')
+    this.footerLinks = fl.split('{link}')
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
-      this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
-      this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      this.locationListData = this.locationListData.filter(location => location.appointments_enabled_ind)
       this.$store.commit('setAppointmentLocation', undefined)
     }
   }
 
   private sortOfficesByDistance (locationList) {
+    // eslint-disable-next-line no-console
+    console.log('LocationsList mounted')
     // If we have no distance, we can't sort
     if (!this.hasCoordinates()) {
       return locationList
@@ -250,12 +295,68 @@ export default class LocationsList extends Mixins(StepperMixin) {
     }
   }
 
-  private async onGeoSelect (input) {
+  private setKeyPressed (e) {
+    // this.mylog('-> setKeyPressed')
+    if (e.key !== 'Enter') {
+      this.keyPressed = true
+    }
+  }
+
+  private scrollTop () {
+    this.selectedOffice = null
+  }
+
+  private checkDisabled (value) {
+    return (value?.appointments_enabled_ind)
+  }
+
+  /* private async onGeoSelect (input) {
     this.locationListData = this.sortOfficesByDistance(this.locationListData)
     this.$forceUpdate()
+  } */
+
+  private clickSelection (value) {
+    // eslint-disable-next-line no-console
+    console.log('====> get clickSelection    item = ', value)
+    if (!value?.service_name) {
+      this.selectedOffice = null
+      this.setCurrentOffice(undefined)
+    } else {
+      if (this.checkDisabled(value)) {
+        this.selectedOffice = null
+        this.setCurrentOffice(undefined)
+      } else {
+        this.setCurrentOffice(value)
+      }
+    }
+  }
+
+  private officeSelection (value) {
+    // this.mylog('-> serviceSelection')
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSelection    item = ', value)
+    this.keyPressed = false
+    this.selectedOffice = value
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSelection    this.locationListData = ', this.locationListData)
+    this.selectedlocationListData = this.locationListData.filter(location => location.office_id === this.selectedOffice.office_id)
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSelection    this.locationListData = ', this.locationListData)
+  }
+
+  private officeSearchFilter (item, queryText, itemText) {
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSearchFilter    item = ', item)
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSearchFilter    queryText = ', queryText)
+    // eslint-disable-next-line no-console
+    console.log('====> get officeSearchFilter    itemText = ', itemText)
+    return `${item?.office_name || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 
   private getDistance (latitude, longitude) {
+    // eslint-disable-next-line no-console
+    console.log('====> get getDistance    ')
     if (!this.hasCoordinates()) {
       return null
     }
@@ -275,6 +376,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async showLocationServices (location) {
+    // eslint-disable-next-line no-console
+    console.log('====> showLocationServices    location', location)
     this.serviceList = await this.getServiceByOffice(location.office_id)
     await this.getCategories()
     this.selectedLocationName = location.office_name
@@ -299,9 +402,9 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.stepNext()
   }
 
-  private getMapUrl (location) {
+  /* private getMapUrl (location) {
     return GeocoderService.generateStaticMapURL(location)
-  }
+  } */
 }
 </script>
 

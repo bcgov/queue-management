@@ -4,7 +4,23 @@
       <app-header :key="$store.state.refreshKey"></app-header>
       <feedback v-if="(isFeedbackEnabled && (!isWalkin))"></feedback>
       <main class="main-block container">
-        <router-view />
+        <v-card
+        class="blue">
+        <v-card-text>
+          <v-row>
+            <v-col
+              class="text-center container py-2"
+              cols="12"
+            >{{ headerMsg[0] }} <a :href="headerLinks[0]" target="_blank">{{ headerMsg[1] }}</a>
+            {{ headerMsg[2] }} <a :href="headerLinks[1]" target="_blank">{{ headerMsg[3] }}</a>
+            {{ headerMsg[4] }} <a :href="headerLinks[2]" target="_blank">{{ headerMsg[5] }}</a>
+            {{ headerMsg[6] }} <a :href="headerLinks[3]" target="_blank">{{ headerMsg[7] }}</a>
+            {{ headerMsg[8] }} <a :href="headerLinks[4]" target="_blank">{{ headerMsg[9] }}</a>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+      <router-view />
       </main>
       <app-footer id="footer"></app-footer>
     </div>
@@ -54,6 +70,8 @@ export default class App extends Vue {
   private isScrolled = false
   private isFeedbackEnabled: boolean = ConfigHelper.isFeedbackEnabled()
   private isWalkin:boolean = false
+  private headerMsg = []
+  private headerLinks = []
 
   private async beforeMount () {
     await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
@@ -69,6 +87,10 @@ export default class App extends Vue {
       callback()
     })
     this.isWalkin = window.location.href.includes('walk-in-Q')
+    let hm = ConfigHelper.getHeaderText()
+    let hl = ConfigHelper.getHeaderLinks()
+    this.headerMsg = hm.split('{link}')
+    this.headerLinks = hl.split('{link}')
   }
 
   private getAccountFromSession (): User {
