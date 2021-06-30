@@ -1,4 +1,5 @@
 <template>
+<div data-app>
   <b-modal
     v-model="modal"
     :no-close-on-backdrop="true"
@@ -22,10 +23,17 @@
           @click="showFieldErrors = false"
           >Submit</b-btn
         >
-        <b-btn
+        <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
+        <!-- <b-btn
           v-if="!okButton.disabled"
           :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
           @click.prevent="submit"
+          >{{ okButton.title }}</b-btn
+        > -->
+        <b-btn
+          v-if="!okButton.disabled"
+          :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
+          @click.prevent="examStatus"
           >{{ okButton.title }}</b-btn
         >
       </div>
@@ -116,18 +124,47 @@
           </b-col>
         </b-form-row>
       </template>
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+         Confirm
+        </v-card-title>
+        <v-card-text>
+          {{ this.warningText }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmExam(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmExam(true)"
+          >
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </b-form>
   </b-modal>
+</div>
 </template>
 
 <script lang="ts">
-
+/* eslint-disable camelcase */
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
 import DatePicker from 'vue2-datepicker'
 import FailureExamAlert from './failure-exam-alert.vue'
-
 import moment from 'moment'
 
 @Component({
@@ -161,6 +198,8 @@ export default class ReturnExamModal extends Vue {
   public notes: any = null
   public showFieldErrors: any = null
   public exam_returned_tracking_number: any = ''
+  public warningText: any = 'Are you sure you want to return this exam?'
+  private confirmDialog: any = false
   public returnOptions: any = [
     { value: false, text: 'Not Returned' },
     { value: true, text: 'Returned' }
@@ -178,6 +217,7 @@ export default class ReturnExamModal extends Vue {
       const fields = ['exam_returned_tracking_number', 'exam_written_ind', 'notes', 'exam_returned_date']
       let result = false
       fields.forEach(field => {
+        // eslint-disable-next-line eqeqeq
         if (this[field] != this.exam[field]) {
           result = true
         }
@@ -215,6 +255,7 @@ export default class ReturnExamModal extends Vue {
   }
 
   handleActionInput (e) {
+    // eslint-disable-next-line eqeqeq
     if (e.keyCode == 8 || e.keyCode == 46) {
       this.removeError()
       return true
@@ -238,6 +279,25 @@ export default class ReturnExamModal extends Vue {
         })
       }
     }
+  }
+
+  examStatus () {
+    if (this.okButton.title === 'Cancel') {
+      this.resetModal()
+      return
+    }
+    if (this.modalUse === 'edit') {
+      this.submit()
+    } else if (this.returned) {
+      this.confirmDialog = true
+    }
+  }
+
+  private async confirmExam (isAgree: boolean) {
+    if (isAgree) {
+      this.submit()
+    }
+    this.confirmDialog = false
   }
 
   show () {
