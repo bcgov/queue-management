@@ -2,7 +2,7 @@ console.log('office.js loaded from api/static/js');
 
 $(document).ready(function() {
     // Smartboard
-    var sb = $("[id='sb']"); 
+    var sb = $("#sb"); 
     if (sb.val() === "3") { // if nocallonsmartboard
         toggleSmartboardFields(false);
     }
@@ -17,7 +17,7 @@ $(document).ready(function() {
     })
 
     // Appointments Enabled
-    var appointments_enabled_ind = $("[id='appointments_enabled_ind']");
+    var appointments_enabled_ind = $("#appointments_enabled_ind");
     if (appointments_enabled_ind.val() === "0") {
         toggleAppointmentFields(false);
     }        
@@ -32,7 +32,7 @@ $(document).ready(function() {
     });    
 
     // Digital Signage
-    var digital_signage_message = $("[id='digital_signage_message']");
+    var digital_signage_message = $("#digital_signage_message");
     if (digital_signage_message.val() === "__None" || digital_signage_message.val() === "0") {
         toggleDigitalSignageFields(false);
     }
