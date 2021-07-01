@@ -238,7 +238,7 @@ class OfficeConfig(Base):
                      'check_in_notification': 'Check-In Notifications',
                      'check_in_reminder_msg': 'Check-In Notification Reminder Message',
                      'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
-                     'currently_waiting': 'Currently Waiting in SmartBoard',
+                     'currently_waiting': 'Display Citizen Details on Smartboard',
                      'digital_signage_message': 'Digital Signage Message in SmartBoard',
                      'digital_signage_message_1': 'Digital Signage Message 1',
                      'digital_signage_message_2': 'Digital Signage Message 2',
