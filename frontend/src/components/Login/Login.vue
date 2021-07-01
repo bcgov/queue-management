@@ -76,12 +76,12 @@ limitations under the License.*/
         <div>
           <template v-if="!showOfficeSwitcher">
              <label class="navbar-label">
-               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
+               <span @click="setOfficeSwitcher(!showOfficeSwitcher)"
                 class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
               </label>
           </template>
           <template v-else>
-            <vue-bootstrap-typeahead 
+            <vue-bootstrap-typeahead
               v-model="officeQuery"
               :data="this.offices"
               :serializer="x => x.office_name"
@@ -155,7 +155,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
-  
+
   set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
@@ -241,7 +241,8 @@ export default class Login extends Vue {
   init () {
     this.$keycloak.init({
       responseMode: 'fragment',
-      flow: 'standard'
+      flow: 'standard',
+      onLoad: 'check-sso'
     }
     ).success(() => {
       setInterval(() => {
