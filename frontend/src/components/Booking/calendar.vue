@@ -628,7 +628,11 @@ export default class Calendar extends Vue {
     event.end = moment(event.start).add(defaultHoursDuration, 'h')
     // event.end = moment.tz(event.start, this.$store.state.user.office.timezone.timezone_name).add(defaultHoursDuration, 'h')
     const resourceDetails = this.roomResources.find(cat => {
-      return cat.title === event.category.categoryName
+      // Refer to getCategoryList():
+      // event.category is a string and it does not have a property named categoryName
+      // However, event.categoryName was added as part of Roombooking issue fix PR #555
+      // Hence this extended expression for equality to keep the changes passive.
+      return cat.title === event.category?.categoryName || cat.title === event.category
     })
     if (resourceDetails) { event.resource = resourceDetails }
 
