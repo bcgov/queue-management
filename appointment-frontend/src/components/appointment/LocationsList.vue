@@ -5,7 +5,6 @@
     <v-row justify="center">
       <v-col cols="12" sm="6" md="4">
         <v-combobox
-            v-show="!selectedOffice"
             :items="locationListData"
             :item-text="'office_name'"
             :filter="officeSearchFilter"
@@ -32,7 +31,7 @@
         :key="location.office_id"
       >
         <v-card
-          v-show="selectedOffice"
+        v-show="selectedOffice"
           :disabled="location.online_status === 'Status.DISABLE'"
           :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
           :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
@@ -41,12 +40,7 @@
             <v-row class="d-flex" justify="space-around">
               <v-col cols="12" md="6" align-self="stretch">
                 <v-row>
-                  <v-col cols="12" md="6">
-                    <h4 class="mb-3 location-name">
-                  {{location.office_name}}
-                </h4>
-                  </v-col>
-                  <v-col cols="12" md="6">
+                  <v-col cols="12" md="12">
                     <v-btn
                       block
                       color="primary"
@@ -56,6 +50,13 @@
                     >
                       Book Appointment
                     </v-btn>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <h4 class="mb-3 location-name">
+                  {{location.office_name}}
+                </h4>
                   </v-col>
                 </v-row>
                 <v-alert
@@ -95,18 +96,6 @@
                         @click="showLocationServices(location)"
                       >
                         Available Services
-                    </v-btn>
-                  </v-col>
-                  <v-col col="12" md="6">
-                    <v-btn
-                      id="findnew"
-                      block
-                      color="primary"
-                      class="pl-5 mt-0 mt-md-2"
-                      large
-                      @click="scrollTop()"
-                    >
-                      Find different location
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -252,7 +241,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.footerLinks = fl.split('{link}')
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
-      this.locationListData = this.locationListData.filter(location => location.appointments_enabled_ind)
+      this.locationListData = this.locationListData.filter(location => location.appointments_enabled_ind).filter(location => location.online_status === 'Status.SHOW')
       this.$store.commit('setAppointmentLocation', undefined)
     }
   }
