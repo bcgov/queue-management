@@ -429,7 +429,7 @@ export default class BookingModal extends Vue {
     this.pressedSubmit = false
     if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
     this.$nextTick(function () {
-      if (this.$refs.contact_information.focus) {
+      if (this.$refs.contact_information?.focus) {
         this.$refs.contact_information.focus()
       }
     })
