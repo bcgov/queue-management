@@ -304,7 +304,7 @@ export default class BookingModal extends Vue {
       { key: 'Format of Exam:', value: this.exam.exam_method },
       { key: 'Length of Exam:', value: length },
       { key: 'ServiceBC to Provide Reader:', value: this.invigilatorRequired ? 'Yes' : 'No' },
-      { key: 'Room:', value: this.date.resource.title }
+      { key: 'Room:', value: this.date?.resource?.title }
     ]
     if (this.exam.exam_type.exam_type_name === 'Monthly Session Exam') {
       const i = items.findIndex(x => x.key === 'Exam Expiry:')
@@ -429,7 +429,7 @@ export default class BookingModal extends Vue {
     this.pressedSubmit = false
     if (this.exam.notes) { this.notes = this.exam.notes.valueOf() }
     this.$nextTick(function () {
-      if (this.$refs.contact_information) {
+      if (this.$refs.contact_information.focus) {
         this.$refs.contact_information.focus()
       }
     })
