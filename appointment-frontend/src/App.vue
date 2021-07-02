@@ -5,8 +5,6 @@
       <feedback v-if="(isFeedbackEnabled && (!isWalkin))"></feedback>
       <main class="main-block container">
         <v-alert
-          v-if="!hideAlert"
-          v-model="showAlert"
           border="left"
           type="info"
           close-text="Close Alert"

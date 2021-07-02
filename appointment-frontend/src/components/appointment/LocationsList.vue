@@ -247,8 +247,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private sortOfficesByDistance (locationList) {
-    // eslint-disable-next-line no-console
-    console.log('LocationsList mounted')
     // If we have no distance, we can't sort
     if (!this.hasCoordinates()) {
       return locationList
@@ -305,8 +303,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   } */
 
   private clickSelection (value) {
-    // eslint-disable-next-line no-console
-    console.log('====> get clickSelection    item = ', value)
     if (!value?.service_name) {
       this.selectedOffice = null
       this.setCurrentOffice(undefined)
@@ -321,31 +317,16 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private officeSelection (value) {
-    // this.mylog('-> serviceSelection')
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSelection    item = ', value)
     this.keyPressed = false
     this.selectedOffice = value
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSelection    this.locationListData = ', this.locationListData)
     this.selectedlocationListData = this.locationListData.filter(location => location.office_id === this.selectedOffice.office_id)
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSelection    this.locationListData = ', this.locationListData)
   }
 
   private officeSearchFilter (item, queryText, itemText) {
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSearchFilter    item = ', item)
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSearchFilter    queryText = ', queryText)
-    // eslint-disable-next-line no-console
-    console.log('====> get officeSearchFilter    itemText = ', itemText)
     return `${item?.office_name || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 
   private getDistance (latitude, longitude) {
-    // eslint-disable-next-line no-console
-    console.log('====> get getDistance    ')
     if (!this.hasCoordinates()) {
       return null
     }
@@ -365,8 +346,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async showLocationServices (location) {
-    // eslint-disable-next-line no-console
-    console.log('====> showLocationServices    location', location)
     this.serviceList = await this.getServiceByOffice(location.office_id)
     await this.getCategories()
     this.selectedLocationName = location.office_name
@@ -390,10 +369,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
     }
     this.stepNext()
   }
-
-  /* private getMapUrl (location) {
-    return GeocoderService.generateStaticMapURL(location)
-  } */
 }
 </script>
 
