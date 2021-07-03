@@ -358,13 +358,11 @@ export const commonMutation: any = {
   setNavigation: (state, value) => (state.adminNavigation = value),
 
   setAddExamModalSetting(state, payload) {
-    console.log("setAddExamModalSetting==>>", payload);
     if (typeof payload === "boolean") {
       state.addExamModal.visible = payload;
       return;
     }
     Object.keys(payload).forEach(key => {
-      console.log(key, "====>>>");
       Vue.set(state.addExamModal, key, payload[key]);
     });
   },

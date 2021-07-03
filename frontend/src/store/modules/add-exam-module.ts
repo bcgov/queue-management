@@ -264,7 +264,6 @@ export const addExamModule = {
       })
     },
     getPesticideExamTypes ({ commit, rootState }) {
-      console.log('getPesticideExamTypes')
       return new Promise<void>((resolve, reject) => {
         const url = '/exam_types/'
 
@@ -349,7 +348,6 @@ export const addExamModule = {
       }
     },
     addPesticideSteps (state, getters) {
-      console.log("getters==========>>>", getters)
       return [
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
