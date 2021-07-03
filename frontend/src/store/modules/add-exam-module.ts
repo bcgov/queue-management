@@ -349,6 +349,7 @@ export const addExamModule = {
       }
     },
     addPesticideSteps (state, getters) {
+      console.log("getters==========>>>", getters)
       return [
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
