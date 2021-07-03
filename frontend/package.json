@@ -60,7 +60,7 @@
     "vue2-datepicker": "^3.9.0",
     "vue2-timepicker": "^1.1.6",
     "vuetify": "2.4.8",
-    "vuex": "2.5",
+    "vuex": "3.6.2",
     "vuex-class": "^0.3.2",
     "vuex-module-decorators": "^1.0.1"
   },
