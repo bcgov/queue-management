@@ -10,10 +10,7 @@ export default class ConfigHelper {
 
   static async fetchConfig () {
     if (this.config === '') {
-      const a = document.createElement('a');
-      a.href = window.location.href
-      const configUrl = a.protocol + '//' + a.host+ '/' + url
-      const response = await Axios.get(configUrl)
+      const response = await Axios.get(url)
       this.config = response.data
     }
   }
