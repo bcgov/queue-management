@@ -146,5 +146,6 @@ const app = new Vue({
   vuetify,
   render: h => h(MainApp)
 }).$mount("#app");
-
-Vue.use(FormsFlowStore, { store: app.$store });
+console.log(FormsFlowStore,'+FormsFlowStore')
+console.log( app.$store, app, store)
+Vue.use(FormsFlowStore, {store: app.$store});
