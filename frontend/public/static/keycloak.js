@@ -41,7 +41,7 @@
         }
 
         var useNonce = true;
-        
+
         kc.init = function (initOptions) {
             kc.authenticated = false;
 
@@ -308,7 +308,7 @@
             if (options && options.locale) {
                 url += '&ui_locales=' + encodeURIComponent(options.locale);
             }
-            
+
             if (options && options.kcLocale) {
                 url += '&kc_locale=' + encodeURIComponent(options.kcLocale);
             }
@@ -640,7 +640,9 @@
 
             if (!config) {
                 // configUrl = 'keycloak.json';
-                configUrl = 'static/keycloak/keycloak.json';
+                const baseThisUrl = window.location.protocol + '//' +  window.location.host
+                configUrl = baseThisUrl + '/static/keycloak/keycloak.json'
+                // configUrl = 'static/keycloak/keycloak.json';
             } else if (typeof config === 'string') {
                 configUrl = config;
             }
@@ -1234,7 +1236,7 @@
                     cordovaOptions.location = 'no';
                     if (userOptions && userOptions.prompt == 'none') {
                         cordovaOptions.hidden = 'yes';
-                    }                    
+                    }
                     return formatCordovaOptions(cordovaOptions);
                 };
 
@@ -1246,7 +1248,7 @@
                         var loginUrl = kc.createLoginUrl(options);
                         var ref = cordovaOpenWindowWrapper(loginUrl, '_blank', cordovaOptions);
                         var completed = false;
-                        
+
                         var closed = false;
                         var closeBrowser = function() {
                             closed = true;
@@ -1289,7 +1291,7 @@
 
                     logout: function(options) {
                         var promise = createPromise(false);
-                        
+
                         var logoutUrl = kc.createLogoutUrl(options);
                         var ref = cordovaOpenWindowWrapper(logoutUrl, '_blank', 'location=no,hidden=yes');
 

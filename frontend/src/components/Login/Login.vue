@@ -1,15 +1,10 @@
-/*Copyright 2015 Province of British Columbia
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
+/*Copyright 2015 Province of British Columbia Licensed under the Apache License,
+Version 2.0 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or
+agreed to in writing, software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
@@ -49,7 +44,7 @@ limitations under the License.*/
         </label>
         <p class="switch-p">
           {{
-            user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active'
+            user.csr_state_id === csr_states["Break"] ? "On Break" : "Active"
           }}
         </p>
       </div>
@@ -70,18 +65,21 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-         <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
+        <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
         <div>
           <template v-if="!showOfficeSwitcher">
-             <label class="navbar-label">
-               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
-                class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
-              </label>
+            <label class="navbar-label">
+              <span
+                @click="setOfficeSwitcher(!showOfficeSwitcher)"
+                class="clickable"
+                >Office: {{ this.$store.state.user.office.office_name }}</span
+              >
+            </label>
           </template>
           <template v-else>
-            <vue-bootstrap-typeahead 
+            <vue-bootstrap-typeahead
               v-model="officeQuery"
               :data="this.offices"
               :serializer="x => x.office_name"
@@ -89,7 +87,9 @@ limitations under the License.*/
               @hit="changeOffice"
             >
               <template slot="append">
-                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
+                <b-button variant="danger" @click="cancelOfficeSwitcher"
+                  >Cancel</b-button
+                >
               </template>
             </vue-bootstrap-typeahead>
           </template>
@@ -109,12 +109,11 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue } from 'vue-property-decorator'
-import config from '../../../config'
-import _ from 'lodash'
-
+import VueBootstrapTypeahead from "vue-bootstrap-typeahead";
+import { Action, Getter, Mutation, State } from "vuex-class";
+import { Component, Vue } from "vue-property-decorator";
+import config from "../../../config";
+import _ from "lodash";
 
 @Component({
   components: {
@@ -122,254 +121,283 @@ import _ from 'lodash'
   }
 })
 export default class Login extends Vue {
-  @State('user') private user!: any
-  @State('csr_states') private csr_states!: any
-  @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
-  @State('offices') private offices!: any
+  @State("user") private user!: any;
+  @State("csr_states") private csr_states!: any;
+  @State("showOfficeSwitcher") private showOfficeSwitcher!: boolean;
+  @State("offices") private offices!: any;
 
-  @Getter('role_code') private role_code!: any;
-  @Getter('quick_trans_status') private quick_trans_status!: any;
-  @Getter('reception') private reception!: any;
-  @Getter('receptionist_status') private receptionist_status!: any;
-  @Getter('citizens_queue') private citizens_queue!: any;
+  @Getter("role_code") private role_code!: any;
+  @Getter("quick_trans_status") private quick_trans_status!: any;
+  @Getter("reception") private reception!: any;
+  @Getter("receptionist_status") private receptionist_status!: any;
+  @Getter("citizens_queue") private citizens_queue!: any;
 
-  @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
-  @Action('updateCSRState') public updateCSRState: any
-  @Action('updateCSROffice') public updateCSROffice: any
-  @Action('getOffices') public getOffices: any
+  @Action("updateCSRCounterTypeState") public updateCSRCounterTypeState: any;
+  @Action("updateCSRState") public updateCSRState: any;
+  @Action("updateCSROffice") public updateCSROffice: any;
+  @Action("getOffices") public getOffices: any;
 
-  @Mutation('setQuickTransactionState') public setQuickTransactionState: any
-  @Mutation('setReceptionistState') public setReceptionistState: any
-  @Mutation('setCSRState') public setCSRState: any
-  @Mutation('setUserCSRStateName') public setUserCSRStateName: any
-  @Mutation('setCounterStatusState') public setCounterStatusState: any
-  @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any
+  @Mutation("setQuickTransactionState") public setQuickTransactionState: any;
+  @Mutation("setReceptionistState") public setReceptionistState: any;
+  @Mutation("setCSRState") public setCSRState: any;
+  @Mutation("setUserCSRStateName") public setUserCSRStateName: any;
+  @Mutation("setCounterStatusState") public setCounterStatusState: any;
+  @Mutation("setOfficeSwitcher") public setOfficeSwitcher: any;
 
-  $keycloak: any
-  officeQuery = '';
+  $keycloak: any;
+  officeQuery = "";
 
-  get counterSelection () {
+  get counterSelection() {
     if (this.receptionist_status === true) {
-      return 'receptionist'
+      return "receptionist";
     } else {
-      return this.user.counter_id
-    }
-  }
-  
-  set counterSelection (value) {
-    if (value === 'receptionist') {
-      this.setReceptionistState(true)
-    } else {
-      this.setCounterStatusState(value)
-      this.setReceptionistState(false)
-    }
-    this.updateCSRCounterTypeState()
-  }
-
-  get breakToggle () {
-    const csrStatus = this.user.csr_state.csr_state_name
-
-    if (csrStatus === 'Break') {
-      return false
-    } else {
-      return true
+      return this.user.counter_id;
     }
   }
 
-  set breakToggle (value) {
-    const breakID = this.csr_states.Break
-    const loginID = this.csr_states.Login
-    let id
-    let name
+  set counterSelection(value) {
+    if (value === "receptionist") {
+      this.setReceptionistState(true);
+    } else {
+      this.setCounterStatusState(value);
+      this.setReceptionistState(false);
+    }
+    this.updateCSRCounterTypeState();
+  }
+
+  get breakToggle() {
+    const csrStatus = this.user.csr_state.csr_state_name;
+
+    if (csrStatus === "Break") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  set breakToggle(value) {
+    const breakID = this.csr_states.Break;
+    const loginID = this.csr_states.Login;
+    let id;
+    let name;
 
     if (value) {
-      id = loginID
-      name = 'Login'
+      id = loginID;
+      name = "Login";
     } else {
-      id = breakID
-      name = 'Break'
+      id = breakID;
+      name = "Break";
     }
 
-    this.setCSRState(id)
-    this.setUserCSRStateName(name)
-    this.updateCSRState()
+    this.setCSRState(id);
+    this.setUserCSRStateName(name);
+    this.updateCSRState();
   }
 
-  get queueLength () {
-    return this.citizens_queue.length
+  get queueLength() {
+    return this.citizens_queue.length;
   }
 
-  get citizenSBType () {
-    if (this.user.office.sb.sb_type !== 'nocallonsmartboard') {
-      return true
+  get citizenSBType() {
+    if (this.user.office.sb.sb_type !== "nocallonsmartboard") {
+      return true;
     } else {
-      return false
+      return false;
     }
   }
 
-  initSessionStorage () {
-    if (sessionStorage.getItem('token')) {
-      const tokenExp: any = sessionStorage.getItem('tokenExp')
-      const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
+  initSessionStorage() {
+    if (sessionStorage.getItem("token")) {
+      const tokenExp: any = sessionStorage.getItem("tokenExp");
+      const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000);
       if (timeUntilExp > 30) {
-        this.$keycloak.init({
-          responseMode: 'fragment',
-          flow: 'standard',
-          refreshToken: sessionStorage.getItem('refreshToken'),
-          token: sessionStorage.getItem('token'),
-          tokenExp: sessionStorage.getItem('tokenExp')
-        })
+        this.$keycloak
+          .init({
+            responseMode: "fragment",
+            flow: "standard",
+            refreshToken: sessionStorage.getItem("refreshToken"),
+            token: sessionStorage.getItem("token"),
+            tokenExp: sessionStorage.getItem("tokenExp")
+          })
           .success(() => {
             // Set a timer to auto-refresh the token
             setInterval(() => {
-              this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
-            }, 60 * 1000)
-            this.setTokenToSessionStorage()
-            this.$store.commit('setBearer', sessionStorage.getItem('token'))
+              this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT);
+            }, 60 * 1000);
+            this.setTokenToSessionStorage();
+            this.$store.commit("setBearer", sessionStorage.getItem("token"));
           })
           .error(() => {
-            this.init()
-          })
+            this.init();
+          });
       } else {
-        this.init()
+        this.init();
       }
-    } else if (!sessionStorage.getItem('token')) {
-      this.init()
+    } else if (!sessionStorage.getItem("token")) {
+      this.init();
     }
   }
 
-  init () {
-    this.$keycloak.init({
-      responseMode: 'fragment',
-      flow: 'standard'
-    }
-    ).success(() => {
-      setInterval(() => {
-        this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
-      }, 60 * 1000)
-    })
+  init() {
+    this.$keycloak
+      .init({
+        responseMode: "fragment",
+        flow: "standard",
+        onLoad: "check-sso"
+      })
+      .success(() => {
+        setInterval(() => {
+          this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT);
+        }, 60 * 1000);
+      });
   }
 
-  setupKeycloakCallbacks () { // authenticated
+  setupKeycloakCallbacks() {
+    // authenticated
     this.$keycloak.onAuthSuccess = () => {
-      this.$store.dispatch('logIn', this.$keycloak.token)
-      this.setTokenToSessionStorage()
-      this.$root.$emit('socketConnect')
-    }
+      this.$store.dispatch("logIn", this.$keycloak.token);
+      this.setTokenToSessionStorage();
+      this.$root.$emit("socketConnect");
+    };
 
     this.$keycloak.onAuthLogout = () => {
-      this.$root.$emit('socketDisconnect')
-      this.$store.commit('setBearer', null)
-      this.$store.commit('logOut')
-    }
+      this.$root.$emit("socketDisconnect");
+      this.$store.commit("setBearer", null);
+      this.$store.commit("logOut");
+    };
 
     this.$keycloak.onAuthRefreshSuccess = () => {
-      this.setTokenToSessionStorage()
-      this.$store.commit('setBearer', this.$keycloak.token)
+      this.setTokenToSessionStorage();
+      this.$store.commit("setBearer", this.$keycloak.token);
+    };
+  }
+
+  setTokenToSessionStorage() {
+    const tokenParsed = this.$keycloak.tokenParsed;
+    const token = this.$keycloak.token;
+    const refreshToken = this.$keycloak.refreshToken;
+    const tokenExpiry = tokenParsed.exp;
+
+    if (sessionStorage.getItem("token")) {
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("tokenExp");
+      sessionStorage.removeItem("refreshToken");
     }
+    sessionStorage.setItem("token", token);
+    document.cookie = "oidc-jwt=" + this.$keycloak.token;
+    sessionStorage.setItem("tokenExp", tokenExpiry);
+    sessionStorage.setItem("refreshToken", refreshToken);
   }
 
-  setTokenToSessionStorage () {
-    const tokenParsed = this.$keycloak.tokenParsed
-    const token = this.$keycloak.token
-    const refreshToken = this.$keycloak.refreshToken
-    const tokenExpiry = tokenParsed.exp
-
-    if (sessionStorage.getItem('token')) {
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('tokenExp')
-      sessionStorage.removeItem('refreshToken')
-    }
-    sessionStorage.setItem('token', token)
-    document.cookie = 'oidc-jwt=' + this.$keycloak.token
-    sessionStorage.setItem('tokenExp', tokenExpiry)
-    sessionStorage.setItem('refreshToken', refreshToken)
+  login() {
+    this.$keycloak.login({ idpHint: "idir", scope: "offline_access" });
   }
 
-  login () {
-    this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
-  }
-
-  logoutTokenExpired () {
-    console.log('==> In logoutTokenExpired')
-    this.clearStorage()
+  logoutTokenExpired() {
+    console.log("==> In logoutTokenExpired");
+    this.clearStorage();
     // this.init()
-    location.href = '/queue'
+    location.href = "/queue";
   }
 
-  logout () {
-    this.$keycloak.logout()
-    this.clearStorage()
+  logout() {
+    this.$keycloak.logout();
+    this.clearStorage();
   }
 
-  clearStorage () {
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('tokenExp')
-    sessionStorage.removeItem('refreshToken')
+  clearStorage() {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("tokenExp");
+    sessionStorage.removeItem("refreshToken");
   }
 
-  setBreakClickEvent () {
+  setBreakClickEvent() {
     // Click anywhere on screen to end "Break"
     // Prevent double-click on IE11  by delaying listener
     // As it's pure DOM, no need to worry about $nextTick
     setTimeout(() => {
-      document.body.addEventListener('click', this.stopBreak)
-    }, 100)
-    const breakSwitch = document.getElementById('break-switch')
+      document.body.addEventListener("click", this.stopBreak);
+    }, 100);
+    const breakSwitch = document.getElementById("break-switch");
     if (breakSwitch !== null) {
-      breakSwitch.style.pointerEvents = 'none' // Prevent double click event
+      breakSwitch.style.pointerEvents = "none"; // Prevent double click event
     }
   }
 
-  stopBreak () {
-    const loginStateID = this.csr_states.Login
-    this.setCSRState(loginStateID)
-    this.setUserCSRStateName('Login')
-    this.updateCSRState()
+  stopBreak() {
+    const loginStateID = this.csr_states.Login;
+    this.setCSRState(loginStateID);
+    this.setUserCSRStateName("Login");
+    this.updateCSRState();
   }
 
-  refreshToken (minValidity: any) {
-    const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-    console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
-    this.$keycloak.updateToken(minValidity).success((refreshed: any) => {
-      if (refreshed) {
-        console.log('Token refreshed and is below')
-        console.log(this.$keycloak.tokenParsed)
-        console.log('Refresh token is below')
-        console.log(this.$keycloak.refreshTokenParsed)
-      } else {
-        console.log('Token not refreshed')
-      }
-      const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-      console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-    }).error((error: any) => {
-      console.log('Failed to refresh token')
-      console.log(error)
-      const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-      console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-      if (secondsLeft < 90) {
-        this.logoutTokenExpired()
-      }
-    })
+  refreshToken(minValidity: any) {
+    const secondsLeft = Math.round(
+      this.$keycloak.tokenParsed.exp +
+        this.$keycloak.timeSkew -
+        new Date().getTime() / 1000
+    );
+    console.log(
+      "==> Updating token.  Currently valid for " + secondsLeft + " seconds"
+    );
+    this.$keycloak
+      .updateToken(minValidity)
+      .success((refreshed: any) => {
+        if (refreshed) {
+          console.log("Token refreshed and is below");
+          console.log(this.$keycloak.tokenParsed);
+          console.log("Refresh token is below");
+          console.log(this.$keycloak.refreshTokenParsed);
+        } else {
+          console.log("Token not refreshed");
+        }
+        const secondsLeft = Math.round(
+          this.$keycloak.tokenParsed.exp +
+            this.$keycloak.timeSkew -
+            new Date().getTime() / 1000
+        );
+        console.log(
+          "    --> After refresh.  Token now valid for " +
+            secondsLeft +
+            " seconds"
+        );
+      })
+      .error((error: any) => {
+        console.log("Failed to refresh token");
+        console.log(error);
+        const secondsLeft = Math.round(
+          this.$keycloak.tokenParsed.exp +
+            this.$keycloak.timeSkew -
+            new Date().getTime() / 1000
+        );
+        console.log(
+          "    --> After refresh.  Token now valid for " +
+            secondsLeft +
+            " seconds"
+        );
+        if (secondsLeft < 90) {
+          this.logoutTokenExpired();
+        }
+      });
   }
 
-  created () {
-    this.setupKeycloakCallbacks()
-    _.defer(this.initSessionStorage)
+  created() {
+    this.setupKeycloakCallbacks();
+    _.defer(this.initSessionStorage);
     // use 'force' to avoid race condition, as user may not be set yet
-    this.getOffices('force')
+    this.getOffices("force");
   }
 
-  updated () {
-    const csrStatus = this.user.csr_state.csr_state_name
+  updated() {
+    const csrStatus = this.user.csr_state.csr_state_name;
 
-    if (csrStatus === 'Break') {
-      this.setBreakClickEvent()
+    if (csrStatus === "Break") {
+      this.setBreakClickEvent();
     } else {
-      document.body.removeEventListener('click', this.stopBreak)
-      const breakSwitch = document.getElementById('break-switch')
+      document.body.removeEventListener("click", this.stopBreak);
+      const breakSwitch = document.getElementById("break-switch");
       if (breakSwitch !== null) {
-        breakSwitch.style.pointerEvents = 'all'
+        breakSwitch.style.pointerEvents = "all";
       }
 
       // document.getElementById('break-switch').style.pointerEvents = 'all'
@@ -382,24 +410,28 @@ export default class Login extends Vue {
 
   changeOffice(newOffice) {
     this.updateCSROffice(newOffice)
-    .then(() => {
-      console.log('Done updateCSROffice() then in Login.vue');
-      this.setOfficeSwitcher(false);
-      // Auto-refresh to reload all new data now that office has changed
-      window.location.reload();
-    })
-    .catch((err) => {
-      let message = 'Something went wrong'
-      if (err && err.response && err.response.data && err.response.data.message) {
-        message = err.response.data.message
-      }
-      alert('Unable to change offices: ' + message)
-      console.error('Unable to change offices: ' + message, { err })
-      this.setOfficeSwitcher(false);
-    })
+      .then(() => {
+        console.log("Done updateCSROffice() then in Login.vue");
+        this.setOfficeSwitcher(false);
+        // Auto-refresh to reload all new data now that office has changed
+        window.location.reload();
+      })
+      .catch(err => {
+        let message = "Something went wrong";
+        if (
+          err &&
+          err.response &&
+          err.response.data &&
+          err.response.data.message
+        ) {
+          message = err.response.data.message;
+        }
+        alert("Unable to change offices: " + message);
+        console.error("Unable to change offices: " + message, { err });
+        this.setOfficeSwitcher(false);
+      });
   }
 }
-
 </script>
 
 <style>
@@ -490,5 +522,4 @@ input:checked + .circle1 + .circle2 {
   color: #c7ddef;
   border-bottom: 1px dashed white;
 }
-
 </style>
