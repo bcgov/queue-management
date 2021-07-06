@@ -75,9 +75,8 @@ import MainApp from "./MainApp.vue";
 
 import ConfigHelper from "@/utils/config-helper";
 
-import install from "camunda-formio-tasklist-vue/src/store/index";
-// Vue.use(FormsFlowStore, { store });
-install( store)
+import FormsFlowStore from "camunda-formio-tasklist-vue/src/store/index";
+// install( store)
 
 require("es6-shim");
 // require('Keycloak')
@@ -141,9 +140,11 @@ Vue.config.productionTip = false;
 
 ConfigHelper.fetchConfig();
 
-new Vue({
+const app = new Vue({
   router,
   store,
   vuetify,
   render: h => h(MainApp)
 }).$mount("#app");
+
+Vue.use(FormsFlowStore, { store: app.$store });
