@@ -9,11 +9,11 @@
           type="info"
           close-text="Close Alert"
           color="#d9eaf7"
-          icon="mdi-alert-circle-outline"
+          icon="mdi-information"
           dense
           dismissible
         >
-          <div class="bc-gov-alertbanner bc-gov-alertbanner-info text-center container py-2" role="alert">
+          <div class="bc-gov-alertbanner bc-gov-alertbanner-info text-center container py-0" role="alert">
             {{ headerMsg[0] }} <a :href="headerLinks[0]" target="_blank">{{ headerMsg[1] }}</a>
             {{ headerMsg[2] }} <a :href="headerLinks[1]" target="_blank">{{ headerMsg[3] }}</a>
             {{ headerMsg[4] }} <a :href="headerLinks[2]" target="_blank">{{ headerMsg[5] }}</a>
@@ -228,5 +228,8 @@ a {
 
 .bc-gov-alertbanner-success a {
   color: #2b542c;
+}
+.v-icon.v-icon:before {
+    color: black;
 }
 </style>

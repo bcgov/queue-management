@@ -55,6 +55,7 @@
                   :disabled="!termsOfServiceConsent"
                   :loading="isLoading"
                   color="primary"
+                  class="white--text"
                 >{{submitBtnText}}</v-btn>
               </div>
             </v-col>
