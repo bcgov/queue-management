@@ -335,6 +335,10 @@ class OfficeConfigGA(OfficeConfig):
     column_labels = {
         'quick_list': 'Quick List',
         'back_office_list': 'Back Office List',
+        'currently_waiting': 'Display Citizen Details on Smartboard',
+        'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard',
+        'check_in_reminder_msg': 'Check-In Notification Reminder Message',
+        'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
         'soonest_appointment': 'Soonest Appointment (minutes)',
         'appointment_duration': 'Default Appointment Duration'
     }
