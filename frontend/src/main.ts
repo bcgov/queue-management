@@ -74,9 +74,8 @@ import "./assets/css/bc-gov-style.css";
 import MainApp from "./MainApp.vue";
 
 import ConfigHelper from "@/utils/config-helper";
-
-import FormsFlowStore from "camunda-formio-tasklist-vue/src/store/index";
-// install( store)
+// import FormsFlowStore from "camunda-formio-tasklist-vue/src/store/index";
+// store.registerModule("serviceFlowModule", serviceFlowModule);
 
 require("es6-shim");
 // require('Keycloak')
@@ -140,12 +139,9 @@ Vue.config.productionTip = false;
 
 ConfigHelper.fetchConfig();
 
-const app = new Vue({
+new Vue({
   router,
   store,
   vuetify,
   render: h => h(MainApp)
 }).$mount("#app");
-console.log(FormsFlowStore,'+FormsFlowStore')
-console.log( app.$store, app, store)
-Vue.use(FormsFlowStore, {store: app.$store});
