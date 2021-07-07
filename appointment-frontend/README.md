@@ -47,15 +47,15 @@ npm run build
   "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
   "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
   "hideBCServicesCard": false,
-  "BCEIDRegistrationUrl": "https://www.test.bceid.ca/os/?7521&SkipTo=Basic",
+  "BCEIDRegistrationUrl": "",
   "disableSms": false,
   "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1",
   "FEEDBACK_SERVICE_CHANNEL": "online",
   "FEEDBACK_ENABLED": true,
-  "VUE_APP_HEADER_MSG": "Before you start – do you have the {link} BC Services Card Mobile app {link} or {link} Basic BCeID {link}? Login needed to confirm appointment.",
-  "VUE_APP_HEADER_LINKS": "https://www.gov.bc.ca/bcservicescardapp {link} https://www.bceid.ca/",
-  "VUE_APP_FOOTER_MSG": "Looking for ICBC Services? Ensure you are at the right place by visiting {link} icbc.com/locators",
-  "VUE_APP_FOOTER_LINKS": "https://www.icbc.com/locators"
+  "VUE_APP_HEADER_MSG": Place text before link separate by {link} then link text separated by {link} and then more text and more link text, all seperated by {link}
+  "VUE_APP_HEADER_LINKS": Place header links in here seperated by {link}
+  "VUE_APP_FOOTER_MSG": same as above except for footer
+  "VUE_APP_FOOTER_LINKS": Place footer links in here seperated by {link}
 }
 ```
 See [Configuration Reference](https://cli.vuejs.org/config/).
