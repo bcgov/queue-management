@@ -86,6 +86,7 @@
             <label class="mb-0">Time</label><br />
             <b-form-input :value="displayStart" disabled />
             <b-button
+                v-show="allow_reschedule"
                 variant="primary"
                 class="mr-3"
                 @click="editAppointTime"
@@ -102,6 +103,7 @@
             <label class="mb-0">Date</label><br />
             <b-form-input :value="displayDate" disabled />
             <b-button
+                v-show="allow_reschedule"
                 variant="primary"
                 class="mr-3"
                 @click="editAppointDate"

@@ -244,10 +244,10 @@ export default class Home extends Vue {
     }
   }
 
-  private getMapUrl (appointment) {
+  /* private getMapUrl (appointment) {
     if (!appointment.office) { return '' }
     return GeocoderService.generateStaticMapURL(appointment.office)
-  }
+  } */
 
   private getMapAltText (appointment) {
     return appointment?.office?.civic_address || 'No address'
