@@ -6,7 +6,6 @@
       <main class="main-block container">
         <v-alert
           border="left"
-          type="info"
           close-text="Close Alert"
           color="#d9eaf7"
           icon="mdi-information"
@@ -228,8 +227,5 @@ a {
 
 .bc-gov-alertbanner-success a {
   color: #2b542c;
-}
-.v-icon.v-icon:before {
-    color: black;
 }
 </style>
