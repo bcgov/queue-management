@@ -49,7 +49,7 @@
               v-if="showBackButton(bookingStep)"
               class="stepper-back-button"
             >
-              <v-icon left class="mr-1">mdi-arrow-left</v-icon>
+              <v-icon left class="mr-1">mdi-arrow-left-circle</v-icon>
               {{(!$vuetify.breakpoint.xs) ? 'Back' : ''}}
             </v-btn>
             <v-spacer></v-spacer>
