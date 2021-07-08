@@ -16,7 +16,7 @@
           color="success"
           header-color="primary"
           full-width
-          @click:date="dateClicked('true')"
+          @click:date="goto('available');dateClicked('true')"
         ></v-date-picker>
       </v-col>
       <v-col
@@ -33,7 +33,7 @@
           <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
         </div>
         <template v-if="selectedDateTimeSlots.length">
-          <div class="mt-6">
+          <div ref="available" class="mt-6">
             <strong>Available Time Slots</strong>
           </div>
           <v-row>
@@ -160,6 +160,12 @@ export default class DateSelection extends Mixins(StepperMixin) {
      return this.availableDates.find(date => date === val)
    }
 
+   goto (refName) {
+     let element = this.$refs[refName] as HTMLDivElement
+     let top = element.offsetTop
+     window.scrollTo(0, top)
+   }
+
    private dateClicked (userClicked = 'false') {
      this.selectedDateTimeSlots = []
      let slots = []
@@ -205,6 +211,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
        //  if (resp.appointment_id) {
        if (resp) {
          this.setCurrentDraftAppointment(resp)
+         window.scrollTo(0, 0)
          this.stepNext()
          // this.isLoading = false
        }
