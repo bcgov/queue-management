@@ -1554,7 +1554,6 @@ export default class ExamInventoryTable extends Vue {
     this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
     this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
     this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-    this.setInventoryFilters({ type: 'office_number', value: 'default' })
     this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
     this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
     this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
