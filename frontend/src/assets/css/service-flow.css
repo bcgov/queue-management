@@ -37,3 +37,12 @@
   list-style-type: disc;
   display: list-item !important;
 }
+.loading div {
+  border: unset;
+  -webkit-animation: unset;
+  border-radius: unset;
+}
+
+input.mx-input:focus, input.mx-input:hover {
+  margin: unset !important;
+}
