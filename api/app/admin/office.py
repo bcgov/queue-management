@@ -225,7 +225,7 @@ class OfficeConfig(Base):
 
     }
 
-    column_labels = {'sb': 'Smartboard',
+    column_labels = {'sb': 'Smartboard Layout',
                      'timezone.timezone_name': 'Timezone Name',
                      'exams_enabled_ind': 'Exams Enabled',
                      'appointments_enabled_ind': 'Appointments Enabled',
@@ -238,12 +238,13 @@ class OfficeConfig(Base):
                      'check_in_notification': 'Check-In Notifications',
                      'check_in_reminder_msg': 'Check-In Notification Reminder Message',
                      'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
-                     'currently_waiting': 'Display Citizen Details on Smartboard',
+                     'currently_waiting': 'Display Citizen Details on SmartBoard',
                      'digital_signage_message': 'Digital Signage Message in SmartBoard',
                      'digital_signage_message_1': 'Digital Signage Message 1',
                      'digital_signage_message_2': 'Digital Signage Message 2',
                      'digital_signage_message_3': 'Digital Signage Message 3',
-                     'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard'
+                     'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard',
+                     'number_of_dlkt': 'Number Of DLKT Kiosks'
                      }
 
     column_sortable_list = ['office_name',
@@ -335,12 +336,17 @@ class OfficeConfigGA(OfficeConfig):
     column_labels = {
         'quick_list': 'Quick List',
         'back_office_list': 'Back Office List',
-        'currently_waiting': 'Display Citizen Details on Smartboard',
+        'sb': 'Smartboard Layout',
+        'appointments_enabled_ind': 'Appointments Enabled',
+        'currently_waiting': 'Display Citizen Details on SmartBoard',
         'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard',
+        'check_in_notification': 'Check-In Notifications',
         'check_in_reminder_msg': 'Check-In Notification Reminder Message',
         'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
         'soonest_appointment': 'Soonest Appointment (minutes)',
-        'appointment_duration': 'Default Appointment Duration'
+        'appointment_duration': 'Default Appointment Duration',
+        'max_person_appointment_per_day': 'Maximum number of appointments allowed for same person per day',
+        'number_of_dlkt': 'Number Of DLKT Kiosks'
     }
 
     column_list = [
