@@ -1,11 +1,12 @@
 // import Vue from 'vue'
-import { mapGetters, mapMutations, mapState } from 'vuex'
-import DatePicker from 'vue2-datepicker'
-import moment from 'moment'
-import OfficeDrop from './office-drop.vue'
 
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+
+import DatePicker from 'vue2-datepicker'
+import OfficeDrop from './office-drop.vue'
+import moment from 'moment'
 
 // checkmark
 @Component({

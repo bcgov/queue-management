@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <!-- removed shown -->
-    <!-- @shown="showModal" -->
+  <div data-app>
     <b-modal
       v-model="modalVisible"
       :no-close-on-backdrop="true"
@@ -14,7 +12,11 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
+          <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
+          <!-- <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
+            >Submit</b-btn
+          > -->
+          <b-btn class="btn-primary" v-if="!submitted" @click="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -103,18 +105,6 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-
-          <!--  Delete the notes field.  Can no longer edit notes when uploading. -->
-          <!--
-        <b-form-row class="mt-2">
-          <b-col>
-            <b-form-group class="mb-0">
-              <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="examNotes"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        -->
           <b-alert class="mt-2" :show="uploadFailed" variant="danger">
             File upload failed, please try again.
           </b-alert>
@@ -122,26 +112,77 @@
         <div class="text-center" v-if="isLoading">
           <b-spinner variant="primary" label="Loading"></b-spinner>
         </div>
+        <v-dialog
+           v-model="confirmDialog"
+           max-width="400"
+           :retain-focus="false"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Confirm
+             </v-card-title>
+             <v-card-text>
+               {{ this.warningText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmDialog = false"
+               >
+                 No
+               </v-btn>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmExam()"
+               >
+                 Yes
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
+        <v-dialog
+           v-model="noFileWarning"
+           max-width="400"
+           :retain-focus="false"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Warning
+             </v-card-title>
+             <v-card-text>
+               {{ this.noFileText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="noFileWarning = false"
+               >
+                 OK
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
       </b-form>
     </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable camelcase */
+/* eslint-disable no-console */
 
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Action, Mutation } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
-// import { mapActions, mapMutations, mapState } from 'vuex'
-
-const addExamModule = namespace('addExamModule')
 
 @Component({
 
   computed: {
-    // ...mapGetters('auth', ['isAuthenticated'])
-
     ...mapState({
       showModal: (state: any) => state.addExamModule.uploadPesticideModalVisible
     })
@@ -155,11 +196,6 @@ export default class UploadPesticideModal extends Vue {
   private resetExam!: any
 
   private readonly showModal!: any
-  // @State('addExamModule.uploadPesticideModalVisible') private showModal
-
-  //   ...mapState ({
-  //   showModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Action('putExamInfo') public putExamInfo: any
   @Action('getExams') public getExams: any
@@ -175,6 +211,10 @@ export default class UploadPesticideModal extends Vue {
   public destroyed: any = this.actionedExam.exam_destroyed_date !== null
   public submitted: any = false
   public exam_printed: any = this.actionedExam.exam_received_date !== null
+  public warningText: any = 'Are you sure you want to upload this exam?'
+  public noFileText: any = 'Please provide a file to upload.'
+  private confirmDialog: any = false
+  private noFileWarning: any = false
   public statusOptions: any = this.exam_printed ? [
     { value: 'unwritten', text: 'Unwritten' },
     { value: 'written', text: 'Written' },
@@ -207,6 +247,21 @@ export default class UploadPesticideModal extends Vue {
   resetModal () {
     this.resetExam()
     this.toggleUploadExamModal(false)
+  }
+
+  examStatus () {
+    if (this.status === 'written' && this.file === null) {
+      this.noFileWarning = true
+    } else if (this.status === 'written' && this.file) {
+      this.confirmDialog = true
+    } else {
+      this.submit()
+    }
+  }
+
+  private async confirmExam () {
+    this.confirmDialog = false
+    this.submit()
   }
 
   submit () {
@@ -254,9 +309,6 @@ export default class UploadPesticideModal extends Vue {
   updateExam (putData) {
     this.putExamInfo(putData)
       .then(() => {
-        // setTimeout(()=> {
-        //   this.resetModal()
-        // }, 3000)
       })
       .catch((error) => {
         console.error(error)

@@ -4,38 +4,7 @@
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
-          <v-row class="pa-8 summary-grid">
-            <v-col cols="12" sm="6">
-              <v-label>Reason for Appointment</v-label>
-              <p>{{appointmentDisplayData.serviceForAppointment}}</p>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-label>Date of Appointment</v-label>
-              <p>{{appointmentDateTime}}</p>
-            </v-col>
-            <v-col cols="12">
-              <v-label>Location</v-label>
-              <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
-            </v-col>
-            <v-col cols="3"></v-col>
-            <v-col cols="12" md="6" class="text-center">
-              <div>
-                <v-switch v-if="currentUserProfile && currentUserProfile.telephone && !currentUserProfile.send_sms_reminders"
-                  inset
-                  v-model="isSendSmsReminders"
-                  label="Send me appointment reminders via SMS text message"
-                ></v-switch>
-                <p class="sms-info">Standard messaging and data rates may apply</p>
-              </div>
-              <div>
-                <v-switch v-if="currentUserProfile && currentUserProfile.email && !currentUserProfile.send_email_reminders"
-                    inset
-                    v-model="isSendEmailReminders"
-                    label="Send me appointment reminders via email"
-                  ></v-switch>
-              </div>
-            </v-col>
-            <v-col cols="3"></v-col>
+          <v-row class="pt-0 pa-4 summary-grid">
             <v-col cols="12">
               <div class="d-flex justify-center">
                 <v-checkbox
@@ -56,6 +25,35 @@
                   :loading="isLoading"
                   color="primary"
                 >{{submitBtnText}}</v-btn>
+              </div>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-label>Reason for Appointment</v-label>
+              <p>{{appointmentDisplayData.serviceForAppointment}}</p>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-label>Date of Appointment</v-label>
+              <p>{{appointmentDateTime}}</p>
+            </v-col>
+            <v-col cols="12">
+              <v-label>Location</v-label>
+              <p>{{appointmentDisplayData.locationName}}</p>
+            </v-col>
+            <v-col cols="3"></v-col>
+            <v-col cols="12" md="6" class="text-center">
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.telephone && !currentUserProfile.send_sms_reminders"
+                  inset
+                  v-model="isSendSmsReminders"
+                  label="Send me appointment reminders via SMS text message"
+                ></v-switch>
+              </div>
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.email && !currentUserProfile.send_email_reminders"
+                    inset
+                    v-model="isSendEmailReminders"
+                    label="Send me appointment reminders via email"
+                  ></v-switch>
               </div>
             </v-col>
             <v-col cols="12">
@@ -368,9 +366,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     this.callsp()
   }
 
-  private getMapUrl (location) {
+  /* private getMapUrl (location) {
     return GeocoderService.generateStaticMapURL(location, { height: 200, width: 1200, scale: 2 })
-  }
+  } */
 
   private openToS () {
     (this.$refs.TermsOfServicePopup as TermsOfServicePopup).open()
