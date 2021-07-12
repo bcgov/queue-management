@@ -21,20 +21,17 @@
       @click="goTo('home')"
     ></v-img>
     <v-toolbar-title v-if="!isWalkin">Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
-
     <v-spacer></v-spacer>
-
-    <v-btn
-      outlined
-      alt='Help - opens in new window'
-      class='mx-3'
-      @click="goTo('help')">
-      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-      Help
-    </v-btn>
-
     <template v-if="((!isAuthenticated) && (!isWalkin))">
       <div class='d-flex'>
+        <v-btn
+          light
+          class="mr-3"
+          min-width="90"
+          @click="goTo('login')"
+          >
+          Login
+        </v-btn>
         <v-btn
           dark
           outlined
@@ -44,18 +41,19 @@
           >
           Register
         </v-btn>
-        <v-btn
-          light
-          min-width="90"
-          @click="goTo('login')"
-          >
-          Login
-        </v-btn>
       </div>
     </template>
     <template v-else>
       <SignedUser v-if="(!isWalkin)" :username="username"></SignedUser>
     </template>
+    <v-btn
+      outlined
+      alt='Help - opens in new window'
+      class='mr-3'
+      @click="goTo('help')">
+      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+      Help
+    </v-btn>
   </v-app-bar>
 </template>
 

@@ -23,9 +23,6 @@ Note:
 
 - if you need to use BCSC or BCeID services, please point to the dev keycloak
 
-- Get Google Map API Key from Google developer console. and use it as VUE_APP_GOOGLE_STATIC_MAP_API_KEY in .env.local file 
-
-
 
 ## Project setup
 ```
@@ -44,4 +41,21 @@ npm run build
 
 
 ### Customize configuration
+/public/config/configration.json
+```
+{
+  "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+  "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
+  "hideBCServicesCard": false,
+  "BCEIDRegistrationUrl": "",
+  "disableSms": false,
+  "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1",
+  "FEEDBACK_SERVICE_CHANNEL": "online",
+  "FEEDBACK_ENABLED": true,
+  "VUE_APP_HEADER_MSG": Place text before link separate by {link} then link text separated by {link} and then more text and more link text, all seperated by {link}
+  "VUE_APP_HEADER_LINKS": Place header links in here seperated by {link}
+  "VUE_APP_FOOTER_MSG": same as above except for footer
+  "VUE_APP_FOOTER_LINKS": Place footer links in here seperated by {link}
+}
+```
 See [Configuration Reference](https://cli.vuejs.org/config/).
