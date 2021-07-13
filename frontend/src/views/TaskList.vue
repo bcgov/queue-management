@@ -19,12 +19,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import CamundaTasklist from "camunda-formio-tasklist-vue/src/components/TaskList.vue";
-import { State } from "vuex-class";
-import configMap from "../utils/config-helper";
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import CamundaTasklist from 'camunda-formio-tasklist-vue/src/components/TaskList.vue'
+import { State } from 'vuex-class'
+import configMap from '../utils/config-helper'
 // css specific to service flow
-import "../assets/css/service-flow.css";
+import '../assets/css/service-flow.css'
 
 @Component({
   components: {
@@ -32,21 +32,21 @@ import "../assets/css/service-flow.css";
   }
 })
 export default class TaskList extends Vue {
-  @State("bearer") private bearer!: any;
-  public token: any = sessionStorage.getItem("token");
+  @State('bearer') private bearer!: any;
+  public token: any = sessionStorage.getItem('token');
   public configs = configMap.getconfig();
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled();
   public getTaskId: string = this.$route.params.taskId;
 
-  mounted() {
-    this.getTaskId = this.$route.params.taskId;
-    this.token = sessionStorage.getItem("token");
-    this.isServiceFLowEnabled = configMap.isServiceFLowEnabled();
+  mounted () {
+    this.getTaskId = this.$route.params.taskId
+    this.token = sessionStorage.getItem('token')
+    this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
   }
 
-  @Watch("bearer")
-  onbearerChange() {
-    this.token = sessionStorage.getItem("token");
+  @Watch('bearer')
+  onbearerChange () {
+    this.token = sessionStorage.getItem('token')
   }
 }
 </script>
