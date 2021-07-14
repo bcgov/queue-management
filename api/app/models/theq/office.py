@@ -17,7 +17,7 @@ from app.models.theq import Base
 from app.models.bookings import Exam, Room
 from qsystem import cache, db
 import enum
-from sqlalchemy import Enum
+from sqlalchemy import Enum, desc
 
 
 class Status(enum.Enum):
@@ -155,7 +155,7 @@ class Office(Base):
         active_offices = cache.get(Office.offices_cache_key)
         if not active_offices:
             office_schema = OfficeSchema(many=True)
-            active_offices = office_schema.dump(Office.query.filter(Office.deleted.is_(None)))
+            active_offices = office_schema.dump(Office.query.filter(Office.deleted.is_(None)).order_by(Office.office_name))
             cache.set(Office.offices_cache_key, active_offices)
         return active_offices
 
