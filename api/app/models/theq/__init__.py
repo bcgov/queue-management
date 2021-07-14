@@ -23,7 +23,6 @@ from app.models.theq.timezone import Timezone
 from app.models.theq.office import Office
 from app.models.theq.period import Period
 from app.models.theq.period_state import PeriodState
-from app.models.theq.permission import Permission
 from app.models.theq.role import Role
 from app.models.theq.service import Service
 from app.models.theq.service_req import ServiceReq
