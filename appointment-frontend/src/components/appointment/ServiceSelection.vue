@@ -85,7 +85,7 @@
         </div>
         <p class="text-center body-2">
           Information is collected under the authority of
-          <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" target="_blank">Sections 26(c)</a>
+          <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" rel="noopener noreferrer" target="_blank">Sections 26(c)</a>
           of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to the Director, Provincial Operations, PO BOX 9412 STN PROV GOVT, Victoria, BC, V8W 9V1, 1 800 663-7867.
         </p>
       </template>

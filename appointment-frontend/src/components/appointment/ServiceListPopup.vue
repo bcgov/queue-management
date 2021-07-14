@@ -54,8 +54,8 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="text-left">Service</th>
-                <th></th>
+                <th id="txtservice" class="text-left">Service</th>
+                <th id="txtserviceblank"></th>
               </tr>
             </thead>
             <tbody>
