@@ -82,16 +82,16 @@ class OfficeConfig(Base):
             ("3", '3 - Third in Line')
         ],
         'currently_waiting': [
-            ("0", 'Off - Disabale Currently Waiting in SmartBoard'), \
-            ("1", 'On - Enable Currently Waiting in SmartBoard')
+            ("0", 'Off - Disabale Currently Waiting in Smartboard'), \
+            ("1", 'On - Enable Currently Waiting in Smartboard')
         ],
         'digital_signage_message': [
-            ("0", 'Off - Disabale Messages in SmartBoard'), \
-            ("1", 'On - Enable Messages in SmartBoard')
+            ("0", 'Off - Disabale Messages in Smartboard'), \
+            ("1", 'On - Enable Messages in Smartboard')
         ],
         'show_currently_waiting_bottom': [
-            ("0", 'Off - Hide Currently Waiting at bottom in SmartBoard'), \
-            ("1", 'On - Show Currently Waiting  from bottom in SmartBoard')
+            ("0", 'Off - Hide Currently Waiting at bottom in Smartboard'), \
+            ("1", 'On - Show Currently Waiting  from bottom in Smartboard')
         ],
     }
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
@@ -238,12 +238,12 @@ class OfficeConfig(Base):
                      'check_in_notification': 'Check-In Notifications',
                      'check_in_reminder_msg': 'Check-In Notification Reminder Message',
                      'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',
-                     'currently_waiting': 'Display Citizen Details on SmartBoard',
-                     'digital_signage_message': 'Digital Signage Message in SmartBoard',
+                     'currently_waiting': 'Display Citizen Details on Smartboard',
+                     'digital_signage_message': 'Digital Signage Message in Smartboard',
                      'digital_signage_message_1': 'Digital Signage Message 1',
                      'digital_signage_message_2': 'Digital Signage Message 2',
                      'digital_signage_message_3': 'Digital Signage Message 3',
-                     'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard',
+                     'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in Smartboard',
                      'number_of_dlkt': 'Number Of DLKT Kiosks'
                      }
 
@@ -338,8 +338,9 @@ class OfficeConfigGA(OfficeConfig):
         'back_office_list': 'Back Office List',
         'sb': 'Smartboard Layout',
         'appointments_enabled_ind': 'Appointments Enabled',
-        'currently_waiting': 'Display Citizen Details on SmartBoard',
-        'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in SmartBoard',
+        'currently_waiting': 'Display Citizen Details on Smartboard',
+        'show_currently_waiting_bottom': 'Show Currently Waiting at Bottom in Smartboard',
+        'digital_signage_message': 'Digital Signage Message in Smartboard',
         'check_in_notification': 'Check-In Notifications',
         'check_in_reminder_msg': 'Check-In Notification Reminder Message',
         'automatic_reminder_at': 'Check-In Notification Automatically Send Message When Ticket is X in Line',

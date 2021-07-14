@@ -37,8 +37,10 @@ $(document).ready(function() {
         }
     });
 
-    // Appointments Enabled
+    // Appointments Enabled and Online Status
     var appointments_enabled_ind = $("#appointments_enabled_ind");
+    var online_status = $("#online_status"); 
+
     if (appointments_enabled_ind.val() === "0") {
         toggleAppointmentFields(false);
         toggleOnlineStatusFields(false);
@@ -51,11 +53,14 @@ $(document).ready(function() {
         } else { // if enabled
             console.log('appointments enabled')
             toggleAppointmentFields(true);
+            if (online_status.val() === "__None" || online_status.val() === "HIDE") {
+                toggleOnlineStatusFields(false);
+            } else {
+                toggleOnlineStatusFields(true);
+            }
         }
     });
-
-    // Online Status
-    var online_status = $("#online_status"); 
+    
     if (online_status.val() === "__None" || online_status.val() === "HIDE") {
         toggleOnlineStatusFields(false);
     } else {
