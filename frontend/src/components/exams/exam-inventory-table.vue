@@ -1569,7 +1569,7 @@ export default class ExamInventoryTable extends Vue {
         this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
         this.setInventoryFilters({ type: 'scheduledFilter', value: 'unscheduled' })
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'group' })
-      } else if (this.selectedExamType === 'all') {
+      } else {
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'both' })
       }
     } else if (option.value === 'ready') {
