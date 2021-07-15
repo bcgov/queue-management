@@ -17,7 +17,7 @@ This module is being invoked from a job and it sends SMS reminders to customers.
 """
 import json
 import os
-
+import time
 import requests
 from flask import Flask
 
@@ -84,6 +84,7 @@ def send_reminders(app):
                                                   'Authorization': f'Bearer {token}'},
                                          data=json.dumps(notifications))
                 print(response)
+                time.sleep(5)
             except Exception as e:
                 print(e)  # log and continue
 
