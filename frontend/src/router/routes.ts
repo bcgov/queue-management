@@ -1,4 +1,3 @@
-
 /* tslint-disable */
 import Admin from '../views/admin.vue'
 import Agenda from '@/components/Agenda/Agenda.vue'
@@ -21,6 +20,8 @@ import Smartboard from '@/components/smartboard/index.vue'
 import Upload from '@/components/upload/upload.vue'
 import Tasklist from '@/views/TaskList.vue'
 import ButtonTasklist from '@/components/TaskList/ButtonTasklist.vue'
+
+import FormView from '@/views/FormView.vue'
 
 export const routes = [
   {
@@ -85,9 +86,18 @@ export const routes = [
         meta: { hideCitizenWaiting: false }
       },
       {
-        path: 'service-flow',
+        path: 'service-flow/:taskId?',
         components: {
           default: Tasklist,
+          buttons: ButtonTasklist
+        },
+        props: true,
+        meta: { hideCitizenWaiting: false }
+      },
+      {
+        path: 'form/:form_id/submission/:submission_id',
+        components: {
+          default: FormView,
           buttons: ButtonTasklist
         },
         meta: { hideCitizenWaiting: false }
