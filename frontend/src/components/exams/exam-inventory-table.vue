@@ -1584,7 +1584,7 @@ export default class ExamInventoryTable extends Vue {
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'individual' })
       } else if (this.selectedExamType === 'group') {
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'group' })
-      } else if (this.selectedExamType === 'all') {
+      } else {
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'both' })
       }
     } else if (option.value === 'awaiting_upload') {
