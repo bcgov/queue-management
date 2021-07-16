@@ -243,13 +243,14 @@
               <!-- If not a challenger exam, display the exam type -->
               <b-form-group v-if="!['challenger'].includes(examType)">
                 <label class="my-0">Exam Type</label><br />
-                <div @click="handleExamInputClick">
+                <div>
                   <b-input
                     :style="examInputStyle"
                     :value="examInputText"
                     class="less-15-mb"
                     placeholder="click here to see options"
                     read-only
+                    :disabled="true"
                   />
                 </div>
                 <div
@@ -594,6 +595,7 @@ export default class EditExamModal extends Vue {
   @Action('getExams') public getExams: any
   @Action('getOffices') public getOffices: any
   @Action('putExamInfo') public putExamInfo: any
+  @Action('getExamTypes') public getExamTypes: any
 
   @Mutation('setEditExamFailure') public setEditExamFailure: any
   @Mutation('setEditExamSuccess') public setEditExamSuccess: any
@@ -1000,6 +1002,10 @@ export default class EditExamModal extends Vue {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
     }
+  }
+
+  mounted () {
+    this.getExamTypes()
   }
 }
 </script>
