@@ -13,8 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div class="marquee-container1" v-if="isMessageEnabled">
-    <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
+  <div class="marquee" v-if="isMessageEnabled">
       <span v-if="msg_1">{{msg_1}}
         &nbsp;	&nbsp;	&nbsp; &nbsp;
         |
@@ -28,7 +27,6 @@ limitations under the License.*/
       <span v-if="msg_3">{{msg_3}}
       &nbsp;	&nbsp; 	&nbsp;	&nbsp;
       </span>
-    </marquee>
   </div>
 </template>
 
