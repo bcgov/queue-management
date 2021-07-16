@@ -41,28 +41,15 @@ $(document).ready(function() {
     if (appointments_enabled_ind.val() === "0") { // if disabled
         toggleAppointmentFields(false);
         toggleOnlineStatusFields(false);
-    }        
-    appointments_enabled_ind.on('change', function (e) {        
-        if (e.val === "0") { // if disabled
-            console.log('appointments disabled')
-            toggleAppointmentFields(false);
-            toggleOnlineStatusFields(false);
-        } else { // if enabled
-            console.log('appointments enabled')
-            toggleAppointmentFields(true);
-            if (online_status.val() === "__None" || online_status.val() === "HIDE") {
-                toggleOnlineStatusFields(false);
-            } else {
-                toggleOnlineStatusFields(true);
-            }
-        }
-    });
-    
-    if (online_status.val() === "__None" || online_status.val() === "HIDE") {
-        toggleOnlineStatusFields(false);
     } else {
-        toggleOnlineStatusFields(true);
-    }
+        toggleAppointmentFields(true);
+        if (online_status.val() === "__None" || online_status.val() === "HIDE") {
+            toggleOnlineStatusFields(false);
+        } else {
+            toggleOnlineStatusFields(true);
+        }
+    }       
+    $("select[id='appointments_enabled_ind'].form-control").prop("disabled", true);
     $("select[id='online_status'].form-control").prop("disabled", true);
     
 });
