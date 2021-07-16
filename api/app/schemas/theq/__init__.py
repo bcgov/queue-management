@@ -29,4 +29,5 @@ from .metadata_schema import MetaDataSchema
 from .period_schema import PeriodSchema
 from .service_req_schema import ServiceReqSchema
 from .citizen_schema import CitizenSchema
+from .permission_schema import PermissionSchema
 from .user_schema import UserSchema

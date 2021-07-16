@@ -16,20 +16,14 @@ from qsystem import db
 from app.models.theq import Base
 
 
-class Role(Base):
+class Permission(Base):
 
-    role_permission = db.Table('role_permission',
-            db.Column('role_id', db.Integer, db.ForeignKey('role.role_id'), primary_key=True, nullable=False),
-            db.Column('permission_id', db.Integer, db.ForeignKey('permission.permission_id'), primary_key=True, nullable=False))
+    permission_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    permission_code = db.Column(db.String(100), nullable=False)
+    permission_desc = db.Column(db.String(1000), nullable=False)
 
-    role_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    role_code = db.Column(db.String(100))
-    role_desc = db.Column(db.String(1000))
-
-    roles = db.relationship('CSR', lazy=False)
-
-    def __repr__(self):
-        return self.role_code
+    def __repr__(self, permission_code):
+        return '<Permission Code:(name={self.permission_code!r})>'.format(self=self)
 
     def __init__(self, **kwargs):
-        super(Role, self).__init__(**kwargs)
+        super(Permission, self).__init__(**kwargs)
