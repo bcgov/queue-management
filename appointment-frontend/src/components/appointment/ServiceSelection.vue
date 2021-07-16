@@ -82,7 +82,8 @@
             <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
         </div>
-        <p class="text-center mb-6"><strong>{{selectedService.external_service_name}}</strong> can be completed online, <a :href="selectedService.online_link" target="_blank">would you like to try online</a>?</p>
+        <p class="text-center mb-6"><strong>{{selectedService.external_service_name}}</strong> can be completed online.</p>
+        <p class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
         <p class="text-center body-2">
           Information is collected under the authority of
           <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" target="_blank">Sections 26(c)</a>
@@ -91,7 +92,7 @@
       </template>
       <template v-if="checkDisabled(selectedService)">
         <p class="text-center mb-6">We're sorry, <strong>{{selectedService.external_service_name}}</strong> is not available by appointment.</p>
-        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online</a>?</p>
+        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
       </template>
     </v-card-text>
     <!-- Other Booking Option Model Popup -->
