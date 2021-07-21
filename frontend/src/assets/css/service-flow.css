@@ -46,3 +46,7 @@
 input.mx-input:focus, input.mx-input:hover {
   margin: unset !important;
 }
+
+.tabs {
+  user-select: unset !important;
+}
