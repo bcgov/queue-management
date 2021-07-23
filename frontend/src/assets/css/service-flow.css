@@ -1,7 +1,7 @@
 .formio-component.formio-component-table.table-responsive {
   overflow-x: hidden !important;
-  padding-right: 13vh !important;
-  padding-left: 13vh !important;
+  /* padding-right: 13vh !important;
+  padding-left: 13vh !important; */
   overflow-y: hidden !important;
 }
 
