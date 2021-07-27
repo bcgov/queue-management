@@ -50,3 +50,7 @@ input.mx-input:focus, input.mx-input:hover {
 .tabs {
   user-select: unset !important;
 }
+
+.t-height {
+  height: 68vh !important;
+}
