@@ -47,7 +47,11 @@ objects:
             "disableSms": ${DISABLE_SMS},
             "VUE_APP_FEEDBACK_API": ${VUE_APP_FEEDBACK_API},
             "FEEDBACK_SERVICE_CHANNEL": ${FEEDBACK_SERVICE_CHANNEL},
-            "FEEDBACK_ENABLED": ${FEEDBACK_ENABLED}
+            "FEEDBACK_ENABLED": ${FEEDBACK_ENABLED},
+            "VUE_APP_HEADER_MSG": ${VUE_APP_HEADER_MSG},
+            "VUE_APP_HEADER_LINKS": ${VUE_APP_HEADER_LINKS},
+            "VUE_APP_FOOTER_MSG": ${VUE_APP_FOOTER_MSG},
+            "VUE_APP_FOOTER_LINKS": ${VUE_APP_FOOTER_LINKS}
           }
   - apiVersion: v1
     kind: ConfigMap
@@ -254,4 +258,21 @@ parameters:
     description: "Feature flag to enable feedback display"
     required: true
     value: ""
+  - name: VUE_APP_HEADER_MSG
+    description: "Header Message to be displayed"
+    required: true
+    value: ""
+  - name: VUE_APP_HEADER_LINKS
+    description: "Links to BC services card and bceid card"
+    required: true
+    value: ""
+  - name: VUE_APP_FOOTER_MSG
+    description: "Footer message to be displayed"
+    required: true
+    value: ""
+  - name: VUE_APP_FOOTER_LINKS
+    description: "Footer links(ICBC)"
+    required: true
+    value: ""
+
 
