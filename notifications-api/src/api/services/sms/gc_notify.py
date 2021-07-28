@@ -49,7 +49,6 @@ class GCNotify(SmsBaseService):
 
             except Exception as e:
                 print(e)  # log and continue
-                raise e
 
     @classmethod
     def _construct_sms_text(cls, sms_request: dict) -> str:
