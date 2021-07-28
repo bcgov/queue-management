@@ -121,9 +121,9 @@ objects:
                 - name: APP_MODULE
                   value: wsgi
                 - name: ACTIVE_MQ_HOST
-                  value: rabbitmq
+                  value: redis-theq
                 - name: ACTIVE_MQ_PORT
-                  value: "5672"
+                  value: "6379"
                 - name: SECRET_KEY
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
@@ -214,12 +214,8 @@ objects:
                   value: WARNING
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
                   value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"
-                - name: JWT_OIDC_ALGORITHMS
-                  value: "${JWT_OIDC_ALGORITHMS}"
                 - name: JWT_OIDC_AUDIENCE
                   value: "${JWT_OIDC_AUDIENCE}"
-                - name: JWT_OIDC_CLIENT_SECRET
-                  value: "${JWT_OIDC_CLIENT_SECRET}"
                 - name: SOCKETIO_PING_TIMEOUT
                   value: "10"
                 - name: SOCKETIO_PING_INTERVAL
@@ -229,7 +225,28 @@ objects:
                 - name: APPOINTMENT_PORTAL_URL
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"                               
                 - name: BCMP_USER
-                  value: "${BCMP_USER}" 
+                  value: "${BCMP_USER}"
+                - name: ACTIVE_MQ_TYPE
+                  value: "redis"
+                - name: ACTIVE_MQ_USER
+                  value: "${ACTIVE_MQ_USER}"
+                - name: ACTIVE_MQ_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: redis-theq-secret
+                      key: password
+                - name: ACTIVE_MQ_HOST
+                  value: "redis-theq"
+                - name: CHES_POST_EMAIL_ENDPOINT
+                  value: "${CHES_POST_EMAIL_ENDPOINT}"
+                - name: CHES_SSO_CLIENT_ID
+                  value: "${CHES_SSO_CLIENT_ID}"
+                - name: CHES_SSO_CLIENT_SECRET
+                  value: "${CHES_SSO_CLIENT_SECRET}"
+                - name: CHES_SSO_TOKEN_URL
+                  value: "${CHES_SSO_TOKEN_URL}"
+                - name: TEAMS_URL
+                  value: "${TEAMS_URL}"
 
               ports:
                 - containerPort: 8080
@@ -471,17 +488,9 @@ parameters:
     description: "Well known config URL for the keycloak realm "
     required: true
     value: ""
-  - name: JWT_OIDC_ALGORITHMS
-    description: "OIDC Algorithm"
-    required: false
-    value: "RS256"
   - name: JWT_OIDC_AUDIENCE
     description: "OIDC Audience"
     required: true
-    value: ""
-  - name: JWT_OIDC_CLIENT_SECRET
-    description: "OIDC Client secret"
-    required: false
     value: ""
   - name: NOTIFICATIONS_ENDPOINT
     description: "Notifications endpoint"
@@ -503,4 +512,23 @@ parameters:
     description: ""
     required: true
     value: ""
-
+  - name: ACTIVE_MQ_USER
+    description: "redis default user"
+    required: true
+    value: ""
+  - name: CHES_POST_EMAIL_ENDPOINT
+    description: "email endpoint"
+    required: true
+    value: ""
+  - name: CHES_SSO_CLIENT_ID
+    description: "CHES client Id"
+    required: true
+    value: ""
+  - name: CHES_SSO_CLIENT_SECRET
+    description: "CHES client Secret"
+    required: true
+    value: ""
+  - name: CHES_SSO_TOKEN_URL
+    description: "CHES SSO token URL"
+    required: true
+    value: ""
