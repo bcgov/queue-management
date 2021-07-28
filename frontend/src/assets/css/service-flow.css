@@ -1,7 +1,7 @@
 .formio-component.formio-component-table.table-responsive {
   overflow-x: hidden !important;
-  padding-right: 13vh !important;
-  padding-left: 13vh !important;
+  /* padding-right: 13vh !important;
+  padding-left: 13vh !important; */
   overflow-y: hidden !important;
 }
 
@@ -45,4 +45,12 @@
 
 input.mx-input:focus, input.mx-input:hover {
   margin: unset !important;
+}
+
+.tabs {
+  user-select: unset !important;
+}
+
+.t-height {
+  height: 68vh !important;
 }
