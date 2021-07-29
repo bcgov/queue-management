@@ -21,7 +21,7 @@
 
 def WAIT_TIMEOUT = 20
 def TAG_NAMES = ['dev', 'test', 'prod']
-def BUILDS = ['queue-management-api','queue-management-nginx-frontend','appointment-nginx-frontend','send-appointment-reminder-crond','notifications-api','feedback-api']
+def BUILDS = ['queue-management-api','queue-management-frontend','appointment-frontend','send-appointment-reminder-crond','notifications-api','feedback-api']
 def DEP_ENV_NAMES = ['dev', 'test', 'prod']
 def label = "mypod-${UUID.randomUUID().toString()}"
 def API_IMAGE_HASH = ""
@@ -113,20 +113,20 @@ podTemplate(
                 )
             }
         }
-        parallel Build_Staff_FE_NGINX: {
-            stage("Build Front End NGINX..") {
+        parallel Build_Staff_FE: {
+            stage("Build Front End..") {
                 script: {
                     openshift.withCluster() {
                         openshift.withProject() {
-                            echo "Building Front End Nginx"
+                            echo "Building Front End "
                             openshift.selector("bc", "${BUILDS[1]}").startBuild("--wait")
                         }
-                        echo "Staff Front End Nginx Completed ..."
+                        echo "Staff Front End Completed ..."
                     }
                 }
             }
-        }, Build_Appointment_FE_NGINX: {
-            stage("Build Appointment NGINX") {
+        }, Build_Appointment_FE: {
+            stage("Build Appointment") {
                 script: {
                     openshift.withCluster() {
                         openshift.withProject() {
@@ -255,7 +255,7 @@ podTemplate(
                     }
                 }
             }
-        }, Deploy_Staff_FE_NGINX_Dev: {
+        }, Deploy_Staff_FE_Dev: {
             stage("Deploy Frontend to Dev") {
                 script: {
                     openshift.withCluster() {
@@ -280,7 +280,7 @@ podTemplate(
                     }
                 }
             }
-        }, Deploy_Appointment_NGINX_Dev: {
+        }, Deploy_Appointment_Dev: {
             stage("Deploy Appointment to Dev") {
                 script: {
                     openshift.withCluster() {
@@ -419,7 +419,7 @@ node {
                 }
             }
         }
-    }, Deploy_Staff_FE_NGINX_Test: {
+    }, Deploy_Staff_FE_Test: {
         stage("Deploy Frontend - Test") {
             script: {
                 openshift.withCluster() {
@@ -443,7 +443,7 @@ node {
                 }
             }
         } 
-    }, Deploy_Appointment_NGINX_Test: {
+    }, Deploy_Appointment_Test: {
         stage("Deploy Appointment - Test") {
             script: {
                 openshift.withCluster() {
@@ -562,7 +562,7 @@ node {
                 }
             }
         }
-    }, Deploy_Staff_FE_NGINX_Prod: {
+    }, Deploy_Staff_FE_Prod: {
         stage("Deploy Frontend - Prod") {
             script: {
                 openshift.withCluster() {
@@ -586,7 +586,7 @@ node {
                 }
             }
         }
-    }, Deploy_Appointment_NGINX_Prod: {
+    }, Deploy_Appointment_Prod: {
         stage("Deploy Appointment - Prod") {
             script: {
                 openshift.withCluster() {
