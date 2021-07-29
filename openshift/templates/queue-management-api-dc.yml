@@ -114,16 +114,35 @@ objects:
                   value: "patroni-master"
                 - name: DATABASE_PORT
                   value: "5432"
+                - name: DATABASE_LONG_RUNNING_QUERY
+                  value: "${DATABASE_LONG_RUNNING_QUERY}"
+                - name: SQLALCHEMY_POOL_PRE_PING
+                  value: "true"
+                - name: SQLALCHEMY_POOL_SIZE
+                  value: "${SQLALCHEMY_POOL_SIZE}"
+                - name: SQLALCHEMY_MAX_OVERFLOW
+                  value: "${SQLALCHEMY_MAX_OVERFLOW}"
+                - name: SQLALCHEMY_ECHO
+                  value: "${SQLALCHEMY_ECHO}"
                 - name: APP_CONFIG
                   value: gunicorn_config.py
                 - name: FLASK_CONFIGURATION
                   value: "${FLASK_CONFIGURATION}"
                 - name: APP_MODULE
                   value: wsgi
+                - name: ACTIVE_MQ_TYPE
+                  value: "redis"								  					  
                 - name: ACTIVE_MQ_HOST
                   value: redis-theq
                 - name: ACTIVE_MQ_PORT
-                  value: "6379"
+                  value: '6379'
+                - name: ACTIVE_MQ_USER
+                  value: "${ACTIVE_MQ_USER}"				
+                - name: ACTIVE_MQ_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: redis-theq-secret
                 - name: SECRET_KEY
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
@@ -163,17 +182,7 @@ objects:
                 - name: SERVICENOW_TABLE
                   value: "${SERVICENOW_TABLE}"
                 - name: SERVICENOW_ASSIGN_GROUP
-                  value: "${SERVICENOW_ASSIGN_GROUP}"
-                - name: SQLALCHEMY_POOL_PRE_PING
-                  value: "true"
-                - name: SQLALCHEMY_POOL_SIZE
-                  value: "${SQLALCHEMY_POOL_SIZE}"
-                - name: SQLALCHEMY_MAX_OVERFLOW
-                  value: "${SQLALCHEMY_MAX_OVERFLOW}"
-                - name: DATABASE_LONG_RUNNING_QUERY
-                  value: "${DATABASE_LONG_RUNNING_QUERY}"
-                - name: SQLALCHEMY_ECHO
-                  value: "${SQLALCHEMY_ECHO}"                  
+                  value: "${SERVICENOW_ASSIGN_GROUP}"                
                 - name: MINIO_HOST
                   value: "${MINIO_HOST}"
                 - name: MINIO_BUCKET
@@ -226,15 +235,6 @@ objects:
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"                               
                 - name: BCMP_USER
                   value: "${BCMP_USER}"
-                - name: ACTIVE_MQ_TYPE
-                  value: "redis"
-                - name: ACTIVE_MQ_USER
-                  value: "${ACTIVE_MQ_USER}"
-                - name: ACTIVE_MQ_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: password
-                      name: redis-theq-secret
                 - name: CHES_POST_EMAIL_ENDPOINT
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: CHES_SSO_CLIENT_ID
