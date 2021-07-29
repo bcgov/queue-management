@@ -261,18 +261,18 @@ parameters:
   - name: VUE_APP_HEADER_MSG
     description: "Header Message to be displayed"
     required: true
-    value: ""
+    value: "test"
   - name: VUE_APP_HEADER_LINKS
     description: "Links to BC services card and bceid card"
     required: true
-    value: ""
+    value: " "
   - name: VUE_APP_FOOTER_MSG
     description: "Footer message to be displayed"
     required: true
-    value: ""
+    value: " "
   - name: VUE_APP_FOOTER_LINKS
     description: "Footer links(ICBC)"
     required: true
-    value: ""
+    value: " "
 
 
