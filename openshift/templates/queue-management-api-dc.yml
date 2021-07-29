@@ -233,10 +233,8 @@ objects:
                 - name: ACTIVE_MQ_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: redis-theq-secret
                       key: password
-                - name: ACTIVE_MQ_HOST
-                  value: "redis-theq"
+                      name: redis-theq-secret
                 - name: CHES_POST_EMAIL_ENDPOINT
                   value: "${CHES_POST_EMAIL_ENDPOINT}"
                 - name: CHES_SSO_CLIENT_ID
@@ -507,11 +505,11 @@ parameters:
   - name: APP_GROUP
     description: "For EDB NSP identification"
     required: true
-    value: ""
+    value: "theq"
   - name: BCMP_USER
     description: ""
     required: true
-    value: ""
+    value: "env_exam"
   - name: ACTIVE_MQ_USER
     description: "redis default user"
     required: true
