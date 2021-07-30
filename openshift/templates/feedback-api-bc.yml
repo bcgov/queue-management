@@ -69,7 +69,7 @@ objects:
           memory: 4Gi
       postCommit: {}
       nodeSelector:
-      successfulBuildsHistoryLimit: 10
+      successfulBuildsHistoryLimit: 5
       failedBuildsHistoryLimit: 2
     status:
       lastVersion: 0
