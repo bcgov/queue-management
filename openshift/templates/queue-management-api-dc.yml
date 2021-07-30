@@ -495,7 +495,7 @@ parameters:
     required: true
     value: ""
   - name: SHOW_ESTIMATE_TIME_WALKIN
-    description: ""
+    description: "estimated walkin time"
     required: true
     value: ""
   - name: APPOINTMENT_PORTAL_URL
