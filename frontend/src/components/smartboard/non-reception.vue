@@ -18,7 +18,6 @@ limitations under the License.*/
       <div class="board-video-div">
         <Video :office_number="smartboardData.office_number" />
       </div>
-      <br/><br/>
       <MarqueeText
         v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"

@@ -21,9 +21,6 @@ limitations under the License.*/
       <div v-if="((!networkStatus.networkDown) && (office.office.show_currently_waiting_bottom === 1))" class="bottom-flex-div">
         <div class="flex-title">Currently waiting: {{ waiting }}</div>
       </div>
-      <span v-else>
-        <br/><br/>
-      </span>
       <MarqueeText
       v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
