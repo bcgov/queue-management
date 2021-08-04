@@ -51,19 +51,7 @@ limitations under the License.*/ -->
       </v-col>
     </v-row>
     <div v-if="networkDown == true" id="network-status" class="loading small">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
     </div>
-    <!-- <v-row class="marquee-msg-container-full" v-if="(isMessageEnabled)">
-      <MarqueeText
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </v-row> -->
   </div>
 </template>
 

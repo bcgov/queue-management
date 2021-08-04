@@ -14,7 +14,6 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-    <div style="display: flex; height: 75%; width: 100%">
       <div class="board-nameticket-video">
         <div class="board-video-div">
           <Video :office_number="smartboardData.office_number" />
@@ -66,13 +65,7 @@ limitations under the License.*/
             </template>
           </b-table>
           <div v-if="networkStatus.networkDown" class="loading small">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
           </div>
-        </div>
       </div>
     </div>
     <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
