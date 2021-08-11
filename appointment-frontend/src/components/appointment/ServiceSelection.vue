@@ -28,9 +28,9 @@
                 class="service-selection-options"
               >
                 <div>{{ data.item.external_service_name }}</div>
-                <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.external_service_name, data.item.online_link)">
+                <!-- <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.external_service_name, data.item.online_link)">
                   Online Option <v-icon small>mdi-open-in-new</v-icon>
-                </div>
+                </div> -->
               </div>
             </template>
           </v-combobox>
@@ -50,7 +50,7 @@
 <!--      <v-row>-->
 <!--        {{myMessage}}-->
 <!--      </v-row>-->
-      <v-row justify="center">
+<!--      <v-row justify="center">
         <v-col cols="12" sm="6">
           <v-textarea
             :maxlength="maxChars"
@@ -63,9 +63,8 @@
             @keyup="setCharsLeft"
         ></v-textarea>
         </v-col>
-      </v-row>
-      <template v-if="selectedService && !keyPressed">
-        <p class="text-center mb-6">Do you want to book an appointment with <strong>{{currentOffice.office_name}}</strong> for <strong>{{selectedService.external_service_name}}</strong> service?</p>
+      </v-row> -->
+      <template v-if="selectedService && !keyPressed && !checkDisabled(selectedService)">
         <div class="d-flex justify-center mb-6">
           <!-- <v-btn
             large
@@ -79,15 +78,21 @@
             @click="proceedBooking"
             color="primary"
           >
-            Yes, Book With The Service BC Centre
+            Next
             <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
         </div>
+        <p v-if="selectedService.online_link" class="text-center mb-6"><strong>{{selectedService.external_service_name}}</strong> can be completed online.</p>
+        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
         <p class="text-center body-2">
           Information is collected under the authority of
           <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" target="_blank">Sections 26(c)</a>
           of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to the Director, Provincial Operations, PO BOX 9412 STN PROV GOVT, Victoria, BC, V8W 9V1, 1 800 663-7867.
         </p>
+      </template>
+      <template v-if="checkDisabled(selectedService)">
+        <p class="text-center mb-6">We're sorry, <strong>{{selectedService.external_service_name}}</strong> is not available by appointment.</p>
+        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
       </template>
     </v-card-text>
     <!-- Other Booking Option Model Popup -->
@@ -212,7 +217,7 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
       this.setCurrentService(undefined)
     } else {
       if (this.checkDisabled(value)) {
-        this.selectedService = null
+        // this.selectedService = null
         this.setCurrentService(undefined)
       } else {
         this.setCurrentService(value)

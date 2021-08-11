@@ -161,8 +161,8 @@
   -ms-flex: none !important;
 }
 
-/* 
-  To reduce jank in IE11 and Windows, 
+/*
+  To reduce jank in IE11 and Windows,
   we remove scrollbars when modals are open.
   This stops all "double scrollbar" issues.
 */
@@ -178,8 +178,8 @@
 /* Internet Explorer 10+ */
 /* Firefox */
 html.modal-open, body.modal-open {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
   display: none; /* Safari, Chrome, Edge */
@@ -231,7 +231,7 @@ input.mx-input:focus, input.mx-input:hover {
   border: 4px solid #9cc7f4;
   background-color: white;
 }
-input#appointment_blackout_start_time, input#recurring_blackout_start_time, 
+input#appointment_blackout_start_time, input#recurring_blackout_start_time,
 input#appointment_blackout_end_time, input#recurring_blackout_end_time,
 input#app_timepicker_id {
   padding-left: 10px;

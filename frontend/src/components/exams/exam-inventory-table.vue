@@ -1526,37 +1526,23 @@ export default class ExamInventoryTable extends Vue {
     this.setSelectedExamTypeFilter(option.text)
     this.page = 1
 
+    this.setSelectedQuickAction('')
+    this.setSelectedQuickActionFilter('')
+
     if (option.value === 'individual') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
       this.setInventoryFilters({ type: 'groupFilter', value: 'individual' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'group') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
       this.setInventoryFilters({ type: 'groupFilter', value: 'group' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'all') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
     }
+
+    this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+    this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
   }
 
   setQuickActionFilter (option) {
@@ -1564,79 +1550,42 @@ export default class ExamInventoryTable extends Vue {
     this.setSelectedQuickActionFilter(option.text)
     this.page = 1
 
+    // Setting Default Values
+    this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+    this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+    this.$store.commit('toggleShowAllPesticideExams', false)
+
     if (option.value === 'returned') {
       this.setInventoryFilters({ type: 'returnedFilter', value: 'returned' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'require_attention') {
       if (this.selectedExamType === 'individual') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'individual' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       } else if (this.selectedExamType === 'group') {
         this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
         this.setInventoryFilters({ type: 'scheduledFilter', value: 'unscheduled' })
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'group' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      } else if (this.selectedExamType === 'all') {
+      } else {
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
       }
     } else if (option.value === 'ready') {
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
       this.setInventoryFilters({ type: 'scheduledFilter', value: 'scheduled' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'expired') {
       this.setInventoryFilters({ type: 'expiryFilter', value: 'expired' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'oemai') {
       if (this.selectedExamType === 'individual') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'individual' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       } else if (this.selectedExamType === 'group') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'group' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      } else if (this.selectedExamType === 'all') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+      } else {
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       }
     } else if (option.value === 'awaiting_upload') {
       this.isLoading = true
@@ -1647,8 +1596,6 @@ export default class ExamInventoryTable extends Vue {
         this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
         this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
         this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
         this.setInventoryFilters({ type: 'uploadFilter', value: 'notuploaded' })
         this.isLoading = false
       }, err => {
@@ -1660,23 +1607,11 @@ export default class ExamInventoryTable extends Vue {
     } else if (option.value === 'awaiting_receipt') {
       // this.$store.commit('toggleShowAllPesticideExams', false)
       this.viewAllOfficePesticideExams()
-
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       this.setInventoryFilters({ type: 'receptSentFilter', value: 'notsent' })
     } else if (option.value === 'all') {
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
       this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
     }
   }
 

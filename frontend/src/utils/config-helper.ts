@@ -6,19 +6,22 @@ import Axios from 'axios'
 const url = 'config/configuration.json'
 
 export default class ConfigHelper {
-  static config:any = ''
+  static config: any = '';
 
   static async fetchConfig () {
     if (this.config === '') {
-      const response = await Axios.get(url)
+      const a = document.createElement('a')
+      a.href = window.location.href
+      const configUrl = a.protocol + '//' + a.host + '/' + url
+      const response = await Axios.get(configUrl)
       this.config = response.data
     }
   }
 
-  static  getValue (key: any) {
+  static getValue (key: any) {
     // @ts-ignore
     if (this.config === '') {
-       this.fetchConfig()
+      this.fetchConfig()
     }
     return this.config[key] || false
   }
