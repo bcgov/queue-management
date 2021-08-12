@@ -47,6 +47,23 @@
           }}</b-col
         >
       </b-form-row>
+      <b-form-row v-if="returned">
+        <b-col>
+          <div class="q-info-display-grid-container">
+            <div class="q-id-grid-outer">
+              <div class="q-id-grid-head"><strong>Exam Details</strong></div>
+              <div class="q-id-grid-full-col px-2">
+                <div>
+                  <u>Exam</u>: {{ this.exam.exam_name }}<br>
+                  <u>Exam Type</u>: {{ this.exam.exam_type.exam_type_name }}<br>
+                  <u>Event ID</u>: {{ this.exam.event_id }}<br>
+                  <u>Examinee</u>: {{ this.exam.examinee_name }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </b-col>
+      </b-form-row>
       <b-form-row>
         <b-col :cols="returned ? 3 : 12">
           <b-form-group class="mb-0">
@@ -308,7 +325,7 @@ export default class ReturnExamModal extends Vue {
     if (tempValues.exam_returned_date) {
       this.modalUse = 'edit'
       this.returned = true
-      this.exam_returned_date = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
+      this.exam_returned_date = new Date(tempValues.exam_returned_date)
       this.exam_written_ind = tempValues.exam_written_ind
       return
     }
