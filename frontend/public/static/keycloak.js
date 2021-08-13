@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-(function (window, undefined) {
+(function (window) {
   var Keycloak = function (config) {
     if (!(this instanceof Keycloak)) {
       return new Keycloak(config)
@@ -916,7 +916,7 @@
     }
 
     function parseCallbackUrl (url) {
-      let supportedParams
+      let supportedParams = []
       switch (kc.flow) {
       case 'standard':
         supportedParams = ['code', 'state', 'session_state']

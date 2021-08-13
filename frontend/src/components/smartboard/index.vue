@@ -421,6 +421,18 @@ export default class Smartboard extends Vue {
   100% { transform: translate(-100%, 0); }
 }
 
+.marqueeup {
+  width: 100%;
+	height: 100%;
+  margin-left: -60% !important;
+  position: relative;
+  animation: scrollup 20s infinite linear;
+}
+@keyframes scrollup {
+    0%   {top: 1000px; left:0px}
+    100% {top: 0px; left:0px}
+}
+
 .loading div:nth-child(1) {
   -webkit-animation-delay: -0.23s;
 }

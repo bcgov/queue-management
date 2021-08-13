@@ -17,7 +17,7 @@ limitations under the License.*/
     <div v-if="(!networkStatus.networkDown && (citizenInQ))" class="bottom-flex-div">
       <div class="flex-title-waiting">Currently waiting: {{ waiting }}</div>
     </div>
-      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="3" behavior="scroll" >
+    <div class="marqueeup">
       <b-container :class="waitingClass">
           <div>
             <b-row  v-for="(each, index) in citizenInQ" :key="each.start_time">
@@ -80,11 +80,11 @@ limitations under the License.*/
             </b-row>
         </div>
       </b-container>
-      </marquee>
+      </div>
       <div v-if="(!networkStatus.networkDown && (bookedNotcheckIn.length > 0))" class="bottom-flex-div">
         <div class="flex-title-upcomming"> Upcoming Appointments:</div>
       </div>
-      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="3" behavior="smooth" >
+      <div class="marqueeup">
       <b-container class="container-height-menu-half-bottom">
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
@@ -109,7 +109,7 @@ limitations under the License.*/
           </b-row>
       </div>
       </b-container>
-      </marquee>
+    </div>
   </div>
 </template>
 

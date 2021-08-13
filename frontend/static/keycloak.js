@@ -17,7 +17,7 @@
  */
 
 /* eslint-disable indent */
-(function (window, undefined) {
+(function (window) {
     var Keycloak = function (config) {
         if (!(this instanceof Keycloak)) {
             return new Keycloak(config)
@@ -916,7 +916,7 @@
         }
 
         function parseCallbackUrl (url) {
-            var supportedParams
+            var supportedParams = []
             switch (kc.flow) {
                 case 'standard':
                     supportedParams = ['code', 'state', 'session_state']
