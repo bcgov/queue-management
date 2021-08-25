@@ -13,12 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div style="">
+  <div style="width: 100%; height: 100%">
     <div class="board-nameticket-video">
-      <div class="board-video-div">
-        <Video :office_number="smartboardData.office_number" />
-      </div>
-      <br/><br/>
+      <Video :office_number="smartboardData.office_number" />
       <MarqueeText
         v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
