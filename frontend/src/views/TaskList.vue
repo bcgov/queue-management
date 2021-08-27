@@ -13,6 +13,7 @@
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
+      containerHeight ="280"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
