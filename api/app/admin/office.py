@@ -325,9 +325,15 @@ class OfficeConfig(Base):
 
     def render(self, template, **kwargs):
         if current_user.role.role_code == 'SUPPORT':
-            self.extra_js = [url_for("static", filename="js/office.js")]
+            if template == 'admin/model/edit.html':
+                template = 'office/office_edit.html'
+            elif template == 'admin/model/create.html':
+                template = 'office/office_create.html'
         elif current_user.role.role_code == 'GA':
-            self.extra_js = [url_for("static", filename="js/officega.js")]
+            if template == 'admin/model/edit.html':
+                template = 'office/officega_edit.html'
+            elif template == 'admin/model/create.html':
+                template = 'office/officega_create.html'
         return super(OfficeConfig, self).render(template, **kwargs)            
 
 class OfficeConfigGA(OfficeConfig):
