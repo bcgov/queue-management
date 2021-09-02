@@ -104,7 +104,6 @@ export default class CallByName extends Vue {
 
   mounted () {
     this.videoStyle = this.cssStyle
-    console.log('MOUNTED CALL BY NAME---mounted-cssStyle',this.cssStyle)
     this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()

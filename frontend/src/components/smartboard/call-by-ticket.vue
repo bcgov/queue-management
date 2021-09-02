@@ -218,7 +218,6 @@ export default class CallByTicket extends Vue {
 
   mounted () {
     this.videoStyle = this.cssStyle
-    console.log('MOUNTED CALL BY TICKET---mounted-cssStyle',this.cssStyle)
     this.$root.$on('addToBoard', () => { this.updateBoard() })
     this.initializeBoard()
   }

@@ -175,10 +175,6 @@ export default class Smartboard extends Vue {
   }
 
   private async setCss() {
-    console.log('INDEX VUE - setCSS - this.office', this.office)
-    console.log('setCSS this.office.currently_waiting', this.office.currently_waiting)
-    console.log('setCSS this.office.show_currently_waiting_bottom', this.office.show_currently_waiting_bottom)
-    console.log('setCSS this.office.digital_signage_message', this.office.digital_signage_message)
     if (this.office.currently_waiting === 1) {
       if (this.office.show_currently_waiting_bottom === 1) {
         if (this.office.digital_signage_message === 1) {
@@ -208,7 +204,6 @@ export default class Smartboard extends Vue {
           }
         } 
     }
-    console.log('setCSS - return cssStyle', this.cssStyle)
     if (this.office.currently_waiting === undefined || this.office.show_currently_waiting_bottom === undefined || this.office.show_currently_waiting_bottom === undefined) {
       this.cssStyle = 'board-nameticket-video-default'
     }

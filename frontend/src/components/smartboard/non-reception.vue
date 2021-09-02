@@ -61,7 +61,6 @@ export default class NonReception extends Vue {
 
   created () {
     this.videoStyle = this.cssStyle
-    console.log('MOUNTED NON RECEPTION---mounted-cssStyle',this.cssStyle)
     this.office = this.office.office
     this.isMessageEnabled = this.isMessageEnabled.isMessageEnabled
     this.networkStatus = this.networkStatus.networkStatus
