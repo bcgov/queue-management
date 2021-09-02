@@ -17,7 +17,7 @@ limitations under the License.'''
 from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
-from flask import flash, url_for
+from flask import flash, url_for, has_app_context
 from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
@@ -40,6 +40,20 @@ class OfficeConfig(Base):
     @property
     def can_create(self):
         return current_user.role.role_code != 'GA'
+
+    @property
+    def column_list(self):
+        if has_app_context() and current_user.role.role_code == 'SUPPORT':
+            return self.column_list_support
+        return self.column_list_GA    
+
+    @property
+    def _list_columns(self):
+        return self.get_list_columns()
+
+    @_list_columns.setter
+    def _list_columns(self, value):
+        pass
 
     def get_query(self):
         if current_user.role.role_code == 'SUPPORT':
@@ -97,9 +111,39 @@ class OfficeConfig(Base):
     column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
     column_searchable_list = ('office_name',)
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
-    column_list = ['office_name',
+    column_list_GA = ['office_name',
                    'sb',
                    'services',
+                   'deleted',
+                   'exams_enabled_ind',
+                   'appointments_enabled_ind',
+                   'counters',
+                   'timezone.timezone_name',
+                   'latitude',
+                   'longitude',
+                   'office_appointment_message',
+                   'appointments_days_limit',
+                   'appointment_duration',
+                   'max_person_appointment_per_day',
+                   'civic_address',
+                   'timeslots',
+                   'number_of_dlkt',
+                   'office_email_paragraph',
+                   'external_map_link',
+                   'check_in_notification',
+                   'check_in_reminder_msg',
+                   'automatic_reminder_at',
+                    'currently_waiting',
+                    'digital_signage_message',
+                    'digital_signage_message_1',
+                    'digital_signage_message_2',
+                    'digital_signage_message_3',
+                    'show_currently_waiting_bottom',
+                   ]
+    
+    column_list_support = ['office_name',
+                   'sb',
+                   'office_number',
                    'deleted',
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
@@ -249,6 +293,7 @@ class OfficeConfig(Base):
 
     column_sortable_list = ['office_name',
                             'sb',
+                            'office_number',
                             'deleted',
                             'exams_enabled_ind',
                             'exams_enabled_ind',
