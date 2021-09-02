@@ -14,7 +14,7 @@ limitations under the License.*/ -->
 
 <template>
   <div class="main-container">
-    <v-row>
+    <v-row class="main-container">
       <v-col :cols="((isRightMenuEnabled) && (officetype === 'callbyname' || officetype === 'reception')) ? 10 : 12">
         <div class="top-flex-div">
           <div class="flex-title">{{ date }} {{ time }}</div>
@@ -49,21 +49,9 @@ limitations under the License.*/ -->
           :isRightMenuEnabled="{isRightMenuEnabled}"
         ></RightMenu>
       </v-col>
-    </v-row>
-    <div v-if="networkDown == true" id="network-status" class="loading small">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div v-if="networkDown == true" id="network-status" class="loading small">
     </div>
-    <!-- <v-row class="marquee-msg-container-full" v-if="(isMessageEnabled)">
-      <MarqueeText
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </v-row> -->
+    </v-row>
   </div>
 </template>
 
