@@ -312,7 +312,7 @@ export default class Smartboard extends Vue {
 }
 .board-nameticket-video-C {
   display: inline-block;
-  width: 90%;
+  width: 85%;
 }
 .board-nameticket-video-BM {
   display: inline-block;
