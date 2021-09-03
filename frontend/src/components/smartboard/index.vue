@@ -20,22 +20,25 @@ limitations under the License.*/ -->
           <div class="flex-title">{{ date }} {{ time }}</div>
         </div>
         <CallByTicket
-          v-if="officetype === 'callbyticket'"
+          v-if="officetype === 'callbyticket'  && cssStyle"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
+          :cssStyle="{cssStyle}"
         ></CallByTicket>
         <CallByName
-          v-else-if="officetype === 'callbyname' || officetype === 'reception'"
+          v-else-if="cssStyle && (officetype === 'callbyname' || officetype === 'reception')"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
           :office="{office}"
           :isMessageEnabled="{isMessageEnabled}"
+          :cssStyle="{cssStyle}"
         ></CallByName>
         <NonReception
-          v-else-if="officetype === 'nocallonsmartboard'"
+          v-else-if="officetype === 'nocallonsmartboard' && cssStyle"
           :smartboardData="{ office_number }"
           :office="{office}"
           :isMessageEnabled="{isMessageEnabled}"
+          :cssStyle="{cssStyle}"
         ></NonReception>
 
         <div v-else>Please stand by...</div>
@@ -107,6 +110,7 @@ export default class Smartboard extends Vue {
   private isMessageEnabled: boolean = false
   private isRightMenuEnabled: boolean = false
   private office: any = {}
+  private cssStyle: string = ''
 
 
   get url () {
@@ -144,7 +148,7 @@ export default class Smartboard extends Vue {
     this.initializeBoard()
   }
 
-  mounted () {
+  async mounted () {
     this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
@@ -160,9 +164,9 @@ export default class Smartboard extends Vue {
     }
     fetchNetworkStatus()
 
-    this.getOffice()
-    window.setInterval(() => {
-      this.getOffice()
+    await this.getOffice()
+    window.setInterval(async () => {
+      await this.getOffice()
     }, 350000)
   }
 
@@ -170,11 +174,46 @@ export default class Smartboard extends Vue {
     this.getOffice()
   }
 
-  private getOffice () {
+  private async setCss() {
+    if (this.office.currently_waiting === 1) {
+      if (this.office.show_currently_waiting_bottom === 1) {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-CBM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-CB'
+        } 
+      } else {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-CM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-C'
+        }
+      } 
+    } else {
+      if (this.office.show_currently_waiting_bottom === 1) {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-BM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-B'
+        }
+      } else {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-M'
+        } else {
+          this.cssStyle = 'board-nameticket-video-full'
+          }
+        } 
+    }
+    if (this.office.currently_waiting === undefined || this.office.show_currently_waiting_bottom === undefined || this.office.show_currently_waiting_bottom === undefined) {
+      this.cssStyle = 'board-nameticket-video-default'
+    }
+  }
+
+  private async getOffice () {
     this.isMessageEnabled = false
     this.isRightMenuEnabled = false
     const url = '/smardboard/side-menu/'+this.office_number
-    Axios.get(url).then(resp => {
+    await Axios.get(url).then( async resp => {
       if (resp.data) {
         this.office = resp.data.office
         if (this.office) {
@@ -185,6 +224,7 @@ export default class Smartboard extends Vue {
             this.isRightMenuEnabled = true
           }
         }
+        await this.setCss()
         }
     })
   }
@@ -253,11 +293,39 @@ export default class Smartboard extends Vue {
   background-color: white;
   text-align: center;
 }
-.board-nameticket-video {
+.board-nameticket-video-CBM {
   display: inline-block;
-  width: 74%;
+  width: 85%;
 }
-.board-noticket-video {
+.board-nameticket-video-CB {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-CM {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-C {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-BM {
+  display: inline-block;
+  width: 70%;
+}
+.board-nameticket-video-B {
+  display: inline-block;
+  width: 80%;
+}
+.board-nameticket-video-M {
+  display: inline-block;
+  width: 82%;
+}
+.board-nameticket-video-full {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-default {
   display: inline-block;
   width: 85%;
 }

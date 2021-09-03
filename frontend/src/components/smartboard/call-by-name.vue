@@ -14,7 +14,7 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-    <div class="board-nameticket-video">
+    <div v-bind:class="videoStyle.cssStyle">
       <Video :office_number="smartboardData.office_number" />
       <div v-if="((!networkStatus.networkDown) && (office.office.show_currently_waiting_bottom === 1))" class="bottom-flex-div">
         <div class="flex-title">Currently waiting: {{ waiting }}</div>
@@ -58,11 +58,15 @@ export default class CallByName extends Vue {
   @Prop({ default: false })
   private isMessageEnabled!: boolean
 
+  @Prop({ default: '' })
+  private cssStyle!: string
+
   private citizens: any = ''
   private officeType: string = ''
   private maxVideoHeight: string | number = ''
   private office_number: string = this.smartboardData.office_number
   private networkDown: boolean = false
+  private videoStyle: string = ''
 
   get url () {
     return `/smartboard/?office_number=${this.smartboardData.office_number}`
@@ -99,6 +103,7 @@ export default class CallByName extends Vue {
   }
 
   mounted () {
+    this.videoStyle = this.cssStyle
     this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()
