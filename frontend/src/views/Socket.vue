@@ -60,8 +60,8 @@ export default class Socket extends Vue {
       path: '/api/v1/socket.io',
       transports: ['websocket']
     })
-    socket.on('connect', () => { this.onConnect() })
-    socket.on('disconnect', () => { this.onDisconnect() })
+    socket.once('connect', () => { this.onConnect() })
+    socket.once('disconnect', () => { this.onDisconnect() })
     console.log('Socket attempting to connect')
     this.addListeners()
   }
