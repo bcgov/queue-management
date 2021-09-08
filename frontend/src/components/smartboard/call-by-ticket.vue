@@ -14,11 +14,8 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-    <div style="display: flex; height: 75%; width: 100%">
-      <div class="board-nameticket-video">
-        <div class="board-video-div">
-          <Video :office_number="smartboardData.office_number" />
-        </div>
+      <div v-bind:class="videoStyle.cssStyle">
+        <Video :office_number="smartboardData.office_number" />
       </div>
       <div class="board-25-table">
         <div class="board-content-div">
@@ -66,13 +63,7 @@ limitations under the License.*/
             </template>
           </b-table>
           <div v-if="networkStatus.networkDown" class="loading small">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
           </div>
-        </div>
       </div>
     </div>
     <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
@@ -109,6 +100,9 @@ export default class CallByTicket extends Vue {
   @Prop({ default: '' })
   private networkStatus!: string
 
+  @Prop({ default: '' })
+  private cssStyle!: string
+
   private tz: any = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   private options: any = {
@@ -130,6 +124,7 @@ export default class CallByTicket extends Vue {
   private overflow: any = []
   private showOverflow: boolean = false
   private overflowStyle: string = 'd-none'
+  private videoStyle: string = ''
 
   get items () {
     if (this.showOverflow === true) {
@@ -222,6 +217,7 @@ export default class CallByTicket extends Vue {
   }
 
   mounted () {
+    this.videoStyle = this.cssStyle
     this.$root.$on('addToBoard', () => { this.updateBoard() })
     this.initializeBoard()
   }
