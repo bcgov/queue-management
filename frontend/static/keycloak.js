@@ -342,7 +342,7 @@
 
         kc.createAccountUrl = function (options) {
             var realm = getRealmUrl()
-            var url = undefined
+            var url = ''
             if (typeof realm !== 'undefined') {
                 url = realm +
                     '/account' +
