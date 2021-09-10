@@ -14,19 +14,11 @@ limitations under the License.*/
 -->
 <template>
   <div class="marquee" v-if="isMessageEnabled">
-      <span v-if="msg_1">{{msg_1}}
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
-        |
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
-        </span>
-      <span v-if="msg_2">{{msg_2}}
-      &nbsp;	&nbsp;	&nbsp;	&nbsp;
-      |
-      &nbsp;	&nbsp;	&nbsp; &nbsp;
-      </span>
-      <span v-if="msg_3">{{msg_3}}
-      &nbsp;	&nbsp; 	&nbsp;	&nbsp;
-      </span>
+    <span>
+      <span v-if="msg_1">{{msg_1}}</span>
+      <span v-if="msg_2">{{msg_2}}</span>
+      <span v-if="msg_3">{{msg_3}}</span>
+    </span>
   </div>
 </template>
 

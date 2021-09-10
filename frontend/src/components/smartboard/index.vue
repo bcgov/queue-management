@@ -469,8 +469,10 @@ export default class Smartboard extends Vue {
 }
 .marquee span {
   display: inline-block;
-  padding-left: 100%;
-  animation: marquee 15s linear infinite;
+  padding-left: 700px;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
 }
 @keyframes marquee {
 	0%   { transform: translate(0, 0); }
@@ -479,13 +481,12 @@ export default class Smartboard extends Vue {
 
 .marqueeup {
   width: 100%;
-	height: 100%;
-  margin-left: -60% !important;
+  margin-left: -20% !important;
   position: relative;
   animation: scrollup 20s infinite linear;
 }
 @keyframes scrollup {
-    0%   {top: 1000px; left:0px}
+    0%   {top: 900px; left:0px}
     100% {top: 0px; left:0px}
 }
 
