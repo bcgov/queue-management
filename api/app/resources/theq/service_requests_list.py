@@ -137,8 +137,8 @@ class ServiceRequestsList(Resource):
             )
             service_request.periods.append(ticket_create_period)
 
-            # Move start_time back 6 hours to account for DST and UTC offsets
-            # It's only important that the number carries over _around_ midnight
+            # Move start_time back 11 hours to account for DST and UTC offsets
+            # tickets up till 10pm will not affect ticket numbering on next day
             offset_start_time = citizen.start_time - timedelta(hours=11)
 
             service_count = ServiceReq.query \
