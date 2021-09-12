@@ -139,7 +139,7 @@ class ServiceRequestsList(Resource):
 
             # Move start_time back 6 hours to account for DST and UTC offsets
             # It's only important that the number carries over _around_ midnight
-            offset_start_time = citizen.start_time - timedelta(hours=6)
+            offset_start_time = citizen.start_time - timedelta(hours=11)
 
             service_count = ServiceReq.query \
                     .join(ServiceReq.citizen, aliased=True) \
