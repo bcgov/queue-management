@@ -47,7 +47,7 @@ class Smartboard(Resource):
                 active_service_request = c.get_active_service_request()
 
                 #  Make sure a category, rather than a service, hasn't slipped in somehow.
-                if active_service_request.service.parent:
+                if active_service_request and active_service_request.service.parent:
 
                   # Filter Back Office out of services
                   if active_service_request.service.parent.service_name == "Back Office":

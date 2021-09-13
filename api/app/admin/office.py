@@ -86,7 +86,7 @@ class OfficeConfig(Base):
             ("1", 'Yes - Appointments are enabled for this office')
         ],
         'check_in_notification': [
-            ("0", 'Off - Disabale Notifications'), \
+            ("0", 'Off - Disable Notifications'), \
             ("1", 'On - Enable Notifications')
         ],
         'automatic_reminder_at': [
@@ -96,11 +96,11 @@ class OfficeConfig(Base):
             ("3", '3 - Third in Line')
         ],
         'currently_waiting': [
-            ("0", 'Off - Disabale Currently Waiting in Smartboard'), \
+            ("0", 'Off - Disable Currently Waiting in Smartboard'), \
             ("1", 'On - Enable Currently Waiting in Smartboard')
         ],
         'digital_signage_message': [
-            ("0", 'Off - Disabale Messages in Smartboard'), \
+            ("0", 'Off - Disable Messages in Smartboard'), \
             ("1", 'On - Enable Messages in Smartboard')
         ],
         'show_currently_waiting_bottom': [
