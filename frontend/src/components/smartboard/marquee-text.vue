@@ -55,6 +55,7 @@ export default class MarqueeText extends Vue {
   private msg_1: string = ''
   private msg_2: string = ''
   private msg_3: string = ''
+  private sboffice: any
   private isMessageEnabled: boolean = false
 
   get url () {
@@ -99,19 +100,19 @@ export default class MarqueeText extends Vue {
   }
 
   created () {
-    this.office = this.office.office
-    if (this.office.office) {
-      if(this.office.office.digital_signage_message == 1) {
+    this.sboffice = this.office.office
+    if (this.sboffice.office) {
+      if(this.sboffice.office.digital_signage_message_1) {
         this.isMessageEnabled = true
-        if(this.office.office.digital_signage_message_1) {
-          this.msg_1 = this.office.office.digital_signage_message_1
-        }
-        if(this.office.office.digital_signage_message_2) {
-          this.msg_2 = this.office.office.digital_signage_message_2
-        }
-        if(this.office.office.digital_signage_message_3) {
-          this.msg_3 = this.office.office.digital_signage_message_3
-        }
+        this.msg_1 = this.sboffice.office.digital_signage_message_1
+      }
+      if(this.sboffice.office.digital_signage_message_2) {
+        this.isMessageEnabled = true
+        this.msg_2 = this.sboffice.office.digital_signage_message_2
+      }
+      if(this.sboffice.office.digital_signage_message_3) {
+        this.isMessageEnabled = true
+        this.msg_3 = this.sboffice.office.digital_signage_message_3
       }
     }
   }
