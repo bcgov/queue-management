@@ -12,17 +12,17 @@
       <div style="font-size: 0.9rem; display: flex; justify-content: center">
         <b-col>
           <ul>
-            <b>Exam Name: {{ this.returnExam.exam_name }}</b>
+            <strong>Exam Name: {{ this.returnExam.exam_name }}</strong>
           </ul>
           <ul>
-            <b>Examinee Name:</b>
+            <strong>Examinee Name:</strong>
             {{
               this.returnExam.examinee_name
             }}
           </ul>
           <ul>
-            <b>Event ID:</b
-            >{{
+            <strong>Event ID:</strong>
+            {{
               this.returnExam.event_id
             }}
           </ul>

@@ -19,7 +19,7 @@ limitations under the License.*/
       dismissible
       v-model="countdown"
       @dismissed="setEditExamFailure(0)"
-      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      style="justify-content: center; font-size: 1rem; border-radius: 0px"
     >
       Something Went Wrong! Please submit feedback and tell us about this issue.
     </b-alert>

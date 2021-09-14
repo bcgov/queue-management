@@ -18,7 +18,7 @@
   <div style>
     <b-alert
       :show="showIEWarning"
-      style="h-align: center"
+      style="justify-content: center"
       variant="danger"
       dismissible
       fade

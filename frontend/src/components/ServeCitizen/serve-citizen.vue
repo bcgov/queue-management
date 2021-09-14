@@ -8,7 +8,7 @@
       </div>
       <b-alert
         :show="this.alertMessage != ''"
-        style="h-align: center"
+        style="justify-content: center"
         variant="warning"
         >{{ this.alertMessage }}</b-alert
       >
@@ -133,7 +133,7 @@
         >
           <b-row no-gutters>
             <b-col cols="7" />
-            <b-col cols="auto" style="align: right">
+            <b-col cols="auto" style="align-h: right">
               <select
                 id="counter-selection-serve"
                 v-show="reception && !simplifiedModal"
@@ -183,7 +183,7 @@
                 style="color: white; margin: 0 0 8px"
                 unchecked-value="1"
               >
-                <span style="font: 400 16px Myriad-Pro">Inaccurate Time</span>
+                <span style="font: 400 16px Myriad-Pro, sans-serif">Inaccurate Time</span>
               </b-form-checkbox>
               <b-button
                 @click="clickServiceFinish"
