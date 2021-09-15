@@ -2,7 +2,7 @@
   <div class="add_citizen_form mt-0">
     <b-alert
       :show="commentsTooLong"
-      style="h-align: center"
+      style="justify-content: center"
       variant="danger"
     >You have entered more than the 1,000 characters allowed for comments.</b-alert>
     <b-form-row no-gutters></b-form-row>

@@ -63,7 +63,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="share-square"
-                    style="fontsize: 1rem; color: blue"
+                    style="font-size: 1rem; color: blue"
                   />
                 </div>
               </template>
@@ -74,7 +74,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="hands-helping"
-                    style="fontsize: 1rem; color: green"
+                    style="font-size: 1rem; color: green"
                   />
                 </div>
               </template>

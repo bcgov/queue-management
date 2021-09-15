@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="service-flow-container">
     <CamundaTasklist
       v-if="isServiceFLowEnabled"
       :bpmApiUrl="configs.BPM_URL"
@@ -13,6 +13,7 @@
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
+      containerHeight ="280"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
@@ -47,6 +48,14 @@ export default class TaskList extends Vue {
   @Watch('bearer')
   onbearerChange () {
     this.token = sessionStorage.getItem('token')
+  }
+
+  beforeCreate () {
+    document.body.className = 'service-flow-body'
+  }
+
+  beforeDestroy () {
+    document.body.className = ''
   }
 }
 </script>

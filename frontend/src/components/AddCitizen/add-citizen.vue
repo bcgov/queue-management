@@ -25,7 +25,7 @@
     </div>
     <b-alert
       :show="dismissCountDown"
-      style="h-align: center"
+      style="justify-content: center"
       variant="danger"
       @dismissed="dismissCountDown=0"
       @dismiss-count-down="countDownChanged"

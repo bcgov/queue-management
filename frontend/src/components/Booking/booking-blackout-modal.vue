@@ -190,7 +190,7 @@
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   v-model="blackout_date"
@@ -215,7 +215,7 @@
                   v-if="this.start_time !== null"
                   v-model="this.start_time"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <vue-timepicker
                       v-model="start_time"
@@ -261,7 +261,7 @@
                 <font-awesome-icon
                   v-if="this.end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <vue-timepicker
                       v-model="end_time"
@@ -354,7 +354,7 @@
                     <font-awesome-icon
                       v-if="input.value"
                       icon="check"
-                      style="fontsize: 1rem; color: green"
+                      style="font-size: 1rem; color: green"
                     />
                   </b-col>
                   <b-col cols="1">
@@ -368,7 +368,7 @@
                     >
                       <font-awesome-icon
                           icon="eraser"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                     </b-button>
                   </b-col>
@@ -383,7 +383,7 @@
                     >
                       <font-awesome-icon
                           icon="plus"
-                          style="fontsize: 1rem; color: blue"
+                          style="font-size: 1rem; color: blue"
                         />
                     </b-button>
                   </b-col>
@@ -440,7 +440,7 @@
                   v-if="this.recurring_booking_start_time !== null"
                   v-model="this.recurring_booking_start_time"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <vue-timepicker
                       v-model="recurring_booking_start_time"
@@ -484,7 +484,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_booking_end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <vue-timepicker
                       v-model="recurring_booking_end_time"
@@ -530,7 +530,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_booking_start_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   id="recurring_booking_start_date"
@@ -549,7 +549,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_booking_end_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   v-model="recurring_booking_end_date"
@@ -569,12 +569,12 @@
                 <font-awesome-icon
                   v-if="this.selected_booking_frequency.length === 1"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <font-awesome-icon
                   v-if="this.selected_booking_frequency.length > 1"
                   icon="exclamation-triangle"
-                  style="fontsize: 1rem; color: #ffc32b"
+                  style="font-size: 1rem; color: #ffc32b"
                 />
                 <label v-if="this.selected_booking_frequency.length > 1"
                   >Select one frequency</label
@@ -597,7 +597,7 @@
                 <font-awesome-icon
                   v-if="this.selected_booking_weekdays.length >= 1"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-form-checkbox-group
                   id="weekday-checkboxes"
@@ -623,7 +623,7 @@
               <font-awesome-icon
                 v-if="this.selected_booking_count !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
                 class="ml-1"
               />
             </b-form-row>
@@ -691,7 +691,7 @@
                   :key="date.start"
                 >
                   <li class="list-group-item">
-                    <b>Event:</b> {{ formatStartDate(date.start) }} until
+                    <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     {{ formatEndDate(date.end) }}
                   </li>
                 </ul>
@@ -704,7 +704,7 @@
                     :key="index"
                   >
                     <li class="list-group-item">
-                      <b>STAT:</b> {{ formatDate(value.value) }} whole Day for all office.
+                      <strong>STAT:</strong> {{ formatDate(value.value) }} whole Day for all office.
                     </li>
                   </ul>
                 </div>
@@ -829,7 +829,7 @@
               <font-awesome-icon
                 v-if="this.notes !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-textarea
                 v-model="notes"
