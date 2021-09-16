@@ -22,7 +22,6 @@ limitations under the License.*/
       <MarqueeText
       v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
         :office="{office}"
       />
     </div>
@@ -33,7 +32,6 @@ limitations under the License.*/
 // /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-// import axios from 'axios'
 import Axios from '@/utils/axios'
 import Video from './video.vue'
 import config from '../../../config'
