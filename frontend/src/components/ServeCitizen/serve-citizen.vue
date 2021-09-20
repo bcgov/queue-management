@@ -15,7 +15,7 @@
       <div class="modal_header" v-dragged="onDrag">
         <div>
           <h4 style="font-weight: 900; color: #6e6e6e">
-            {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}
+            {{ simplifiedModal ? 'TheQ Time Tracking' : 'Serve Citizen' }}
           </h4>
         </div>
         <div>
@@ -288,7 +288,6 @@ export default class ServeCitizen extends Vue {
   @Action('screenAllCitizens') public screenAllCitizens: any
   @Action('setServeModalAlert') public setServeModalAlert: any
 
-
   @Mutation('editServiceModalForm') public editServiceModalForm: any
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
@@ -315,11 +314,11 @@ export default class ServeCitizen extends Vue {
     return false
   }
 
-  get appointmentsEnabled() {
+  get appointmentsEnabled () {
     if (this.user && this.user.office) {
       return this.user.office.appointments_enabled_ind
     }
-    return false;
+    return false
   }
 
   get alertMessage () {
@@ -494,7 +493,7 @@ export default class ServeCitizen extends Vue {
     this.left = (this.left || 0) + deltaX
     this.top = (this.top || 0) + deltaY
 
-    var serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
+    const serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
     serve_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
 

@@ -14,6 +14,7 @@
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
       containerHeight ="280"
+      taskSortBy="dueDate"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
