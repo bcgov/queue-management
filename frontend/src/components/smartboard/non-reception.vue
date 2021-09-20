@@ -19,7 +19,6 @@ limitations under the License.*/
       <MarqueeText
         v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
         :office="{office}"
       />
     </div>
@@ -43,9 +42,6 @@ export default class NonReception extends Vue {
   private smartboardData!: any
 
   @Prop({ default: {} })
-  private networkStatus!: any
-
-  @Prop({ default: {} })
   private office!: any
 
   @Prop({ default: {} })
@@ -54,16 +50,11 @@ export default class NonReception extends Vue {
   @Prop({ default: '' })
   private cssStyle!: string
 
-  
   private office_number: string = this.smartboardData.office_number
-  private networkDown: boolean = false
   private videoStyle: string = ''
 
   created () {
     this.videoStyle = this.cssStyle
-    this.office = this.office.office
-    this.isMessageEnabled = this.isMessageEnabled.isMessageEnabled
-    this.networkStatus = this.networkStatus.networkStatus
   }
 }
 </script>

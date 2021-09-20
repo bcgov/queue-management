@@ -173,17 +173,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -211,17 +211,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -250,17 +250,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -285,17 +285,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -1701,27 +1701,27 @@ export default class ExamInventoryTable extends Vue {
     const lifeRing: any = {
       icon: 'life-ring',
       rank: 4,
-      style: { fontSize: '1rem', color: 'red' }
+      style: { font: '1rem', color: 'red' }
     }
     const exclamationTriangle: any = {
       icon: 'exclamation-triangle',
       rank: 3,
-      style: { fontSize: '.9rem', color: '#FFC32B' }
+      style: { font: '.9rem', color: '#FFC32B' }
     }
     const clipboardCheck: any = {
       icon: 'clipboard-check',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
     const envelopeOpenText: any = {
       icon: 'shipping-fast',
       rank: 1,
-      style: { fontSize: '1rem', color: '#4e9de0' }
+      style: { font: '1rem', color: '#4e9de0' }
     }
     const feePending: any = {
       icon: 'dollar-sign',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
 
     // console.log("============= Start of Tests =======================")

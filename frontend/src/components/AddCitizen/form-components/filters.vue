@@ -105,7 +105,7 @@ export default class Filters extends Vue {
 </script>
 
 <style scoped>
-b-col {
+.b-col {
   padding: 0px;
   margin: 0px;
 }

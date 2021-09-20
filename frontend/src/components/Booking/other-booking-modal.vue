@@ -131,7 +131,7 @@
                 <font-awesome-icon
                   v-if="this.title !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   :state="state"
@@ -146,7 +146,7 @@
                 <font-awesome-icon
                   v-if="this.contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <b-input
                   :state="state"
@@ -163,7 +163,7 @@
                     <font-awesome-icon
                       v-if="this.fees !== ''"
                       icon="check"
-                      style="fontsize: 1rem; color: green"
+                      style="font-size: 1rem; color: green"
                     />
                     <b-select
                       v-model="fees"
@@ -247,7 +247,7 @@
               <font-awesome-icon
                 v-if="this.recurring_title !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-input
                 type="text"
@@ -262,7 +262,7 @@
               <font-awesome-icon
                 v-if="this.recurring_contact_information !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-input
                 type="text"
@@ -279,7 +279,7 @@
               <font-awesome-icon
                 v-if="this.recurring_fees !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-select
                 v-model="recurring_fees"
@@ -302,7 +302,7 @@
                   this.other_recurring_display_time !== null
                 "
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
                 <vue-timepicker
                   v-model="other_recurring_start_time"
@@ -345,7 +345,7 @@
               <font-awesome-icon
                 v-if="this.other_recurring_end_time !== null"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <vue-timepicker
                 v-model="other_recurring_end_time"
@@ -394,7 +394,7 @@
                   this.other_recurring_display_date !== null
                 "
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_start_date"
@@ -414,7 +414,7 @@
               <font-awesome-icon
                 v-if="this.other_recurring_end_date !== null"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <DatePicker
                 v-model="other_recurring_end_date"
@@ -435,12 +435,12 @@
               <font-awesome-icon
                 v-if="this.other_selected_frequency.length === 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <font-awesome-icon
                 v-if="this.other_selected_frequency.length > 1"
                 icon="exclamation-triangle"
-                style="fontsize: 1rem; color: #ffc32b"
+                style="font-size: 1rem; color: #ffc32b"
               />
               <label v-if="this.other_selected_frequency.length > 1"
                 >Select one frequency</label
@@ -463,7 +463,7 @@
               <font-awesome-icon
                 v-if="this.other_selected_weekdays.length >= 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <b-form-checkbox-group
                 id="weekday-checkboxes"
@@ -487,7 +487,7 @@
             <font-awesome-icon
               v-if="this.other_selected_count !== ''"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
               class="ml-1"
             />
           </b-form-row>
@@ -551,7 +551,7 @@
                   :key="date.start"
                 >
                   <li class="list-group-item">
-                    <b>Event:</b> {{ formatStartDate(date.start) }} until
+                    <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     {{ formatEndDate(date.end) }}
                   </li>
                 </ul>

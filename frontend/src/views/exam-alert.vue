@@ -18,7 +18,7 @@ limitations under the License.*/
       variant="primary"
       dismissible
       :show="examDismissCount"
-      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      style="justify-content: center; font-size: 1rem; border-radius: 0px"
       @dismissed="onDismissedExam"
     >
       {{ examAlertMessage }}

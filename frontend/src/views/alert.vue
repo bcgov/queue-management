@@ -17,7 +17,7 @@ limitations under the License.*/
     <b-alert
       :show="dismissCount"
       dismissible
-      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      style="justify-content: center; font-size: 1rem; border-radius: 0px"
       variant="warning"
       @dismissed="onDismissed"
       >{{ alertMessage }}</b-alert

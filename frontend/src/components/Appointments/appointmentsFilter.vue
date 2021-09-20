@@ -6,7 +6,7 @@
           <div v-if="events.length === 0" class="my-5 mx-3">
             No events found
           </div>
-          <table class="fc-list-table" v-else>
+          <table class="fc-list-table" aria-hidden=true v-else>
             <tbody>
               <template v-for="(eventDetails, date) in getEvents">
                 <tr
@@ -40,11 +40,11 @@
                     <div
                       style="display: flex; justify-content: left; width: 100%"
                     >
-                      <div class="ft-wt-600 mr-1"><b>Name:</b></div>
+                      <div class="ft-wt-600 mr-1"><strong>Name:</strong></div>
 
                       <div class="ft-wt-400 mr-3">{{ event.name }}</div>
 
-                      <div class="ft-wt-600 mx-1"><b>service Name:</b></div>
+                      <div class="ft-wt-600 mx-1"><strong>service Name:</strong></div>
 
                       <div class="ft-wt-400 mr-3">
                         {{ event.serviceName }}
@@ -54,7 +54,7 @@
                         class="ft-wt-600 mx-1"
                         v-if="event.comments !== null"
                       >
-                        <b>Notes:</b>
+                        <strong>Notes:</strong>
                       </div>
 
                       <div
