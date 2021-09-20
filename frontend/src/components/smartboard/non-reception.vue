@@ -14,12 +14,11 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-    <div class="board-nameticket-video">
+    <div v-bind:class="videoStyle.cssStyle">
       <Video :office_number="smartboardData.office_number" />
       <MarqueeText
         v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
         :office="{office}"
       />
     </div>
@@ -43,22 +42,19 @@ export default class NonReception extends Vue {
   private smartboardData!: any
 
   @Prop({ default: {} })
-  private networkStatus!: any
-
-  @Prop({ default: {} })
   private office!: any
 
   @Prop({ default: {} })
   private isMessageEnabled!: any
 
-  
+  @Prop({ default: '' })
+  private cssStyle!: string
+
   private office_number: string = this.smartboardData.office_number
-  private networkDown: boolean = false
+  private videoStyle: string = ''
 
   created () {
-    this.office = this.office.office
-    this.isMessageEnabled = this.isMessageEnabled.isMessageEnabled
-    this.networkStatus = this.networkStatus.networkStatus
+    this.videoStyle = this.cssStyle
   }
 }
 </script>

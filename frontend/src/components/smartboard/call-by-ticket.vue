@@ -14,7 +14,7 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-      <div class="board-nameticket-video">
+      <div v-bind:class="videoStyle.cssStyle">
         <Video :office_number="smartboardData.office_number" />
       </div>
       <div class="board-25-table">
@@ -100,6 +100,9 @@ export default class CallByTicket extends Vue {
   @Prop({ default: '' })
   private networkStatus!: string
 
+  @Prop({ default: '' })
+  private cssStyle!: string
+
   private tz: any = Intl.DateTimeFormat().resolvedOptions().timeZone
 
   private options: any = {
@@ -121,6 +124,7 @@ export default class CallByTicket extends Vue {
   private overflow: any = []
   private showOverflow: boolean = false
   private overflowStyle: string = 'd-none'
+  private videoStyle: string = ''
 
   get items () {
     if (this.showOverflow === true) {
@@ -213,6 +217,7 @@ export default class CallByTicket extends Vue {
   }
 
   mounted () {
+    this.videoStyle = this.cssStyle
     this.$root.$on('addToBoard', () => { this.updateBoard() })
     this.initializeBoard()
   }

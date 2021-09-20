@@ -156,7 +156,7 @@
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   v-model="blackout_date"
@@ -179,7 +179,7 @@
                 <font-awesome-icon
                   v-if="this.start_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <vue-timepicker
                     v-model="start_time"
@@ -224,7 +224,7 @@
                 <font-awesome-icon
                   v-if="this.end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <vue-timepicker
                       v-model="end_time"
@@ -292,7 +292,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_start_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <vue-timepicker
                       v-model="recurring_start_time"
@@ -338,7 +338,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_end_time !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                   <vue-timepicker
                       v-model="recurring_end_time"
@@ -386,7 +386,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_start_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   id="recurring_start_date"
@@ -407,7 +407,7 @@
                 <font-awesome-icon
                   v-if="this.recurring_end_date !== null"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <DatePicker
                   id="recurring_end_date"
@@ -429,12 +429,12 @@
               <font-awesome-icon
                 v-if="this.selected_frequency.length === 1"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
               />
               <font-awesome-icon
                 v-if="this.selected_frequency.length > 1"
                 icon="exclamation-triangle"
-                style="fontsize: 1rem; color: #ffc32b"
+                style="font-size: 1rem; color: #ffc32b"
               />
               <b-form-checkbox-group
                 id="frequency-checkboxes"
@@ -453,7 +453,7 @@
             <font-awesome-icon
               v-if="this.selected_weekdays.length >= 1"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
             />
             <b-form-checkbox-group
               id="weekday-checkboxes"
@@ -478,7 +478,7 @@
               <font-awesome-icon
                 v-if="this.selected_count !== ''"
                 icon="check"
-                style="fontsize: 1rem; color: green"
+                style="font-size: 1rem; color: green"
                 class="ml-1"
               />
             </b-form-row>
@@ -544,7 +544,7 @@
                     <font-awesome-icon
                       v-if="input.value"
                       icon="check"
-                      style="fontsize: 1rem; color: green"
+                      style="font-size: 1rem; color: green"
                     />
                   </b-col>
                   <b-col cols="1">
@@ -558,7 +558,7 @@
                     >
                       <font-awesome-icon
                           icon="eraser"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                     </b-button>
                   </b-col>
@@ -573,7 +573,7 @@
                     >
                       <font-awesome-icon
                           icon="plus"
-                          style="fontsize: 1rem; color: blue"
+                          style="font-size: 1rem; color: blue"
                         />
                     </b-button>
                   </b-col>
@@ -674,7 +674,7 @@
                     :key="date.start"
                   >
                     <li class="list-group-item">
-                      <b>Event:</b> {{ formatStartDate(date.start) }} until
+                      <strong>Event:</strong> {{ formatStartDate(date.start) }} until
                     </li>
                   </ul>
                 </div><div style="height: 75px; overflow-y: scroll; margin: 0px" v-else>
@@ -685,7 +685,7 @@
                     :key="index"
                   >
                     <li class="list-group-item">
-                      <b>STAT:</b> {{ formatDate(value.value) }} whole Day for all office.
+                      <strong>STAT:</strong> {{ formatDate(value.value) }} whole Day for all office.
                     </li>
                   </ul>
                 </div>
@@ -714,7 +714,7 @@
             <font-awesome-icon
               v-if="this.notes !== ''"
               icon="check"
-              style="fontsize: 1rem; color: green"
+              style="font-size: 1rem; color: green"
             />
           </b-form-row>
           <b-form-row>

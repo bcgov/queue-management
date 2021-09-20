@@ -28,6 +28,7 @@ class Smartboard(Resource):
 
     def get(self):
         try:
+            citizens_waiting = []
             office_number = int(request.args.get('office_number'))
 
             office = Office.query.filter_by(office_number=office_number).first()
@@ -35,37 +36,33 @@ class Smartboard(Resource):
             if not office:
                 return {'message': 'office_number could not be found.'}, 400
 
-            active_citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+            if office.currently_waiting == 1 or office.show_currently_waiting_bottom == 1:
+                citizens = Citizen.query.filter_by(office_id=office.office_id) \
+                    .filter_by(cs_id=active_citizen_state) \
+                    .join(ServiceReq, aliased=True)
+                    
+                for c in citizens:
+                    active_service_request = c.get_active_service_request()
 
-            citizens = Citizen.query.filter_by(office_id=office.office_id) \
-                .filter_by(cs_id=active_citizen_state.cs_id) \
-                .join(ServiceReq, aliased=True)
+                    #  Make sure a category, rather than a service, hasn't slipped in somehow.
+                    if active_service_request and active_service_request.service.parent:
 
-            citizens_waiting = []
+                        # Filter Back Office out of services
+                        if active_service_request.service.parent.service_name == "Back Office":
+                            continue
 
-            for c in citizens:
-                active_service_request = c.get_active_service_request()
+                        active_period = active_service_request.get_active_period()
+                        period = self.period_schema.dump(active_period)
 
-                #  Make sure a category, rather than a service, hasn't slipped in somehow.
-                if active_service_request.service.parent:
-
-                  # Filter Back Office out of services
-                  if active_service_request.service.parent.service_name == "Back Office":
-                      continue
-
-                  active_period = active_service_request.get_active_period()
-                  period = self.period_schema.dump(active_period)
-
-                  citizens_waiting.append({
-                      "ticket_number": c.ticket_number,
-                      "active_period": period
-                  })
-
-                else:
-                    #  Display error to console, no other action taken.
-                    print("==> Error in Smartboard: Citizen has no active service request. " \
-                            + "Possible cause, category, not service, selected.")
-
+                        citizens_waiting.append({
+                            "ticket_number": c.ticket_number,
+                            "active_period": period
+                        })
+                    else:
+                        #  Display error to console, no other action taken.
+                        print("==> Error in Smartboard: Citizen has no active service request. " \
+                                + "Possible cause, category, not service, selected.")
+    
             return {
                 "office_type": office.sb.sb_type,
                 "citizens": citizens_waiting
@@ -97,3 +94,11 @@ class SmartBoradQMenu(Resource):
         except exc.SQLAlchemyError as e:
             print(e)
             return {'message': 'API is down'}, 500
+
+try:
+    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+    active_citizen_state = citizen_state.cs_id
+except Exception as ex:
+    active_citizen_state = 1
+    print("==> In smartboard.py")
+    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
