@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 Red Hat, Inc. and/or its affiliates
  * and other contributors as indicated by the @author tags.
@@ -17,7 +16,7 @@
  */
 
 /* eslint-disable indent */
-(function (window) {
+(function (window, undefined) {
     var Keycloak = function (config) {
         if (!(this instanceof Keycloak)) {
             return new Keycloak(config)
@@ -342,7 +341,7 @@
 
         kc.createAccountUrl = function (options) {
             var realm = getRealmUrl()
-            var url = ''
+            var url = undefined
             if (typeof realm !== 'undefined') {
                 url = realm +
                     '/account' +
@@ -916,7 +915,7 @@
         }
 
         function parseCallbackUrl (url) {
-            var supportedParams = []
+            var supportedParams
             switch (kc.flow) {
                 case 'standard':
                     supportedParams = ['code', 'state', 'session_state']
