@@ -469,9 +469,10 @@ export default class Smartboard extends Vue {
 }
 .marquee span {
   display: inline-block;
+  padding-top: 5px;
   padding-left: 700px;
   width: max-content;
-  animation: marquee 30s linear infinite;
+  animation: marquee 60s linear infinite;
   white-space: nowrap;
 }
 @keyframes marquee {
