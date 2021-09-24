@@ -41,12 +41,16 @@
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
                 <div class="q-id-grid-head">Exam Details</div>
+                <div class="q-id-grid-full-col px-2">
+                  <div>
+                    <u>Exam</u>: {{ this.exam.exam_name }}<br>
+                    <u>Exam Type</u>: {{ this.exam.exam_type.exam_type_name }}<br>
+                    <u>Event ID</u>: {{ this.exam.event_id }}<br>
+                    <u>Examinee</u>: {{ this.exam.examinee_name }}<br>
+                    <u>Scheduled Date</u>: {{ this.exam.booking === null ? 'N/A' : formatDate(this.exam.booking.start_time) }}
+                  </div>
                 <div class="q-id-grid-col px-2">
-                  <div>Exam:</div>
-                  <div>{{ this.exam.examinee_name }}</div>
-                </div>
-                <div class="q-id-grid-col px-2">
-                  <div>Upload Status:</div>
+                  <div style="margin-right: 5px;">Upload Status:</div>
                   <div
                     style="color: green"
                     v-if="actionedExam.upload_received_ind"
@@ -54,6 +58,7 @@
                     Received
                   </div>
                   <div style="color: red" v-else>Not Received</div>
+                </div>
                 </div>
               </div>
             </div>
@@ -179,6 +184,7 @@
 import { Action, Mutation } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
+import moment from 'moment'
 
 @Component({
 
@@ -324,6 +330,10 @@ export default class UploadPesticideModal extends Vue {
     } else {
       this.status = 'unwritten'
     }
+  }
+
+  formatDate (d) {
+    return moment(d).format('MMM D, YYYY')
   }
 }
 </script>
