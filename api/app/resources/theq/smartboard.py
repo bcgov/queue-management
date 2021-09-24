@@ -15,11 +15,13 @@ limitations under the License.'''
 from flask import request
 from flask_restx import Resource
 from qsystem import api
-from app.models.theq import Citizen, CitizenState, ServiceReq, SRState, Office
+from app.models.theq import Citizen, CitizenState, ServiceReq, Office, Period
 from app.models.theq import Office
 from app.schemas.theq.period_schema import PeriodSchema
 from app.schemas.theq import OfficeSchema
 from sqlalchemy import exc
+from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.dialects import postgresql
 
 @api.route("/smartboard/", methods=["GET"])
 class Smartboard(Resource):
@@ -35,12 +37,15 @@ class Smartboard(Resource):
 
             if not office:
                 return {'message': 'office_number could not be found.'}, 400
-
+        
             if office.currently_waiting == 1 or office.show_currently_waiting_bottom == 1:
-                citizens = Citizen.query.filter_by(office_id=office.office_id) \
-                    .filter_by(cs_id=active_citizen_state) \
-                    .join(ServiceReq, aliased=True)
-                    
+                citizens = Citizen.query \
+                    .options(joinedload(Citizen.service_reqs, innerjoin=True).options(joinedload(ServiceReq.periods).options(raiseload(Period.csr),raiseload(Period.sr))), raiseload(Citizen.cs),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                    .filter_by(office_id=office.office_id) \
+                    .filter_by(cs_id=active_citizen_state) 
+                print('***** smartboard.py citizen query: *****')
+                print(str(citizens.statement.compile(dialect=postgresql.dialect())))
+
                 for c in citizens:
                     active_service_request = c.get_active_service_request()
 
