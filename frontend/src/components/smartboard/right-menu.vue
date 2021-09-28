@@ -17,7 +17,7 @@ limitations under the License.*/
     <div v-if="(!networkStatus.networkDown && (citizenInQ))" class="bottom-flex-div">
       <div class="flex-title-waiting">Currently waiting: {{ waiting }}</div>
     </div>
-      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="3" behavior="scroll" >
+    <div class="marqueeup">
       <b-container :class="waitingClass">
           <div>
             <b-row  v-for="(each, index) in citizenInQ" :key="each.start_time">
@@ -32,7 +32,7 @@ limitations under the License.*/
                     icon="calendar-alt"
                   />
                 </b-button>
-                <p  v-if="(each.flag=='booked_app')"><b>Appointment</b></p>
+                <p  v-if="(each.flag=='booked_app')"><strong>Appointment</strong></p>
                 <!-- jus for walkin -->
                 <b-button 
                   v-if="((each.flag=='walkin_app')  && (isNew(each)))"
@@ -45,7 +45,7 @@ limitations under the License.*/
                     pulse 
                   />
                 </b-button>
-                <p v-if="((each.flag=='walkin_app') && (isNew(each)))"><b>Walk In</b></p>
+                <p v-if="((each.flag=='walkin_app') && (isNew(each)))"><strong>Walk In</strong></p>
                 <!-- walk in   -->
                 <b-button 
                   v-if="((each.flag=='walkin_app') && !(isNew(each)))"
@@ -57,7 +57,7 @@ limitations under the License.*/
                     icon="walking"
                   />
                 </b-button>
-                <p v-if="((each.flag=='walkin_app') && !(isNew(each)))"><b>Walk In</b></p>
+                <p v-if="((each.flag=='walkin_app') && !(isNew(each)))"><strong>Walk In</strong></p>
               </b-col>
               <b-col>
                 <b-card bg-variant="success" text-variant="white"  v-if="each.flag=='booked_app'">
@@ -80,11 +80,11 @@ limitations under the License.*/
             </b-row>
         </div>
       </b-container>
-      </marquee>
+      </div>
       <div v-if="(!networkStatus.networkDown && (bookedNotcheckIn.length > 0))" class="bottom-flex-div">
         <div class="flex-title-upcomming"> Upcoming Appointments:</div>
       </div>
-      <marquee direction="up"  width="100%" height="100%" class="margin-push-left" scrollamount="3" behavior="smooth" >
+      <div class="marqueeup">
       <b-container class="container-height-menu-half-bottom">
         <div>
           <b-row v-for="each in bookedNotcheckIn" :key="each.start_time">
@@ -97,19 +97,19 @@ limitations under the License.*/
                   icon="calendar-alt"
                 />
               </b-button>
-              <p><b>Appointment</b></p>
+              <p><strong>Appointment</strong></p>
             </b-col>
             <b-col>
               <b-card bg-variant="dark" text-variant="white">
                 <b-card-text class="text-font-sz">
-                  <b>{{getAppTime(each)}}</b>
+                  <strong>{{getAppTime(each)}}</strong>
                 </b-card-text>
               </b-card>
             </b-col>
           </b-row>
       </div>
       </b-container>
-      </marquee>
+    </div>
   </div>
 </template>
 

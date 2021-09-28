@@ -420,8 +420,6 @@ export default class Smartboard extends Vue {
     height: 70px;
     margin-left: 178px;
     margin-right: -183px;
-    /* margin-left: -73px;
-    margin-right: 66px; */
 }
 
 .marquee-ds {
@@ -461,6 +459,38 @@ export default class Smartboard extends Vue {
     padding-right: 394px;
 }
 
+.marquee {
+  width: 100%;
+	line-height: 50px;
+	color: white;
+  font-size: 2.8rem;
+  background-color: rgb(25, 25, 112);
+  height: 70px;
+}
+.marquee span {
+  display: inline-block;
+  padding-top: 5px;
+  padding-left: 700px;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+	0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+.marqueeup {
+  width: 100%;
+  margin-left: -20% !important;
+  position: relative;
+  animation: scrollup 20s infinite linear;
+}
+@keyframes scrollup {
+    0%   {top: 900px; left:0px}
+    100% {top: 0px; left:0px}
+}
+
 .loading div:nth-child(1) {
   -webkit-animation-delay: -0.23s;
 }
@@ -482,4 +512,7 @@ export default class Smartboard extends Vue {
     -webkit-transform: rotate(360deg);
   }
 }
+
+
+
 </style>
