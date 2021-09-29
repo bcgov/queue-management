@@ -16,7 +16,7 @@
   </v-row>
   <v-row align="center"
       justify="center">
-      <p><b>Please note:</b> booked appointments take priority and will move to the top of queue </p>
+      <p><strong>Please note:</strong> booked appointments take priority and will move to the top of queue </p>
   </v-row>
   <v-row>
     <v-col> </v-col>
@@ -105,7 +105,7 @@
     <!--total time column end -->
   </v-row>
 </v-container>
-<p v-if="lastRefresh"><b>Page last updated at: {{ lastRefresh }}</b></p>
+<p v-if="lastRefresh"><strong>Page last updated at: {{ lastRefresh }}</strong></p>
 </v-container>
 </template>
 

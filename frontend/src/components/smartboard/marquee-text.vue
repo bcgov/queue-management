@@ -13,12 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div class="marquee-container1" v-if="isMessageEnabled">
-    <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
-      <span v-if="msg1">{{msg1}} &nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span v-if="msg2"> | &nbsp;&nbsp;&nbsp;&nbsp; {{msg2}} &nbsp;&nbsp;&nbsp;&nbsp;</span>
-      <span v-if="msg3"> | &nbsp;&nbsp;&nbsp;&nbsp; {{msg3}} &nbsp;&nbsp;&nbsp;&nbsp;</span>
-    </marquee>
+  <div class="marquee" v-if="isMessageEnabled">
+    <span>
+      <span v-if="msg_1">{{msg_1}}</span>
+      <span v-if="msg_2">{{msg_2}}</span>
+      <span v-if="msg_3">{{msg_3}}</span>
+    </span>
   </div>
 </template>
 
@@ -41,9 +41,12 @@ export default class MarqueeText extends Vue {
 
   private citizens: any = ''
   private officeType: string = ''
-  private msg1: string = ''
-  private msg2: string = ''
-  private msg3: string = ''
+  private maxVideoHeight: string | number = ''
+  private msg:string = 'This is a sample scrolling text that has scrolls texts to left.'
+
+  private msg_1: string = ''
+  private msg_2: string = ''
+  private msg_3: string = ''
   private sboffice: any
   private isMessageEnabled: boolean = false
 
@@ -55,17 +58,17 @@ export default class MarqueeText extends Vue {
   created () {
     this.sboffice = this.office.office
     if (this.sboffice.office) {
-      if (this.sboffice.office.digital_signage_message === 1) {
+      if(this.sboffice.office.digital_signage_message_1) {
         this.isMessageEnabled = true
-        if (this.sboffice.office.digital_signage_message_1) {
-          this.msg1 = this.sboffice.office.digital_signage_message_1
-        }
-        if (this.sboffice.office.digital_signage_message_2) {
-          this.msg2 = this.sboffice.office.digital_signage_message_2
-        }
-        if (this.sboffice.office.digital_signage_message_3) {
-          this.msg3 = this.sboffice.office.digital_signage_message_3
-        }
+        this.msg_1 = this.sboffice.office.digital_signage_message_1
+      }
+      if(this.sboffice.office.digital_signage_message_2) {
+        this.isMessageEnabled = true
+        this.msg_2 = this.sboffice.office.digital_signage_message_2
+      }
+      if(this.sboffice.office.digital_signage_message_3) {
+        this.isMessageEnabled = true
+        this.msg_3 = this.sboffice.office.digital_signage_message_3
       }
     }
   }
