@@ -409,9 +409,8 @@ export default class Feedback extends Vue {
 
   private getCurrentDateinFormat () {
     const currentDate = new Date()
-    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
-    return currentDate.getFullYear() + '-' + month + '-' + day
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    return currentDate.toLocaleDateString('en-CA', options)
   }
 
   private phoneEmail (value) {
