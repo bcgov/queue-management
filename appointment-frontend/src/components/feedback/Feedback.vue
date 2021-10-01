@@ -410,7 +410,7 @@ export default class Feedback extends Vue {
   private getCurrentDateinFormat () {
     const currentDate = new Date()
     const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+    const month = (currentDate.getMonth() +1).toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
     return currentDate.getFullYear() + '-' + month + '-' + day
   }
 
