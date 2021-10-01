@@ -409,8 +409,7 @@ export default class Feedback extends Vue {
 
   private getCurrentDateinFormat () {
     const currentDate = new Date()
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
-    return currentDate.toLocaleDateString('en-CA', options)
+    return new Intl.DateTimeFormat('en-CA').format(currentDate)
   }
 
   private phoneEmail (value) {
