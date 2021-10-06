@@ -46,8 +46,8 @@ export default class BoardSocket extends Vue {
       transports: ['websocket']
     })
     console.log('==> In boardsocket.vue CALLING SOCKET.ONCE connect which calls this.onconnect')
-    socket.once('connect', () => { this.onConnect() })
-    socket.once('disconnect', () => { this.onDisconnect() })
+    socket.on('connect', () => { this.onConnect() })
+    socket.on('disconnect', () => { this.onDisconnect() })
     console.log('boardSocket attempting to connect')
     this.addListeners()
   }
