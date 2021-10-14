@@ -4,7 +4,6 @@
       v-if="isServiceFLowEnabled"
       :bpmApiUrl="configs.BPM_URL"
       :token="token"
-      :formIOUserRoles="configs.FORM_IO_USER_ROLES"
       :formIOApiUrl="configs.FORM_IO_API_URL"
       :formIOResourceId="configs.FORM_IO_RESOURCE_ID"
       :formIOReviewerId="configs.FORM_IO_REVIEWER_ID"
@@ -13,6 +12,7 @@
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
+      :formIOUserRoles="userKeyclockGroups"
       containerHeight ="280"
       taskSortBy="dueDate"
       taskSortOrder="asc"
@@ -32,6 +32,22 @@ import '../assets/css/service-flow.css'
 @Component({
   components: {
     CamundaTasklist
+  },
+  computed: {
+    getTaskId: {
+      get: function () {
+        return this.$route.params.taskId
+      }
+    },
+    userKeyclockGroups: {
+      get: function () {
+        const token = sessionStorage.getItem('token') ?? ''
+        const decodeToken = atob(token.split('.')[1])
+        const userDetails = JSON.parse(decodeToken)
+        return userDetails?.resource_access?.['forms-flow-web']?.roles ? userDetails?.resource_access?.['forms-flow-web']?.roles.join() : ''
+      }
+    }
+
   }
 })
 export default class TaskList extends Vue {
@@ -39,12 +55,13 @@ export default class TaskList extends Vue {
   public token: any = sessionStorage.getItem('token');
   public configs = configMap.getconfig();
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled();
-  public getTaskId: string = this.$route.params.taskId;
+
+  loadProps () {
+    this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+  }
 
   mounted () {
-    this.getTaskId = this.$route.params.taskId
-    this.token = sessionStorage.getItem('token')
-    this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+    this.loadProps()
   }
 
   @Watch('bearer')
@@ -60,6 +77,7 @@ export default class TaskList extends Vue {
     document.body.className = ''
   }
 }
+
 </script>
 
 <style scoped>
