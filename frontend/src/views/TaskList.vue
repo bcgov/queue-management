@@ -46,13 +46,16 @@ import '../assets/css/service-flow.css'
         const userDetails = JSON.parse(decodeToken)
         return userDetails?.resource_access?.['forms-flow-web']?.roles ? userDetails?.resource_access?.['forms-flow-web']?.roles.join() : ''
       }
+    },
+    token: {
+      get: function () {
+        return sessionStorage.getItem('token')
+      }
     }
 
   }
 })
 export default class TaskList extends Vue {
-  @State('bearer') private bearer!: any;
-  public token: any = sessionStorage.getItem('token');
   public configs = configMap.getconfig();
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled();
 
@@ -62,11 +65,6 @@ export default class TaskList extends Vue {
 
   mounted () {
     this.loadProps()
-  }
-
-  @Watch('bearer')
-  onbearerChange () {
-    this.token = sessionStorage.getItem('token')
   }
 
   beforeCreate () {
