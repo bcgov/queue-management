@@ -42,7 +42,7 @@ class CitizenList(Resource):
                 raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
             citizens = Citizen.query \
-                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
                 .filter_by(office_id=csr.office_id, cs_id=active_id) \
                 .order_by(Citizen.priority)
 
