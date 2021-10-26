@@ -33,3 +33,7 @@ SQLAlchemy-Continuum==1.3.11
 redis==3.5.3
 kombu==5.1.0
 alembic==1.5.2
+# Added Forced due to error in pycontracts from snowplow-tracker dependency update.
+# Sent note to request a fix to snowplow-tracker to resolve this.
+pyparsing==2.4.7
+
