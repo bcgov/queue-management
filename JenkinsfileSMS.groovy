@@ -78,44 +78,6 @@ podTemplate(
             echo "checking out source"
             checkout scm
         }
-       stage('SonarQube Analysis') {
-            echo ">>> Performing static analysis <<<"
-            SONAR_ROUTE_NAME = 'sonarqube'
-            SONAR_ROUTE_NAMESPACE = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
-                returnStdout: true
-            ).trim()
-            SONAR_PROJECT_NAME = 'Queue Management'
-            SONAR_PROJECT_KEY = 'queue-management'
-            SONAR_PROJECT_BASE_DIR = sh (
-                    script: "pwd",
-                    returnStdout: true
-            ).trim()
-            SONAR_SOURCES = 'api,frontend,appointment-frontend,jobs,feedback-api,notifications-api'
-            SONARQUBE_PWD = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^sonarqube_key/{print $2}\'',
-                returnStdout: true
-            ).trim()
-
-            SONARQUBE_URL = sh (
-                script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
-                returnStdout: true
-            ).trim()
-
-            dir('sonar-runner') {
-                sh (
-                    returnStdout: true,
-                    script: "./gradlew sonarqube --stacktrace --info \
-                        -Dsonar.verbose=true \
-                        -Dsonar.login=${SONARQUBE_PWD} \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.projectName='${SONAR_PROJECT_NAME}' \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.projectBaseDir=${SONAR_PROJECT_BASE_DIR} \
-                        -Dsonar.sources=${SONAR_SOURCES}"
-                )
-            }
-        }
         parallel Build_Staff_FE_NGINX: {
             stage("Build Front End NGINX..") {
                 script: {
@@ -425,13 +387,7 @@ podTemplate(
         stage('ZAP Security Scan') {          
                 def retVal = sh (
                     returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index1.html -t ${APPTMNTURL}"
-                )
-        }
-        stage('ZAP Security Scan') {          
-                def retVal = sh (
-                    returnStatus: true, 
-                    script: "/zap/zap-baseline.py -r index2.html -t ${STAFFURL}"
+                    script: "/zap/zap-baseline.py -r index2.html -t ${APPTMNTURL}"
                 )
                 sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
                 publishHTML([
@@ -443,13 +399,6 @@ podTemplate(
                     reportName: 'OWASPReport', 
                 ])
                 echo "Return value is: ${retVal}"
-
-                script {
-                    if (retVal != 0) {
-                        echo "MARKING BUILD AS UNSTABLE"
-                        currentBuild.result = 'UNSTABLE'
-                    }
-                }
         }
     }
   }
