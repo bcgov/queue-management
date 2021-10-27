@@ -47,7 +47,6 @@ import '../assets/css/service-flow.css'
         return userDetails?.resource_access?.['forms-flow-web']?.roles ? userDetails?.resource_access?.['forms-flow-web']?.roles.join() : ''
       }
     }
-
   }
 })
 export default class TaskList extends Vue {

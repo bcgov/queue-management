@@ -30,6 +30,9 @@ def APPOINTMENT_IMAGE_HASH = ""
 def REMINDER_IMAGE_HASH = ""
 def NOTIFICATION_IMAGE_HASH = ""
 def FEEDBACK_IMAGE_HASH = ""
+def owaspPodLabel = "jenkins-agent-zap"
+def STAFFURL = ""
+def APPTMNTURL = ""
 
 String getNameSpace() {
     def NAMESPACE = sh (
@@ -74,44 +77,6 @@ podTemplate(
          stage('Checkout Source') {
             echo "checking out source"
             checkout scm
-        }
-       stage('SonarQube Analysis') {
-            echo ">>> Performing static analysis <<<"
-            SONAR_ROUTE_NAME = 'sonarqube'
-            SONAR_ROUTE_NAMESPACE = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^namespace/{print $2}\'',
-                returnStdout: true
-            ).trim()
-            SONAR_PROJECT_NAME = 'Queue Management'
-            SONAR_PROJECT_KEY = 'queue-management'
-            SONAR_PROJECT_BASE_DIR = sh (
-                    script: "pwd",
-                    returnStdout: true
-            ).trim()
-            SONAR_SOURCES = 'api,frontend,appointment-frontend,jobs,feedback-api,notifications-api'
-            SONARQUBE_PWD = sh (
-                script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^sonarqube_key/{print $2}\'',
-                returnStdout: true
-            ).trim()
-
-            SONARQUBE_URL = sh (
-                script: 'oc get routes -o wide --no-headers | awk \'/sonarqube/{ print match($0,/edge/) ?  "https://"$2 : "http://"$2 }\'',
-                returnStdout: true
-            ).trim()
-
-            dir('sonar-runner') {
-                sh (
-                    returnStdout: true,
-                    script: "./gradlew sonarqube --stacktrace --info \
-                        -Dsonar.verbose=true \
-                        -Dsonar.login=${SONARQUBE_PWD} \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
-                        -Dsonar.projectName='${SONAR_PROJECT_NAME}' \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.projectBaseDir=${SONAR_PROJECT_BASE_DIR} \
-                        -Dsonar.sources=${SONAR_SOURCES}"
-                )
-            }
         }
         parallel Build_Staff_FE_NGINX: {
             stage("Build Front End NGINX..") {
@@ -388,6 +353,55 @@ podTemplate(
         }
     }
 }
+node() {
+
+         stage('get url') {
+		        STAFFURL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_staff/{print $2}\'',
+                    returnStdout: true
+                ).trim()
+		        APPTMNTURL = sh (
+                    script: 'oc describe configmap jenkin-config | awk  -F  "=" \'/^zap_url_appntmnt/{print $2}\'',
+                    returnStdout: true
+                ).trim()				
+        }
+	}
+podTemplate(
+    label: owaspPodLabel, 
+    name: owaspPodLabel, 
+    serviceAccount: 'jenkins', 
+    cloud: 'openshift', 
+    containers: [ containerTemplate(
+        name: 'jenkins-agent-zap',
+        image: 'image-registry.openshift-image-registry.svc:5000/df1ee0-tools/jenkins-agent-zap:latest',
+        resourceRequestCpu: '1000m',
+        resourceLimitCpu: '2000m',
+        resourceRequestMemory: '4Gi',
+        resourceLimitMemory: '5Gi',
+        workingDir: '/home/jenkins',
+        command: '',
+        args: '${computer.jnlpmac} ${computer.name}'
+    )]
+) {
+    node(owaspPodLabel) {
+        stage('ZAP Security Scan') {          
+                def retVal = sh (
+                    returnStatus: true, 
+                    script: "/zap/zap-baseline.py -r index2.html -t ${APPTMNTURL}"
+                )
+                sh 'echo "<html><head></head><body><a href=index1.html>Staff Front Report</a><br><a href=index2.html>Appointment Front End Report</a></body></html>" > /zap/wrk/index.html'
+                publishHTML([
+                    allowMissing: false, 
+                    alwaysLinkToLastBuild: true, 
+                    keepAll: true, 
+                    reportDir: '/zap/wrk', 
+                    reportFiles: 'index.html', 
+                    reportName: 'OWASPReport', 
+                ])
+                echo "Return value is: ${retVal}"
+        }
+    }
+  }
 node {
     stage("Deploy to test") {
         input "Deploy to test?"
