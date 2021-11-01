@@ -40,8 +40,6 @@ class CitizenBeginService(Resource):
             citizen = Citizen.query\
             .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*')), raiseload(Citizen.user)) \
             .filter_by(citizen_id=id)
-            print('***** citizen_begin_service.py query: *****')
-            print(str(citizen.statement.compile(dialect=postgresql.dialect())))
             citizen = citizen.first()
             pending_service_state = SRState.get_state_by_name("Active")
 

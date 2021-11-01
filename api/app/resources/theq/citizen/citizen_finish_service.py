@@ -40,8 +40,6 @@ class CitizenFinishService(Resource):
         citizen = Citizen.query\
         .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), raiseload(Citizen.counter),raiseload(Citizen.user), joinedload(Citizen.counter), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*'))) \
         .filter_by(citizen_id=id)
-        print('***** citizen_finish_service.py query: *****')
-        print(str(citizen.statement.compile(dialect=postgresql.dialect())))
         
         citizen = citizen.first()
 

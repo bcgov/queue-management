@@ -57,11 +57,7 @@ def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
         .options(contains_eager(Citizen.service_reqs).contains_eager(ServiceReq.periods)) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
-        .order_by(Citizen.priority, Citizen.start_time) \
-           
-
-    print('***** citizen_generic_invite find opt query: *****')
-    print(str(citizen.statement.compile(dialect=postgresql.dialect())))
+        .order_by(Citizen.priority, Citizen.start_time) 
 
     return citizen.first()
 
@@ -76,11 +72,7 @@ def find_citizen2(active_citizen_state, csr, waiting_period_state):
         .options(contains_eager(Citizen.service_reqs).contains_eager(ServiceReq.periods)) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
-        .order_by(Citizen.priority, Citizen.citizen_id) \
-
-
-    print('***** citizen_generic_invite find2 opt query: *****')
-    print(str(citizen.statement.compile(dialect=postgresql.dialect())))
+        .order_by(Citizen.priority, Citizen.citizen_id) 
 
     return citizen.first()
 
