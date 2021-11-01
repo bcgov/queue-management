@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import g, request
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
-from app.models.theq import Citizen, CSR, CitizenState
+from app.models.theq import Citizen, CSR, CitizenState, ServiceReq, Period, Service, Office
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
@@ -23,6 +23,8 @@ from datetime import datetime
 import os
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
+from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.dialects import postgresql
 
 
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
@@ -35,7 +37,14 @@ class CitizenFinishService(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id).first()
+        citizen = Citizen.query\
+        .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), raiseload(Citizen.counter),raiseload(Citizen.user), joinedload(Citizen.counter), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*'))) \
+        .filter_by(citizen_id=id)
+        print('***** citizen_finish_service.py query: *****')
+        print(str(citizen.statement.compile(dialect=postgresql.dialect())))
+        
+        citizen = citizen.first()
+
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/finish_service/, Ticket: ' + citizen.ticket_number)
         active_service_request = citizen.get_active_service_request()
         inaccurate = request.args.get('inaccurate')
