@@ -196,26 +196,6 @@
                 </vue-timepicker>
                 <br/>
                 <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="start_time"
-                  id="appointment_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    step: '00:30',
-                    end: '16:30',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkSingleInput"
-                  @input="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -241,26 +221,6 @@
                   </vue-timepicker>
                 <br/>
                 <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="end_time"
-                  id="appointment_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    step: '00:30',
-                    end: '17:00',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkSingleInput"
-                  @input="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -309,27 +269,6 @@
                   </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_start_time"
-                  id="recurring_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    end: '16:30',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="hh:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkRecurringInput"
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -355,27 +294,6 @@
                   </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_end_time"
-                  id="recurring_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    end: '17:00',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="hh:mm a"
-                  autocomplete="off"
-                  :editable="true"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  @change="checkRecurringInput"
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -441,8 +359,6 @@
                 v-model="selected_frequency"
                 @input="checkRecurringInput"
               >
-                <!--                <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>-->
-                <!--                <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>-->
                 <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                 <b-form-checkbox :value="daily">Daily</b-form-checkbox>
               </b-form-checkbox-group>
@@ -1038,9 +954,7 @@ export default class AppointmentBlackoutModal extends Vue {
     const limit = 50
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
-    // const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
     const end = moment(end_time).clone().format('HH:mm:ss')
-    // const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
     const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid').v4
@@ -1065,13 +979,10 @@ export default class AppointmentBlackoutModal extends Vue {
         if (this.notes) {
           e.comments = this.notes
         }
-        // this.postAppointment(e)
         axiosArray.push(this.createAxioObject(e))
-        // this.getAppointments()
         if ((axiosArray.length == limit)) {
             this.bulkApiCall(axiosArray)
             axiosArray = []
-            // this.api_count = this.api_count + limit
         } else if (rrule_ind == this.rrule_array.length) {
           this.bulkApiCall(axiosArray, true)
           axiosArray = [] 
@@ -1505,8 +1416,6 @@ export default class AppointmentBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.rrule_array.length)
     showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, true)
-    // const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-    // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
@@ -1514,7 +1423,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const all_offices = await this.getOffices('force')
     const stat_user_name = this.stat_user_name
     const user_contact_info = this.user_contact_info
-    // const notes = this.notes
     const createStatAxioObject = this.createStatAxioObject
     const rrule_array = this.rrule_array
     const stat_dates = this.stat_dates
@@ -1574,10 +1482,6 @@ export default class AppointmentBlackoutModal extends Vue {
                     blackout_booking.for_stat = true
                   }
                   axiosArray.push(self.postBookingStat(blackout_booking))
-                  // this.postBooking(blackout_booking)
-                  // .then(() => {
-                  //   this.getBookings()
-                  // })
                 })
               }
             }
@@ -1624,10 +1528,6 @@ export default class AppointmentBlackoutModal extends Vue {
                       blackout_booking.for_stat = true
                     }
                     axiosArray.push(self.postBookingStat(blackout_booking))
-                    // this.postBooking(blackout_booking)
-                    // .then(() => {
-                    //   this.getBookings()
-                    // })
                   })
                 })
             }
@@ -1635,7 +1535,6 @@ export default class AppointmentBlackoutModal extends Vue {
             if ((axiosArray.length == limit)) {
                 bulkApiCall(axiosArray)
                 axiosArray = []
-                // this.api_count = this.api_count + limit
             } else if (rrule_ind == rrule_array.length) {
               bulkApiCall(axiosArray, true)
               axiosArray = []
