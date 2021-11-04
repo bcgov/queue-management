@@ -83,7 +83,7 @@ class CitizenAddToQueue(Resource):
                     if citizen.notification_phone:
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
-                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                        send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                         update_table = True
                     if sms_sent:
                         update_table = True

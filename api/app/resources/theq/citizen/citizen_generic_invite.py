@@ -119,7 +119,6 @@ class CitizenGenericInvite(Resource):
         #print("==> In Python /citizens/invitetest")
         y = 0
         #for x in range(0, 25):
-        key = "DR->" + get_key()
         #print("")
         y = y + 1
         #print("DATETIME:", datetime.now(), "starting loop:", y, "==>Key : ", key)

@@ -145,7 +145,7 @@ class Office(Base):
                 office.timezone
                 cache.set(key, office)
         except Exception as e:
-            print('Error on building cache')
+            print('Error on building cache: ' + str(e))
 
     @classmethod
     def get_all_active_offices(cls):

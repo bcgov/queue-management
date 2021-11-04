@@ -180,7 +180,6 @@ class WalkinDetail(Resource):
         if office:
             office_id = office.office_id
         if office_id:  
-            time_now = datetime.utcnow()
             past_hour = datetime.utcnow() - timedelta(minutes=15)
             future_hour = datetime.utcnow() + timedelta(minutes=15)
             local_past = pytz.utc.localize(past_hour)
@@ -309,7 +308,6 @@ class SendLineReminderWalkin(Resource):
         return booked_check_app, walkin_app
 
     def send_sms_reminder(self, citizen, officeObj):
-        data_values = {}
         if (citizen.notification_phone):
             sms_sent = False
             validate_check = True
@@ -339,7 +337,7 @@ class SendLineReminderWalkin(Resource):
             if validate_check:
                 email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
                 if email_sent:
-                    status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     flag_value = 1
                     if citizen.reminder_flag == 1:
                         flag_value = 2
