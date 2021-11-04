@@ -14,19 +14,17 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
+
 import 'babel-polyfill'; // For IE11 compat
 import './router/componentHooks'; // <-- Needs to be first to work beforeRouteLeave
 import 'core-js/stable'; // For IE11 compat
-
-import Vue from 'vue';
-import vuetify from './plugins/vuetify';
-import Buefy from 'buefy';
 import 'es6-promise/auto';
-import store from './store/index';
-import BootstrapVue from 'bootstrap-vue';
-import router from './router';
-import { Plugin } from 'vue-fragment';
-import { library } from '@fortawesome/fontawesome-svg-core';
+import 'buefy/dist/buefy.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import './assets/css/q.css';
+import './assets/css/bc-gov-style.css';
+
 import {
   faAngleLeft,
   faAngleRight,
@@ -64,21 +62,22 @@ import {
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import VDragged from 'v-dragged';
-import 'buefy/dist/buefy.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-import './assets/css/q.css';
-import './assets/css/bc-gov-style.css';
-import MainApp from './MainApp.vue';
 
+import BootstrapVue from 'bootstrap-vue';
+import Buefy from 'buefy';
 import ConfigHelper from '@/utils/config-helper';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MainApp from './MainApp.vue';
+import { Plugin } from 'vue-fragment';
+import VDragged from 'v-dragged';
+import Vue from 'vue';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import router from './router';
+import store from './store/index';
+import vuetify from './plugins/vuetify';
 
 require('es6-shim');
-// require('Keycloak')
 require('../static/keycloak.js');
-// import * as Keycloak from '../static/keycloak.js';
 const Keycloak = window && (window as any).Keycloak;
 Vue.use(Buefy);
 Vue.use(VDragged);
@@ -126,13 +125,6 @@ var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL);
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
-/* eslint-disable no-new */
-// const app = new Vue({
-//   el: '#app',
-//   store,
-//   router: Router,
-//   template: '<router-view></router-view>'
-// });
 /* eslint-disable no-new */
 
 ConfigHelper.fetchConfig();

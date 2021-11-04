@@ -21,7 +21,6 @@ limitations under the License. */ -->
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions } from 'vuex'
 import config from './../../config'
 import configMap from '@/utils/config-helper'
 
@@ -93,7 +92,6 @@ export default class Socket extends Vue {
   }
 
   join () {
-    // console.log('==> In Socket.vue.join, socket.io.engine.id is: ' + socket.io.engine.id.toString())
     socket.emit('joinRoom', { count: 0 }, () => { console.log('socket emit: "joinRoom"') }
     )
   }
