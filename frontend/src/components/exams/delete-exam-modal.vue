@@ -48,7 +48,6 @@
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapMutations, mapState } from 'vuex'
 @Component({})
 export default class DeleteExamModal extends Vue {
   [x: string]: any

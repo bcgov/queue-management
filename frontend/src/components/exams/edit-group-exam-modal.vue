@@ -697,11 +697,9 @@
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import zone from 'moment-timezone'
 import DatePicker from 'vue2-datepicker'
-// import Vue from 'vue'
 const FileDownload = require('js-file-download')
 
 @Component({

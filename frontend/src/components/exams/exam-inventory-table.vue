@@ -573,9 +573,6 @@
                     >
                   </template>
                   <template v-else>
-                    <!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
-                    <!--                    <b-dropdown-item size="sm"-->
-                    <!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
                     <b-dropdown-item
                       size="sm"
                       v-if="
@@ -808,11 +805,6 @@ export default class ExamInventoryTable extends Vue {
 
   private expiryNotificationDialog: boolean = false
   private examExpiryDateScheduling: string = ''
-
-  //   ...mapState ({
-  //   showAllPesticide: state => state.addExamModule.showAllPesticideExams,
-  //   showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Getter('calendar_events') private calendar_events!: any;
   @Getter('exam_inventory') private exam_inventory!: any;
@@ -1605,7 +1597,6 @@ export default class ExamInventoryTable extends Vue {
         this.isLoading = false
       })
     } else if (option.value === 'awaiting_receipt') {
-      // this.$store.commit('toggleShowAllPesticideExams', false)
       this.viewAllOfficePesticideExams()
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
@@ -1724,78 +1715,48 @@ export default class ExamInventoryTable extends Vue {
       style: { font: '1rem', color: 'green' }
     }
 
-    // console.log("============= Start of Tests =======================")
-    // console.log("==> Test 1")
-    // console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
-    // console.log("    --> receive date: ", item.exam_received_date)
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
-    //                 item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
-
-    //
     if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 2")
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
     if (item.exam_returned_date) {
-      // console.log("        --> True: returning enveloopeOpenText")
       return envelopeOpenText
     }
 
-    // console.log("==> Test 3")
-    // console.log("    --> booking:      ", item.booking)
     if (item.booking) {
-      // console.log("    --> invig:        ", item.booking.invigilator)
     }
     if (item.booking && item.booking.invigilator) {
-      // console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
     }
-    // console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
-    //   item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
     if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 4")
     if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
       console.log('    --> Monthly Session Exam, name: ' + item.exam_name)
       console.log('    --> item.booking: ', item.booking)
       if (!item.booking) {
-        // console.log("!item.booking, returning lifeRing")
         return lifeRing
       }
-      // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
       console.log('    --> this.checkInvigilator(item): ', this.checkInvigilator(item))
       if (!this.checkInvigilator(item)) {
-        // console.log('checkInvigilator is false, returning lifeRing')
         return lifeRing
       }
       if (this.filterByExpiry(item)) {
-        // console.log("this.filterByExpiry(item) is true, returning lifeRing")
         return lifeRing
       }
       if (item.booking) {
         if (moment(item.booking.start_time).isValid()) {
           if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
-            // console.log("item.booking and start_time valid and start time before today, returning lifeRing")
             return lifeRing
           }
         }
       }
       if (item.number_of_students === null && length_of_invigilator_array > 0) {
-        // console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
         return exclamationTriangle
       }
       if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
-        // console.log("No event_id or no students or no received date, returning exclamationTriangle")
         return exclamationTriangle
       }
-      // console.log("No errors found, returning clipboardCheck")
       return clipboardCheck
     }
     if (item.exam_type.group_exam_ind) {
@@ -1901,10 +1862,7 @@ export default class ExamInventoryTable extends Vue {
 
     // not needed to change to moment
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.start = moment(booking.start)
-    // booking.start = moment(booking.start)
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.end = moment(booking.end)
     this.setEditedBooking(booking)
     this.setEditedBookingOriginal(booking)
     this.toggleEditBookingModal(true)
