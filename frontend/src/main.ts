@@ -14,17 +14,19 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
-
 import 'babel-polyfill'; // For IE11 compat
 import './router/componentHooks'; // <-- Needs to be first to work beforeRouteLeave
 import 'core-js/stable'; // For IE11 compat
-import 'es6-promise/auto';
-import 'buefy/dist/buefy.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-import './assets/css/q.css';
-import './assets/css/bc-gov-style.css';
 
+import Vue from 'vue';
+import vuetify from './plugins/vuetify';
+import Buefy from 'buefy';
+import 'es6-promise/auto';
+import store from './store/index';
+import BootstrapVue from 'bootstrap-vue';
+import router from './router';
+import { Plugin } from 'vue-fragment';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faAngleLeft,
   faAngleRight,
@@ -62,19 +64,16 @@ import {
   faWindowMaximize,
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
-
-import BootstrapVue from 'bootstrap-vue';
-import Buefy from 'buefy';
-import ConfigHelper from '@/utils/config-helper';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MainApp from './MainApp.vue';
-import { Plugin } from 'vue-fragment';
 import VDragged from 'v-dragged';
-import Vue from 'vue';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import router from './router';
-import store from './store/index';
-import vuetify from './plugins/vuetify';
+import 'buefy/dist/buefy.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import './assets/css/q.css';
+import './assets/css/bc-gov-style.css';
+import MainApp from './MainApp.vue';
+
+import ConfigHelper from '@/utils/config-helper';
 
 require('es6-shim');
 require('../static/keycloak.js');
