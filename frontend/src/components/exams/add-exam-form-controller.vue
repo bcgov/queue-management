@@ -216,6 +216,7 @@ export default class AddExamFormController extends Vue {
   onValidationObjChange () {
     // calling validate() with every change in validationObj() is untested with any workflow except 'pesticide',
     // and other workflows don't seem to require this additional step, so limiting this call to fire only when
+    // setup === pesticide
     this.validate()
     this.$nextTick(function () {
       this.validate()
