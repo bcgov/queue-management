@@ -515,6 +515,7 @@ export default class Calendar extends Vue {
   }
 
   options (option) {
+    // I assume this empty block is intentional
   }
 
   prev () {
@@ -698,9 +699,11 @@ export default class Calendar extends Vue {
   toggleOffsite (bool) {
     this.toggleOffsiteVisible(bool)
     if (bool) {
+      // I assume this empty block is intentional
     }
     if (!bool) {
       if (this.offsiteOnly) {
+        // I assume this empty block is intentional
       }
       this.setOffsiteOnly(false)
     }

@@ -385,6 +385,7 @@ export default class Appointments extends Vue {
 
   removeTempEvent () {
     this.deleteDraftAppointment().then((resp) => {
+      // I assume this empty block is intentional
     })
 
   }
@@ -417,6 +418,7 @@ export default class Appointments extends Vue {
     }
 
     this.postDraftAppointment(data).then((resp) => {
+      // I assume this empty block is intentional
     })
   }
 
