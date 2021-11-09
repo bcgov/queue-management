@@ -35,6 +35,9 @@ objects:
       NOTIFICATIONS_EMAIL_ENDPOINT: '${NOTIFICATIONS_EMAIL_ENDPOINT}'
       NOTIFICATIONS_ENDPOINT: '${NOTIFICATIONS_ENDPOINT}'
       SERVICE_ACCOUNT_SECRET: '${SERVICE_ACCOUNT_SECRET}'
+      GC_NOTIFY_API_BASE_URL: '${GC_NOTIFY_API_BASE_URL}'
+      GC_NOTIFY_API_KEY: '${GC_NOTIFY_API_KEY}'
+      GC_NOTIFY_SMS_TEMPLATE_ID: '${GC_NOTIFY_SMS_TEMPLATE_ID}'
 
   - kind: DeploymentConfig
     apiVersion: v1
@@ -285,4 +288,4 @@ parameters:
     required: true
   - name: MAX_EMAIL_PER_BATCH
     description: 
-    required: ture
+    required: true

@@ -88,11 +88,20 @@ objects:
                 - name: CORS_ALLOWED_ORIGINS
                   value: "${CORS_ALLOWED_ORIGINS}"
                 - name: APP_AUTH_URL
-                  value: "${APP_AUTH_URL}"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: appointment-reminder-dev-config
+                      key: OIDC_PROVIDER_TOKEN_URL
                 - name: APP_AUTH_CLIENT_ID
-                  value: "${APP_AUTH_CLIENT_ID}"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: appointment-reminder-dev-config
+                      key: SERVICE_ACCOUNT_ID
                 - name: APP_AUTH_CLIENT_SECRET
-                  value: "${APP_AUTH_CLIENT_SECRET}"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: appointment-reminder-dev-config
+                      key: SERVICE_ACCOUNT_SECRET
                 - name: NOTIFICATION_EMAIL_URL
                   value: "${NOTIFICATION_EMAIL_URL}"
                 - name: NOTIFICATION_EMAIL_TO
@@ -201,15 +210,6 @@ parameters:
     required: true
   - name: CORS_ALLOWED_ORIGINS
     description: "CORS allowed origins"
-    required: true
-  - name: APP_AUTH_URL
-    description: "Application auth URL"
-    required: true
-  - name: APP_AUTH_CLIENT_ID
-    description: "Application auth client id"
-    required: true
-  - name: APP_AUTH_CLIENT_SECRET
-    description: "Application auth client secret"
     required: true
   - name: NOTIFICATION_EMAIL_URL
     description: "Notification email endpoint"

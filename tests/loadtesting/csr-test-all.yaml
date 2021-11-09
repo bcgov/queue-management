@@ -15,11 +15,11 @@ config:
       arrivalRate: 30
     - name: Ramp up load (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
       duration: 30
-      arrivalRate: 75
-      rampTo: 100
+      arrivalRate: 10
+      rampTo: 90
       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}
     - name: Sustained max load. (max {{ $processEnvironment.MAX_VIRTUAL_USERS }} users)
-      duration: 40
+      duration: 60
       arrivalRate: 100
       maxVusers: {{ $processEnvironment.MAX_VIRTUAL_USERS }}   
   processor: "./functions.js"
