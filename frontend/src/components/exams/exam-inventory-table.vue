@@ -1724,8 +1724,10 @@ export default class ExamInventoryTable extends Vue {
     }
 
     if (item.booking) {
+      // I assume this empty block is intentional
     }
     if (item.booking && item.booking.invigilator) {
+      // I assume this empty block is intentional
     }
     if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
       return lifeRing

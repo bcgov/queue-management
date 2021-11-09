@@ -83,6 +83,7 @@ export class AddExamCounter extends Vue {
     if (newVal == this.currentNumber) {
       this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
     } else {
+      // I assume this empty block is intentional
     }
   }
 
@@ -91,6 +92,7 @@ export class AddExamCounter extends Vue {
     if (newVal == this.exam.number_of_students) {
       this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
     } else {
+      // I assume this empty block is intentional
     }
   }
 
