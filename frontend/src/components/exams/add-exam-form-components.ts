@@ -1,8 +1,8 @@
 // import Vue from 'vue'
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
+import { Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
