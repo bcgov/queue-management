@@ -1,6 +1,5 @@
 import Axios, { AxiosResponse } from 'axios'
 import { GeolocatorSuccess, LatLng } from '@/models/geo'
-import { Office } from '@/models/office'
 import { addAxiosInterceptors } from '@/utils/interceptors'
 
 const axios = addAxiosInterceptors(Axios.create())
