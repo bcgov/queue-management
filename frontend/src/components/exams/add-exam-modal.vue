@@ -437,7 +437,7 @@ export default class AddExamModal extends Vue {
       const list: any = []
       this.errors.forEach(error => {
         if (this.steps.some(step => step.step == error)) {
-          list.push(this.steps.find(step => step.step == error)).questions
+          list.push(this.steps.find(step => step.step == error).questions)
         }
       })
       if (list.includes(i)) {

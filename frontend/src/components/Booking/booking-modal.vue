@@ -511,8 +511,9 @@ export default class BookingModal extends Vue {
         const payload: any = {
           url: `/exams/${exam_id}/`
         }
-        // eslint-disable-next-line no-unused-expressions
-        putNotes ? payload.data = { notes } : null
+        if (putNotes) {
+          payload.data = { notes }
+        }
         let redirect = false
         if (this.exam.referrer === 'inventory') {
           redirect = true

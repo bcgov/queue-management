@@ -132,8 +132,8 @@ export default class ButtonsAppointments extends Vue {
 </script>
 <style scoped>
 .align-center {
-    padding-left: 40%;
-    margin-top: -46px;
+  padding-left: 40%;
+  margin-top: -46px;
 }​
 .butttons-appointments {
   margin-right: auto;
