@@ -93,7 +93,7 @@ class AvailabilityService():
                             }
                             # Check if today's time is past appointment slot
                             # Arc - also check if in office.soonest_appointment
-                            if not (today.date() == day_in_month.date() and soonest_appointment_date.time() > start_time):
+                            if not (today.date() == day_in_month.date() and start_time > soonest_appointment_date.time()):
                                 if slot not in available_slots_per_day[formatted_date]: 
                                     available_slots_per_day[formatted_date].append(slot)
 
