@@ -1067,7 +1067,7 @@ export default class EditBooking extends Vue {
       }
     }
     if (!this.editedFields.includes('title')) {
-      this.title = this.event.title
+      this.title = this.event.name
     }
     if (!this.editedFields.includes('fees')) {
       this.fees = this.event.fees
