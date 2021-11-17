@@ -163,7 +163,6 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
 import moment from 'moment'

@@ -216,7 +216,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly isAuthenticated!: boolean
   private footerMsg = []
   private footerLinks = []
-  // private readonly coords!: () => any;
   private readonly currentCoordinates!: () => any;
   private selectedOffice: Office = null
   private keyPressed = true
@@ -283,7 +282,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private setKeyPressed (e) {
-    // this.mylog('-> setKeyPressed')
     if (e.key !== 'Enter') {
       this.keyPressed = true
     }
@@ -296,11 +294,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private checkDisabled (value) {
     return (value?.appointments_enabled_ind)
   }
-
-  /* private async onGeoSelect (input) {
-    this.locationListData = this.sortOfficesByDistance(this.locationListData)
-    this.$forceUpdate()
-  } */
 
   private clickSelection (value) {
     if (!value?.service_name) {
@@ -341,7 +334,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private hasCoordinates (): boolean {
-    // return !!this.$store.state.geo.currentCoordinates
     return !!this.currentCoordinates()
   }
 
@@ -379,7 +371,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   margin-right: 24px;
 }
 .hours-closed {
-    // color: $BCgovInputError;
     // We can't use the $BCgovInputError on the background here, as it will break accessibility.
     // The only colour which works on the background is black, or this muddy dark red
     color: black;

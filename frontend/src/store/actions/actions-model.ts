@@ -11,8 +11,6 @@
  *
  */
 
-// import { ActionIF } from '@/interfaces/action-interface'
-
 import { Axios, searchNestedObject } from './../helpers'
 
 import AppointmentsModule from '../modules/appointments-module';
@@ -94,9 +92,6 @@ export const commonActions: any = {
           context.commit('setMainAlert', 'File could not be deleted.')
         }
       )
-    // .catch(() => {
-    //   context.commit('setMainAlert', 'An exception occurred trying to delete file.')
-    // })
   },
 
   requestVideoFileInfo (context) {
@@ -308,7 +303,7 @@ export const commonActions: any = {
               booking.name = b.booking_name
             }
             booking.id = b.booking_id
-            booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
+            booking.category = b.room ? b.room.room_name : 'Offsite'
             booking.exam =
               context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
@@ -442,8 +437,6 @@ export const commonActions: any = {
         .get(url)
         .then(resp => {
           context.commit('setExams', resp.data.exams)
-          // console.log('==> getExams(context), exams are:')
-          // console.log(resp.data.exams)
           resolve(resp)
         })
         .catch(error => {
@@ -1422,7 +1415,6 @@ export const commonActions: any = {
         context.commit('toggleServiceModal', true)
       })
       .catch(() => {
-        // context.commit('setMainAlert', '(index) There are no citizens waiting.')
         context.commit('toggleInviteCitizenSpinner', false)
       })
       .finally(() => {

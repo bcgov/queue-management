@@ -196,34 +196,22 @@ export default class DateSelection extends Mixins(StepperMixin) {
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = et.replace('.000Z', '+00').replace('T', ' ')
      const selectedSlot: AppointmentSlot = {
-       // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
-       // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
-       //  start_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
-       //  end_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
        start_time: st,
        end_time: et
      }
      this.setCurrentAppointmentSlot(selectedSlot)
-     // this.createDraftAppointment()
-     // this.isLoading = true
      try {
        const resp = await this.createDraftAppointment()
-       //  if (resp.appointment_id) {
        if (resp) {
          this.setCurrentDraftAppointment(resp)
          window.scrollTo(0, 0)
          this.stepNext()
-         // this.isLoading = false
        }
      } catch (error) {
        this.isLoading = false
 
        this.getAvailableService()
        this.dateClicked()
-       // this.dialogPopup.showDialog = true
-       // this.dialogPopup.isSuccess = false
-       // this.dialogPopup.title = 'Failed!'
-       // this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
      }
    }
 }

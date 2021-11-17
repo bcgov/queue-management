@@ -62,11 +62,6 @@ class CitizenRemoveFromQueue(Resource):
         db.session.delete(active_service_request)
         db.session.commit()
 
-        # appointment, warning = self.appointment_schema.load(json_data, instance=appointment, partial=True)
-        # if warning:
-        #     logging.warning("WARNING: %s", warning)
-        #     return {"message": warning}, 422
-
         socketio.emit('update_customer_list', {}, room=csr.office.office_name)
         socketio.emit('citizen_invited', {}, room='sb-%s' % csr.office.office_number)
         result = self.appointment_schema.dump(appointment)

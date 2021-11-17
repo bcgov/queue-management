@@ -22,7 +22,6 @@ That are used to expose operational health information about the service, and me
 """
 
 from flask_restx import Api
-# from .trace import API as TRACE_API
 from .meta import api as META_API
 from .ops import api as OPS_API
 from .feedback import api as FEEDBACK_API

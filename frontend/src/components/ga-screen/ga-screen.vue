@@ -36,9 +36,6 @@ limitations under the License.*/
       </div>
       <div></div>
     </div>
-    <!--<div>-->
-    <!--The time is now: {{time_now}}-->
-    <!--</div>-->
     <b-table
       small
       head-variant="light"
@@ -64,10 +61,6 @@ import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import moment from 'moment'
-// import {
-//   mapActions, mapGetters, mapState
-// }
-//   from 'vuex'
 
 @Component({})
 export default class GAScreen extends Vue {
@@ -214,7 +207,6 @@ export default class GAScreen extends Vue {
         if (activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === 'Being Served')[0]) {
           const waitPeriods = sortedSRs[0].periods.filter(p => p.ps.ps_name === 'Waiting')
           // TODO check functionality
-          // const waitDate: any = new Date(null)
           const waitDate: any = new Date(0)
           if (waitPeriods.length !== 0) {
             const waitStart: any = new Date(waitPeriods[0].time_start)
@@ -242,7 +234,6 @@ export default class GAScreen extends Vue {
           const waitSeconds: any = (firstServedPeriodDate - citizenStartDate) / 1000
           const timeServeTotal = (timeServeClosed + timeServeOpen)
           // TODO check functionality
-          // const serveDate = new Date(null)
           const serveDate = new Date(0)
           serveDate.setSeconds(timeServeTotal / 1000)
           csr.wait_time = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`
