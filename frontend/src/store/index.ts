@@ -16,23 +16,14 @@ import 'es6-promise/auto'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import moment from 'moment'
-// import tZone from 'moment-timezone'
-
 import { addExamModule } from './modules/add-exam-module'
 import appointmentsModule from './modules/appointments-module'
-// import { Axios, searchNestedObject } from './helpers'
-
 import { commonActions } from './actions'
 import { commonGetters } from './getters'
 import { commonMutation } from './mutations'
 import { stateModel } from './state'
 
-// var flashInt
-
 Vue.use(Vuex)
-
-// var _default_counter_id = null
 
 export const store = new Vuex.Store({
   modules: {
