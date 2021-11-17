@@ -10,7 +10,9 @@
  * and import in index.ts
  *
  */
+
 import { Axios, searchNestedObject } from './../helpers'
+
 import moment from 'moment'
 
 const serviceColor = (blackColor, serviceList, serviceId) => {
@@ -394,12 +396,6 @@ export default {
       commit('toggleAddModal', payload, { root: true })
     },
 
-    // toggleApptBookingModalWithDraft ({ commit }, payload) {
-    //   commit('toggleApptBookingModal', payload, { root: true })
-    //   if (payload) {
-    //     // commit('switchAddModalMode', 'add_mode', { root: true })
-    //   }
-    // },
     async postDraftAppointment ({ rootState, commit }, payload) {
       const state = rootState
       // draftAppointments
@@ -413,7 +409,6 @@ export default {
     },
     // need to set draft appointment id
     deleteDraftAppointment ({ dispatch, rootState, state, commit }) {
-      // const state = rootState
 
       const draftAppointmentId = state.draftAppointment.appointment && state.draftAppointment.appointment.appointment_id
 
@@ -422,9 +417,6 @@ export default {
           Axios({ state: rootState }).delete(`/appointments/draft/${draftAppointmentId}/`).then((resp) => {
             commit('setDraftAppointments', {})
             resolve(resp)
-            // dispatch('getAppointments').then(() => {
-            //   resolve()
-            // })
           })
         })
       }

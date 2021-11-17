@@ -43,7 +43,6 @@ class Citizen(Base):
     # for walk-in notification
     notification_phone = db.Column(db.String(100), nullable=True)
     notification_email = db.Column(db.String(100), nullable=True)
-    # notification_sent_time = db.Column(UtcDateTime, nullable=True)
     notification_sent_time = db.Column(db.DateTime, nullable=True)
     reminder_flag = db.Column(db.Integer, nullable=True)
     walkin_unique_id = db.Column(db.String(500), nullable=True)
@@ -83,17 +82,6 @@ class Citizen(Base):
     def find_citizen_by_user_id(cls, user_id, office_id):
         """Find citizen record by user id."""
         return cls.query.filter(Citizen.user_id == user_id).filter(Citizen.office_id == office_id).one_or_none()
-
-    # @classmethod
-    # def find_citizen_by_username(cls, username, office_id):
-    #     """Find citizen record by user name."""
-    #     from .public_user import PublicUser
-    #
-    #     query = db.session.query(Citizen) \
-    #         .join(PublicUser) \
-    #         .filter(PublicUser.username == username, Citizen.user_id == PublicUser.user_id, Citizen.office_id == office_id)
-    #
-    #     return query.one_or_none()
 
     @classmethod
     def find_citizen_by_id(cls, citizen_id):

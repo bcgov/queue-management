@@ -135,19 +135,10 @@ export default class AgendaScreen extends Vue {
       label: 'Service',
       sortable: true
     },
-    // {
-    //   key: 'contact_info',
-    //   label: 'Contact Info',
-    //   sortable: true
-    // },
     {
       key: 'comments',
       label: 'Comments'
     },
-    // {
-    //   key: 'edit',
-    //   label: 'Edit'
-    // },
     {
       key: 'check_in',
       label: 'Check-In'
@@ -197,14 +188,12 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        // start_time: `${moment(appt.start_time).format("LT")}`,
         start_time: appt.start_time,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
         comments: appt.comments,
         check_in: { appt }
-        // edit: { appt }
       }
     })
   }
@@ -298,7 +287,6 @@ export default class AgendaScreen extends Vue {
       end: moment(appt.end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
-    // this.toggleCheckInModal(true);
 
     this.loadingButtons[appt.appointment_id] = true;
     this.postCheckIn(this.clickedAppt).then(response => {

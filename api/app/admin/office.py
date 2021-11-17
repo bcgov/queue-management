@@ -313,53 +313,6 @@ class OfficeConfig(Base):
         'office_email_paragraph': TextAreaField
     }
 
-    #     if is_created:
-    #         print('==>init_formdata  ===> is_created True')
-    #     #     print('==>on_model_change  ===> Office.counters', Office.counters)
-    #     print('==>init_formdata  ===> Office.counters.counter_id', Office.counters.counter_id)
-    #     #     print('==>on_model_change  ===> Counter.counter_id:', Counter.counter_id)
-    #     #     print('==>on_model_change  ===> Counter.counter_name:', Counter.counter_name)
-    #     #     print('==>on_model_change  ===> model.counters:', model.counters)
-    #     counter = Office.query.filter(Office.counters.counter_id == 2).first()
-    #     print('==>on_model_change  ===> init_formdata:', counter)
-    #     form.Office.process_formdata(counter)
-    #     #     if model.counters is None:
-    #     #
-    #     #
-    #     #         model.counters = counter
-    #     #         print('==>on_model_change  ===> model.counter:',model.counter)
-
-    # def on_model_change(self, form, model, is_created):
-    #     print('==>on_model_change  ===> office.py Flask Admin')
-    #     """Invoked on model change."""
-    #     socketio.emit('update_offices_cache')
-    #
-    #     invalid = []
-    #     for service in model.quick_list:
-    #         if service not in model.services:
-    #             invalid.append(str(service))
-    #             model.quick_list.remove(service)
-    #     if len(invalid) != 0:
-    #         message = ", ".join(invalid)
-    #         flash(gettext("Services saved minus services not offered at this office: " + message), 'warning')
-    #
-    #     print("==> on_model_change for Office")
-    #     print("    --> Counter.counter_name")
-    #     pprint(Counter.counter_name)
-    #     # print("    --> Counter.counter_name")
-    #     # pprint(Counter.counter_name)
-    #     # print("    --> model.counters")
-    #     # pprint(model.counters)
-    #     counterItem = Counter.query.filter(Counter.counter_id == 2).first()
-    #     print("    --> counterItem.counter_name")
-    #     pprint(counterItem.counter_id)
-    #     pprint(counterItem.counter_name)
-    #     Office.counters.model.counters.counter_id = counterItem.counter_id
-    #     model.counters.counter_name = counterItem.counter_name
-    #     print("    --> model.counters  last line, what is value")
-    #     pprint(model.counters.counter_id)
-    #     pprint(model.counters.counter_name)
-    
     def on_model_change(self, form, model, is_created):
         csr = CSR.find_by_username(current_user.username)
         socketio.emit('clear_csr_cache', { "id": csr.csr_id})

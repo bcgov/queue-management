@@ -1,5 +1,3 @@
-// import Vue from 'vue'
-
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { mapGetters, mapMutations, mapState } from 'vuex'
@@ -25,9 +23,6 @@ import moment from 'moment'
 export class checkmark extends Vue {
   @Prop()
   private validated!: any
-
-  // export const checkmark = Vue.component('checkmark', {
-  // props: ['']
 }
 
 // AddExamCounter
@@ -62,7 +57,6 @@ export class checkmark extends Vue {
 `
 })
 export class AddExamCounter extends Vue {
-  // export const  = Vue.component('add-exam-counter', {
   @Prop()
   private error!: any
 
@@ -89,7 +83,7 @@ export class AddExamCounter extends Vue {
     if (newVal == this.currentNumber) {
       this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
     } else {
-      // this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+      // I assume this empty block is intentional
     }
   }
 
@@ -98,7 +92,7 @@ export class AddExamCounter extends Vue {
     if (newVal == this.exam.number_of_students) {
       this.$store.commit('captureExamDetail', { key: 'add_exam_counter', value: 1 })
     } else {
-      // this.$store.commit('deleteCapturedExamDetail', 'add_exam_counter')
+      // I assume this empty block is intentional
     }
   }
 
@@ -163,8 +157,6 @@ export class DateQuestion extends Vue {
   private today!: any
 
   private date: any = null
-
-  // export const DateQuestion = Vue.component('date-question', {
 
   @State('user') private user!: any
   @State('addExamModal') private addExamModal!: any
@@ -264,7 +256,6 @@ export class DropdownQuestion extends Vue {
   private error!: any
 
   private clicked: any = false
-  // export const  = Vue.component('dropdown-question', {
 
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
@@ -388,8 +379,6 @@ export class DropdownQuestion extends Vue {
 `
 })
 export class ExamReceivedQuestion extends Vue {
-  // export const  = Vue.component('exam-received-question', {
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   @Prop()
   private error!: any
 
@@ -525,8 +514,6 @@ export class ExamReceivedQuestion extends Vue {
 `
 })
 export class InputQuestion extends Vue {
-  // export const  = Vue.component('input-question', {
-
   @Prop()
   private error!: any
 
@@ -541,8 +528,6 @@ export class InputQuestion extends Vue {
 
   @Prop()
   private exam!: any
-
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
 
   preHandleInput (e) {
     this.handleInput(e)
@@ -608,13 +593,6 @@ export class InputQuestion2 extends Vue {
     { text: 'Yes', value: true }
   ]
 
-  // export const = Vue.component('input-question-2', {
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
-
-  //     ...mapState ({
-  //   setup: state => state.addExamModal.setup
-  // }),
-
   get capture_names () {
     return this.exam.capture_names
   }
@@ -635,7 +613,6 @@ export class InputQuestion2 extends Vue {
     checkmark
   },
   computed: {
-    // ...mapGetters('auth', ['isAuthenticated'])
     ...mapState({
       examTypes: (state: any) => state.examTypes,
       setup: (state: any) => state.addExamModal.setup,
@@ -728,15 +705,6 @@ export class LocationInput extends Vue {
   private readonly booking
   private readonly user
 
-  // export const LocationInput = Vue.component('location-input-question', {
-
-  //   ...mapState ({
-  //   examTypes: 'examTypes',
-  //   setup: state => state.addExamModal.setup,
-  //   capturedExam: state => state.capturedExam,
-  //   booking: state => state.addExamModule.booking,
-  //   user: state => state.user
-  // }),
   get showBooking () {
     if (this.booking && Object.keys(this.booking).length > 1) {
       return 'some specifics when possible'
@@ -853,8 +821,6 @@ export class NotesQuestion extends Vue {
 
   @Mutation('updateCaptureTab') public updateCaptureTab: any
 
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
-
   get notes () {
     return this.captureITAExamTabSetup.notes
   }
@@ -914,8 +880,6 @@ export class OffsiteSelect extends Vue {
   private exam!: any
 
   private readonly booking!: any
-  // export const  = Vue.component('offsite-select', {
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
   @State('user') private user!: any
@@ -953,7 +917,6 @@ export class OffsiteSelect extends Vue {
   `
 })
 export class SelectQuestion extends Vue {
-  // export const SelectQuestion = Vue.component('select-question', {
 
   @Prop()
   private error!: any
@@ -973,7 +936,6 @@ export class SelectQuestion extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
 
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
   @Watch('ind_or_group')
   onInd_or_groupChange (newVal: any, oldVal: any) {
     if (this.addExamModal.setup === 'pesticide' && newVal === 'group') {
@@ -1026,9 +988,6 @@ export class SelectOffice extends Vue {
 
   @Prop()
   private exam!: any
-
-  // export const SelectOffice = Vue.component('select-office', {
-  // props: ['error', 'q', 'validationObj', 'handleInput', 'exam'],
 
   get office_number () {
     return this.addExamModal.office_number
@@ -1130,9 +1089,6 @@ export class TimeQuestion extends Vue {
 
   @Prop()
   private today!: any
-
-  // export const TimeQuestion = Vue.component('time-question', {
-  // props: ['error', 'exam', 'handleInput', 'q', 'radioChange', 'today', 'validationObj'],
 
   private date: any = ''
 

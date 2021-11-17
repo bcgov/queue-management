@@ -233,26 +233,6 @@
                   <br/>
                   <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
 
-                <!-- <DatePicker
-                  v-model="start_time"
-                  id="appointment_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    step: '00:30',
-                    end: '17:30',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  clearable
-                  @input="checkSingleInput"
-                  @change="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
             <b-col cols="6">
@@ -279,26 +259,6 @@
                   </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="end_time_msg">{{end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="end_time"
-                  id="appointment_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    step: '00:30',
-                    end: '18:00',
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  clearable
-                  @input="checkSingleInput"
-                  @change="checkSingleInput"
-                  @clear="checkSingleInput"
-                >
-                </DatePicker> -->
               </b-form-group>
             </b-col>
           </b-form-row>
@@ -458,26 +418,6 @@
                   </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_booking_start_time"
-                  id="recurring_blackout_start_time"
-                  :time-picker-options="{
-                    start: '8:00',
-                    end: '17:30',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplete="off"
-                  placeholder="Select Start Time"
-                  class="w-100"
-                  type="time"
-                  clearable
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-col>
               <b-col cols="6">
                 <label>Blackout End Time</label>
@@ -502,26 +442,6 @@
                   </vue-timepicker>
                   <br/>
                   <span class="danger" v-if="reccuring_end_time_msg">{{reccuring_end_time_msg}}</span>
-                <!-- <DatePicker
-                  v-model="recurring_booking_end_time"
-                  id="recurring_blackout_end_time"
-                  :time-picker-options="{
-                    start: '8:30',
-                    end: '18:00',
-                    step:'00:01',
-                    format: 'hh:mm a'
-                  }"
-                  lang="en"
-                  format="h:mm a"
-                  autocomplette="off"
-                  placeholder="Select End Time"
-                  class="w-100"
-                  type="time"
-                  clearable
-                  @input="checkRecurringInput"
-                  @clear="checkRecurringInput"
-                >
-                </DatePicker> -->
               </b-col>
             </b-form-row>
             <b-form-row class="mb-2">
@@ -584,8 +504,6 @@
                   v-model="selected_booking_frequency"
                   @input="checkRecurringInput"
                 >
-                  <!--                  <b-form-checkbox :value="yearly">Yearly</b-form-checkbox>-->
-                  <!--                  <b-form-checkbox :value="monthly">Monthly</b-form-checkbox>-->
                   <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                   <b-form-checkbox :value="daily">Daily</b-form-checkbox>
                 </b-form-checkbox-group>
@@ -857,7 +775,6 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import VueTimepicker from 'vue2-timepicker'
 import 'vue2-datepicker/index.css'
@@ -1188,15 +1105,9 @@ export default class BookingBlackoutModal extends Vue {
         })
       }
 
-      // booking_array.forEach(booking => {
-      //   self.postBooking(booking).then(() => {
-      //     self.getBookings()
-      //   })
-      // })
       if ((axiosArray.length == limit)) {
               this.bulkApiCall(axiosArray)
               axiosArray = []
-              // this.api_count = this.api_count + limit
           } else if (rrule_ind ==  this.booking_rrule_array.length*this.room_id_list.length) {
             this.bulkApiCall(axiosArray, true)
             axiosArray = []
@@ -1292,14 +1203,11 @@ export default class BookingBlackoutModal extends Vue {
     const start_year = parseInt(moment(this.recurring_booking_start_date).clone().format('YYYY'))
     const start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
     const start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
-    // let start_hour = parseInt(moment(this.recurring_booking_start_time).utc().clone().format('HH'))
     const local_start_hour = parseInt(moment(recurring_booking_start_time).clone().format('HH'))
     const start_minute = parseInt(moment(recurring_booking_start_time).utc().clone().format('mm'))
     const end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
     const end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
     const end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
-    // let end_hour = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('HH'))
-    // let end_minute = parseInt(moment(this.recurring_booking_end_time).utc().clone().format('mm'))
     const duration = moment.duration(moment(recurring_booking_end_time).diff(moment(recurring_booking_start_time)))
     const duration_minutes = duration.asMinutes()
     let booking_input_frequency: any = null
@@ -1572,12 +1480,6 @@ export default class BookingBlackoutModal extends Vue {
     this.hideCollapse('collapse-booking-event-selection')
   }
 
-  // async created () {
-  //   this.user_name = 'BLACKOUT PERIOD'
-  //   this.stat_user_name = 'STAT PERIOD'
-  //   this.user_contact_info = this.$store.state.user.username
-  // }
-
   mounted () {
     this.blackout_name = 'BLACKOUT PERIOD'
     this.stat_user_name = 'STAT PERIOD'
@@ -1607,8 +1509,6 @@ export default class BookingBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.booking_rrule_array.length)
     showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, true)
-    // const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-    // const end_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
     const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
@@ -1616,7 +1516,6 @@ export default class BookingBlackoutModal extends Vue {
     const all_offices = await this.getOffices('force')
     const stat_user_name = this.stat_user_name
     const user_contact_info = this.user_contact_info
-    // const notes = this.notes
     const createStatAxioObject = this.createStatAxioObject
     const booking_rrule_array = this.booking_rrule_array
     const stat_dates = this.stat_dates
@@ -1723,10 +1622,6 @@ export default class BookingBlackoutModal extends Vue {
                       blackout_booking.for_stat = true
                     }
                     axiosArray.push(self.postBookingStat(blackout_booking))
-                    // this.postBooking(blackout_booking)
-                    // .then(() => {
-                    //   this.getBookings()
-                    // })
                   }) 
                 }) 
                 //end of office list
@@ -1735,7 +1630,6 @@ export default class BookingBlackoutModal extends Vue {
             if ((axiosArray.length == limit)) {
                 bulkApiCall(axiosArray)
                 axiosArray = []
-                // this.api_count = this.api_count + limit
             } else if (rrule_ind == booking_rrule_array.length) {
               bulkApiCall(axiosArray, true)
               axiosArray = []
@@ -1746,12 +1640,9 @@ export default class BookingBlackoutModal extends Vue {
         //end of items
 
     }
-    // this.recurring_blackout_boolean = true
-    // this.single_blackout_boolean = true
     this.getAppointments()
     this.booking_rrule_text = ''
     this.booking_rrule_array = []
-    // this.recurring_input_state = ''
     this.single_input_boolean = ''
 
     this.toggleBookingBlackoutModal(false)

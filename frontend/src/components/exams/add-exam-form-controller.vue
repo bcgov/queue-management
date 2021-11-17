@@ -19,8 +19,6 @@
         :error="error"
         :handleInput="handleInput"
       />
-      <!-- InputQuestion logic below:   obsolete code from before if there are issues we will need to reinstate -->
-      <!-- v-show="addExamModal.setup !== 'other' || q.key !== 'event_id' || q.key === 'event_id'" -->
       <InputQuestion
         v-if="q.kind === 'input'"
         :error="error"
@@ -193,7 +191,6 @@ import { mapState } from 'vuex'
 })
 export default class AddExamFormController extends Vue {
   @Getter('add_modal_steps') private steps!: any;
-  // @Getter('event_id_warning') private event_id_warning!: any;
   @Getter('exam_object') private exam_object!: any;
   @Getter('role_code') private role_code!: any;
   @Getter('is_pesticide_designate') private is_pesticide_designate!: any;
@@ -316,12 +313,6 @@ export default class AddExamFormController extends Vue {
       }
       // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
       // below as well
-      /* let group_exam_indicator = false
-        this.examTypes.forEach(exam_type => {
-          if (exam_type.exam_type_id === this.exam.exam_type_id && exam_type.group_exam_ind === 1) {
-            group_exam_indicator = true
-          }
-        }) */
       if (key === 'event_id' && answer && answer.length >= 4) {
         if (this.event_id_warning) {
           valid.event_id = true

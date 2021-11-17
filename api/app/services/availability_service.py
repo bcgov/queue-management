@@ -71,7 +71,6 @@ class AvailabilityService():
                         start_time = timeslot_start_time
                         end_time = add_delta_to_time(timeslot_start_time, minutes=appointment_duration,
                                                      timezone=office.timezone.timezone_name)
-                        # print(start_time, end_time)
 
                         # Cannot exceed office timeslot slots.
                         dlkt_slots = office.number_of_dlkt  or 0
@@ -81,7 +80,6 @@ class AvailabilityService():
                         
 
                         # Limit DLKT slots only for DLKT services.
-                        # no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
                         no_of_slots = timeslot.no_of_slots
 
                         while end_time <= timeslot_end_time:
@@ -116,11 +114,6 @@ class AvailabilityService():
                                 actual_slot.get('end_time') \
                                 > booked_slot.get('start_time') \
                                 >= actual_slot.get('start_time'):
-                            # print('>>>actual_slot.get(start_time)', actual_slot.get('start_time'))
-                            # print('>>>actual_slot.get(end_time)', actual_slot.get('end_time'))
-                            # print('>>>booked_slot.get(start_time)', booked_slot.get('start_time'))
-                            # print('>>>booked_slot.get(end_time)', booked_slot.get('end_time'))
-                            # print('>>>booked_slot.get(blackout_flag)', booked_slot.get('blackout_flag', False))
 
 
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots
