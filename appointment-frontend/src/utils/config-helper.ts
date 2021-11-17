@@ -42,7 +42,6 @@ export default class ConfigHelper {
 
   static getAppAPIUrl () {
     return ConfigHelper.getValue('VUE_APP_ROOT_API')
-    // return process.env.VUE_APP_ROOT_API
   }
 
   static getValue (key: String) {
