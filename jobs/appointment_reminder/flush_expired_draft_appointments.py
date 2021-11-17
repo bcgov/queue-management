@@ -15,22 +15,7 @@
 
 This module is being invoked from a job and it cleans up the stale records
 """
-# import os
-# import base64
-# import requests
-# import time
-# import config
-# from flask import Flask
 from utils.logging import setup_logging
-# from send_appointment_reminder import create_app
-# # Logging is invoked just by importing from send_appointment_reminder
-
-
-
-# import os
-# print('\nCWD')
-# print (os.getcwd())
-# print('\n')
 
 import os
 import sys
@@ -38,24 +23,11 @@ import sys
 from flask import Flask
 
 import config
-# from utils.logger import setup_logging
 
-
-# from ..app.models.bookings import Appointment
-# from ...api.app.models.bookings import Appointment
-# import sys
-# sys.path.append("...api") 
-# sys.path.append("..")
-# from ..api.app.models.bookings import Appointment
-
-
-# https://github.com/bcgov/sbc-pay/blob/development/jobs/payment-jobs/invoke_jobs.py#L46
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     """Return a configured Flask App using the Factory method."""
-    # from app.models.bookings import Appointment
     from qsystem import db
-    # from api.qsystem import db
 
     app = Flask(__name__)
 
@@ -88,12 +60,7 @@ def run():
 def flush_drafts(app):
     app.logger.debug('<<< Starting flush_drafts job')
 
-    # appointment = Appointment.query.filter_by(appointment_id=14)\
-    #                                    .first_or_404()
-
     # todo - get appointment query, for now just select *
-
-    # use Appointments.delete_appointments([ids])
 
     return 'todo'
     

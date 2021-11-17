@@ -40,8 +40,6 @@ class AppointmentSchema(BaseSchema):
     online_flag = fields.Boolean(allow_none=True)
     is_draft = fields.Boolean(allow_none=True)
     stat_flag = fields.Boolean(allow_none=True)
-    # office = fields.Int(attribute="office_id")
-    # service = fields.Int(attribute="service_id")
     office = fields.Nested(OfficeSchema(exclude=('sb', 'counters', 'quick_list', 'back_office_list', 'timeslots')))
     service = fields.Nested(ServiceSchema())
 
