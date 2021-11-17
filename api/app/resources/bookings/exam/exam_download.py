@@ -60,19 +60,6 @@ class ExamStatus(Resource):
                                 })
             else:
                 return {'message': 'Package not yet generated', 'status': job['jobStatus']}, 400
-                # test_url = 'http://www.pdf995.com/samples/pdf.pdf'
-                # req = urllib.request.Request(test_url)
-                # response = urllib.request.urlopen(req).read()
-                # exam_file = io.BytesIO(response)
-                # file_wrapper = FileWrapper(exam_file)
-                #
-                # return Response(file_wrapper,
-                #                 mimetype="application/pdf",
-                #                 direct_passthrough=True,
-                #                 headers={
-                #                     "Content-Disposition": 'attachment; filename="%s.csv"' % exam.exam_id,
-                #                     "Content-Type": "application/pdf"
-                #                 })
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
