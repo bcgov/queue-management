@@ -72,12 +72,6 @@ export default class PesticideFees extends Vue {
   private readonly capturePayee!: any
   private readonly payeeSentReceipt!: any
 
-  //  ...mapState ({
-  //   addExamModal: state => state.addExamModal,
-  //   capturePayee: state => state.captureITAExamTabSetup.capturePayee,
-  //   payeeSentReceipt: state => state.captureITAExamTabSetup.payeeSentReceipt
-  // }),
-
   @Prop()
   private error!: any
 
@@ -96,13 +90,6 @@ export default class PesticideFees extends Vue {
       this.$store.commit('deleteCapturedExamKey', 'receipt_number')
     }
   }
-  //  watch: {
-  //     showReceiptField(newVal, oldVal) {
-  //       if (!newVal) {
-  //         this.$store.commit('deleteCapturedExamKey', 'receipt_number')
-  //       }
-  //     }
-  //   },
 
   get feesSelect () {
     return this.exam.fees
@@ -120,10 +107,6 @@ export default class PesticideFees extends Vue {
   }
 
   get showReceiptField () {
-    // if (this.exam.fees === 'paid') {
-    //   return true
-    // }
-    // return false
     return true
   }
 

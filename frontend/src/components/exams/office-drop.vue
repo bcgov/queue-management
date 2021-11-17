@@ -149,36 +149,10 @@ export default class OfficeDrop extends Vue {
 
       this.officeChoices = this.offices.filter(item => {
         const office_name = item.office_name === undefined || item.office_name === null ? '' : item.office_name
-        // Why is a name search checking for matches with all these fields? Leaving them commented out for now. CRG
-        // const telephone =  item['telephone'] === undefined || item['telephone'] === null ? '' : item['telephone']
-        // const office_appointment_message =  item['office_appointment_message'] === undefined || item['office_appointment_message'] === null ? '' : item['office_appointment_message']
-        // const civic_address =  item['civic_address'] === undefined || item['civic_address'] === null ? '' : item['civic_address']
-        // const longitude =  item['longitude'] === undefined || item['longitude'] === null ? '' : item['longitude'] + ''
-        // const latitude =  item['latitude'] === undefined || item['latitude'] === null ? '' : item['latitude'] + ''
 
         if (office_name.toLowerCase().indexOf(this.search.toLowerCase()) > -1) {
           return true
         }
-        // let searchResult = telephone.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        // if (searchResult) {
-        //   return true
-        // }
-        // searchResult = office_appointment_message.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        // if (searchResult) {
-        //   return true
-        // }
-        // searchResult = civic_address.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-        // if (searchResult) {
-        //   return true
-        // }
-        // searchResult = longitude.indexOf(this.search) > -1
-        // if (searchResult) {
-        //   return true
-        // }
-        // searchResult = latitude.indexOf(this.search) > -1
-        // if (searchResult) {
-        //   return true
-        // }
       })
 
       if (this.officeChoices.length === 0) {
