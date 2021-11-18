@@ -141,7 +141,7 @@ export default class App extends Vue {
   }
 }
 body {
-  font-family: 'BC Sans', 'Noto Sans', Arial, 'sans serif';
+  font-family: 'BC Sans', 'Noto Sans', Arial, 'sans-serif';
   color: #313132;
   font-size: 16px;
   line-height: 1.5em;
@@ -161,7 +161,7 @@ a {
 
 .bc-gov-alertbanner:before {
   float: left;
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'Font Awesome 5 Free', 'sans-serif';
   font-size: larger;
   font-style: normal;
   line-height: 1;
