@@ -68,12 +68,11 @@ class CitizenDetail(Resource):
                 return {'message': err.messages}, 422
         else:
             try:
-                data_values = {}
-                officeObj = Office.find_by_id(citizen.office_id)
+                office_obj = Office.find_by_id(citizen.office_id)
                 if (citizen.notification_phone):
                     sms_sent = False
                     # code/function call to send sms notification,
-                    sms_sent = send_walkin_reminder_sms(citizen, officeObj, request.headers['Authorization'].replace('Bearer ', ''))
+                    sms_sent = send_walkin_reminder_sms(citizen, office_obj, request.headers['Authorization'].replace('Bearer ', ''))
                     if (json_data.get('is_first_reminder', False)):
                         if (sms_sent):
                             citizen.reminder_flag = 1
@@ -85,9 +84,9 @@ class CitizenDetail(Resource):
                 if (citizen.notification_email):
                     # code/function call to send first email notification,
                     email_sent = False
-                    email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
+                    email_sent = get_walkin_reminder_email_contents(citizen, office_obj)
                     if email_sent:
-                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                        send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     if (json_data.get('is_first_reminder', False)):
                         if email_sent:
                             citizen.reminder_flag = 1
