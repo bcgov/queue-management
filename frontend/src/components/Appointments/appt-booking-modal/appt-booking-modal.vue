@@ -578,7 +578,6 @@ export default class ApptBookingModal extends Vue {
               this.selectLength = this.selectedServiceObj.timeslot_duration
             }
           }
-          this.selectLength = this.selectLength
           return this.selectedServiceObj.service_name
         }
       }
@@ -884,7 +883,6 @@ export default class ApptBookingModal extends Vue {
       }else {
         this.allow_reschedule = false
       }
-      this.selectLength = this.selectLength
   }
 
   submit () {
