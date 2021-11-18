@@ -1011,7 +1011,6 @@ export default class BookingBlackoutModal extends Vue {
           this.toggleBookingBlackoutModal(false)
           showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, false)
         })
-        this.getBookings
       } else if (this.room_id_list.length > 1) {
         const self = this
         this.room_id_list.forEach(function (room) {

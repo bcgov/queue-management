@@ -134,7 +134,6 @@ export default class Smartboard extends Vue {
   }
 
   getParameterByName (name, url = window.location.href) {
-    url = window.location.href
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
