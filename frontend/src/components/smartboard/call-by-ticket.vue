@@ -80,14 +80,6 @@ import Axios from '@/utils/axios'
 import Video from './video.vue'
 import config from '../../../config'
 
-// const Axios = axios.create({
-//   baseURL: process.env.API_URL,
-//   withCredentials: true,
-//   headers: {
-//     Accept: 'application/json'
-//   }
-// })
-
 @Component({
   components: {
     Video
@@ -202,10 +194,6 @@ export default class CallByTicket extends Vue {
   initializeBoard () {
     Axios.get(this.url).then(resp => {
       this.citizens = resp.data.citizens
-
-      // TODO check can't see  this.office_id declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
-      // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
   }

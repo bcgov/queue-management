@@ -22,7 +22,6 @@ class TimeslotSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = TimeSlot
         include_relationships = True
-        # exclude = ('offices','time_slot_id')
 
     start_time = fields.Time()
     end_time = fields.Time()

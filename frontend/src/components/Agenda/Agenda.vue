@@ -110,9 +110,7 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
-// import Vue from 'vue'
 
 @Component({})
 export default class Agenda extends Vue {

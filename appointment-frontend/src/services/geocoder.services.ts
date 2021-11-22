@@ -4,16 +4,6 @@ import { addAxiosInterceptors } from '@/utils/interceptors'
 
 const axios = addAxiosInterceptors(Axios.create())
 
-// export interface GeoAddressResult {
-//   /** String from the API that includes street, city, province, and country. */
-//   fullAddress: string;
-//   city: string;
-//   street: string;
-//   // Set to defaults in response
-//   country: string;
-//   province: string;
-// }
-
 export interface GeoAddressResult {
   name: string,
   coords: LatLng
@@ -71,7 +61,6 @@ export default class GeocoderService {
   }
 
   // https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-  // public static distance (lat1, lon1, lat2, lon2) {
   public static distanceSplit (lat1, lon1, lat2, lon2) {
     const p = 0.017453292519943295 // Math.PI / 180
     const c = Math.cos
@@ -81,11 +70,4 @@ export default class GeocoderService {
 
     return 12742 * Math.asin(Math.sqrt(a)) // 2 * R; R = 6371 km
   }
-
-  /* public static generateStaticMapURL (location: Office, options = { height: 300, width: 500, scale: 1 }) {
-    if (!location || !location.civic_address) { return }
-    const API_KEY = process.env.VUE_APP_GOOGLE_STATIC_MAP_API_KEY
-    const encodedAddr = encodeURI(location.civic_address)
-    return `https://maps.googleapis.com/maps/api/staticmap?center=${encodedAddr}&zoom=13&size=${options.width}x${options.height}&maptype=roadmap&markers=color:blue%7Clabel:S%7C${location.civic_address}&scale=${options.scale}&key=${API_KEY}`
-  } */
 }

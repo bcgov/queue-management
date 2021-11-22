@@ -99,10 +99,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { mapState } from 'vuex'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
-
-// const addExamModule = namespace('addExamModule')
 
 @Component({
   computed: {
@@ -122,9 +119,7 @@ export default class AddPesticideFinalStep extends Vue {
   @State('user') private user!: any
   @State('addExamModal') private addExamModal!: any
   @State('offices') private offices!: any
-  // @State('offices') private offices!: any
   @State('examBcmpJobId') private examBcmpJobId!: any
-  // @State('addExamModule.candidateTableData') private candidateTableData!: any
 
   @Getter('exam_object') private exam_object!: any;
   @Getter('is_pesticide_designate') private is_pesticide_designate!: any;

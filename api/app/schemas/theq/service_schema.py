@@ -24,7 +24,6 @@ class ServiceSchema(BaseSchema):
         model = Service
         include_relationships = True
         include_fk = True
-        #exclude = ('offices',)
 
     service_id = fields.Int(dump_only=True)
     service_code = fields.Str(dump_only=True)

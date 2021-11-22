@@ -76,9 +76,7 @@ import MainApp from './MainApp.vue';
 import ConfigHelper from '@/utils/config-helper';
 
 require('es6-shim');
-// require('Keycloak')
 require('../static/keycloak.js');
-// import * as Keycloak from '../static/keycloak.js';
 const Keycloak = window && (window as any).Keycloak;
 Vue.use(Buefy);
 Vue.use(VDragged);
@@ -126,13 +124,6 @@ var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL);
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
-/* eslint-disable no-new */
-// const app = new Vue({
-//   el: '#app',
-//   store,
-//   router: Router,
-//   template: '<router-view></router-view>'
-// });
 /* eslint-disable no-new */
 
 ConfigHelper.fetchConfig();

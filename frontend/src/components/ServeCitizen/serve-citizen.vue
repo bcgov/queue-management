@@ -133,7 +133,7 @@
         >
           <b-row no-gutters>
             <b-col cols="7" />
-            <b-col cols="auto" style="align-h: right">
+            <b-col cols="auto" style="text-align: right">
               <select
                 id="counter-selection-serve"
                 v-show="reception && !simplifiedModal"

@@ -24,7 +24,6 @@ class RoomSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = Room
         include_relationships = True
-        #exclude = ("booking",)
 
     capacity = fields.Int()
     color = fields.Str()

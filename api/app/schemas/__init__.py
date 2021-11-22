@@ -19,6 +19,5 @@ from qsystem import ma
 class BaseSchema(ma.SQLAlchemySchema):
 
     class Meta:
-        # datetimeformat = '%Y-%m-%dT%H:%M:%S+00:00'
         load_instance = True
         unknown = EXCLUDE
