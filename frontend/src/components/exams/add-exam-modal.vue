@@ -163,7 +163,6 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
 import moment from 'moment'
@@ -437,7 +436,7 @@ export default class AddExamModal extends Vue {
       const list: any = []
       this.errors.forEach(error => {
         if (this.steps.some(step => step.step == error)) {
-          list.push(this.steps.find(step => step.step == error)).questions
+          list.push(this.steps.find(step => step.step == error).questions)
         }
       })
       if (list.includes(i)) {

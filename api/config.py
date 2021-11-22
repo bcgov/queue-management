@@ -35,13 +35,6 @@ class BaseConfig(object):
     #   Set up OIDC variables.
     SECRET_KEY = os.getenv('SECRET_KEY')
     
-    # #   Set up OIDC variables.
-    # SECRET_KEY = os.getenv('SECRET_KEY')
-    # OIDC_OPENID_REALM = os.getenv('OIDC_OPENID_REALM','nest')
-    # OIDC_CLIENT_SECRETS = os.getenv('OIDC_SECRETS_FILE','client_secrets/secrets.json')
-    # OIDC_USER_INFO_ENABLED = True
-    # OIDC_SCOPES = ['openid', 'email', 'profile']
-
     #  Set up session and communication variables.
     REMEMBER_COOKIE_DURATION = 86400
     SESSION_COOKIE_DOMAIN = os.getenv('SERVER_NAME', '')
@@ -96,32 +89,6 @@ class BaseConfig(object):
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
     max_overflow = int(os.getenv('SQLALCHEMY_MAX_OVERFLOW', '18'))
-    # db_timeout = int(os.getenv('SQLALCHEMY_TIMEOUT', '10'))
-
-    # Karims settings
-    # SQLALCHEMY_ENGINE_OPTIONS = {
-    #     'pool_size': pool_size,
-    #     'max_overflow': max_overflow,
-    #     'pool_pre_ping': True,
-    #     'pool_timeout': 5,
-    #     'pool_recycle': 3600,
-    #     'connect_args': {
-    #         'connect_timeout': 3
-    #     }
-    # }
-
-    #  Try to set some options to avoid long delays.
-    # SQLALCHEMY_ENGINE_OPTIONS  = {
-    #     'pool_size' : pool_size,
-    #     'max_overflow' : max_overflow,
-    #     'pool_pre_ping' : True,
-    #     'pool_timeout': DB_POOL_TIMEOUT,
-    #     'pool_recycle': 3600,
-    #     'connect_args': {
-    #         'connect_timeout': DB_CONNECT_TIMEOUT,
-    #         'options' : '-c statement_timeout=1000'
-    #     }
-    # }
 
     #  Get SQLAlchemy environment variables.
     pool_size = int(os.getenv('SQLALCHEMY_POOL_SIZE', '9'))
@@ -147,9 +114,7 @@ class BaseConfig(object):
         #   Determine which database engine being used, to use correct syntax.
         if "PG8000" in DB_ENGINE.upper():
             SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout}
-            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'timeout': connect_timeout, 'tcp_user_timeout': 500 }
         else:
-            # SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = { 'connect_timeout': connect_timeout, 'tcp_user_timeout': 500 }
             SQLALCHEMY_ENGINE_OPTIONS['connect_args'] = {'connect_timeout': connect_timeout}
 
     print("==> SQLALCHEMY_ENGINE_OPTIONS (Engine: " + DB_ENGINE)
@@ -187,16 +152,6 @@ class BaseConfig(object):
     MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY', 'minio1234')
     MINIO_USE_SECURE = os.getenv('MINIO_USE_SECURE', 0)
 
-    #print(parse_dsn(("postgresql://localhost:5000?connect_timeout=10")))
-    #quote_ident("connect_timeout", scope)
-
-    # Email variables
-    # MAIL_SERVER = os.getenv('MAIL_SERVER', 'apps.smtp.gov.bc.ca')
-    # MAIL_PORT = os.getenv('MAIL_PORT', '25')
-    # MAIL_USE_TLS = False
-    # MAIL_USE_SSL = False
-    # MAIL_USERNAME = os.getenv('MAIL_USERNAME', None)
-    # MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', None)
     MAIL_FROM_ID = os.getenv('MAIL_FROM_ID', 'donotreply@gov.bc.ca')
 
     # Email variables
@@ -235,8 +190,6 @@ class LocalConfig(BaseConfig):
     PREFERRED_URL_SCHEME = 'http'
 
     ACTIVE_MQ_URL = ''
-    #  For running rabbitmq locally, use the line below.
-    # ACTIVE_MQ_URL = 'amqp://guest:guest@localhost:5672'
 
     SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
@@ -276,9 +229,6 @@ class DevelopmentConfig(BaseConfig):
     TESTING = False
     ENV = 'dev'
 
-    # # Only allowed 1 origin, but need to work for
-    # # queue-frontend and appointment-frontend
-    # CORS_ALLOWED_ORIGINS = ["https://dev-theq.pathfinder.gov.bc.ca/"]
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')

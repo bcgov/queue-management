@@ -67,7 +67,6 @@ class CsrSelf(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         try:
-            # print('====> ATTENTION NEEDED')
             csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
             if not csr:
@@ -77,7 +76,6 @@ class CsrSelf(Resource):
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()
             start_date = self.timezone.localize(today).date()
-            # print('====> ATTENTION NEEDED==>start_Date',start_date)
 
             active_citizens = Citizen.query \
                 .join(Citizen.service_reqs) \
@@ -104,27 +102,14 @@ class CsrSelf(Resource):
             for exam in office_exams:
 
                 if exam.exam_type.group_exam_ind == 0:
-                    # print('====> INDIVIDUAL EXAM CHECKS',exam.exam_name)
                     if exam.booking is not None:
-                        # print('====> EXAM BOOKING IS NOT NONE')
-                        # print('====> EXAM.BOOKING==>start_Date', start_date)
-                        # print('====> EXAM.BOOKING==>exam.booking.start_time', exam.booking.start_time)
                         attention_needed = attention_needed or exam.booking.start_time.date() < start_date
-                        # print('====> ATTENTION NEEDED',attention_needed)
                     if exam.expiry_date is not None:
-                        # print('====> EXPIRY IS NOT NONE')
-                        # print('====> EXAM.BOOKING==>start_Date', start_date)
-                        # print('====> EXAM.BOOKING==>exam.expiry_date', exam.expiry_date)
                         attention_needed = attention_needed or exam.expiry_date.date() < start_date
-                        # print('====> ATTENTION NEEDED', attention_needed)
                     if exam.is_pesticide and exam.exam_received_date is None:
-                        # print('====> PESTICIDE AND NOT RECEIVED')
                         attention_needed = True
-                        # print('====> ATTENTION NEEDED', attention_needed)
                     if exam.exam_returned_date is not None:
-                        # print('====> exam.exam_returned_date')
                         attention_needed = False
-                        # print('====> ATTENTION NEEDED', attention_needed)
                     if attention_needed:
                         individual.append(exam)
 
@@ -134,34 +119,19 @@ class CsrSelf(Resource):
             if not attention_needed:
                 for exam in office_exams:
                     if exam.exam_type.group_exam_ind == 1:
-                        # print('====> GROUP EXAM CHECKS',exam.exam_name)
                         if exam.booking is not None:
-                            # print('====> ATTENTION NEEDED==>start_Date', start_date)
-                            # print('====> EXAM.BOOKING==>exam.booking.start_time', exam.booking.start_time)
                             attention_needed = attention_needed or exam.booking.start_time.date() < start_date
-                            # print('====> ATTENTION NEEDED', attention_needed)
                         if exam.expiry_date is not None:
-                            # print('====> EXPIRY IS NOT NONE')
-                            # print('====> EXAM.BOOKING==>start_Date', start_date)
-                            # print('====> EXAM.BOOKING==>exam.expiry_date', exam.expiry_date)
                             attention_needed = attention_needed or exam.expiry_date.date() < start_date
-                            # print('====> ATTENTION NEEDED', attention_needed)
                         if exam.booking is not None and exam.number_of_students is not None:
-                            # print('====> exam.number_of_students IS NOT NONE')
-                            # print('====> EXAM.BOOKING==>exam.number_of_students', exam.number_of_students)
-                            # print('====> EXAM.BOOKING==>len(exam.booking.invigilators', len(exam.booking.invigilators))
                             attention_needed = attention_needed or (len(exam.booking.invigilators) < 1
                                                                     and exam.number_of_students < 25)
                             attention_needed = attention_needed or (len(exam.booking.invigilators) < 2
                                                                     and exam.number_of_students > 24)
-                            # print('====> ATTENTION NEEDED', attention_needed)
                         if exam.is_pesticide and exam.exam_received_date is None:
-                            # print('====> PESTICIDE AND NOT RECEIVED')
                             attention_needed = True
-                            # print('====> ATTENTION NEEDED', attention_needed)
                         if exam.exam_returned_date is not None:
                             attention_needed = False
-                            # print('====> ATTENTION NEEDED', attention_needed)
                         if attention_needed:
                             group.append(exam)
 

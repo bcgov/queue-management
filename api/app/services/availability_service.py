@@ -71,7 +71,6 @@ class AvailabilityService():
                         start_time = timeslot_start_time
                         end_time = add_delta_to_time(timeslot_start_time, minutes=appointment_duration,
                                                      timezone=office.timezone.timezone_name)
-                        # print(start_time, end_time)
 
                         # Cannot exceed office timeslot slots.
                         dlkt_slots = office.number_of_dlkt  or 0
@@ -81,7 +80,6 @@ class AvailabilityService():
                         
 
                         # Limit DLKT slots only for DLKT services.
-                        # no_of_slots = dlkt_slots if service_is_dltk else timeslot.no_of_slots
                         no_of_slots = timeslot.no_of_slots
 
                         while end_time <= timeslot_end_time:
@@ -93,7 +91,7 @@ class AvailabilityService():
                             }
                             # Check if today's time is past appointment slot
                             # Arc - also check if in office.soonest_appointment
-                            if not (today.date() == day_in_month.date() and soonest_appointment_date.time() > start_time):
+                            if ((day_in_month.date() == soonest_appointment_date.date() and start_time >= soonest_appointment_date.time()) or day_in_month.date() > soonest_appointment_date.date()):
                                 if slot not in available_slots_per_day[formatted_date]: 
                                     available_slots_per_day[formatted_date].append(slot)
 
@@ -116,11 +114,6 @@ class AvailabilityService():
                                 actual_slot.get('end_time') \
                                 > booked_slot.get('start_time') \
                                 >= actual_slot.get('start_time'):
-                            # print('>>>actual_slot.get(start_time)', actual_slot.get('start_time'))
-                            # print('>>>actual_slot.get(end_time)', actual_slot.get('end_time'))
-                            # print('>>>booked_slot.get(start_time)', booked_slot.get('start_time'))
-                            # print('>>>booked_slot.get(end_time)', booked_slot.get('end_time'))
-                            # print('>>>booked_slot.get(blackout_flag)', booked_slot.get('blackout_flag', False))
 
 
                             if booked_slot.get('blackout_flag', False):  # If it's blackout override the no of slots

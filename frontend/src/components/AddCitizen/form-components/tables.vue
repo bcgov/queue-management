@@ -108,7 +108,6 @@
 </template>
 
 <script lang="ts">
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'

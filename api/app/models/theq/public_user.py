@@ -31,8 +31,6 @@ class PublicUser(Base):
     send_email_reminders = db.Column(db.Boolean())
     send_sms_reminders = db.Column(db.Boolean())
 
-    # format_string = 'public_user_%s'
-
     def __repr__(self):
         return '<Public User Name:(name={self.display_name!r})>'.format(self=self)
 
@@ -43,14 +41,12 @@ class PublicUser(Base):
     def find_by_username(cls, username):
         """Find User records by username."""
         user = cls.query.filter_by(username=username).one_or_none()
-        # cache.set(key, user)
         return user
 
     @classmethod
     def find_by_user_id(cls, user_id):
         """Find User records by user_id."""
         user = cls.query.get(user_id)
-        # cache.set(key, user)
         return user
 
     @classmethod

@@ -24,7 +24,6 @@ class CSRSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = CSR
         include_relationships = True
-        # exclude = ('periods',)
 
     csr_id = fields.Int()
     username = fields.Str()

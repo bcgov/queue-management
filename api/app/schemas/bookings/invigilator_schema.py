@@ -23,7 +23,6 @@ class InvigilatorSchema(BaseSchema):
 
     class Meta(BaseSchema.Meta):
         model = Invigilator
-        #exclude = ("invigilators",)
         include_relationships = True
 
     contact_phone = fields.Str()
