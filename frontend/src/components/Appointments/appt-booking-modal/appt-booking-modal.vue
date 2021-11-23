@@ -578,7 +578,6 @@ export default class ApptBookingModal extends Vue {
               this.selectLength = this.selectedServiceObj.timeslot_duration
             }
           }
-          this.selectLength = this.selectLength
           return this.selectedServiceObj.service_name
         }
       }
@@ -879,12 +878,11 @@ export default class ApptBookingModal extends Vue {
       // }
     }
     var now = new Date();
-    if (this.start > now) {
+    if (this.start > now || this.app_start_time == null || this.app_start_date == null ) {
         this.allow_reschedule = true
       }else {
         this.allow_reschedule = false
       }
-      this.selectLength = this.selectLength
   }
 
   submit () {
@@ -899,6 +897,7 @@ export default class ApptBookingModal extends Vue {
         validate_flag = true
       }
       if (start_time) {
+        var now = new Date();
         if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
           if ((new Date(start_time).getHours() === 8)) {
             if ((new Date(start_time).getMinutes() < 30)) {
@@ -914,6 +913,9 @@ export default class ApptBookingModal extends Vue {
             this.time_msg = "Selected length/time is not within the office time"
             validate_flag = true
           }
+        } else if (start_time < now) {
+          this.time_msg = "Selected length/time cannot be in the past"
+          validate_flag = true
         }
       }
       if (this.end) {
@@ -1099,7 +1101,7 @@ export default class ApptBookingModal extends Vue {
         this.start = new Date(this.appt_date+' '+this.appt_time)
     }
     var now = new Date();
-    if (this.start > now) {
+    if (this.start > now || this.app_start_time == null || this.app_start_date == null ) {
         this.allow_reschedule = true
     }else {
       this.allow_reschedule = false
