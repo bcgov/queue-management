@@ -126,7 +126,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
