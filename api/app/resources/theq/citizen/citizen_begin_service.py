@@ -16,11 +16,13 @@ from filelock import FileLock
 from flask import g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
-from app.models.theq import Citizen, CSR
+from app.models.theq import Citizen, CSR, ServiceReq, Period, Service, Office
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
+from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.dialects import postgresql
 
 
 @api.route("/citizens/<int:id>/begin_service/", methods=["POST"])
@@ -35,7 +37,10 @@ class CitizenBeginService(Resource):
         lock = FileLock("lock/begin_citizen_{}.lock".format(csr.office_id))
 
         with lock:
-            citizen = Citizen.query.filter_by(citizen_id=id).first()
+            citizen = Citizen.query\
+            .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*')), raiseload(Citizen.user)) \
+            .filter_by(citizen_id=id)
+            citizen = citizen.first()
             pending_service_state = SRState.get_state_by_name("Active")
 
             if citizen is None:
