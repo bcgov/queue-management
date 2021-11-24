@@ -265,6 +265,5 @@ export function timezoneOffset () {
   const timezoneOffset = date.getTimezoneOffset()
   const hours = ('00' + Math.floor(Math.abs(timezoneOffset / 60))).slice(-2)
   const minutes = ('00' + Math.abs(timezoneOffset % 60)).slice(-2)
-  const string = (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
-  return string
+  return (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
 }

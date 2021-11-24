@@ -115,7 +115,6 @@ import CommonUtils from '@/utils/common-util'
 import { WalkinModule } from '@/store/modules'
 import { getModule } from 'vuex-module-decorators'
 import { mapActions } from 'vuex'
-import { th } from 'date-fns/locale'
 
 @Component({
   methods: {
