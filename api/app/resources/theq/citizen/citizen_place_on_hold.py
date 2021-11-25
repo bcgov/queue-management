@@ -36,7 +36,7 @@ class CitizenPlaceOnHold(Resource):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         citizen = Citizen.query\
-        .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),joinedload(Citizen.office).raiseload('*'),raiseload(Citizen.user)) \
+        .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
         .filter_by(citizen_id=id, office_id=csr.office_id)
         print('***** citizen_place_on_hold.py opt query: *****')
         print(str(citizen.statement.compile(dialect=postgresql.dialect())))
