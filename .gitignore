@@ -140,7 +140,6 @@ version.GENERATED.ts
 # Docker
 api/Dockerfile
 frontend/Dockerfile
-docker-compose.yml
 api/init.sh
 api/wait-for-it.sh
 /.env-Names
