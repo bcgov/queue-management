@@ -766,7 +766,7 @@ export default class Calendar extends Vue {
     await this.getRooms()
     this.roomResources.forEach(each => {
           if (each.title) {
-            if (flag == false) {
+            if (!flag) {
               if (each.id !== '_offsite'){
                    this.categories.push(each.title)
               }

@@ -33,9 +33,9 @@
     }
 
     const scripts = document.getElementsByTagName('script')
-    for (let i = 0; i < scripts.length; i++) {
-      if ((scripts[i].src.indexOf('keycloak.js') !== -1 || scripts[i].src.indexOf('keycloak.min.js') !== -1) && scripts[i].src.indexOf('version=') !== -1) {
-        kc.iframeVersion = scripts[i].src.substring(scripts[i].src.indexOf('version=') + 8).split('&')[0]
+    for (let script of scripts) {
+      if ((script.src.indexOf('keycloak.js') !== -1 || script.src.indexOf('keycloak.min.js') !== -1) && script.src.indexOf('version=') !== -1) {
+        kc.iframeVersion = script.src.substring(script.src.indexOf('version=') + 8).split('&')[0]
       }
     }
 
@@ -320,10 +320,7 @@
     }
 
     kc.createLogoutUrl = function (options) {
-      const url = kc.endpoints.logout() +
-                '?redirect_uri=' + encodeURIComponent(adapter.redirectUri(options, false))
-
-      return url
+      return kc.endpoints.logout() + '?redirect_uri=' + encodeURIComponent(adapter.redirectUri(options, false))
     }
 
     kc.register = function (options) {
@@ -737,9 +734,9 @@
         if (!oidcProvider) {
           if (!config.url) {
             const scripts = document.getElementsByTagName('script')
-            for (let i = 0; i < scripts.length; i++) {
-              if (scripts[i].src.match(/.*keycloak\.js/)) {
-                config.url = scripts[i].src.substr(0, scripts[i].src.indexOf('/js/keycloak.js'))
+            for (let script of scripts) {
+              if (script.src.match(/.*keycloak\.js/)) {
+                config.url = script.src.substr(0, script.src.indexOf('/js/keycloak.js'))
                 break
               }
             }
@@ -886,16 +883,10 @@
       s[14] = '4'
       s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1)
       s[8] = s[13] = s[18] = s[23] = '-'
-      const uuid = s.join('')
-      return uuid
+      return s.join('')
     }
 
     kc.callback_id = 0
-
-    function createCallbackId () {
-      const id = '<id: ' + (kc.callback_id++) + (Math.random()) + '>'
-      return id
-    }
 
     function parseCallback (url) {
       const oauth = parseCallbackUrl(url)
@@ -977,15 +968,15 @@
         paramsString: '',
         oauthParams: {}
       }
-      for (let i = 0; i < p.length; i++) {
-        const t = p[i].split('=')
+      for (let param of p) {
+        const t = param.split('=')
         if (supportedParams.indexOf(t[0]) !== -1) {
           result.oauthParams[t[0]] = t[1]
         } else {
           if (result.paramsString !== '') {
             result.paramsString += '&'
           }
-          result.paramsString += p[i]
+          result.paramsString += param
         }
       }
       return result
@@ -1510,8 +1501,7 @@
       var getCookie = function (key) {
         const name = key + '='
         const ca = document.cookie.split(';')
-        for (let i = 0; i < ca.length; i++) {
-          let c = ca[i]
+        for (let c of ca) {
           while (c.charAt(0) == ' ') {
             c = c.substring(1)
           }
