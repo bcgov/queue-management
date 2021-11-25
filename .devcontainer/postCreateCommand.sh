@@ -11,10 +11,10 @@
     python manage.py db upgrade
 ) &
 
-#(
-#    cd appointment-frontend
-#    npm ci --no-progress
-#) &
+(
+    cd appointment-frontend
+    npm ci #--no-progress
+) &
 
 #(
 #    cd feedback-api
