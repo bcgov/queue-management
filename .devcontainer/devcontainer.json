@@ -32,6 +32,10 @@
         "8080": {
             "label": "Queue Management Frontend",
             "onAutoForward": "silent"
+        },
+        "8081": {
+            "label": "Appointments Frontend",
+            "onAutoForward": "silent"
         }
     },
 

@@ -14,6 +14,28 @@
     ],
     "configurations": [
         {
+            // Run the Vue.js front end for the Appointment application.
+            "cwd": "${workspaceFolder}/appointment-frontend",
+            "env": {
+                "VUE_APP_PATH": "/",
+            },
+            "name": "appointment_front_end",
+            "port": 8081,
+            "request": "launch",
+            "resolveSourceMapLocations": [
+                "!**/node_modules/**"
+            ],
+            "runtimeArgs": [
+                "run",
+                "serve"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             // Run the Queue Management API Python gunicorn process.
             "args": [
                 "wsgi",
