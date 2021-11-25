@@ -107,8 +107,9 @@ queue-env/
 # mypy
 .mypy_cache/
 
-# Visual Studio
-.vscode/
+# Visual Studio -- generally ignore, but allow shared configuration
+.vscode/*
+!.vscode/launch.json
 
 # Project specific include/excludes
 /frontend/public/static/keycloak/
