@@ -546,7 +546,6 @@ import VueTimepicker from 'vue2-timepicker'
 import { RRule } from 'rrule'
 
 import moment from 'moment'
-import EditExamModal from '../exams/edit-exam-form-modal.vue'
 
 import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
@@ -868,13 +867,11 @@ export default class OtherBookingModal extends Vue {
   }
 
   formatStartDate (date) {
-    const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-    return formatted_start_date
+    return moment(date).format('YYYY-MM-DD HH:mm')
   }
 
   formatEndDate (date) {
-    const formatted_end_date = moment(date).clone().format('HH:mm')
-    return formatted_end_date
+    return moment(date).clone().format('HH:mm')
   }
 
   generateRule () {
@@ -1001,7 +998,7 @@ export default class OtherBookingModal extends Vue {
         break
     }
 
-    if (isNaN(start_year) == false || isNaN(end_year) == false) {
+    if (!isNaN(start_year) || !isNaN(end_year)) {
       // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
       const date_start = new Date(start_year+'/'+start_month+'/'+start_day)
       let until = new Date(end_year+'/'+end_month+'/'+end_day)

@@ -744,10 +744,10 @@
 <script lang="ts">
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import moment from 'moment'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import EditExamModal from './edit-exam-form-modal.vue'
 import EditGroupExamBookingModal from './edit-group-exam-modal.vue'
 import SelectInvigilatorModal from './select-invigilator-modal.vue'
@@ -1392,19 +1392,15 @@ export default class ExamInventoryTable extends Vue {
           break
       }
       let uploadFiltered = []
-      switch (this.inventoryFilters.uploadFilter) {
-        case 'notuploaded':
+      if (this.inventoryFilters.uploadFilter == 'notuploaded') {
           uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
-          break
-        default:
+      } else {
           uploadFiltered = evenMoreFiltered
       }
       let receptSentFiltered: any = []
-      switch (this.inventoryFilters.receptSentFilter) {
-        case 'notsent':
+      if (this.inventoryFilters.receptSentFilter == 'notsent') {
           receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
-          break
-        default:
+      } else {
           receptSentFiltered = uploadFiltered
       }
       let finalFiltered = []
