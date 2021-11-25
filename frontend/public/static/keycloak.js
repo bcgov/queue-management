@@ -1502,11 +1502,12 @@
         const name = key + '='
         const ca = document.cookie.split(';')
         for (let c of ca) {
-          while (c.charAt(0) == ' ') {
-            c = c.substring(1)
+          let cookie = c
+          while (cookie.charAt(0) == ' ') {
+            cookie = cookie.substring(1)
           }
-          if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length)
+          if (cookie.indexOf(name) == 0) {
+            return cookie.substring(name.length, cookie.length)
           }
         }
         return ''
