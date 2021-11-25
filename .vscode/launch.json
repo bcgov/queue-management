@@ -1,0 +1,62 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "compounds": [
+        {
+            // Run the components used for the Queue Management system.
+            "name": "Queue Management",
+            "configurations": [
+                "queue_management_api",
+                "queue_management_front_end"
+            ]
+        }
+    ],
+    "configurations": [
+        {
+            // Run the Queue Management API Python gunicorn process.
+            "args": [
+                "wsgi",
+                "--bind=0.0.0.0:5000",
+                "--access-logfile=-",
+                "--config=gunicorn_config.py",
+                "--reload",
+                "--timeout=0" // Disable timeout; don't die at breakpoints
+            ],
+            "cwd": "${workspaceFolder}/api",
+            "env": {
+                "PRINT_ENABLE": "TRUE"
+            },
+            "gevent": true,
+            "name": "queue_management_api",
+            "program": "env/bin/gunicorn",
+            "python": "${workspaceFolder}/api/env/bin/python",
+            "request": "launch",
+            "type": "python"
+        },
+        {
+            // Run the Vue.js front end for the Queue Management application.
+            "cwd": "${workspaceFolder}/frontend",
+            "env": {
+                "VUE_APP_API_URL": "http://localhost:5000/api/v1",
+                "VUE_APP_SOCKET_URL": "http://localhost:5000"
+            },
+            "name": "queue_management_front_end",
+            "port": 8080,
+            "request": "launch",
+            "resolveSourceMapLocations": [
+                "!**/node_modules/**"
+            ],
+            "runtimeArgs": [
+                "run",
+                "serve"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        }
+    ],
+    "version": "0.2.0"
+}

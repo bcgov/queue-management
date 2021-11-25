@@ -1,6 +1,6 @@
 # Installation Guide - Work in Progress
 
-We use Openshift in our environment. We recommend you setup an openshift (or minishift) for this project. You can then use our build / deployment configs found in the openshift directory.
+We use OpenShift in our environment. We recommend you setup an OpenShift (or Red Hat CodeReady Containers) for this project. You can then use our build / deployment configs found in the openshift directory.
 
 ## Key features of the platform:
 
@@ -12,6 +12,58 @@ Jenkins Build process includes:
 - Postman tests
 - Zap Vulnerability tests
 
+## Running the code with VSCode Remote - Containers
+
+TODO: blurb
+
+Clone the code in this repo:
+
+```
+$ git clone https://github.com/bcgov/queue-management
+```
+
+Opening the cloned repo in VSCode will detect the *.devcontainer* directory and recommend that you re-open in *Remote - Containers*. This will build and start the docker containers that are needed.
+
+The first time VSCode switches to the container, you have to populate the empty database with:
+```
+/workspace$ (cd api; env/bin/python manage.py bootstrap)
+```
+
+## TODO: Complete these.
+
+Set up FAQ. How do I...
+1. Launch
+1. APIs debugging, hot reload
+1. Front Ends, hot reload?
+1. Run Python tests?
+1. Run newman tests?
+1. Run Jest tests?
+1. Update requirements.txt?
+1. Update packages.json?
+1. Change python version?
+1. Change node version?
+1. Change PostgreSQL version?
+1. Wipe DB?
+1. Do stuff in Keycloak?
+1. Do stuff with analytics?
+1. What else?
+
+### Configure Keycloak
+
+TODO: this will change when we have a Keycloak pod.
+
+```
+queue-management$ mkdir api/client_secrets
+queue-management$ cp documentation/demo-files/secrets.json api/client_secrets/
+queue-management$ cp documentation/demo-files/keycloak.json frontend/static/
+```
+
+TODO: .env file for API, once we have docker keycloak.
+TODO: configuration.json file for frontend.
+
+# TODO: REMOVE/REVISE/INCLUDE EVERYTHING BELOW
+
+## Running with Ubuntu
 If you want to just try out the application, here are some instructions to get it running on Ubuntu (I used Windows 10 WSL Ubuntu):
 
 - Note we do not use RabbitMQ for local testing but this is used to manage multiple pods and syncing messages between them.
