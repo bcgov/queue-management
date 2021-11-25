@@ -71,9 +71,7 @@ export default class NotificationFields extends Vue {
   checkEmail () {
     if (this.formData.notification_email) {
         let  serchfind: boolean = false;
-        // IT'S NOT USELESS! :D We need it to escape the . in the regex!!
-        // eslint-disable-next-line no-useless-escape
-        const regexp = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+        const regexp = new RegExp(/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/);
         serchfind = regexp.test(this.formData.notification_email);
         if (serchfind) {
           this.notificationEmailValidation = true
