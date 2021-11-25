@@ -40,7 +40,7 @@ class CitizenAddToQueue(Resource):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
         citizens = Citizen.query \
-                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),joinedload(Citizen.office).raiseload('*'),raiseload(Citizen.user)) \
+                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
                 .filter_by(citizen_id=id)
         
         print('*****GET citizen_add_to_queue.py Citizen query: *****')
