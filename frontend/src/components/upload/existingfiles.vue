@@ -20,7 +20,6 @@
       fixed
       bordered
     >
-      <!--style="text-align: center">-->
 
       <!--  This is the file name -->
       <template #cell(name)="row">
@@ -90,7 +89,6 @@ export default class ExistingFiles extends Vue {
 
 </script>
 
-<!--<style scoped>-->
 <style>
 .existing_files_table {
   padding: 0px;
