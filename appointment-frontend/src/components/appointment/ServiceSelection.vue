@@ -28,51 +28,13 @@
                 class="service-selection-options"
               >
                 <div>{{ data.item.external_service_name }}</div>
-                <!-- <div v-if="data.item.online_link" class="service-link" :class="{'service-link-mobile': $vuetify.breakpoint.xs}" @click="goToServiceLink(data.item.external_service_name, data.item.online_link)">
-                  Online Option <v-icon small>mdi-open-in-new</v-icon>
-                </div> -->
               </div>
             </template>
           </v-combobox>
-          <!-- <v-btn
-            v-if="selectedService && selectedService.online_link"
-            text
-            link
-            color="primary"
-            target="_blank"
-            :href="selectedService.online_link"
-          >
-            Click here for more options
-            <v-icon small class="ml-1">mdi-open-in-new</v-icon>
-          </v-btn> -->
         </v-col>
       </v-row>
-<!--      <v-row>-->
-<!--        {{myMessage}}-->
-<!--      </v-row>-->
-<!--      <v-row justify="center">
-        <v-col cols="12" sm="6">
-          <v-textarea
-            :maxlength="maxChars"
-            :label=this.textCharsLeft
-            class="mt-3"
-            outlined
-            name="additional-options"
-            v-model="additionalOptions"
-            @change="changeAdditionalOptions"
-            @keyup="setCharsLeft"
-        ></v-textarea>
-        </v-col>
-      </v-row> -->
       <template v-if="selectedService && !keyPressed && !checkDisabled(selectedService)">
         <div class="d-flex justify-center mb-6">
-          <!-- <v-btn
-            large
-            outlined
-            color="primary"
-            class="mr-3"
-            @click="otherBookingOptionModel = true"
-          >No, Book With Another Option</v-btn> -->
           <v-btn
             large
             @click="proceedBooking"
@@ -195,7 +157,6 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private serviceSelection (value) {
-    // this.mylog('-> serviceSelection')
     this.keyPressed = false
     this.setCurrentService(value)
   }
@@ -205,7 +166,6 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
   }
 
   private setKeyPressed (e) {
-    // this.mylog('-> setKeyPressed')
     if (e.key !== 'Enter') {
       this.keyPressed = true
     }
@@ -217,7 +177,6 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
       this.setCurrentService(undefined)
     } else {
       if (this.checkDisabled(value)) {
-        // this.selectedService = null
         this.setCurrentService(undefined)
       } else {
         this.setCurrentService(value)
