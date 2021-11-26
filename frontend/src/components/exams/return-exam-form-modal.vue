@@ -23,13 +23,6 @@
           @click="showFieldErrors = false"
           >Submit</b-btn
         >
-        <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
-        <!-- <b-btn
-          v-if="!okButton.disabled"
-          :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
-          @click.prevent="submit"
-          >{{ okButton.title }}</b-btn
-        > -->
         <b-btn
           v-if="!okButton.disabled"
           :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
@@ -377,8 +370,7 @@ export default class ReturnExamModal extends Vue {
         this.resetModal()
       })
     }).catch(() => {
-      // JSTOTS This property not existing. now just commenting out. check
-      // this.setExamEditFailureMessage(10)
+      // empty block
     })
   }
 }

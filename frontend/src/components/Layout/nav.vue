@@ -26,10 +26,8 @@
       You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
       Chrome or Microsoft Edge
     </b-alert>
-    <!-- <v-card class="m-4" max-width="100%" elevation="5"> -->
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
-      <!-- <div class="d-flex"> -->
       <div
         style="width: 75px"
         v-show="$route.path !== '/queue' || showTimeTrackingIcon"
@@ -50,7 +48,6 @@
         </b-button>
       </div>
       <router-view name="buttons"></router-view>
-      <!-- </div> -->
       <div
         v-if="calendarSetup && this.$route.path === '/booking'"
         style="flex-grow: 8"
@@ -162,7 +159,6 @@
     </div>
     <AddCitizen />
     <ServeCitizen v-if="showServiceModal" />
-    <!-- </v-card> -->
   </div>
 </template>
 
@@ -193,7 +189,6 @@ export default class Nav extends Vue {
   @State('showGAScreenModal') private showGAScreenModal!: any
 
   @State('showAgendaScreenModal') private showAgendaScreenModal!: any
-  // @State('showServiceModal') private showServiceModal!: any
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('showAddModal') private showAddModal!: any
   @State('user') private user!: any
@@ -210,8 +205,6 @@ export default class Nav extends Vue {
 
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
-  // TODO check this value - seems like not using
-  // @Mutation('toggleTrackingIcon') public toggleTrackingIcon: any
   // to check service for enable
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
 
@@ -360,9 +353,6 @@ export default class Nav extends Vue {
   padding: 10px;
   margin: 10px;
 }
-/* .add-flex-grow {
-  flex-grow: 1;
-} */
 .gaScreenChecked {
   padding-left: 0em;
 }

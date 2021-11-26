@@ -23,8 +23,6 @@
     <v-col align="center"
       v-if="(showEstimate === 'True')"
       justify="center">Est. time</v-col>
-    <!-- <v-col align="center"
-      justify="center">Tot. time</v-col> -->
   </v-row>
   <v-row v-for="(Q, index) in theWalkinQ"
         :key="Q.citizen_id">
@@ -41,7 +39,6 @@
           >
           <span v-if="Q.flag === 'agenda_panel'">{{ getAppTime(Q) }} </span>
           <span v-else>{{ index + 1  }}</span>
-          <!-- <span v-else>{{ Q.ticket_number }}</span> -->
         </v-card-text>
       </v-card>
     </v-col>
@@ -96,9 +93,6 @@
             </v-icon>
             Me
           </v-btn>
-          <!-- <v-btn text  v-if="Q.flag === 'serving_app'">
-          <span>{{ toHHMMSS(Q.service_begin_seconds) }}</span>
-          </v-btn> -->
          </v-card-text>
       </v-card>
     </v-col>
@@ -217,16 +211,5 @@ export default class WalkinQ extends Vue {
 </script>
 
 <style lang="scss" scoped>
-// @import "@/assets/scss/theme.scss";
-// .card-animation-serving  {
-//   background-color: #C9A0DC;
-//   animation-name: serving_now;
-//   animation-duration: 1s;
-//   animation-iteration-count:infinite;
-// }
-
-// @keyframes serving_now {
-//   from {background-color: #C9A0DC;}
-//   to {background-color: white;}
-// }
+// empty block
 </style>

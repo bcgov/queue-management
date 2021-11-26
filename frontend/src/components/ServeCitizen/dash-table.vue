@@ -24,7 +24,6 @@ limitations under the License.*/
       @row-clicked="rowClicked"
       class="p-0 m-0"
     >
-      <!--id="client-waiting-table"-->
       <template #cell(counter_id)="row">{{ showCounter(row.item.counter_id) }}</template>
       <template #cell(start_time)="row">{{ formatTime(row.item.start_time) }}</template>
       <template #cell(csr)="row">{{ showCSR(row.item.citizen_id) }}</template>
