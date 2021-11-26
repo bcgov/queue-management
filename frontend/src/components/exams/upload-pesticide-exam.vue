@@ -12,10 +12,6 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <!-- This is the old button. Leaving it commented in case a rollback is needed. -->
-          <!-- <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
-            >Submit</b-btn
-          > -->
           <b-btn class="btn-primary" v-if="!submitted" @click="examStatus"
             >Submit</b-btn
           >
