@@ -37,6 +37,10 @@ async function loginToKeycloak(username, password) {
 
 async function setAuthHeader(requestParams, context, ee, next) {
     const {access_token} = await getAuthToken(process.env.KEYCLOAK_USERNAME, process.env.KEYCLOAK_PASSWORD)
+    requestParams = {};
+    requestParams.headers = {};
+    requestParams.Authorization = {};
+    requestParams.cookie = {};
     // HTTP requests use Authorization
     requestParams.headers.Authorization = `Bearer ${access_token}`
     // Websocket requests use oidc-jwt cookie
