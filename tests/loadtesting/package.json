@@ -23,7 +23,7 @@
     "Faiz Shabeeb <faiz.shabeeb@aot-technologies.com> (https://github.com/shabeeb-aot)"
   ],
   "devDependencies": {
-    "artillery": "^1.6.1",
+    "artillery": "^2.0.0-5",
     "node-fetch": "^2.6.1"
   }
 }
