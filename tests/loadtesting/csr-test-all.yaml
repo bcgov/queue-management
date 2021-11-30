@@ -33,7 +33,7 @@ scenarios:
     weight: 75
     flow:
       - emit:
-          channel: "connect"
+          channel: "connecting"
           data: "ping"
       - think: 5
       - emit:
