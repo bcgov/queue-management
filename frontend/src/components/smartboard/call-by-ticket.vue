@@ -78,7 +78,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
 
 @Component({
   components: {

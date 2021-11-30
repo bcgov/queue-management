@@ -50,8 +50,8 @@
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class ButtonsAdmin extends Vue {

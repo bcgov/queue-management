@@ -314,8 +314,7 @@ export const commonGetters: any = {
       return false
     }
     const filtered = citizens.filter(c => c.service_reqs.length > 0)
-    const list = filtered.filter(isCitizenOnHold)
-    return list
+    return filtered.filter(isCitizenOnHold)
   },
 
   citizens_queue (state) {
@@ -334,8 +333,7 @@ export const commonGetters: any = {
       return false
     }
     const filtered = citizens.filter(c => c.service_reqs.length > 0)
-    const list = filtered.filter(isCitizenQueued)
-    return list
+    return filtered.filter(isCitizenQueued)
   },
 
   form_data: state => {

@@ -228,37 +228,31 @@ function delay (time) {
 
 const getCSRQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return await (await option.getProperty('value')).jsonValue()
 }
 
 const getCSRCounterValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Counter")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return await (await option.getProperty('value')).jsonValue()
 }
 
 const getServeQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return await (await option.getProperty('value')).jsonValue()
 }
 
 const getServeCounterValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Counter")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return await (await option.getProperty('value')).jsonValue()
 }
 
 const getServeSelectedValue = async () => {
-  var selectedValue = await page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
-  return selectedValue
+  return await page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
 }
 
 const getAddQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-add"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return await (await option.getProperty('value')).jsonValue()
 }
 
 async function addCitizenToQueue () {
@@ -309,7 +303,7 @@ async function setCsrToCounter () {
 
 async function getValueQTxnCsr () {
   const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
+  await (await option.getProperty('value')).jsonValue()
 }
 
 async function inviteFromQueue () {

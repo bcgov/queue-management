@@ -57,8 +57,8 @@ limitations under the License.*/
 </template>
 <script lang="ts">
 // /* eslint-disable */
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Action, Getter, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
 import moment from 'moment'
 
@@ -161,12 +161,12 @@ export default class GAScreen extends Vue {
   }
 
   public get_citizen_for_csr (csr) {
-    for (let i = 0; i < this.citizens.length; i++) {
-      for (let j = 0; j < this.citizens[i].service_reqs.length; j++) {
-        const activePeriod = this.citizens[i].service_reqs[j].periods.filter(p => p.time_end === null)[0]
+    for (const citz of this.citizens) {
+      for (const servReq of citz.service_reqs) {
+        const activePeriod = servReq.periods.filter(p => p.time_end === null)[0]
         if (activePeriod &&
           (activePeriod.ps.ps_name === 'Invited' || activePeriod.ps.ps_name === 'Being Served') && activePeriod.csr_id === csr.csr_id) {
-          return this.citizens[i]
+          return citz
         }
       }
     }
