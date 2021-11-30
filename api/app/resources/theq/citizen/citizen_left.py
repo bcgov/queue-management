@@ -47,9 +47,6 @@ class CitizenLeft(Resource):
             .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
             .filter_by(citizen_id=id)
 
-        print('***** citizen_left.py opt query: *****')
-        print(str(citizen.statement.compile(dialect=postgresql.dialect())))
-
         citizen = citizen.first()
 
         my_print("    ++> Time before citizen ID statement: " + str(datetime.now()))

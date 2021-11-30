@@ -43,8 +43,6 @@ class CitizenAddToQueue(Resource):
                 .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
                 .filter_by(citizen_id=id)
         
-        print('*****GET citizen_add_to_queue.py Citizen query: *****')
-        print(str(citizens.statement.compile(dialect=postgresql.dialect())))
         citizen = citizens.first()
         active_service_request = citizen.get_active_service_request()
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/add_to_queue, Ticket: ' + citizen.ticket_number)

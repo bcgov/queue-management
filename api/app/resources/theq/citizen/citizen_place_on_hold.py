@@ -38,10 +38,8 @@ class CitizenPlaceOnHold(Resource):
         citizen = Citizen.query\
         .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
         .filter_by(citizen_id=id, office_id=csr.office_id)
-        print('***** citizen_place_on_hold.py opt query: *****')
-        print(str(citizen.statement.compile(dialect=postgresql.dialect())))
+        
         citizen = citizen.first()
-
 
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/place_on_hold/, Ticket: ' + citizen.ticket_number)
         active_service_request = citizen.get_active_service_request()
