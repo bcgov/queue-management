@@ -44,7 +44,7 @@ class CitizenLeft(Resource):
         my_print("    ++> Time before citizen = statement: " + str(datetime.now()))
 
         citizen = Citizen.query\
-            .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr, innerjoin=True).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
+            .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
             .filter_by(citizen_id=id)
 
         print('***** citizen_left.py opt query: *****')
