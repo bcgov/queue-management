@@ -254,7 +254,7 @@ export function debounce (func, wait, immediate) {
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
   }
-};
+}
 
 // https://stackoverflow.com/a/50069453
 // returns e.g. "-7:00" and can be appended to end of date string

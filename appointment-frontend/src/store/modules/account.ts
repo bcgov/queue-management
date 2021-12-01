@@ -1,9 +1,8 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-import { User, UserUpdateBody } from '@/models/user'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import UserService from '@/services/user.services'
-import { store } from '@/store'
+import { UserUpdateBody } from '@/models/user'
 
 @Module({
   name: 'account',
