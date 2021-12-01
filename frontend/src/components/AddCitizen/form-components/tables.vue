@@ -204,7 +204,7 @@ export default class Tables extends Vue {
   }
 
   rowClicked (item: any, index: any) {
-    if (this.performingAction == false) {
+    if (!this.performingAction) {
       const id = item.service_id
       this.setAddModalSelectedItem(item.service_name)
       this.$store.commit('updateAddModalForm', { type: 'service', value: id })
