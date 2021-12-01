@@ -44,7 +44,7 @@ export default class ConfigHelper {
     return ConfigHelper.getValue('VUE_APP_ROOT_API')
   }
 
-  static getValue (key: String) {
+  static getValue (key:string) {
     // @ts-ignore
     return JSON.parse(sessionStorage.getItem(SessionStorageKeys.ApiConfigKey))[key]
   }
