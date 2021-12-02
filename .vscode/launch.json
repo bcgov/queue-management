@@ -46,9 +46,6 @@
                 "--timeout=0" // Disable timeout; don't die at breakpoints
             ],
             "cwd": "${workspaceFolder}/api",
-            "env": {
-                "PRINT_ENABLE": "TRUE"
-            },
             "gevent": true,
             "name": "queue_management_api",
             "program": "env/bin/gunicorn",
