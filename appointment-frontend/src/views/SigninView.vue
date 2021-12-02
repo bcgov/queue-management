@@ -2,14 +2,12 @@
   <loading-screen :is-loading="isLoading"></loading-screen>
 </template>
 <script lang="ts">
-import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import LoadingScreen from '@/components/common/LoadingScreen.vue'
 import TokenService from '@/services/token.services'
-import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {

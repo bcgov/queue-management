@@ -140,7 +140,7 @@ export default class AccountSettingsView extends Vue {
 
   private phoneNumberRules = [
     (v) =>
-      /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) ||
+      /^\(?(\d{3})\)?[-. ]?(\d{3})[-. ]?(\d{4})$/.test(v) ||
       'Phone number must be valid'
   ]
 

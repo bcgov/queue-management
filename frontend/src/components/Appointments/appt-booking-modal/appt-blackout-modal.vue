@@ -685,7 +685,7 @@
 <script lang="ts">
 /* eslint-disable */
 import { Component, Vue } from 'vue-property-decorator'
-import { Action, State } from 'vuex-class'
+import { Action, State, namespace } from 'vuex-class'
 import { apiProgressBus, APIProgressBusEvents } from '../../../events/progressBus'
 import { showFlagBus, ShowFlagBusEvents } from '../../../events/showFlagBus'
 import DatePicker from 'vue2-datepicker'
@@ -695,7 +695,6 @@ import moment from 'moment'
 import 'vue2-datepicker/index.css'
 import 'vue2-timepicker/dist/VueTimepicker.css'
 
-import { namespace } from 'vuex-class'
 const appointmentsModule = namespace('appointmentsModule')
 
 @Component({
@@ -1017,17 +1016,14 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   formatStartDate (date) {
-    const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-    return formatted_start_date
+    return moment(date).format('YYYY-MM-DD HH:mm')
   }
 
   formatEndDate (date) {
-    const formatted_end_date = moment(date).format('HH:mm')
-    return formatted_end_date
+    return moment(date).format('HH:mm')
   }
   formatDate (value) {
-    const formatted_date = moment(value).format('DD MMM, YYYY')
-    return formatted_date
+    return moment(value).format('DD MMM, YYYY')
   }
 
   generateRule () {
@@ -1138,7 +1134,7 @@ export default class AppointmentBlackoutModal extends Vue {
         break
     }
 
-    if (isNaN(start_year) == false || isNaN(end_year) == false) {
+    if (!isNaN(start_year) || !isNaN(end_year)) {
       // IF RRule Breaks, this is where it will happen
       // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
       if (start_hour > 15 && end_hour < 8) {

@@ -11,9 +11,7 @@
  *
  */
 
-import { Axios, searchNestedObject } from './../helpers'
-
-import AppointmentsModule from '../modules/appointments-module';
+import { Axios } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
 

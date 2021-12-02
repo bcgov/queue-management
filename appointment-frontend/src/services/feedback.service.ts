@@ -1,6 +1,6 @@
 import Axios, { AxiosResponse } from 'axios'
-import { FeedbackRequestObject, FeedbackResponseObject } from '@/models/feedback'
 import ConfigHelper from '@/utils/config-helper'
+import { FeedbackRequestObject } from '@/models/feedback'
 import { addAxiosInterceptors } from '@/utils/interceptors'
 const axios = addAxiosInterceptors(Axios.create())
 

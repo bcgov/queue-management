@@ -65,13 +65,13 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable sort-imports */
 import { Appointment, AppointmentSlot } from '@/models/appointment'
-import CommonUtils, { timezoneOffset } from '@/utils/common-util'
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import CommonUtils from '@/utils/common-util'
+import { Component, Mixins } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import { Office } from '@/models/office'
-import { OfficeModule } from '@/store/modules'
 import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 

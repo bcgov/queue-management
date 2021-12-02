@@ -770,7 +770,7 @@
 <script lang="ts">
 /* eslint-disable */
 import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
@@ -958,13 +958,11 @@ export default class BookingBlackoutModal extends Vue {
   }
 
   formatStartDate (date) {
-    const formatted_start_date = moment(date).format('YYYY-MM-DD HH:mm')
-    return formatted_start_date
+    return moment(date).format('YYYY-MM-DD HH:mm')
   }
 
   formatEndDate (date) {
-    const formatted_end_date = moment(date).format('HH:mm')
-    return formatted_end_date
+    return moment(date).format('HH:mm')
   }
 
   submit (e) {
@@ -1228,7 +1226,7 @@ export default class BookingBlackoutModal extends Vue {
       break
     }
 
-    if (isNaN(start_year) == false || isNaN(end_year) == false) {
+    if (!isNaN(start_year) || !isNaN(end_year)) {
       // IF RRule Breaks, this is where it will happen
       // Removed hours and minutes from date_start and until
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
@@ -1664,8 +1662,7 @@ export default class BookingBlackoutModal extends Vue {
   }
   
   formatDate (value) {
-    const formatted_date = moment(value).format('DD MMM, YYYY')
-    return formatted_date
+    return moment(value).format('DD MMM, YYYY')
   }
 
   convertTimePickerValue(model:any){

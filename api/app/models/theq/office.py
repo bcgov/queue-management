@@ -142,7 +142,7 @@ class Office(Base):
                 office.timeslots
                 office.timezone
                 cache.set(key, office)
-        except Exception as e:
+        except Exception:
             print('Error on building cache')
 
     @classmethod
