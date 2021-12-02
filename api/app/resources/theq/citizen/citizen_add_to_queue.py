@@ -75,15 +75,15 @@ class CitizenAddToQueue(Resource):
                     # email
                     email_sent = False
                     if citizen.notification_email:
-                        officeObj = Office.find_by_id(citizen.office_id)
+                        office_obj = Office.find_by_id(citizen.office_id)
                         print('Sending email for walk in spot confirmations to')
-                        email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
+                        email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, office_obj)
                     # SMS  
                     sms_sent = False
                     if citizen.notification_phone:
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
-                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                        send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                         update_table = True
                     if sms_sent:
                         update_table = True

@@ -42,7 +42,7 @@ class Feedback(Resource):
 
         try:
             feedback_message = json_data['feedback_message']
-        except KeyError as err:
+        except KeyError:
             return {"message": "Must provide message to send as feedback"}, 422
 
         teams_result = None

@@ -1148,7 +1148,7 @@ export default class EditBooking extends Vue {
       if (!(this.end as any).isSame(this.event.end)) {
         changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
       }
-      if (this.newEvent && !(this.newEvent.resource.id == this.event.resourceId)) {
+      if (this.newEvent && (this.newEvent.resource.id != this.event.resourceId)) {
         changes.room_id = this.newEvent.resource.id
       }
       if (this.editedFields.includes('title')) {

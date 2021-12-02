@@ -126,9 +126,6 @@ class BCMPService:
     def create_group_exam_bcmp(self, exam, booking, candiate_list, invigilator, pesticide_office, oidc_token_info):
         url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-GROUP" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_group_exam_bcmp    url: %s" % url)
-        invigilator_name = None
-        if invigilator:
-            invigilator_name = invigilator.invigilator_name
 
         office_name = None
         time_zone = pytz.timezone('America/Vancouver')

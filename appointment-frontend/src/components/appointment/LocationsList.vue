@@ -153,7 +153,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
