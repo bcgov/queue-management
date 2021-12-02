@@ -1,7 +1,6 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import GeocoderService from '@/services/geocoder.services'
 import { LatLng } from '@/models/geo'
-import { store } from '@/store'
 
 @Module({
   name: 'geo',

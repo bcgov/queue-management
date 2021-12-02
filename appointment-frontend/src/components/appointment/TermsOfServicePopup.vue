@@ -74,10 +74,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 @Component({})
-export default class ServiceListPopup extends Vue {
+export default class TermsOfServicePopup extends Vue {
   // @Prop({ default: false })
   // private isModalOpen!: boolean
   private isModalOpen: boolean = false
