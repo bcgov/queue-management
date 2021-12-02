@@ -237,7 +237,7 @@ export default class DashTable extends Vue {
     }
     if (service.service.parent) {
       return service.service.parent.service_name
-    } else { // @TODO DELETE THIS
+    } else {
       return 'category'
     }
   }

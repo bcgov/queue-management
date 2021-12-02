@@ -831,7 +831,6 @@ export default class ApptBookingModal extends Vue {
       this.app_start_date = null
       this.app_start_time = null
       this.curr_date = null
-      //todo, remove if consditon
       if (this.clickedTime) {
       this.start = new Date(this.clickedTime.start.format())
       this.app_start_date = new Date(this.clickedTime.start.format('YYYY/MM/DD'))

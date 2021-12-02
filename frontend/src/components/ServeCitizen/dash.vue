@@ -142,8 +142,6 @@ export default class Dash extends Vue {
 
   get dashH () {
     if (!this.isDragged) return this.availH / 2
-    // TODO removed if condtion
-    // if (this.isDragged)
     return this.availH + this.offset
   }
 

@@ -1229,7 +1229,7 @@ export default class BookingBlackoutModal extends Vue {
     }
 
     if (isNaN(start_year) == false || isNaN(end_year) == false) {
-      // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+      // IF RRule Breaks, this is where it will happen
       // Removed hours and minutes from date_start and until
       const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
       const until = new Date(Date.UTC(end_year, end_month - 1, end_day))

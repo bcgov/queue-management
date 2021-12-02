@@ -270,7 +270,6 @@ export default class BookingModal extends Vue {
   public minimized: any = false
   public pressedSubmit: any = false
   public expiry_date: any = ''
-  // TODO Defined clickedRown check Functionality
   public clickedRow: any;
 
   get buttonStatus () {

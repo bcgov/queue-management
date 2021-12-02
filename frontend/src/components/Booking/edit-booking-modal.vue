@@ -996,7 +996,6 @@ export default class EditBooking extends Vue {
     this.newStart = null
     this.newEnd = null
     this.editedFields = []
-    // TODO chnaged fee to fees
     this.fees = false
     this.labelColor = 'black'
     this.message = null
