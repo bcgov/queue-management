@@ -33,7 +33,6 @@ import { AccountModule, AuthModule } from '@/store/modules'
 import { AppFooter, AppHeader } from '@/components/common'
 import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
-import CommonUtils from './utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import { Feedback } from './components/feedback'
 import { KCUserProfile } from '@/models/KCUserProfile'
@@ -141,7 +140,7 @@ export default class App extends Vue {
   }
 }
 body {
-  font-family: 'BC Sans', 'Noto Sans', Arial, 'sans-serif';
+  font-family: 'BC Sans', 'Noto Sans', Arial, sans-serif;
   color: #313132;
   font-size: 16px;
   line-height: 1.5em;
@@ -161,7 +160,7 @@ a {
 
 .bc-gov-alertbanner:before {
   float: left;
-  font-family: 'Font Awesome 5 Free', 'sans-serif';
+  font-family: 'Font Awesome 5 Free', sans-serif;
   font-size: larger;
   font-style: normal;
   line-height: 1;

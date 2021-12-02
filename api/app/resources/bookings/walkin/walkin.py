@@ -166,7 +166,6 @@ class WalkinDetail(Resource):
         if office:
             office_id = office.office_id
         if office_id:  
-            time_now = datetime.utcnow()
             past_hour = datetime.utcnow() - timedelta(minutes=15)
             future_hour = datetime.utcnow() + timedelta(minutes=15)
             local_past = pytz.utc.localize(past_hour)
@@ -237,12 +236,12 @@ class SendLineReminderWalkin(Resource):
                         if nth_app['citizen_id']:
                             citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
                             if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
-                                officeObj = Office.find_by_id(citizen.office_id)
+                                office_obj = Office.find_by_id(citizen.office_id)
                                 if citizen.notification_phone:
-                                    citizen = self.send_sms_reminder(citizen, officeObj)
+                                    citizen = self.send_sms_reminder(citizen, office_obj)
                                     citizen.automatic_reminder_flag = 1
                                 if citizen.notification_email:
-                                    citizen = self.send_email_reminder(citizen, officeObj)
+                                    citizen = self.send_email_reminder(citizen, office_obj)
                                     citizen.automatic_reminder_flag = 1
                                 db.session.add(citizen)
                                 db.session.commit()
@@ -294,8 +293,7 @@ class SendLineReminderWalkin(Resource):
                                     break
         return booked_check_app, walkin_app
 
-    def send_sms_reminder(self, citizen, officeObj):
-        data_values = {}
+    def send_sms_reminder(self, citizen, office_obj):
         if (citizen.notification_phone):
             sms_sent = False
             validate_check = True
@@ -304,7 +302,7 @@ class SendLineReminderWalkin(Resource):
                 if (citizen.reminder_flag == 2):
                     validate_check =  False
             if validate_check:
-                sms_sent = send_walkin_reminder_sms(citizen, officeObj, request.headers['Authorization'].replace('Bearer ', ''))
+                sms_sent = send_walkin_reminder_sms(citizen, office_obj, request.headers['Authorization'].replace('Bearer ', ''))
                 if (sms_sent):
                     flag_value = 1
                     if citizen.reminder_flag == 1:
@@ -314,7 +312,7 @@ class SendLineReminderWalkin(Resource):
         return citizen
                 
     
-    def send_email_reminder(self, citizen, officeObj):
+    def send_email_reminder(self, citizen, office_obj):
         if (citizen.notification_email):
             # code/function call to send first email notification,
             email_sent = False
@@ -323,9 +321,9 @@ class SendLineReminderWalkin(Resource):
                 if (citizen.reminder_flag == 2):
                     validate_check =  False
             if validate_check:
-                email_sent = get_walkin_reminder_email_contents(citizen, officeObj)
+                email_sent = get_walkin_reminder_email_contents(citizen, office_obj)
                 if email_sent:
-                    status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     flag_value = 1
                     if citizen.reminder_flag == 1:
                         flag_value = 2

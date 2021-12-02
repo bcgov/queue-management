@@ -83,15 +83,13 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
-import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
-import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
+import { GeolocatorSuccess } from '@/models/geo'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
-import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
 
 @Component({
@@ -237,7 +235,7 @@ export default class AppointmentBookingView extends Vue {
   private async mounted () {
     this.$store.commit('setNonStepperLocation', undefined)
     if (this.isAuthenticated) {
-      this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
+      this.bookingSteppers = this.bookingSteppers.filter(step => (step.code !== 'login'))
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
     }
     this.stepCounter = this.$store.state.stepperCurrentStep
@@ -252,7 +250,7 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private isOnCurrentStep (step) {
-    return !!(step.step === this.stepCounter)
+    return (step.step === this.stepCounter)
   }
 
   private async fetchCurrentLocation () {

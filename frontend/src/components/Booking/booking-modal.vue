@@ -462,7 +462,7 @@ export default class BookingModal extends Vue {
   }
 
   submit () {
-    if (this.pressedSubmit == false) {
+    if (!this.pressedSubmit) {
       this.pressedSubmit = true
       const { exam_id } = this.exam
       let notes = null

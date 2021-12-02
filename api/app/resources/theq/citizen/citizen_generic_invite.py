@@ -120,7 +120,6 @@ class CitizenGenericInvite(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def post(self):
         y = 0
-        key = "DR->" + get_key()
         y = y + 1
         csr = csr_find_by_user()
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))

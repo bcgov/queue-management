@@ -497,6 +497,7 @@ class Bootstrap(Command):
             day_of_week="{Tuesday,Wednesday,Thursday}",
             office_id=office_100.office_id
         )
+        # Shouldn't these be added to the DB? Nov18/21 - CRG
 
         #-- CSR values ------------------------------------------------------
         print("--> CSRs")

@@ -34,9 +34,6 @@ class AppointmentDraftDelete(Resource):
 
     def delete(self, id):
 
-        appointment = Appointment.query.filter_by(appointment_id=id)\
-                                       .first_or_404()
-
         Appointment.delete_draft([id])
         if not application.config['DISABLE_AUTO_REFRESH']:
             socketio.emit('appointment_delete', id)
