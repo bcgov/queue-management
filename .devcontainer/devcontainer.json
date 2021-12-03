@@ -10,7 +10,8 @@
         "ms-python.vscode-pylance",
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg",
-        "octref.vetur"
+        "octref.vetur",
+        "sonarsource.sonarlint-vscode"
     ],
 
     // Use 'forwardPorts' to make a list of ports inside the container
@@ -50,20 +51,13 @@
 
     // Set *default* container specific settings.json values on container create.
     "settings": {
-        "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-        "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-        "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
         "python.languageServer": "Pylance",
-        "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
         "python.linting.enabled": true,
-        "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-        "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-        "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-        "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
         "python.linting.pylintEnabled": true,
         "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
         "python.pythonPath": "/usr/local/bin/python",
-        "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
+        // "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
+        "sonarlint.ls.javaHome": "/usr/lib/jvm/default-java",
         "sqltools.connections": [{
             "database": "postgres",
             "driver": "PostgreSQL",
