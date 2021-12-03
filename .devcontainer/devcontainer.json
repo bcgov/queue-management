@@ -9,7 +9,8 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "mtxr.sqltools",
-        "mtxr.sqltools-driver-pg"
+        "mtxr.sqltools-driver-pg",
+        "octref.vetur"
     ],
 
     // Use 'forwardPorts' to make a list of ports inside the container
