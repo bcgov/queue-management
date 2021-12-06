@@ -247,7 +247,7 @@ const getServeCounterValue = async () => {
 }
 
 const getServeSelectedValue = async () => {
-  return await page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
+  return page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
 }
 
 const getAddQTxnValue = async () => {
