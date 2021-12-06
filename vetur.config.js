@@ -5,20 +5,20 @@
 // directory for package.json and tsconfig.json, and complain that they do not
 // exist.
 //
-/** @type {import('vls').VeturConfig} */
+/** @type {import("vls").VeturConfig} */
 module.exports = {
     // Notice: It only affects the settings used by Vetur.
     settings: {
         "vetur.experimental.templateInterpolationService": true
     },
     projects: [
-        'appointment-frontend',
+        "appointment-frontend",
         {
-            root: './appointment-frontend'
+            root: "./appointment-frontend"
         },
-        'frontend',
+        "frontend",
         {
-            root: './frontend'
+            root: "./frontend"
         }
     ]
 }

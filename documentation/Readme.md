@@ -1,6 +1,8 @@
 # Installation Guide - Work in Progress
 
-We use OpenShift in our environment. We recommend you setup an OpenShift (or Red Hat CodeReady Containers) for this project. You can then use our build / deployment configs found in the openshift directory.
+We use OpenShift in our environment, and it is our recommendation for running this project. You can then use our build / deployment configs found in the openshift directory.
+
+For development, we recommend you use Visual Studio Code's *Remote - Containers* to run the application in docker containers, as described below.
 
 ## Key features of the platform:
 
@@ -18,7 +20,7 @@ This repo is configured to use Visual Studio Code's *Remote - Containers* (aka *
 
 To run the code in devcontainers you need:
 1. VSCode
-1. WSL2 with a Linux distribution (we like Ubuntu)
+1. WSL2 with a Linux distribution (we like LTS Ubuntu)
 1. *dockerd* running in your WSL2 Linux
 
 Clone the code in this repo:
@@ -89,7 +91,7 @@ If you really want to wipe and rebuild your database:
 </details>
 
 <details>
-<summary>How do I update a Python requirements.txt</summary>
+<summary>How do I update a Python requirements.txt?</summary>
 
 The best way to update Python requirements is to:
 
@@ -97,12 +99,12 @@ The best way to update Python requirements is to:
 1. Run *pip install -r requirements.txt*
 1. Run the tests and ensure success
 
-To rebuild the container with the new packages, click the green section of the *Status Bar* and select *Rebuild Container*.
+To rebuild the container with the new requirements, click the green section of the *Status Bar* and select *Rebuild Container*.
 
 </details>
 
 <details>
-<summary>How do I update a Node packages.json</summary>
+<summary>How do I update a Node packages.json?</summary>
 
 The best way to update Node packages is to:
 
@@ -110,16 +112,16 @@ The best way to update Node packages is to:
 1. Run *npm install*
 1. Run the tests and ensure success
 
-To rebuild the container with the new requirements, click the green section of the *Status Bar* and select *Rebuild Container*.
+To rebuild the container with the new packages, click the green section of the *Status Bar* and select *Rebuild Container*.
 
 </details>
 
 <details>
 <summary>How do I change the Python version?</summary>
 
-The development environment should be as close as possible to production, including the patch release version of Python. The production version of Python is defined by the RedHat UBI in our buildconfigs. We should match versions in the devcontainers, even though it's tedious and not straightforward.
+The development environment should be as close as possible to production, including the patch release version of Python. The production version of Python is defined by the Red Hat UBI in our buildconfigs. We should match versions in the devcontainers, even though setting it up is tedious and not straightforward.
 
-1. Figure out the production version to target with *python --version*
+1. In a live container get the production version to target with *python --version*
 1. Look at https://mcr.microsoft.com/v2/vscode/devcontainers/python/tags/list and take a guess as an image that will match
 1. Update the *VARIANT* in *.devcontainer/docker-compose.yml* and rebuild the container
 1. Check the Python version, and start over at step 2 until you have the most recent image matching the target version
@@ -129,9 +131,9 @@ The development environment should be as close as possible to production, includ
 <details>
 <summary>How do I change the Node version?</summary>
 
-The development environment should be as close as possible to production, including the version of Node. The production version of Node is defined by the RedHat UBI in our buildconfigs.
+The development environment should be as close as possible to production, including the version of Node. The production version of Node is defined by the Red Hat UBI in our buildconfigs.
 
-1. Figure out the production version to target with *node --version* 
+1. In a live container get the production version to target with *node --version* 
 1. Update the *NODE_VERSION* in *.devcontainer/docker-compose.yml* and rebuild the container
 
 </details>
@@ -177,9 +179,6 @@ You should be able to login in with admin/admin on http://localhost:8085/auth
     - under Groups, under Available Groups, join theq_internal_user
     - under Role Mappings, select internal_user, add selected, should see under assigned role
 1. Go to Clients, edit account, scope, set full scope allowed to ON
-## Setup Flask Python API Container:
-
-Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclient-dev and python3-dev installed.
 
 ## To use FRONTEND:
 
