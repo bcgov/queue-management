@@ -29,6 +29,8 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then \
 # RUN pip3 --disable-pip-version-check --no-cache-dir install -r \
 #    /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp
 
-# Install psql
 RUN sudo apt update && \
-    sudo apt-get install -y postgresql-contrib
+    # psql is useful and needed in the container post-create commands.
+    sudo apt-get install -y postgresql-contrib && \
+    # A JRE is needed to run SonarLint.
+    sudo apt install -y default-jre

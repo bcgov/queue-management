@@ -33,7 +33,6 @@ Opening the cloned repo in VSCode will detect the *.devcontainer* directory and 
 2. Application code in a Python + Node container
 
 TODO: config files
-    1. *frontend/public/config/configuration.json*
     1. copy *documentation/demo-files/keycloak.json* to *frontend/static/* (**TODO: really? I don't have it**)
 
 ## Frequently Asked Questions
