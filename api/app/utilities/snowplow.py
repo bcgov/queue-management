@@ -180,6 +180,8 @@ class SnowPlow():
 
         if csr is not None:
             csr_id = csr.csr_id
+            username = csr.username
+            print('************************csr: ' + username)
             if csr.receptionist_ind == 1:
                 counter_name = "Receptionist"
             else:
@@ -205,7 +207,9 @@ class SnowPlow():
         agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-2',
                                    {"agent_id": csr_id,
                                     "role": role_name,
-                                    "counter_type": counter_name})
+                                    "counter_type": counter_name,
+                                    "user_name": username
+                                   })
 
         return agent
 
