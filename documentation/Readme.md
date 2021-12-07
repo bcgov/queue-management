@@ -8,7 +8,6 @@ For development, we recommend you use Visual Studio Code's *Remote - Containers*
 
 Jenkins Build process includes:
 
-- SonarQube
 - Building our Flask/Python API
 - Building our Vue FrontEnd and copying the output to CADDY Webserver
 - Postman tests
@@ -36,6 +35,18 @@ Opening the cloned repo in VSCode will detect the *.devcontainer* directory and 
 
 TODO: config files
     1. copy *documentation/demo-files/keycloak.json* to *frontend/static/* (**TODO: really? I don't have it**)
+
+## Set up Keycloak:
+
+TODO: automate this.
+
+You should be able to login in with admin/admin on http://localhost:8085/auth
+1. Go to Groups, add new group *theq_internal_user*
+1. Go to Roles, add new role *internal_user*
+1. Go to Users, view all users, edit 'admin', 
+    - under Groups, under Available Groups, join *theq_internal_user*
+    - under Role Mappings, select *internal_user*, add selected, should see under assigned role
+1. Go to Clients, edit *account*, Scope tab, set Full Scope Allowed to ON
 
 ## Frequently Asked Questions
 
@@ -158,27 +169,9 @@ It's probably a good idea to delete your database volume when changing the versi
 **TODO: Complete these: How do I...**
 
 1. Front Ends, hot reload?
-1. Do stuff in Keycloak?
 1. Do stuff with analytics?
 1. Run Redis?
 1. Anything else?
-
-
-## Setup docker & install Keycloak:
-
-1. `git clone https://github.com/bcgov/queue-management.git`
-1. `export DOCKER_HOST=tcp://0.0.0.0:2375`
-1. `cd queue-management/keycloak-local-testserver`
-1. `chmod +x *.sh`
-1. `docker build -t keycloak .`
-1. `docker run -it --name keycloak -p 8085:8080 keycloak`
-
-You should be able to login in with admin/admin on http://localhost:8085/auth
-1. Go to Groups, add new.  theq_internal_user
-1. Go to Users, view all users, edit 'admin', 
-    - under Groups, under Available Groups, join theq_internal_user
-    - under Role Mappings, select internal_user, add selected, should see under assigned role
-1. Go to Clients, edit account, scope, set full scope allowed to ON
 
 ## To use FRONTEND:
 

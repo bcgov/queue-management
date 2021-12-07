@@ -19,6 +19,7 @@ services:
         NODE_VERSION: 14.17.5
 
       context: ..
+
       dockerfile: .devcontainer/Dockerfile
 
     # Overrides default command so things don't shut down after the process
@@ -39,15 +40,28 @@ services:
       - ..:/workspace:cached
 
   db:
-    # Note: Try to keep this in sync with what we're using at runtime.
     environment:
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+
+    # Note: Keep the version in sync with production.
     image: postgres:13.4
+
     restart: unless-stopped
+
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
+  keycloak:
+    environment:
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_USER: admin
+
+    image: jboss/keycloak:9.0.3
+
+    ports:
+      - 8085:8080
 
 volumes:
   postgres-data:
