@@ -1002,7 +1002,7 @@ export default class OtherBookingModal extends Vue {
     }
 
     if (isNaN(start_year) == false || isNaN(end_year) == false) {
-      // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
+      // IF RRule Breaks, this is where it will happen
       const date_start = new Date(start_year+'/'+start_month+'/'+start_day)
       let until = new Date(end_year+'/'+end_month+'/'+end_day)
       const rule = new RRule({
@@ -1015,18 +1015,15 @@ export default class OtherBookingModal extends Vue {
 
       const array = rule.all()
       this.other_rrule_text = rule.toText()
-      // TODO For the night is dark and full of terror
       // JSTOTS added typr for this.startTime
       const first_event_start_day: any = moment(this.startTime).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date((this.startTime as any)).getTimezoneOffset(), 'minutes')
       let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
       array.forEach(date => {
-          // TODO For the night is dark and full of terror
           const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(date).getTimezoneOffset(), 'minutes')
           if (local_start_hour >= 8 && local_start_hour < 16) {
             date_with_offset.add(1, 'd')
           }
           const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-          // TODO For the night is dark and full of terror
           if (num_days < 0) {
             num_days = 0
           }

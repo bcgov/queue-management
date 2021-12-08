@@ -138,8 +138,6 @@ export default class CallByTicket extends Vue {
   }
 
   get headclass () {
-    // TODO change  longList longlist
-    // check impact
     if (this.longlist) {
       return 'sm-boardtable-head'
     }
