@@ -170,11 +170,9 @@ THEQ_SNOWPLOW_CALLFLAG=False
 
 ##  Below is for Postgres, localhost
 DATABASE_ENGINE=postgresql
-DATABASE_USERNAME=demo
-DATABASE_PASSWORD=demo
-DATABASE_NAME=queue_management
-DATABASE_HOST=127.0.0.1
-DATABASE_PORT=5432
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+DATABASE_NAME=postgres
 
 ###############################  SQLAlchemy Variables #########################
 

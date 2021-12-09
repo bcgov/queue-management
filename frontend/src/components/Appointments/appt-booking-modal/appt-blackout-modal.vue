@@ -1135,8 +1135,7 @@ export default class AppointmentBlackoutModal extends Vue {
     }
 
     if (!isNaN(start_year) || !isNaN(end_year)) {
-      // TODO Might be Deprecated -- IF RRule Breaks, this is where it will happen
-      // TODO remove tzid from rule object
+      // IF RRule Breaks, this is where it will happen
       // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
       if (start_hour > 15 && end_hour < 8) {
         end_adj_day = end_day + 1
