@@ -319,7 +319,7 @@ export default class Nav extends Vue {
     return false
   }
 
-  // TODO check this function - not sure where it is using
+  // Is this used?
   toggleTrackingIcon (bool: boolean) {
     if (!bool) {
       this.showSpacer = false

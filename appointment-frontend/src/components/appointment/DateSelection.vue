@@ -106,7 +106,6 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
    private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
   private readonly currentService!: Service
-  // TODO: take timezone from office data from state
   private selectedDate = ''
   private selectedDateObj = ''
   private selectedDateTimeSlots = []

@@ -877,7 +877,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   get isPesticideOffice () {
-    // TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
+    // Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
     // 100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
     // and trigger a different setup of the exam_inventory_table
     // as this is not implemented yet, this computed value can simply return true or false depending on what
