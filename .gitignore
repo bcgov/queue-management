@@ -107,8 +107,9 @@ queue-env/
 # mypy
 .mypy_cache/
 
-# Visual Studio
-.vscode/
+# Visual Studio -- generally ignore, but allow shared configuration
+.vscode/*
+!.vscode/launch.json
 
 # Project specific include/excludes
 /frontend/public/static/keycloak/
@@ -139,7 +140,6 @@ version.GENERATED.ts
 # Docker
 api/Dockerfile
 frontend/Dockerfile
-docker-compose.yml
 api/init.sh
 api/wait-for-it.sh
 /.env-Names

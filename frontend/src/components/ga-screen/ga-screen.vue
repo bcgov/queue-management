@@ -206,7 +206,6 @@ export default class GAScreen extends Vue {
 
         if (activeCitizen.service_reqs[0].periods.filter(p => p.ps.ps_name === 'Being Served')[0]) {
           const waitPeriods = sortedSRs[0].periods.filter(p => p.ps.ps_name === 'Waiting')
-          // TODO check functionality
           const waitDate: any = new Date(0)
           if (waitPeriods.length !== 0) {
             const waitStart: any = new Date(waitPeriods[0].time_start)
@@ -233,7 +232,6 @@ export default class GAScreen extends Vue {
           })
           const waitSeconds: any = (firstServedPeriodDate - citizenStartDate) / 1000
           const timeServeTotal = (timeServeClosed + timeServeOpen)
-          // TODO check functionality
           const serveDate = new Date(0)
           serveDate.setSeconds(timeServeTotal / 1000)
           csr.wait_time = `${waitDate.getUTCHours()}h ${waitDate.getMinutes()}m ${waitDate.getSeconds()}s`

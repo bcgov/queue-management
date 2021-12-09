@@ -80,9 +80,6 @@ export default class CallByName extends Vue {
     Axios.get(this.url).then(resp => {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
-      // TODO check can't see  this.office_id Declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
-      // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
   }
@@ -93,8 +90,6 @@ export default class CallByName extends Vue {
     })
   }
 
-  // TODO check event param
-  // event
   handleResize () {
     this.maxVideoHeight = document.documentElement.clientHeight * 0.8
   }

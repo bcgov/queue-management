@@ -1,0 +1,67 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      args:
+        # Update 'VARIANT' to pick a version of Python: 3, 3.10, 3.9, 3.8,
+        # 3.7, 3.6. Append -bullseye or -buster to pin to an OS version. Use
+        # -bullseye variants on local arm64/Apple Silicon.
+        #
+        # Note: Tying ourselves to Python 3.8.8 to match the runtime version
+        # means that we are tied to old vscode images. We should consider an
+        # update to the runtime version. The list of versions available is at
+        # https://hub.docker.com/_/microsoft-vscode-devcontainers
+        # https://mcr.microsoft.com/v2/vscode/devcontainers/python/tags/list
+        VARIANT: 0.201.2-3.8
+
+        # Node.js version to install
+        NODE_VERSION: 14.17.5
+
+      context: ..
+
+      dockerfile: .devcontainer/Dockerfile
+
+    # Overrides default command so things don't shut down after the process
+    # ends.
+    command: sleep infinity
+
+    environment:
+      DATABASE_NAME: postgres
+      DATABASE_PASSWORD: postgres
+
+    init: true
+
+    # Runs app on the same network as the database container, allows
+    # "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+
+    volumes:
+      - ..:/workspace:cached
+
+  db:
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+
+    # Note: Keep the version in sync with production.
+    image: postgres:13.4
+
+    restart: unless-stopped
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+#  keycloak:
+#    environment:
+#      KEYCLOAK_PASSWORD: admin
+#      KEYCLOAK_USER: admin
+#
+#    image: jboss/keycloak:9.0.3
+#
+#    ports:
+#      - 8085:8080
+
+volumes:
+  postgres-data:

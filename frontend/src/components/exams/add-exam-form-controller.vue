@@ -311,7 +311,8 @@ export default class AddExamFormController extends Vue {
         messages[key] = ''
         return
       }
-      // TODO Turn this on for event ID checks only on group exams. Add && group_exam_indicator to the if block
+      // To turn this on for event ID checks only on group exams,
+      // add && group_exam_indicator to the if block
       // below as well
       if (key === 'event_id' && answer && answer.length >= 4) {
         if (this.event_id_warning) {

@@ -26,7 +26,7 @@
     </b-button>
         </form>
       </div>
-      <div class="align-center">
+      <div class="align-center-text">
         <span class="q-inline-title">
           {{ calendar_setup.title }}
           {{ calendar_setup.titleRef && calendar_setup.titleRef.title }}
@@ -131,13 +131,10 @@ export default class ButtonsAppointments extends Vue {
 }
 </script>
 <style scoped>
-.align-center {
+.align-center-text {
   padding-left: 40%;
   margin-top: -46px;
 }​
-.butttons-appointments {
-  margin-right: auto;
-}
 .full-div {
   width: 100%;
 }
