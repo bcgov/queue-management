@@ -19,6 +19,7 @@ from app.models.theq.office import Office
 from app.models.theq.role import Role
 from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
+from pprint import pprint
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import logging
@@ -209,7 +210,8 @@ class SnowPlow():
                                     "role": role_name,
                                     "counter_type": counter_name
                                    })
-        print('returning snowplow data: ' + str(agent))
+        print('returning snowplow data:')
+        pprint(vars(agent))
         return agent
 
     @staticmethod
