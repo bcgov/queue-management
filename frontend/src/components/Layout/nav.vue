@@ -159,7 +159,6 @@
     </div>
     <AddCitizen/>
     <ServeCitizen v-if="showServiceModal" :finishServiceFromFormIO="finishServiceFromFormIO"/>
-    <!-- </v-card> -->
   </div>
 </template>
 

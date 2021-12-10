@@ -35,7 +35,7 @@
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "buefy": "^0.9.5",
-    "camunda-formio-tasklist-vue": "1.0.14",
+    "camunda-formio-tasklist-vue": "https://gitpkg.now.sh/AOT-Technologies/forms-flow-ai-extensions/camunda-formio-tasklist-vue?master",
     "core-js": "3.9.1",
     "es6-promise": "4.2.8",
     "es6-shim": "0.35.6",
