@@ -16,7 +16,8 @@ class TokenServices {
     this.kc = kcInstance
   }
 
-  // TODO: Fallback function just to not break the legacy versions, should be removed once the coops consumes the service using the init() function
+  // Fallback function just to not break the legacy versions
+  // Should be removed once the coops consumes the service using the init() function
   async initUsingUrl (keyCloakConfigurl: string) {
     ConfigHelper.setKeycloakConfigUrl(keyCloakConfigurl)
     await this.init()
@@ -44,7 +45,7 @@ class TokenServices {
             resolve(this.kc.token)
           } else {
             // If not authenticated that means token is invalid
-            // Clear out session storage and go to auth home (TODO: Perhaps make this a propery parent apps could pass in?)
+            // Clear out session storage and go to auth home
             this.clearSession()
           }
         })
