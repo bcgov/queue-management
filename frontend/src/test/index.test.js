@@ -228,37 +228,31 @@ function delay (time) {
 
 const getCSRQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return (await option.getProperty('value')).jsonValue()
 }
 
 const getCSRCounterValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Counter")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return (await option.getProperty('value')).jsonValue()
 }
 
 const getServeQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return (await option.getProperty('value')).jsonValue()
 }
 
 const getServeCounterValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-serve"]/option[contains(text(), "Counter")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return (await option.getProperty('value')).jsonValue()
 }
 
 const getServeSelectedValue = async () => {
-  var selectedValue = await page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
-  return selectedValue
+  return page.$eval('#counter-selection-serve', selectedValue => selectedValue.value)
 }
 
 const getAddQTxnValue = async () => {
   const option = (await page.$x('//*[@id = "counter-selection-add"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
-  return value
+  return (await option.getProperty('value')).jsonValue()
 }
 
 async function addCitizenToQueue () {
@@ -292,7 +286,7 @@ async function addCitizenLowPriorityToQueue () {
 async function populateAddCitizen () {
   await page.waitForSelector('#add_citizen_channels_select')
   const option = (await page.$x('//*[@id = "add_citizen_channels_select"]/option[text() = "In Person"]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
+  const value = (await option.getProperty('value')).jsonValue()
   await page.select('#add_citizen_channels_select', value)
   await page.click('.add_citizen_categories_table > tbody > tr > td')
 }
@@ -305,11 +299,6 @@ async function setCsrToQuickTxn () {
 async function setCsrToCounter () {
   const value = await getCSRCounterValue()
   await page.select('#counter-selection-csr', value) // Select quick transaction counter
-}
-
-async function getValueQTxnCsr () {
-  const option = (await page.$x('//*[@id = "counter-selection-csr"]/option[contains(text(), "Quick")]'))[0]
-  const value = await (await option.getProperty('value')).jsonValue()
 }
 
 async function inviteFromQueue () {
