@@ -28,8 +28,8 @@ limitations under the License.*/
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
 
 @Component
 export default class SuccessExamAlert extends Vue {

@@ -380,8 +380,7 @@ export default class ServeCitizen extends Vue {
 
   get comments () {
     if (this.appointment) {
-      const newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
-      return newVal
+      return this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
     }
     return this.serviceModalForm.citizen_comments
   }
