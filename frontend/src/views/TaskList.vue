@@ -61,6 +61,9 @@ export default class TaskList extends Vue {
 
   mounted () {
     this.loadProps()
+    this.$root.$on('finishBeginServiceTheQ', (customEvent: any) => {
+      this.$root.$emit('navBeginService')
+    })
   }
 
   @Watch('bearer')

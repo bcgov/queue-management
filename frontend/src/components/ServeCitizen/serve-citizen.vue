@@ -255,7 +255,7 @@
 <script lang="ts">
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import ServeCitizenTable from './serve-citizen-table.vue'
 
 @Component({
@@ -264,6 +264,9 @@ import ServeCitizenTable from './serve-citizen-table.vue'
   }
 })
 export default class ServeCitizen extends Vue {
+  @Prop()
+  private finishServiceFromFormIO!: boolean
+
   @State('performingAction') private performingAction!: any
   @State('showServiceModal') private showServiceModal!: any
   @State('showServeCitizenSpinner') private showServeCitizenSpinner!: any
@@ -514,6 +517,16 @@ export default class ServeCitizen extends Vue {
   mounted () {
     setInterval(() => { this.flashButton() }, 800)
     this.toggleTimeTrackingIcon(false)
+    if (this.finishServiceFromFormIO) {
+      this.$root.$emit('closefinishServiceFromFormIO')
+      if (this.simplifiedTicketStarted) {
+        this.toggleExamsTrackingIP(false)
+        this.clickServiceFinish()
+      }
+      this.toggleExamsTrackingIP(true)
+      this.toggleServiceModal(false)
+      this.clickAddCitizen()
+    }
   }
 }
 
