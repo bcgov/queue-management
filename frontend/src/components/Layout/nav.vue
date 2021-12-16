@@ -23,7 +23,7 @@
       dismissible
       fade
     >
-      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
+      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like
       Chrome or Microsoft Edge
     </b-alert>
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
@@ -129,7 +129,7 @@
               <span>Show Day Agenda</span>
               <b-dropdown-divider />
             </b-dropdown-item>
-            
+
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
             >
@@ -157,8 +157,8 @@
     <div style="position: relative; min-height: 400px">
       <router-view />
     </div>
-    <AddCitizen />
-    <ServeCitizen v-if="showServiceModal" />
+    <AddCitizen/>
+    <ServeCitizen v-if="showServiceModal" :finishServiceFromFormIO="finishServiceFromFormIO"/>
   </div>
 </template>
 
@@ -199,7 +199,6 @@ export default class Nav extends Vue {
   @Action('clickGAScreen') public clickGAScreen: any
   @Action('clickAgendaScreen') public clickAgendaScreen: any
 
-  
   @Action('clickAddCitizen') public clickAddCitizen: any
   @Action('clickRefresh') public clickRefresh: any
 
@@ -212,25 +211,33 @@ export default class Nav extends Vue {
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
     dropdownPopperOpts = {
-    modifiers: {
-      computeStyle: {
-        gpuAcceleration: false
+      modifiers: {
+        computeStyle: {
+          gpuAcceleration: false
+        }
       }
     }
-  }
 
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
+  public finishServiceFromFormIO:boolean = false
 
-  mounted() {
+  mounted () {
     // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
     this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
+    this.$root.$on(('navBeginService'), () => {
+      this.finishServiceFromFormIO = true
+      this.clickIcon()
+    })
+    this.$root.$on(('closefinishServiceFromFormIO'), () => {
+      this.finishServiceFromFormIO = false
+    })
   }
 
-  get appointmentsEnabled() : boolean {
+  get appointmentsEnabled () : boolean {
     if (this.user && this.user.office) {
       return !!(this.user.office.appointments_enabled_ind)
     }
-    return false;
+    return false
   }
 
   @Watch('showIcon')
