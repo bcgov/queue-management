@@ -354,7 +354,7 @@ export default class Appointments extends Vue {
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
-      if (this.appointment_events.find(event => moment(event.start).isBetween(start, testEnd))) {
+      if (this.appointment_events.find(apptEvent => moment(apptEvent.start).isBetween(start, testEnd))) {
         break
       }
       end = testEnd
@@ -402,13 +402,6 @@ export default class Appointments extends Vue {
     if (event.end) {
       end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
     } 
-    const e: any = {
-      start,
-      end,
-      title: 'Unconfirmed Booking',
-      color: 'pink',
-      id: '_tempEvent'
-    }
 
     // for draft
     const data: any = {
@@ -513,9 +506,6 @@ export default class Appointments extends Vue {
 
 </script>
 <style scoped>
-.btn {
-  border: none !important;
-}
 .label-text {
   font-size: 0.9rem;
 }

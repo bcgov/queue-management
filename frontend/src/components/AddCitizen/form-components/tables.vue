@@ -234,19 +234,12 @@ export default class Tables extends Vue {
       this.clickAddServiceApply()
     } else if (this.addModalSetup === 'edit_mode') {
       this.clickEditApply()
-    } else if (this.$route.path === '/exams') {
+    } else if (this.$route.path === '/exams' || this.$route.path === '/booking' || this.$route.path === '/service-flow') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
     } else if (this.$route.path === '/appointments') {
       this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
       this.closeAddServiceModal()
-    } else if (this.$route.path === '/booking') {
-      this.toggleExamsTrackingIP(true)
-      this.clickBeginService({ simple: true })
-    } else if (this.$route.path === '/service-flow') {
-      // remove continue button in service flow
-      this.toggleExamsTrackingIP(true)
-      this.clickBeginService({ simple: true })
     } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
       this.clickBeginService({ simple: false })
     } else {
