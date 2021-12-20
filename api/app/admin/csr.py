@@ -230,7 +230,6 @@ def check_uservalues(updated_csr):
     if update_data:
         db.session.add(updated_csr)
         db.session.commit()
-    return
 
 
 def request_redirect(self, return_url, model, request_parameter):
