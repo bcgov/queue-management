@@ -99,17 +99,16 @@ class ServiceRequestsList(Resource):
 
         active_sr_state = SRState.get_state_by_name("Active")
         complete_sr_state = SRState.get_state_by_name("Complete")
-        print('***** service_requests_list.py citizen = none: *****')
         citizen = None
         try:
 
             citizen = Citizen.query \
-                 .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
+                .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
                 .filter_by(citizen_id=service_request.citizen_id)
+            
             print('***** service_requests_list.py citizen query: *****')
             print(str(citizen.statement.compile(dialect=postgresql.dialect())))
             citizen = citizen.first()
-            #citizen = Citizen.query.get(service_request.citizen_id)
 
         except:
             print("==> An exception getting citizen info")
