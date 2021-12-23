@@ -179,6 +179,7 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr, office, csr_id = 1000001, counter_name = "Counter", role_name="WebSelfServe"):
 
+        idir_user = ""
         if csr is not None:
             csr_id = csr.csr_id
             idir_user = csr.username
