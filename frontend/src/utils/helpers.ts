@@ -12,9 +12,7 @@ const roundedDownTime = (time, inteval = 15) => {
 const formatedStartTime = (date, time) => {
     const selectedTime = moment(`${date} ${time}`)// event.start.clone()
     const { hour, minute } = roundedDownTime(selectedTime) // roundingdown  time to 15 min inteval
-    const roundTime = moment(date).set({ hour, minute })
-
-    return roundTime
+    return moment(date).set({ hour, minute })
 }
 
 export {

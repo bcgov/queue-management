@@ -68,7 +68,6 @@ import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import RightMenu from './right-menu.vue'
 import axios from 'axios'
-import config from '../../../config'
 
 @Component({
   components: {
