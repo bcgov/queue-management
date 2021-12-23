@@ -696,7 +696,7 @@
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import zone from 'moment-timezone'
 import DatePicker from 'vue2-datepicker'
@@ -1187,7 +1187,7 @@ export default class EditGroupExamBookingModal extends Vue {
         delete bookingChanges.invigilator_id
       }
 
-      if (this.removeFlag == true) {
+      if (this.removeFlag) {
         putRequests.push({ url: `/invigilator/${this.currentShadowInvigilator}/?add=False&subtract=True` })
         this.removeFlag = false
       } else if (this.shadowInvigilator && this.currentShadowInvigilator) {

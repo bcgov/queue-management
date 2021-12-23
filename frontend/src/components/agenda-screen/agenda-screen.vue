@@ -77,14 +77,10 @@ limitations under the License.*/
 </template>
 <script lang="ts">
  /* eslint-disable */
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
+import { Action, Getter, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'
 import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
-import { formatedStartTime } from '@/utils/helpers'
-
-
-
 import moment from 'moment'
 const appointmentsModule = namespace('appointmentsModule')
 

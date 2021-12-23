@@ -168,8 +168,7 @@ export default class DashHoldTable extends Vue {
 
   private formatTime (data: any) {
     const date = new Date(data)
-    const display = date.toLocaleTimeString()
-    return display
+    return date.toLocaleTimeString()
   }
 
   private parseComments (item: any) {
@@ -204,9 +203,9 @@ export default class DashHoldTable extends Vue {
   }
 
   private showCounter (value: any) {
-    for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
-        return this.user.office.counters[i].counter_name
+    for (let counter of this.user.office.counters) {
+      if (counter.counter_id == value) {
+        return counter.counter_name
       }
     }
   }
