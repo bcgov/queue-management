@@ -161,7 +161,7 @@
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
