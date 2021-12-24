@@ -110,8 +110,6 @@ class CSRConfig(Base):
             .filter(Period.csr_id==id) \
             .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) 
 
-        print('***** csr.py citizen query: *****')
-        print(str(citizen.statement.compile(dialect=postgresql.dialect())))
         citizen = citizen.all()
 
         if len(citizen) != 0:
