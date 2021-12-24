@@ -1,6 +1,6 @@
 <template>
   <div fluid class="container-fluid">
-    <div class="fc-view-container" style="">
+    <div class="fc-view-container">
       <div class="fc-view fc-listYear-view fc-list-view fc-widget-content">
         <div class="fc-scroller" style="overflow: hidden auto; height: auto">
           <div v-if="events.length === 0" class="my-5 mx-3">

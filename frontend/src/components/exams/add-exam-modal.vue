@@ -330,7 +330,6 @@ export default class AddExamModal extends Vue {
       const d = new Date()
       const today = moment(d).format('YYYY-MM-DD')
       this.captureExamDetail({ key: 'exam_received_date', value: today })
-      const recd = moment().add(90, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'group':
@@ -339,7 +338,6 @@ export default class AddExamModal extends Vue {
     case 'other':
       this.resetModal()
       this.captureExamDetail({ key: 'on_or_off', value: 'on' })
-      const exp = moment().add(60, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'pesticide':
