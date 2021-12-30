@@ -947,7 +947,7 @@ export default class ExamInventoryTable extends Vue {
 
   get officeName () {
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number == this.officeNumber)
+      const office = this.offices.find(offz => offz.office_number == this.officeNumber)
       if (office) {
         return office.office_name
       }
@@ -963,7 +963,7 @@ export default class ExamInventoryTable extends Vue {
     if (this.inventoryFilters && this.inventoryFilters.office_number) {
       const { office_number } = this.inventoryFilters
       if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-        const office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+        const office = (this.offices.find(offz => offz.office_name == 'Pesticide Offsite'))
         return office.office_number
       } else if (office_number !== 'default') {
         return office_number
@@ -1288,7 +1288,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   checkExpiryDate (date, exam_returned_date) {
-    if (exam_returned_date != null) {      
+    if (exam_returned_date != null) {
       return false
     }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
@@ -1297,14 +1297,9 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkStartDate (date, exam_returned_date) {    
-    if (exam_returned_date != null) {      
-      return false
-    }
-    if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
-      return true
-    }
-    return false
+  checkStartDate (date, exam_returned_date) {
+    // duplicated code
+    this.checkExpiryDate(date, exam_returned_date)
   }
 
   filteredExams () {
@@ -1319,10 +1314,10 @@ export default class ExamInventoryTable extends Vue {
     if (examInventory.length > 0) {
       if (this.showExamInventoryModal) {
         filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-        const moreFiltered: any = filtered.filter((ex: any) => !ex.booking)
-        const evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
+        const moreFilteredConst: any = filtered.filter((ex: any) => !ex.booking)
+        const evenMoreFilteredConst = moreFilteredConst.filter(ex => !ex.offsite_location)
         const { office_id } = this.user
-        return evenMoreFiltered.filter(ex => ex.office_id == office_id)
+        return evenMoreFilteredConst.filter(ex => ex.office_id == office_id)
       }
 
       const exams = this.showAllPesticide ? examInventory
@@ -1632,7 +1627,13 @@ export default class ExamInventoryTable extends Vue {
         val1 = parseInt(a.exam_id)
         val2 = parseInt(b.exam_id)
       }
-      return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
+      if (val1 < val2) {
+        return -1
+      } else if (val1 > val2) {
+        return 1
+      } else {
+        return 0
+      }
     }
     else if (key === 'start_time') {
       if (a.booking == null && b.booking == null) {
@@ -1656,9 +1657,15 @@ export default class ExamInventoryTable extends Vue {
 
     }
 
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {      
-      return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-    } else {      
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+      if (a[key] < b[key]) {
+        return -1
+      } else if (a[key] > b[key]) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
       return toString(a[key]).localeCompare(toString(b[key]), undefined, {
         numeric: true
       })
@@ -1669,7 +1676,7 @@ export default class ExamInventoryTable extends Vue {
       } else if (value instanceof Object) {
         return Object.keys(value)
           .sort()
-          .map(key => toString(value[key]))
+          .map(q => toString(value[q]))
           .join(' ')
       }
       return String(value)
@@ -1678,7 +1685,6 @@ export default class ExamInventoryTable extends Vue {
 
   statusIcon (item: any) {
     const number_of_students: any = item.number_of_students
-    const number_of_invigilators: any = Math.ceil(number_of_students / 24)
     let length_of_invigilator_array: any = null
     if (!item.booking) {
       length_of_invigilator_array = 0

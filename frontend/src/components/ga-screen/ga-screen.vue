@@ -182,7 +182,11 @@ export default class GAScreen extends Vue {
     this.sortedCsrs.forEach(csr => {
       const activeCitizen = this.get_citizen_for_csr(csr)
       if (activeCitizen === null) {
-        csr.csr_state_id === breakStateID ? csr.wait_time = 'ON BREAK' : csr.wait_time = null
+        if (csr.csr_state_id === breakStateID) {
+          csr.wait_time = 'ON BREAK'
+        } else {
+          csr.wait_time = null
+        }
         csr.serving_time = null
         csr.citizen = null
         csr.service_request = null
@@ -230,7 +234,6 @@ export default class GAScreen extends Vue {
               }
             }
           })
-          const waitSeconds: any = (firstServedPeriodDate - citizenStartDate) / 1000
           const timeServeTotal = (timeServeClosed + timeServeOpen)
           const serveDate = new Date(0)
           serveDate.setSeconds(timeServeTotal / 1000)

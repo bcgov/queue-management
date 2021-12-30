@@ -86,7 +86,6 @@ export default class Smartboard extends Vue {
   networkStatus: string = ''
   date: string = ''
 
-  // return {
   private officetype: string = ''
   private networkDown: boolean = false
   private options: any = {
@@ -254,12 +253,6 @@ export default class Smartboard extends Vue {
   height: 12%;
   width: 100%;
 }
-.flex-title {
-  font-size: 7.2rem;
-  color: darkblue;
-  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue,
-    0 -1px steelblue;
-}
 .lg-boardtable-head {
   font-size: 2.3rem;
   text-align: center;
@@ -336,9 +329,10 @@ export default class Smartboard extends Vue {
   vertical-align: top;
 }
 .flex-title {
-    font-size: 4rem;
-    color: midnightblue;
-    margin-top: -4px;
+  font-size: 4rem;
+  color: midnightblue;
+  margin-top: -4px;
+  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue, 0 -1px steelblue;
 }
 .video-js {
   background-color: white;
