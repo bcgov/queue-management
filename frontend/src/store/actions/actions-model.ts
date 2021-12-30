@@ -2185,20 +2185,20 @@ export const commonActions: any = {
                 }
                 context
                   .dispatch('putExam', putObject)
-                  .then(examResp => {
+                  .then(examResp2 => {
                     if (responses.sbc_managed === 'non-sbc') {
                       if (
-                        examResp.data &&
-                        examResp.data.exam &&
-                        examResp.data.exam.invigilator
+                        examResp2.data &&
+                        examResp2.data.exam &&
+                        examResp2.data.exam.invigilator
                       ) {
                         context
                           .dispatch('emailInvigilator', {
-                            invigilator: examResp.data.exam.invigilator,
-                            exam: examResp.data.exam
+                            invigilator: examResp2.data.exam.invigilator,
+                            exam: examResp2.data.exam
                           })
                           .then(emailResp => {
-                            resolve(examResp)
+                            resolve(examResp2)
                           })
                           .catch(() => {
                             console.log('EMAIL_FAILED')
@@ -2206,7 +2206,7 @@ export const commonActions: any = {
                           })
                       }
                     } else {
-                      resolve(examResp)
+                      resolve(examResp2)
                     }
                   })
                   .catch(() => {
@@ -2332,9 +2332,7 @@ export const commonActions: any = {
     }
 
     if (Object.keys(data).length === 0) {
-      return new Promise((resolve, reject) => {
-        resolve(' ')
-      })
+      return Promise.resolve(' ')
     }
     return new Promise((resolve, reject) => {
       const url = `/citizens/${citizen_id}/`
@@ -2403,9 +2401,7 @@ export const commonActions: any = {
       }
     }
     if (Object.keys(data).length === 0) {
-      return new Promise((resolve, reject) => {
-        resolve(' ')
-      })
+      return Promise.resolve(' ')
     }
     
     return new Promise((resolve, reject) => {

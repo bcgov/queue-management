@@ -292,7 +292,7 @@ export const addExamModule = {
             console.log(resp)
             const putUrl = resp.data.url
 
-            const config = {
+            const schtupf = {
               headers: {
                 'Content-Type': payload.file.type
               },
@@ -303,7 +303,7 @@ export const addExamModule = {
               }
             }
 
-            axios.put(putUrl, payload.file, config)
+            axios.put(putUrl, payload.file, schtupf)
               .then((putResponse) => {
                 console.log(putResponse)
                 const bcmpUrl = `/exams/${payload.exam.exam_id}/transfer/`
@@ -331,7 +331,6 @@ export const addExamModule = {
   getters: {
     add_modal_steps (state, getters, rootState) {
       if (rootState.addExamModal && rootState.addExamModal.setup) {
-        const { capturedExam } = rootState
         switch (rootState.addExamModal.setup) {
         case 'challenger':
           return state.addChallengerSteps
@@ -357,7 +356,7 @@ export const addExamModule = {
       ]
     },
     pesticideStep1 (state, getters, rootState) {
-      const { capturedExam, pesticide_invigilators, pesticide_offsite_invigilators } = rootState
+      const { capturedExam, pesticide_offsite_invigilators } = rootState
       const pesticideTypeQ = {
         key: 'exam_type_id',
         text: 'Type of Environment Exam',
@@ -428,10 +427,7 @@ export const addExamModule = {
       return [state.pesticideStep3]
     },
     pesticideStep4 (state, getters, rootState) {
-      const { capturedExam } = rootState
-
       const step4 = { ...state.pesticideStep4_summary }
-
       return [step4]
     }
   },
