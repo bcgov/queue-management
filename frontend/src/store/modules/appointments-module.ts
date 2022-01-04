@@ -271,10 +271,7 @@ export default {
         service_id: payload.service_id,
         citizen_name: payload.title
       }
-      if (!payload.hasOwnProperty('start_time'))
-      {
-        payload.start_time = data.checked_in_time
-      }
+      payload.start_time = data.checked_in_time
       payload.snowplow_addcitizen = true
       return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${payload.appointment_id}/`, data).then(() => {
