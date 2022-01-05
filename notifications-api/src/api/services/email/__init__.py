@@ -20,7 +20,7 @@ def get_email_service():
     from .email_gc_notify import EmailGCNotify
     from .email_ches_notify import EmailChesNotify
 
-    _instance: EmailBaseService = ""
+    _instance: EmailBaseService
     if os.getenv('EMAIL_PROVIDER') == 'GC_NOTIFY':
         _instance = EmailGCNotify()
     elif os.getenv('EMAIL_PROVIDER') == 'CHES':
