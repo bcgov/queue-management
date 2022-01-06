@@ -19,6 +19,7 @@ from app.models.theq.office import Office
 from app.models.theq.role import Role
 from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
+from pprint import pprint
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import logging
@@ -178,8 +179,10 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr, office, csr_id = 1000001, counter_name = "Counter", role_name="WebSelfServe"):
 
+        idir_user = None
         if csr is not None:
             csr_id = csr.csr_id
+            idir_user = csr.username
             if csr.receptionist_ind == 1:
                 counter_name = "Receptionist"
             else:
@@ -202,11 +205,14 @@ class SnowPlow():
                 role_name = "Helpdesk"
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-2',
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/4-0-0',
                                    {"agent_id": csr_id,
+                                    "idir": idir_user,
                                     "role": role_name,
-                                    "counter_type": counter_name})
-
+                                    "counter_type": counter_name
+                                   })
+        print('returning snowplow data:')
+        pprint(vars(agent))
         return agent
 
     @staticmethod
