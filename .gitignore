@@ -169,3 +169,5 @@ keys-generated
 # new config stuff
 /frontend/public/config/configuration.json
 /appointment-frontend/public/config/configuration.json
+
+#testing GitHub connection
