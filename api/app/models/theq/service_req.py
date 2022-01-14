@@ -34,6 +34,9 @@ class ServiceReq(Base):
     citizen = db.relationship('Citizen')
     service = db.relationship('Service', lazy='joined')
 
+    # Defining String constants to appease SonarQube
+    being_served_const = "Being Served"
+
     def __init__(self, **kwargs):
         super(ServiceReq, self).__init__(**kwargs)
 
@@ -44,7 +47,7 @@ class ServiceReq(Base):
 
     def invite(self, csr, invite_type, sr_count = 1):
         active_period = self.get_active_period()
-        if active_period.ps.ps_name in ["Invited", "Being Served", "On hold"]:
+        if active_period.ps.ps_name in ["Invited", being_served_const, "On hold"]:
             raise TypeError("You cannot invite a citizen that has already been invited")
 
         #  If a generic invite type, event is either invitecitizen or returninvite.
@@ -111,13 +114,13 @@ class ServiceReq(Base):
     def begin_service(self, csr, snowplow_event):
         active_period = self.get_active_period()
         
-        if active_period.ps.ps_name in ["Being Served"]:
+        if active_period.ps.ps_name in [being_served_const]:
             raise TypeError("You cannot begin serving a citizen that is already being served")
 
         active_period.time_end = datetime.utcnow()
         # db.session.add(active_period)
 
-        period_state_being_served = PeriodState.get_state_by_name("Being Served")
+        period_state_being_served = PeriodState.get_state_by_name(being_served_const)
 
         new_period = Period(
             sr_id=self.sr_id,

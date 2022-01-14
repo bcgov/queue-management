@@ -26,6 +26,8 @@ from app.utilities.auth_util import Role
 from app.utilities.sms import send_sms
 from qsystem import api, db
 
+# Defining String constants to appease SonarQube
+api_down_const = 'API is down'
 
 @api.route("/users/", methods=['POST'])
 class PublicUsers(Resource):
@@ -53,7 +55,7 @@ class PublicUsers(Resource):
 
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500
 
 
 @api.route("/users/<int:user_id>/", methods=['PUT'])
@@ -88,7 +90,7 @@ class PublicUser(Resource):
 
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500
 
 
 @api.route("/users/me/", methods=['GET'])
@@ -106,4 +108,4 @@ class CurrentUser(Resource):
 
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500

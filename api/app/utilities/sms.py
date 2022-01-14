@@ -24,6 +24,8 @@ from flask import current_app
 from app.models.bookings import Appointment
 from app.models.theq import Office, PublicUser, Citizen
 
+# Defining String constants to appease SonarQube
+app_json_const = 'application/json'
 
 def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
     """Send confirmation email"""
@@ -33,7 +35,7 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
         try:
             display_name: str = user.display_name if user else ''  # For CSR appointment user is None
             requests.post(notifications_endpoint,
-                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
                           data=json.dumps([{
                               'user_telephone': telephone,
                               'display_name': display_name,
@@ -75,7 +77,7 @@ def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
         try:
             requests.post(notifications_endpoint,
-                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
                           data=json.dumps([{
                               'user_telephone': telephone,
                               'url': url,
@@ -97,7 +99,7 @@ def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
         try:
             msg = "We’re ready! Please come inside and speak to a Service BC Representative"
             requests.post(notifications_endpoint,
-                          headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
+                          headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
                           data=json.dumps([{
                               'user_telephone': telephone,
                               'message': office.check_in_reminder_msg if office.check_in_reminder_msg else msg,

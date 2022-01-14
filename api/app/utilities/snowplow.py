@@ -27,6 +27,10 @@ import os
 from qsystem import application, my_print
 from datetime import datetime, timezone
 
+# Defining String constants to appease SonarQube
+iglu_cfmspoc_const = 'iglu:ca.bc.gov.cfmspoc/'
+json_schema_100_const = '/jsonschema/1-0-0'
+
 class SnowPlow():
 
     sp_endpoint = os.getenv("THEQ_SNOWPLOW_ENDPOINT", "")
@@ -100,7 +104,7 @@ class SnowPlow():
 
             #  Most Snowplow events don't have parameters, so don't have to be built.
             else:
-                snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+                snowplow_event = SelfDescribingJson( iglu_cfmspoc_const + schema + '/jsonschema/' + schema_version, {})
 
             #  Make the call.
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
@@ -273,7 +277,7 @@ class SnowPlow():
         #   Take action depending on the schema.
         if schema == "appointment_checkin":
 
-            appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/1-0-0',
+            appointment = SelfDescribingJson(iglu_cfmspoc_const + schema + json_schema_100_const,
                                              {"appointment_id": appointment.appointment_id})
 
         else:
@@ -284,7 +288,7 @@ class SnowPlow():
 
             if schema == "appointment_create":
 
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_cfmspoc_const + schema +json_schema_100_const,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
@@ -293,7 +297,7 @@ class SnowPlow():
                                                   "program_name": appointment.service.parent.service_name,
                                                   "transaction_name": appointment.service.service_name})
             if schema == "appointment_update":
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_cfmspoc_const + schema +json_schema_100_const,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
