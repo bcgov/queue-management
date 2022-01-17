@@ -398,10 +398,6 @@ export default class Appointments extends Vue {
   setTempEvent (event) {
     this.removeTempEvent()
     const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    let end = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    if (event.end) {
-      end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    } 
 
     // for draft
     const data: any = {
