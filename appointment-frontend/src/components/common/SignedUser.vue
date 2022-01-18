@@ -53,6 +53,7 @@ export default class SignedUser extends Vue {
   private username:string
 
   private async mounted () {
+    // I assume this is intentionally empty.
   }
 
   private callsp () {
