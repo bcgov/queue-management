@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from datetime import datetime
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState, Counter
 from flask import flash, redirect, request
 from .base import Base
@@ -25,7 +24,6 @@ from flask_login import current_user
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from qsystem import db, cache, socketio
-from pytz import timezone
 
 class CSRConfig(Base):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
@@ -151,12 +149,11 @@ class CSRConfig(Base):
         """
         return_url = self.get_return_url()
         model = self.validate_model()
-        # model.deleted = datetime.now()
+
         if not model:
             return redirect(return_url)
 
         csr_id = get_mdict_item_or_list(request.args, 'id')
-        request.form.deleted = '2022-01-15 06:16:00'
         form = self.edit_form(obj=model)
         if not hasattr(form, '_validated_ruleset') or not form._validated_ruleset:
             self._validate_form_instance(ruleset=self._form_edit_rules, form=form)
