@@ -195,8 +195,8 @@ class CSRConfig(Base):
                            return_url=return_url)
 
         if model.deleted:
-            deleted_time = model.deleted.strftime("%Y-%m-%d %H:%M:%S")
-            deleted_time_val = "value=\"{0}\"".format(deleted_time)
+            d_time = model.deleted.strftime("%Y-%m-%d %H:%M:%S")
+            deleted_time_val = "value=\"{0}\"".format(d_time)
             result = result.replace('value=\"%\"',deleted_time_val)
 
         return result
