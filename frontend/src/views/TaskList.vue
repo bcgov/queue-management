@@ -10,6 +10,7 @@
       :formIOReviewer="configs.FORM_IO_REVIEWER"
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
+      :formIOJwtSecret="configs.FORMIO_JWT_SECRET"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
       :formIOUserRoles="userKeyclockGroups"
