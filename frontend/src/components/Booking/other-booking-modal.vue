@@ -973,7 +973,6 @@ export default class OtherBookingModal extends Vue {
     const local_end_minute = parseInt(moment(other_recurring_end_time).clone().format('mm'))
     const duration_start = moment(other_recurring_start_time).utc()
     const duration_end = moment(other_recurring_end_time).utc()
-    const duration = moment.duration(duration_end.diff(duration_start))
     let input_frequency: any = null
     const local_other_dates_array: any = []
 
