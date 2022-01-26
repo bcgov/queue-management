@@ -87,7 +87,7 @@
                   <div class="ai-modal-title">
                     Selected:
                     <strong class="mr-2">{{
-                      invigilatorDetails.invigilator_name
+                      invigilatorDetails.name
                     }}</strong>
                   </div>
                   <div class="info-display-grid-container mt-1">
