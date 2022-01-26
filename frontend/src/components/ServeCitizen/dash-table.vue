@@ -223,9 +223,9 @@ export default class DashTable extends Vue {
   }
 
   private showCounter (value: any) {
-    for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
-        return this.user.office.counters[i].counter_name
+    for (let counter of this.user.office.counters) {
+      if (counter.counter_id == value) {
+        return counter.counter_name
       }
     }
   }
