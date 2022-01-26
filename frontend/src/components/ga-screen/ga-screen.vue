@@ -217,7 +217,6 @@ export default class GAScreen extends Vue {
             const waitTime = waitEnd - waitStart
             waitDate.setSeconds(waitTime / 1000)
           }
-          const firstServedPeriod = sortedSRs[0].periods.filter(p => p.ps.ps_name === 'Being Served')[0]
           let timeServeClosed = 0
           let timeServeOpen = timeServeClosed
           activeServiceRequest.periods.forEach(p => {
