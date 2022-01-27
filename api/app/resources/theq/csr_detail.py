@@ -16,11 +16,16 @@ from flask import g, request
 from flask_restx import Resource
 from marshmallow import ValidationError
 from qsystem import api, api_call_with_retry, db, cache, socketio
-from app.models.theq import CSR, Citizen, ServiceReq, Period, PeriodState
+from app.models.theq import CSR, Citizen, Period, PeriodState, ServiceReq
 from app.schemas.theq import CSRSchema
 from app.utilities.auth_util import Role, has_any_role
 from sqlalchemy import or_
 from app.auth.auth import jwt
+
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import joinedload, raiseload
+from sqlalchemy.orm import raiseload
+from sqlalchemy.dialects import postgresql
 
 
 @api.route("/csrs/<int:id>/", methods=["PUT"])
@@ -48,12 +53,14 @@ class Services(Resource):
 
         #  See if CSR has any open tickets.
         citizen = Citizen.query \
+            .options(raiseload(Citizen.service_reqs), raiseload(Citizen.cs),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
             .join(Citizen.service_reqs) \
             .join(ServiceReq.periods) \
             .filter(Period.time_end.is_(None)) \
             .filter(Period.csr_id==id) \
-            .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) \
-            .all()
+            .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) 
+
+        citizen = citizen.all()
 
         if len(citizen) != 0:
             return {'message': 'CSR has an open ticket and cannot be edited.'}, 403
