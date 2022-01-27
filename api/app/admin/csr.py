@@ -24,6 +24,8 @@ from flask_login import current_user
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from qsystem import db, cache, socketio
+from sqlalchemy.orm import raiseload
+from sqlalchemy.dialects import postgresql
 
 class CSRConfig(Base):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
@@ -101,12 +103,14 @@ class CSRConfig(Base):
 
         #  See if CSR has any open tickets.
         citizen = Citizen.query \
+            .options(raiseload(Citizen.service_reqs), raiseload(Citizen.cs),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
             .join(Citizen.service_reqs) \
             .join(ServiceReq.periods) \
             .filter(Period.time_end.is_(None)) \
             .filter(Period.csr_id==id) \
-            .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) \
-            .all()
+            .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) 
+
+        citizen = citizen.all()
 
         if len(citizen) != 0:
             flash(gettext('CSR has an open ticket and cannot be edited.'), 'error')
