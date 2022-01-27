@@ -101,9 +101,9 @@ export const commonGetters: any = {
         value: i.invigilator_id,
         name: i.invigilator_name,
         shadow_count: i.shadow_count,
-        contact_phone: i.contact_phone,
-        contact_email: i.contact_email,
-        invigilator_notes: i.invigilator_notes
+        contact_phone: i.contact_phone || '',
+        contact_email: i.contact_email || '',
+        invigilator_notes: i.invigilator_notes || ''
       })
     })
     return invigilators.filter(i => i.shadow_count == 2)
