@@ -16,6 +16,7 @@
             @change="officeSelection"
             @input="clickSelection"
             @keyup="setKeyPressed"
+            auto-select-first="true"
             hide-details
           >
           </v-combobox>
