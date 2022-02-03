@@ -215,8 +215,6 @@ class SnowPlow():
                                     "role": role_name,
                                     "counter_type": counter_name
                                    })
-        print('returning snowplow data:')
-        pprint(vars(agent))
         return agent
 
     @staticmethod
