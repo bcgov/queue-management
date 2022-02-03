@@ -16,6 +16,7 @@
             @change="serviceSelection"
             @input="clickSelection"
             @keyup="setKeyPressed"
+            auto-select-first="true"
             hide-details
           >
             <template v-slot:selection="data">
