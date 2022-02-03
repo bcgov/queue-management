@@ -87,7 +87,7 @@
                   <div class="ai-modal-title">
                     Selected:
                     <strong class="mr-2">{{
-                      invigilatorDetails.invigilator_name
+                      invigilatorDetails.name
                     }}</strong>
                   </div>
                   <div class="info-display-grid-container mt-1">
@@ -246,12 +246,14 @@ export default class BookingModal extends Vue {
   public booking_contact_information: any = ''
   public invigilator: any = null
   public formStep: any = 1
-  public fields: any = {
-    invigilator_name: {
-      label: 'Name',
-      thClass: 'd-none'
-    }
-  }
+  public fields: Array<any> = [
+    {key: 'value'},
+    {key: 'name'},
+    {key: 'shadow_count'},
+    {key: 'contact_phone', thClass: 'd-none', tdClass: 'd-none' },
+    {key: 'contact_email', thClass: 'd-none', tdClass: 'd-none' },
+    {key: 'invigilator_notes', thClass: 'd-none', tdClass: 'd-none' },
+  ]
 
   public savedRef: any = 'contact_information'
   public selectedOption: any = null
