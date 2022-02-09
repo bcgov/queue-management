@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Copyright 2022 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+
 ###############################################################################
 # Functions
 ###############################################################################
@@ -64,14 +78,15 @@ check_setting () {
 # Setup
 ###############################################################################
 
-# To save time do the pip and npm installs in parallel.
+# To save time do the installations in parallel.
 
 (
     cd api
+    rm -rf env
     python -m venv env
     source env/bin/activate
     python -m pip install --upgrade pip -q
-    pip install -r requirements.txt --progress-bar off
+    pip install -r requirements_dev.txt --progress-bar off
     python manage.py db upgrade
 
     # If there is nothing in the CSR table, we're probably starting with a
@@ -81,11 +96,16 @@ check_setting () {
     if [ "$COUNT" -eq 0 ]; then
         env/bin/python manage.py bootstrap
     fi
+
+    # Install newman so that the postman tests can be run on the command line.
+    cd postman
+    npm install newman
 ) &
 
 (
     cd appointment-frontend
     npm install
+    $(npm bin)/cypress install
 ) &
 
 #(
