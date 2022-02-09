@@ -64,7 +64,7 @@ class Appointment(Base):
     @staticmethod
     def _get_user_name(**kwargs):
         """Return current user display name."""
-        _name: str = None
+        _name: str = ""
         if g and 'jwt_oidc_token_info' in g:
             _name = g.jwt_oidc_token_info.get('display_name')
         return _name

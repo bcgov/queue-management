@@ -93,8 +93,8 @@ class CSRConfig(Base):
 
     def validate_model(self):
 
-        id = get_mdict_item_or_list(request.args, 'id')
-        if id is None:
+        identifier = get_mdict_item_or_list(request.args, 'id')
+        if identifier is None:
             return False
 
         #  Get Invited and Being Served states, to see if CSR has any open tickets.
@@ -107,7 +107,7 @@ class CSRConfig(Base):
             .join(Citizen.service_reqs) \
             .join(ServiceReq.periods) \
             .filter(Period.time_end.is_(None)) \
-            .filter(Period.csr_id==id) \
+            .filter(Period.csr_id==identifier) \
             .filter(or_(Period.ps_id==period_state_invited.ps_id, Period.ps_id==period_state_being_served.ps_id)) 
 
         citizen = citizen.all()
@@ -119,7 +119,7 @@ class CSRConfig(Base):
         if not self.can_edit:
             return False
 
-        model = self.get_one(id)
+        model = self.get_one(identifier)
 
         if model is None:
             flash(gettext('Record does not exist.'), 'error')
