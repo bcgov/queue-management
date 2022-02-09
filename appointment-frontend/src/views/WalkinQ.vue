@@ -208,7 +208,3 @@ export default class WalkinQ extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-// empty block
-</style>

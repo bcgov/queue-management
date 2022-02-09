@@ -248,14 +248,8 @@ export default class Calendar extends Vue {
 
   @Watch('rescheduling')
   onReschedulingChange (newVal, oldVal) {
-    if (newVal && !oldVal) {
-      this.toggleOffsite(false)
-    }
-    if (oldVal && !newVal) {
-      if (this.offsiteVisible) {
-        this.toggleOffsite(true)
-      }
-    }
+    // Not sure why this function is exactly the same as "onSchedulingChange"
+    this.onSchedulingChange(newVal, oldVal)
   }
   // vuetify calender
 
@@ -580,7 +574,7 @@ export default class Calendar extends Vue {
         event.end = endTime
         this.setClickedDate(event)
         // TOCHECK removed new keyword in moment. not needed
-        const tempEvent = {
+        const tempEvent1 = {
           start: moment(event.start),
           end: moment(event.end),
           title: '(NEW TIME) ' + booking.title,
@@ -591,7 +585,7 @@ export default class Calendar extends Vue {
         }
         // Verify below `setEditedBooking()` is working in OCP3
         // When re-scheduling, is proper date shown?
-        this.setEditedBooking(tempEvent)
+        this.setEditedBooking(tempEvent1)
         this.toggleEditBookingModal(true)
 
         return
@@ -607,7 +601,7 @@ export default class Calendar extends Vue {
       const ii = event.start.clone()
       const ff = event.end.clone()
       const clickedDuration = ff.diff(ii, 'h', true)
-      const tempEvent: any = {
+      const tempEvent2: any = {
         // TOCHECK removed new keyword in moment. not needed
         start: moment(event.start), 
         title: '(NEW TIME) ' + booking.title,
@@ -618,12 +612,12 @@ export default class Calendar extends Vue {
       }
       if (clickedDuration == 0.5) {
         // TOCHECK removed new keyword in moment. not needed
-        tempEvent.end = moment(event.start).add(duration, 'h')
+        tempEvent2.end = moment(event.start).add(duration, 'h')
       } else {
         // TOCHECK removed new keyword in moment. not needed
-        tempEvent.end = moment(event.end)
+        tempEvent2.end = moment(event.end)
       }
-      event.end = tempEvent.end
+      event.end = tempEvent2.end
       this.tempEvent = true
 
       this.toggleEditBookingModal(true)
@@ -721,7 +715,7 @@ export default class Calendar extends Vue {
   }
 
   viewRender () {
-    let viewName = 'week'
+    let viewName = ''
 
     if (this.type === 'category') {
       if (this.categoryDays === 1) {
@@ -799,9 +793,6 @@ export default class Calendar extends Vue {
 </script>
 
 <style scoped>
-.btn {
-  border: none !important;
-}
 .label-text {
   font-size: 0.9rem;
 }
@@ -809,11 +800,6 @@ export default class Calendar extends Vue {
   border: none !important;
   box-shadow: none !important;
   transition: none !important;
-}
-.btn:active,
-.btn.active {
-  background-color: whitesmoke !important;
-  color: darkgrey !important;
 }
 .exam-table-holder {
   border: 1px solid dimgrey;

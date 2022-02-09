@@ -317,7 +317,7 @@ export class DropdownQuestion extends Vue {
     if (this.exam_object && this.exam_object.exam_type_name) {
       return { backgroundColor: `${this.exam_object.exam_color}` }
     }
-    return ''
+    return {}
   }
 
   get dropclass () {
@@ -1012,7 +1012,7 @@ export class SelectOffice extends Vue {
     office_number = parseInt(office_number)
     this.setAddExamModalSetting({ office_number })
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number == office_number) || null
+      const office = this.offices.find(off => off.office_number == office_number) || null
       if (office) {
         const { office_id } = office
         this.handleInput({

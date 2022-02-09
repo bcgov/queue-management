@@ -58,14 +58,11 @@ export default class Video extends Vue {
   private playing: boolean = false
 
   get videoPath () {
-    let videoPath = defaultVideoFile
     if (this.getParameterByName('localvideo') == '1') {
-      videoPath = localVideoFile
+      return localVideoFile
     } else {
-      videoPath = defaultVideoFile
+      return defaultVideoFile
     }
-
-    return videoPath
   }
 
   getOfficeVideoUrl () {
