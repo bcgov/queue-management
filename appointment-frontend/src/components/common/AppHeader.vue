@@ -7,6 +7,7 @@
     <v-img
       v-if="!isWalkin"
       class="mx-2 bc-logo"
+      data-cy="header-image-bcgov"
       :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
       max-width="132"
       contain

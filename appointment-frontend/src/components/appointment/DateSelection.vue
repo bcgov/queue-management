@@ -48,7 +48,9 @@
                 outlined
                 block
                 @click="selectTimeSlot(timeslot)"
-                color="primary">
+                color="primary"
+                data-cy="step-3-button-timeslot"
+              >
                 {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
               </v-btn>
             </v-col>
