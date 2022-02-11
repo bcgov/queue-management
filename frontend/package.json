@@ -111,7 +111,7 @@
     "http-proxy-middleware": "1.1.0",
     "jest": "26.6.3",
     "jest-cli": "^26.6.0",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.0",
     "opn": "6.0.0",
     "ora": "5.4.0",
     "postcss-loader": "4.0.3",
