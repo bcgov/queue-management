@@ -41,6 +41,8 @@ export const SELECTOR_STEP_2_COMBOBOX_SERVICE =
 // Step 3.
 export const SELECTOR_STEP_3_BUTTON_TIMESLOT =
   '[data-cy="step-3-button-timeslot"]'
+export const SELECTOR_STEP_3_DATE_PICKER =
+  '[data-cy="step-3-date-picker"]'
 
 // Step 4.
 export const SELECTOR_STEP_4_BUTTON_BCEID =

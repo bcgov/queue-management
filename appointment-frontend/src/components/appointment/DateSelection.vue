@@ -17,6 +17,7 @@
           header-color="primary"
           full-width
           @click:date="goto('available');dateClicked('true')"
+          data-cy="step-3-date-picker"
         ></v-date-picker>
       </v-col>
       <v-col

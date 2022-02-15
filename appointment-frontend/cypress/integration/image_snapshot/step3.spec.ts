@@ -22,7 +22,8 @@ import {
   SELECTOR_STEP_1_COMBOBOX_OFFICE,
   SELECTOR_STEP_2_BUTTON_NEXT,
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
-  SELECTOR_STEP_3_BUTTON_TIMESLOT
+  SELECTOR_STEP_3_BUTTON_TIMESLOT,
+  SELECTOR_STEP_3_DATE_PICKER
 } from '../../support/selectors'
 
 import { API_PREFIX } from '../../support'
@@ -73,6 +74,9 @@ describe('step 3', () => {
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
+
+    // Flake: v-date-picker has a transition. Wait for it to complete.
+    cy.workaroundDatePickerTransition(SELECTOR_STEP_3_DATE_PICKER)
   })
 
   it('page loaded', () => {

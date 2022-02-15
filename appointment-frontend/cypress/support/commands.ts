@@ -36,6 +36,14 @@ declare global {
        workaroundButtonRipple(selector: string): void
 
       /**
+       * Wait for Vuetify date picker transition to complete. Not chainable.
+       *
+       * @example
+       *     cy.workaroundDatePickerTransition('[data-cy=your-selector]')
+       */
+       workaroundDatePickerTransition(selector: string): void
+
+      /**
        * Wait for Vuetify image fade transition to complete. Not chainable.
        *
        * @example
@@ -84,7 +92,7 @@ Cypress.Commands.add('bceidLogin', (url, username, password) => {
 // taken.
 //
 // Note that this is quite fragile. Perhaps there is a better way, but what this
-// does it wait for a Vuetify v-btn "ripple" span to disappear from the DOM.
+// does is wait for a Vuetify v-btn "ripple" span to disappear from the DOM.
 // This behaviour may change in newer versions of Vuetify, in which case a new
 // workaround will need to be found (or ideally Cypress will start doing the
 // right thing and wait for the ripple to complete).
@@ -95,6 +103,22 @@ Cypress.Commands.add('workaroundButtonRipple', (selector: string) => {
     .should('not.exist')
 })
 
+// We have flaky tests because the date displayed in the Vuetify v-date-picker
+// has an animation when the component is displayed. Repeated image snapshots of
+// the page will very, very rarely catch the date not displayed yet.
+//
+// Note that this is quite fragile. Perhaps there is a better way, but what this
+// does is wait for a Vuetify transition div to disappear from the DOM. This
+// behaviour may change in newer versions of Vuetify, in which case a new
+// workaround will need to be found (or ideally Cypress will start doing the
+// right thing and wait for the transition to complete).
+//
+Cypress.Commands.add('workaroundDatePickerTransition', (selector: string) => {
+  cy.get(selector)
+    .find('.picker-transition-enter.picker-transition-enter-active')
+    .should('not.exist')
+})
+
 // We have flaky tests because the default behaviour of the Vuetify v-img is to
 // fade in the image. Repeated image snapshots of the page will catch the v-img
 // elements in various states of fading in, and will produce false failures. By
@@ -102,7 +126,7 @@ Cypress.Commands.add('workaroundButtonRipple', (selector: string) => {
 // by the time the image snapshot is taken.
 //
 // Note that this is quite fragile. Perhaps there is a better way, but what this
-// does it wait for a Vuetify v-img "preload" div to disappear from the DOM.
+// does is wait for a Vuetify v-img "preload" div to disappear from the DOM.
 // This behaviour may change in newer versions of Vuetify, in which case a new
 // workaround will need to be found (or ideally Cypress will start doing the
 // right thing and wait for the fade to complete).
