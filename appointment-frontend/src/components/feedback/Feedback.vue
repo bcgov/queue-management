@@ -430,7 +430,6 @@ export default class Feedback extends Vue {
       }
       if (phoneCondition) {
         this.phoneRules = [true]
-        this.emailRules = [true]
       }
     } else {
       this.emailRules = ['Email or Phone is required']
