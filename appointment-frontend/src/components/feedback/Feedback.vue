@@ -423,12 +423,15 @@ export default class Feedback extends Vue {
     const phoneCondition = this.phone !== undefined && this.phone !== ''
     const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
+      const formatResponse = /^\S+@\S+\.\S+$/.test(this.email) ? true : 'Email must be valid'
       if (emailCondition) {
-        const formatResponse = /^\S+@\S+\.\S+$/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
       if (phoneCondition) {
+        if (this.email) {
+          this.emailRules = [formatResponse]
+        }
         this.phoneRules = [true]
       }
     } else {
