@@ -424,7 +424,7 @@ export default class Feedback extends Vue {
     const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
       if (emailCondition) {
-        const formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
+        const formatResponse = /^\S+@\S+\.\S+$/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
