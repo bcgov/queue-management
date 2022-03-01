@@ -56,31 +56,45 @@
       <v-row class="text-center bcsc-btn">
         <v-col class="create-bceid"> <h3>Need a BC Services Card or a Basic BCeID account?</h3></v-col>
       </v-row>
-      <v-row class="align-row-1 bcsc-btn">
+      <v-row class="align-row-1 bcsc-btn" v-if="!hideBCServicesCard">
         <v-col class="fill-width">
           <v-btn
-          min-width="150"
-          large
-          color="primary"
-          @click="createBCServicesCard(BCServicesCardURL)"
-        >
-        Get a BC Services Card
-        </v-btn>
-        <a class="link-w-icon mt-3" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/home/privacy','Info: Privacy Statement')"
-          target="_blank" rel="noopener noreferrer">
-          <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-          <span>Privacy Statement</span>
-        </a>
+            width="220"
+            large
+            color="primary"
+            @click="createBCServicesCard(BCServicesCardURL)"
+          >
+            Get a BC Services Card
+          </v-btn>
         </v-col>
-        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
+        <v-col class="align-row-2 bcsc-btn" v-if="!($vuetify.breakpoint.xs)">
           <v-btn
-          min-width="150"
-          large
-          color="primary"
-          @click="createBCEID(BCEIDRegistrationURL)"
-        >
-        Register for Basic BCeID account
-        </v-btn>
+            width="250"
+            large
+            color="primary"
+            @click="createBCEID(BCEIDRegistrationURL)"
+          >
+            Register for Basic BCeID account
+          </v-btn>
+        </v-col>
+        <v-col class="align-row-2 bcsc-btn" v-if="($vuetify.breakpoint.xs)">
+          <v-btn
+            width="250"
+            large
+            color="primary"
+            @click="createBCEID(BCEIDRegistrationURL)"
+          >
+            Register for Basic BCeID account
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row class="align-new-row">
+        <v-col>
+          <a class="link-w-icon mt-6" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/home/privacy','Info: Privacy Statement')"
+            target="_blank" rel="noopener noreferrer">
+            <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+            <span>Privacy Statement</span>
+          </a>
         </v-col>
       </v-row>
     </v-col>
@@ -229,7 +243,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
 .fill-width{
   min-width: 100%;
 }
-@media (min-width: 400px) {
+@media (min-width: 500px) {
   .align-row-1{
   text-align: right!important;
   }
@@ -242,4 +256,8 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     min-width: unset;
   }
 }
+.align-new-row{
+  text-align: center!important;
+}
+
 </style>
