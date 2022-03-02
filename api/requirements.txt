@@ -34,3 +34,5 @@ redis==3.5.3
 kombu==5.1.0
 alembic==1.5.2
 WTForms==3.0.0
+# Using MarkupSafe 2.1.0 throws error importing soft_unicode 
+MarkupSafe==2.0.1
