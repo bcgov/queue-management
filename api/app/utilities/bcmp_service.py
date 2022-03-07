@@ -1,5 +1,6 @@
 import json
 import logging
+from pprint import pprint
 import urllib
 from qsystem import application, my_print
 from app.utilities.document_service import DocumentService
@@ -127,6 +128,8 @@ class BCMPService:
         url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-GROUP" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_group_exam_bcmp    url: %s" % url)
 
+        print('bcmp service info:')
+        pprint(url)
         office_name = None
         time_zone = pytz.timezone('America/Vancouver')
         if pesticide_office:
