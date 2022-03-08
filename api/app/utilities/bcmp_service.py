@@ -173,6 +173,10 @@ class BCMPService:
             })
 
         response = self.send_request(url, 'POST', bcmp_exam)
+        print('bcmp exam info:')
+        pprint(bcmp_exam)
+        print('bcmp response:')
+        pprint(response)
         return response
 
     def create_group_exam(self, exam):
