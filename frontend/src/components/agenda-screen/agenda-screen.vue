@@ -153,8 +153,6 @@ export default class AgendaScreen extends Vue {
   // Note ths method does not FETCH most recent appointments!
   // Call fetch() to update underlying data
   async computed_appointments() {
-    const now = new Date();
-
     // Changing between 1 week / 1 day seems to work tho.  Just can't go lower than 1 day?
     const pastCutoff = moment(new Date()).subtract('1', 'hour');
     const futureCutoff = moment(new Date()).add('4', 'hour');

@@ -42,9 +42,7 @@ class AppointmentRemindersGet(Resource):
                 send_reminder = False
                 user_telephone = None
                 if reminder_type == 'email':
-                    if user and user.send_email_reminders:
-                        send_reminder = True
-                    elif not user and is_valid_email(appointment.contact_information):
+                    if (user and user.send_email_reminders) or (not user and is_valid_email(appointment.contact_information)):
                         send_reminder = True
                 elif reminder_type == 'sms':
                     if user and user.send_sms_reminders:
