@@ -191,10 +191,7 @@ export default class CheckInModal extends Vue {
   }
 
   editStatSeries () {
-    this.toggleApptBookingModal(true)
-    this.toggleCheckInModal(false)
-    this.toggleEditDeleteSeries(true)
-    this.getAppointments()
+    this.editSeries()
   }
 }
 </script>

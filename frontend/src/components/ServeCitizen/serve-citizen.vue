@@ -470,8 +470,11 @@ export default class ServeCitizen extends Vue {
 
   private flashButton () {
     if (this.serviceBegun === false) {
-      this.buttonStyle == 'btn-primary serve-btn'
-        ? this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
+      if (this.buttonStyle == 'btn-primary serve-btn') {
+        this.buttonStyle = 'btn-highlighted'
+      } else {
+        this.buttonStyle = 'btn-primary serve-btn'
+      }
     }
     if (this.serviceBegun === true) {
       this.buttonStyle = 'btn-primary serve-btn'
@@ -483,7 +486,7 @@ export default class ServeCitizen extends Vue {
   }
 
   private onDrag (event: any) {
-    const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
+    const { deltaX, deltaY, first, last } = event
     if (first) {
       this.dragged = true
       return
