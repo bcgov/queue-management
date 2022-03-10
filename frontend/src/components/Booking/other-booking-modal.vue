@@ -890,7 +890,6 @@ export default class OtherBookingModal extends Vue {
               validate_flag = true
           } else {
             this.start_time_msg = ''
-            validate_flag = false
           }
         } else if (new Date(recurring_start_time_obj).getHours() === 17) {
           if ((new Date(recurring_start_time_obj).getMinutes() > 0)) {
@@ -899,7 +898,6 @@ export default class OtherBookingModal extends Vue {
               validate_flag = true
           } else {
             this.start_time_msg = ''
-            validate_flag = false
           }
         } else {
           this.start_time_msg = "Time not allowed"
@@ -969,17 +967,10 @@ export default class OtherBookingModal extends Vue {
     const end_year = parseInt(moment(other_recurring_end_date).utc().clone().format('YYYY'))
     const end_month = parseInt(moment(other_recurring_end_date).utc().clone().format('MM'))
     const end_day = parseInt(moment(other_recurring_end_date).utc().clone().format('DD'))
-    const new_end_year = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('YYYY'))
-    const new_end_month = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('MM'))
-    const new_end_day = parseInt(moment(other_recurring_end_date).utc().clone().add(1, 'day').format('DD'))
     const other_recurring_end_time_obj = moment(recurring_end_time_obj).clone()
     const other_recurring_end_time = moment.tz(other_recurring_end_time_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
     const local_end_hour = parseInt(moment(other_recurring_end_time).clone().format('HH'))
     const local_end_minute = parseInt(moment(other_recurring_end_time).clone().format('mm'))
-    const duration_start = moment(other_recurring_start_time).utc()
-    const duration_end = moment(other_recurring_end_time).utc()
-    const duration = moment.duration(duration_end.diff(duration_start))
-    const duration_minutes = duration.asMinutes()
     let input_frequency: any = null
     const local_other_dates_array: any = []
 

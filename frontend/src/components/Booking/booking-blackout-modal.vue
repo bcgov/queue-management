@@ -977,9 +977,7 @@ export default class BookingBlackoutModal extends Vue {
     const end_time = this.convertTimePickerValue(this.end_time)
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
-    const start_date = moment(date + ' ' + start).format()
     const end = moment(end_time).clone().format('HH:mm:ss')
-    const end_date = moment(date + ' ' + end).format()
     const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
     const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
     const uuidv4 = require('uuid').v4
@@ -1040,10 +1038,10 @@ export default class BookingBlackoutModal extends Vue {
       const self = this
       if (this.room_id_list.length === 1) {
         if (this.selected[0].id === '_offsite') {
-          this.booking_rrule_array.forEach(date => {
+          this.booking_rrule_array.forEach(ruleDate => {
             rrule_ind += 1
-            let st = moment(date.start).clone()
-            let ed = moment(date.end).clone()
+            let st = moment(ruleDate.start).clone()
+            let ed = moment(ruleDate.end).clone()
             const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const booking: any = {}
@@ -1058,11 +1056,11 @@ export default class BookingBlackoutModal extends Vue {
             axiosArray.push(self.postBooking(booking))
           })
         } else {
-          this.booking_rrule_array.forEach(date => {
+          this.booking_rrule_array.forEach(ruleDate => {
             rrule_ind += 1
             const booking: any = {}
-            let st = moment(date.start).clone()
-            let ed = moment(date.end).clone()
+            let st = moment(ruleDate.start).clone()
+            let ed = moment(ruleDate.end).clone()
             const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             booking.start_time = startOffice
@@ -1079,11 +1077,11 @@ export default class BookingBlackoutModal extends Vue {
         }
       } else if (this.room_id_list.length > 1) {
         this.room_id_list.forEach(room => {
-          this.booking_rrule_array.forEach(date => {
+          this.booking_rrule_array.forEach(ruleDate => {
             rrule_ind += 1
             const booking: any = {}
-            let st = moment(date.start).clone()
-            let ed = moment(date.end).clone()
+            let st = moment(ruleDate.start).clone()
+            let ed = moment(ruleDate.end).clone()
             const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
             booking.room_id = room
@@ -1132,7 +1130,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.reccuring_start_time_msg = ''
-            validate_flag = false
           }
         } else if (new Date(recurring_booking_start_time).getHours() === 17) {
           if ((new Date(recurring_booking_start_time).getMinutes() > 0)) {
@@ -1141,7 +1138,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.reccuring_start_time_msg = ''
-            validate_flag = false
           }
         } else {
           this.reccuring_start_time_msg = "Time not allowed"
@@ -1159,7 +1155,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.reccuring_end_time_msg = ''
-            validate_flag = false
           }
         } else if (new Date(recurring_booking_end_time).getHours() === 17) {
           if ((new Date(recurring_booking_end_time).getMinutes() > 0)) {
@@ -1168,7 +1163,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.reccuring_end_time_msg = ''
-            validate_flag = false
           }
         } else {
           this.reccuring_end_time_msg = "Time not allowed"
@@ -1516,10 +1510,8 @@ export default class BookingBlackoutModal extends Vue {
     const user_contact_info = this.user_contact_info
     const createStatAxioObject = this.createStatAxioObject
     const booking_rrule_array = this.booking_rrule_array
-    const stat_dates = this.stat_dates
     const bulkApiCall = this.bulkApiCall
     const getOfficeRooms =  this.getOfficeRooms
-    const postBooking = this.postBooking
     this.booking_rrule_array = this.stat_dates
     const self = this
     if (this.booking_rrule_array.length > 0) {
@@ -1551,28 +1543,18 @@ export default class BookingBlackoutModal extends Vue {
               const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
               office_room.forEach(function (room) {
                 const blackout_booking: any = {}
-                if (room.id == '_offsite') {
-                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                  blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
-                  blackout_booking.booking_contact_information = user_contact_info,
-                  blackout_booking.stat_flag = true,
-                  blackout_booking.blackout_notes = item.note,
-                  blackout_booking.office_id = self.$store.state.user.office.office_id,
-                  blackout_booking.recurring_uuid = recurring_uuid
-                  blackout_booking.for_stat = true
-                } else {
-                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                  blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
-                  blackout_booking.booking_contact_information = user_contact_info,
+                if (room.id != '_offsite') {
                   blackout_booking.room_id = room.id
-                  blackout_booking.stat_flag = true,
-                  blackout_booking.blackout_notes = item.note,
-                  blackout_booking.office_id = self.$store.state.user.office.office_id,
-                  blackout_booking.recurring_uuid = recurring_uuid
-                  blackout_booking.for_stat = true
                 }
+                blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name
+                blackout_booking.booking_contact_information = user_contact_info
+                blackout_booking.stat_flag = true
+                blackout_booking.blackout_notes = item.note
+                blackout_booking.office_id = self.$store.state.user.office.office_id
+                blackout_booking.recurring_uuid = recurring_uuid
+                blackout_booking.for_stat = true
                 axiosArray.push(self.postBookingStat(blackout_booking))
               })
             }
@@ -1597,28 +1579,18 @@ export default class BookingBlackoutModal extends Vue {
                   const office_room = await getOfficeRooms({'office_id': office.office_id})
                   office_room.forEach(function (room) {
                     const blackout_booking: any = {}
-                    if (room.id == '_offsite') {
-                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                      blackout_booking.booking_contact_information = user_contact_info,
-                      blackout_booking.stat_flag = true,
-                      blackout_booking.blackout_notes = item.note,
-                      blackout_booking.office_id = office.office_id,
-                      blackout_booking.recurring_uuid = recurring_uuid
-                      blackout_booking.for_stat = true
-                    } else {
-                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                      blackout_booking.booking_contact_information = user_contact_info,
+                    if (room.id != '_offsite') {
                       blackout_booking.room_id = room.id
-                      blackout_booking.stat_flag = true,
-                      blackout_booking.blackout_notes = item.note,
-                      blackout_booking.office_id = office.office_id,
-                      blackout_booking.recurring_uuid = recurring_uuid
-                      blackout_booking.for_stat = true
                     }
+                    blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.booking_name = stat_user_name+'_'+office.office_name
+                    blackout_booking.booking_contact_information = user_contact_info
+                    blackout_booking.stat_flag = true
+                    blackout_booking.blackout_notes = item.note
+                    blackout_booking.office_id = office.office_id
+                    blackout_booking.recurring_uuid = recurring_uuid
+                    blackout_booking.for_stat = true
                     axiosArray.push(self.postBookingStat(blackout_booking))
                   }) 
                 }) 
