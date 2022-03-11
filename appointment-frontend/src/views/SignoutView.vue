@@ -27,4 +27,5 @@ export default class SignoutView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+// empty block
 </style>
