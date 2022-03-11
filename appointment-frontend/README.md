@@ -48,6 +48,7 @@ npm run build
   "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
   "hideBCServicesCard": false,
   "BCEIDRegistrationUrl": "",
+  "BCServicesCardUrl": "",
   "disableSms": false,
   "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1",
   "FEEDBACK_SERVICE_CHANNEL": "online",
