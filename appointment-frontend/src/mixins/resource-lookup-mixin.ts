@@ -16,7 +16,8 @@ export default class ResourceLookupMixin extends Vue {
    * @param id ID a number indicating the id of the resource to look up.
    */
   getName (id: number): string {
-    const user: ResourceExampleIF | undefined = this.resourceModel && this.resourceModel.find(user => user.id === id)
+    // renaming "user" in the arrow function to avoid confusion with the "user" const
+    const user: ResourceExampleIF | undefined = this.resourceModel && this.resourceModel.find(element => element.id === id)
     return user ? user.displayName : ''
   }
 
@@ -26,7 +27,8 @@ export default class ResourceLookupMixin extends Vue {
    * @param id ID a number indicating the id of the resource to look up.
    */
   getMessage (id: number): string {
-    const user: ResourceExampleIF | undefined = this.resourceModel && this.resourceModel.find(user => user.id === id)
+    // renaming "user" in the arrow function to avoid confusion with the "user" const
+    const user: ResourceExampleIF | undefined = this.resourceModel && this.resourceModel.find(element => element.id === id)
     return user ? user.message : ''
   }
 }

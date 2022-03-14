@@ -19,4 +19,5 @@ export default class ResourceExample extends Vue {
 </script>
 
 <style lang="scss" scoped>
+// empty block
 </style>
