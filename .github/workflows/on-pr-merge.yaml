@@ -3,8 +3,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: build
+  build-appointment-frontend:
+    name: build-appointment-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: build
+      shell: bash
+      run: |
+        echo Build complete
+
+  build-api:
+    name: build-api
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +25,7 @@ jobs:
 
   dev:
     name: deploy-dev
-    needs: build
+    needs: [build-appointment-frontend, build-api]
     environment: dev
   
     runs-on: ubuntu-latest
