@@ -115,7 +115,7 @@ jobs:
  
   deploy-qms-dev:
     name: Deploy to QMS dev
-    needs: [build-api, build-feedback-api, build-frontend, build-jobs-appointment-reminder]
+    needs: [build-api, build-frontend, build-jobs-appointment-reminder]
     environment: qms-dev
   
     runs-on: ubuntu-latest
