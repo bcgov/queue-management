@@ -2,3 +2,13 @@ name: on-pr-merge
 on:
   workflow_dispatch:
 
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: build
+      shell: bash
+      run: |
+        echo Build complete
