@@ -78,7 +78,6 @@ jobs:
   newman-theq-dev:
     name: Newman tests in TheQ dev
     needs: deploy-theq-dev
-    environment: theq-dev
   
     runs-on: ubuntu-latest
     steps:
@@ -126,7 +125,6 @@ jobs:
   newman-qms-dev:
     name: Newman tests in QMS dev
     needs: deploy-qms-dev
-    environment: qms-dev
   
     runs-on: ubuntu-latest
     steps:
