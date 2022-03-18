@@ -25,3 +25,28 @@ jobs:
         run: |
           echo Deploy to dev complete
  
+  test:
+    name: deploy-test
+    needs: dev
+    environment: test
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        shell: bash
+        run: |
+          echo Deploy to test complete
+ 
+
+  prod:
+    name: deploy-prod
+    needs: test
+    environment: prod
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        shell: bash
+        run: |
+          echo Deploy to prod complete
+ 
