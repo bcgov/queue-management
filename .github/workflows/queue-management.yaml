@@ -22,9 +22,10 @@ jobs:
 
     steps:
     - name: build
-      shell: bash
-      run: |
-        echo Build complete
+      uses: ./.github/workflows/reusable-build-dockerfile
+      with:
+        directory: appointment-frontend
+        image-name: appointment-frontend
 
   build-feedback-api:
     name: Build /feedback-api
@@ -42,9 +43,10 @@ jobs:
 
     steps:
     - name: build
-      shell: bash
-      run: |
-        echo Build complete
+      uses: ./.github/workflows/reusable-build-dockerfile
+      with:
+        directory: api
+        image-name: queue-management-api
 
   build-jobs-appointment-reminder:
     name: Build /jobs/appointment-reminder
