@@ -14,7 +14,7 @@ jobs:
         echo Build complete
 
   build-appointment-frontend:
-    name: build-appointment-frontend
+    name: Build /appointment-frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         echo Build complete
 
   build-feedback-api:
-    name: build-feedback-api
+    name: Build /feedback-api
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
         echo Build complete
 
   build-frontend:
-    name: build-frontend
+    name: Build /frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,7 @@ jobs:
         echo Build complete
 
   build-jobs-appointment-reminder:
-    name: build-jobs-appointment-reminder
+    name: Build /jobs/appointment-reminder
     runs-on: ubuntu-latest
 
     steps:
@@ -54,7 +54,7 @@ jobs:
         echo Build complete
 
   build-notifications-api:
-    name: build-notifications-api
+    name: Build /notifications-api
     runs-on: ubuntu-latest
 
     steps:
@@ -64,7 +64,7 @@ jobs:
         echo Build complete
 
   deploy-theq-dev:
-    name: deploy-theq-dev
+    name: Deploy to TheQ dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
   
@@ -76,7 +76,7 @@ jobs:
           echo Deploy to The Q dev complete
  
   deploy-theq-test:
-    name: deploy-theq-test
+    name: Deploy to TheQ test
     needs: deploy-theq-dev
     environment: theq-test
   
@@ -88,7 +88,7 @@ jobs:
           echo Deploy to The Q test complete
  
   deploy-theq-prod:
-    name: deploy-theq-prod
+    name: Deploy to TheQ prod
     needs: deploy-theq-test
     environment: theq-prod
   
@@ -100,7 +100,7 @@ jobs:
           echo Deploy to The Q prod complete
  
   deploy-qms-dev:
-    name: deploy-qms-dev
+    name: Deploy to QMS dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
   
@@ -112,7 +112,7 @@ jobs:
           echo Deploy to QMS dev complete
  
   deploy-qms-test:
-    name: deploy-qms-test
+    name: Deploy to QMS test
     needs: deploy-qms-dev
     environment: qms-test
   
@@ -124,7 +124,7 @@ jobs:
           echo Deploy to QMS test complete
  
   deploy-qms-prod:
-    name: deploy-qms-prod
+    name: Deploy to QMS prod
     needs: deploy-qms-test
     environment: qms-prod
   
