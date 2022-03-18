@@ -38,6 +38,7 @@ jobs:
           IMAGE_TAG=actions-latest
         fi
         echo "::set-output name=image-tag::$IMAGE_TAG"
+
     - name: Buildah Action
       id: build-image
       uses: redhat-actions/buildah-build@v2
