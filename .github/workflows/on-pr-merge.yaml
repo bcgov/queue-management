@@ -63,40 +63,75 @@ jobs:
       run: |
         echo Build complete
 
-  dev:
-    name: deploy-dev
+  deploy-theq-dev:
+    name: deploy-theq-dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
-    environment: dev
+    environment: theq-dev
   
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to dev complete
+          echo Deploy to The Q dev complete
  
-  test:
-    name: deploy-test
-    needs: dev
-    environment: test
+  deploy-theq-test:
+    name: deploy-theq-test
+    needs: deploy-theq-dev
+    environment: theq-test
   
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to test complete
+          echo Deploy to The Q test complete
  
-
-  prod:
-    name: deploy-prod
-    needs: test
-    environment: prod
+  deploy-theq-prod:
+    name: deploy-theq-prod
+    needs: deploy-theq-test
+    environment: theq-prod
   
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to prod complete
+          echo Deploy to The Q prod complete
+ 
+  deploy-qms-dev:
+    name: deploy-qms-dev
+    needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
+    environment: qms-dev
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        shell: bash
+        run: |
+          echo Deploy to QMS dev complete
+ 
+  deploy-qms-test:
+    name: deploy-qms-test
+    needs: deploy-qms-dev
+    environment: qms-test
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        shell: bash
+        run: |
+          echo Deploy to QMS test complete
+ 
+  deploy-qms-prod:
+    name: deploy-qms-prod
+    needs: deploy-qms-test
+    environment: qms-prod
+  
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        shell: bash
+        run: |
+          echo Deploy to QMS prod complete
  
