@@ -1,0 +1,4 @@
+name: on-pr-merge
+on:
+  workflow_dispatch:
+
