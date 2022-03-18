@@ -73,7 +73,7 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to The Q dev complete
+          echo Deploy complete
  
   deploy-theq-test:
     name: Deploy to TheQ test
@@ -85,7 +85,7 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to The Q test complete
+          echo Deploy complete
  
   deploy-theq-prod:
     name: Deploy to TheQ prod
@@ -97,7 +97,7 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to The Q prod complete
+          echo Deploy complete
  
   deploy-qms-dev:
     name: Deploy to QMS dev
@@ -109,7 +109,7 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to QMS dev complete
+          echo Deploy complete
  
   deploy-qms-test:
     name: Deploy to QMS test
@@ -121,7 +121,7 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to QMS test complete
+          echo Deploy complete
  
   deploy-qms-prod:
     name: Deploy to QMS prod
@@ -133,5 +133,5 @@ jobs:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy to QMS prod complete
+          echo Deploy complete
  
