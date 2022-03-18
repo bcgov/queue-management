@@ -1,10 +1,10 @@
-name: on-pr-merge
+name: Queue Management
 on:
   workflow_dispatch:
 
 jobs:
   build-api:
-    name: build-api
+    name: Build /api
     runs-on: ubuntu-latest
 
     steps:
