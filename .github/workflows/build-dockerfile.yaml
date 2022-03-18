@@ -1,9 +1,6 @@
 name: Build Dockerfile
 on:
   push:
-    branches:
-      - cicd
-      - master
     paths:
       - appointment-frontend/**
       
@@ -17,8 +14,6 @@ jobs:
     steps:
     - name: Check out
       uses: actions/checkout@v2
-      with:
-        ref: cicd
 
     - name: Login to Artifactory to Pull Images in build-image
       uses: redhat-actions/podman-login@v1
