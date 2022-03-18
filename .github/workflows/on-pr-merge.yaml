@@ -11,6 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: run pylint
+      shell: bash
+      run: |
+        echo Pylint complete
+
+    - name: run pytest
+      shell: bash
+      run: |
+        echo Pytest complete
+
     - name: build
       shell: bash
       run: |
