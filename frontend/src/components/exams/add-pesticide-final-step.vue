@@ -152,7 +152,7 @@ export default class AddPesticideFinalStep extends Vue {
     this.isGroupExam = (this.exam.ind_or_group == 'group')
     const examObj = this.exam
     if (this.exam.exam_type_id) {
-      const examType = this.examTypes.find(examType => (examType.exam_type_id == this.exam.exam_type_id))
+      const examType = this.examTypes.find(ekzamType => (ekzamType.exam_type_id == this.exam.exam_type_id))
       examObj.exam_type_name = (examType) ? examType.exam_type_name : ''
     }
     if (this.exam.exam_time) {
