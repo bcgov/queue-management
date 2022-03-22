@@ -158,6 +158,3 @@ export default class FinancialReportModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

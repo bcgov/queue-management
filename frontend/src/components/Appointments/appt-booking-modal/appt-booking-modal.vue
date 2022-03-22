@@ -486,7 +486,6 @@ export default class ApptBookingModal extends Vue {
   }
   timeOptions () {
     if (this.clickedTime) {
-      const event = this.clickedTime
       const time = 60
       for (let l = 15; l <= time; l += 15) {
         if (!this.lengthOptions.includes(l)) {
@@ -497,7 +496,6 @@ export default class ApptBookingModal extends Vue {
       return this.lengthOptions
     }
     if (this.clickedAppt) {
-      const event = this.clickedAppt
       const time = 60
       for (let l = 15; l <= time; l += 15) {
         if (!this.lengthOptions.includes(l)) {
