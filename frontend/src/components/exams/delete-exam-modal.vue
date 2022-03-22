@@ -92,6 +92,3 @@ export default class DeleteExamModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

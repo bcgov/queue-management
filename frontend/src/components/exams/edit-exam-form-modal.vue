@@ -1019,9 +1019,6 @@ export default class EditExamModal extends Vue {
 }
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }
