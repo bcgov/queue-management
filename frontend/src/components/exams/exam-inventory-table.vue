@@ -1684,7 +1684,6 @@ export default class ExamInventoryTable extends Vue {
   }
 
   statusIcon (item: any) {
-    const number_of_students: any = item.number_of_students
     let length_of_invigilator_array: any = null
     if (!item.booking) {
       length_of_invigilator_array = 0

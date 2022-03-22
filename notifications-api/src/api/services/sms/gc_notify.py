@@ -54,7 +54,7 @@ class GCNotify(SmsBaseService):
     def _construct_sms_text(cls, sms_request: dict) -> str:
         """Construct SMS text."""
         message_type: str = sms_request.get('type', 'REMINDER')
-        template: str = None
+        template: str = ""
         app_url: str = os.getenv('APPOINTMENT_APP_URL')
         if message_type == 'REMINDER':
             template = os.getenv('SMS_REMINDER_TEMPLATE')
