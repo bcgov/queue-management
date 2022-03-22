@@ -256,7 +256,16 @@ export default class DashTable extends Vue {
   }
 
   private showPriority (priority: any) {
-    return priority === 1 ? 'High' : priority === 2 ? 'Default' : priority === 3 ? 'Low' : null
+    switch (priority) {
+      case 1:
+        return 'High'
+      case 2:
+        return 'Default'
+      case 3:
+        return 'Low'
+      default:
+        return null
+    }
   }
 
   public timeFormat (value: any) {
