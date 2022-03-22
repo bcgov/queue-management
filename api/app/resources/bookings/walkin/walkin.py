@@ -96,9 +96,8 @@ class WalkinDetail(Resource):
         citizen_service_reqs = my_result.get('service_reqs', [])
         for j in citizen_service_reqs:
             my_served_period = sorted(j['periods'], key= lambda x:x['period_id'], reverse=True)[0]
-            if my_served_period:
-                if (my_served_period['ps']['ps_name'] == 'On hold'):
-                    am_on_hold = True
+            if my_served_period and (my_served_period['ps']['ps_name'] == 'On hold'):
+                am_on_hold = True
         return am_on_hold
     
     def get_all_citizen_in_q(self, citizen=False, office=False):
@@ -125,40 +124,32 @@ class WalkinDetail(Resource):
             if bool(each.get('service_reqs', False)):
                 for i in each['service_reqs']:
                     served_period = sorted(i['periods'], key= lambda x:x['period_id'], reverse=True)[0]
-                    if served_period:
-                        if (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
-                            not_booked_flag = False
-                            data_dict = {}
-                            data_dict['ticket_number'] = each.get('ticket_number', '')
-                            data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '') 
-                            if (each.get('citizen_comments', '')):
-                                if '|||' in each['citizen_comments']:
-                                    data_dict['flag'] = 'booked_app'
-                                    booked_check_app.append(data_dict)
-                                    data_dict = {}
-                                    break
-                                else:
-                                    not_booked_flag = True
+                    if served_period and (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
+                        not_booked_flag = False
+                        data_dict = {}
+                        data_dict['ticket_number'] = each.get('ticket_number', '')
+                        data_dict['walkin_unique_id'] = each.get('walkin_unique_id', '') 
+                        if (each.get('citizen_comments', '')):
+                            if '|||' in each['citizen_comments']:
+                                data_dict['flag'] = 'booked_app'
+                                booked_check_app.append(data_dict)
+                                data_dict = {}
+                                break
                             else:
                                 not_booked_flag = True
-                            if not_booked_flag and each.get('cs', False):
-                                if each['cs'].get('cs_state_name', '') == 'Active':
-                                    each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
-                                    # start
-                                    local_datetime_start = each_time_obj.replace(tzinfo=pytz.utc).astimezone(local_timezone)
-                                    #end
-                                    local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)                                    
-                                    if am_on_hold:
-                                        data_dict['flag'] = 'walkin_app'
-                                        walkin_app.append(data_dict)
-                                        data_dict = {}
-                                        break
-                                    else:
-                                        if local_datetime_start <= local_datetime_end:
-                                            data_dict['flag'] = 'walkin_app'
-                                            walkin_app.append(data_dict)
-                                            data_dict = {}
-                                            break
+                        else:
+                            not_booked_flag = True
+                        if (not_booked_flag and each.get('cs', False)) and each['cs'].get('cs_state_name', '') == 'Active':
+                            each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
+                            # start
+                            local_datetime_start = each_time_obj.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+                            #end
+                            local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)                                    
+                            if am_on_hold or local_datetime_start <= local_datetime_end:
+                                data_dict['flag'] = 'walkin_app'
+                                walkin_app.append(data_dict)
+                                data_dict = {}
+                                break
         return booked_check_app, walkin_app
     
     def get_all_app_from_agenda_panel(self,  citizen=False, office=False):
@@ -191,9 +182,8 @@ class WalkinDetail(Resource):
                 data_dict['flag'] = 'agenda_panel'
                 data_dict['start_time'] = app.get('start_time',  '')
                 if data_dict['start_time'] and local_timezone:
-                    if (len(data_dict['start_time']) >= 3):
-                        if ':' in data_dict['start_time'][-3]:
-                            data_dict['start_time'] = '{}{}'.format(data_dict['start_time'][:-3], data_dict['start_time'][-2:])
+                    if (len(data_dict['start_time']) >= 3) and ':' in data_dict['start_time'][-3]:
+                        data_dict['start_time'] = '{}{}'.format(data_dict['start_time'][:-3], data_dict['start_time'][-2:])
                     utc_datetime = datetime.strptime(data_dict['start_time'], '%Y-%m-%dT%H:%M:%S%z')
                     local_datetime = utc_datetime.replace(tzinfo=pytz.utc)
                     local_datetime = local_datetime.astimezone(local_timezone)
@@ -233,21 +223,20 @@ class SendLineReminderWalkin(Resource):
                 # get the nth object in checkedin and walkin list
                 # bool checks for both False and 0
                 nth_app = False
-                if nth_line:
-                    if len(res_list) >= int(nth_line) and (int(nth_line) > 0):
-                        nth_app = res_list[int(nth_line)-1]
-                        if nth_app['citizen_id']:
-                            citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
-                            if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
-                                office_obj = Office.find_by_id(citizen.office_id)
-                                if citizen.notification_phone:
-                                    citizen = self.send_sms_reminder(citizen, office_obj)
-                                    citizen.automatic_reminder_flag = 1
-                                if citizen.notification_email:
-                                    citizen = self.send_email_reminder(citizen, office_obj)
-                                    citizen.automatic_reminder_flag = 1
-                                db.session.add(citizen)
-                                db.session.commit()
+                if nth_line and len(res_list) >= int(nth_line) and (int(nth_line) > 0):
+                    nth_app = res_list[int(nth_line)-1]
+                    if nth_app['citizen_id']:
+                        citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
+                        if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
+                            office_obj = Office.find_by_id(citizen.office_id)
+                            if citizen.notification_phone:
+                                citizen = self.send_sms_reminder(citizen, office_obj)
+                                citizen.automatic_reminder_flag = 1
+                            if citizen.notification_email:
+                                citizen = self.send_email_reminder(citizen, office_obj)
+                                citizen.automatic_reminder_flag = 1
+                            db.session.add(citizen)
+                            db.session.commit()
 
                 result = self.citizen_schema.dump(previous_citizen)
             return {'citizen': result,
@@ -271,29 +260,27 @@ class SendLineReminderWalkin(Resource):
             if bool(each.get('service_reqs', False)):
                 for i in each['service_reqs']:
                     served_period = sorted(i['periods'], key= lambda x:x['period_id'], reverse=True)[0]
-                    if served_period:
-                        if (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
-                            not_booked_flag = False
-                            data_dict = {}
-                            data_dict['citizen_id'] = each.get('citizen_id', False)
-                            data_dict['service_name'] = i['service']['parent']['service_name']
-                            if (each.get('citizen_comments', '')):
-                                if '|||' in each['citizen_comments']:
-                                    data_dict['flag'] = 'booked_app'
-                                    booked_check_app.append(data_dict)
-                                    data_dict = {}
-                                    break
-                                else:
-                                    not_booked_flag = True
+                    if served_period and (not (served_period['time_end']) and (served_period['ps']['ps_name'] in ('Waiting', 'Invited'))):
+                        not_booked_flag = False
+                        data_dict = {}
+                        data_dict['citizen_id'] = each.get('citizen_id', False)
+                        data_dict['service_name'] = i['service']['parent']['service_name']
+                        if (each.get('citizen_comments', '')):
+                            if '|||' in each['citizen_comments']:
+                                data_dict['flag'] = 'booked_app'
+                                booked_check_app.append(data_dict)
+                                data_dict = {}
+                                break
                             else:
                                 not_booked_flag = True
-                            if not_booked_flag and each.get('cs', False):
-                                if each['cs'].get('cs_state_name', '') == 'Active':
-                                    data_dict['flag'] = 'walkin_app'
-                                    data_dict['created_at'] = each.get('created_at', '')
-                                    walkin_app.append(data_dict)
-                                    data_dict = {}
-                                    break
+                        else:
+                            not_booked_flag = True
+                        if not_booked_flag and each.get('cs', False) and each['cs'].get('cs_state_name', '') == 'Active':
+                            data_dict['flag'] = 'walkin_app'
+                            data_dict['created_at'] = each.get('created_at', '')
+                            walkin_app.append(data_dict)
+                            data_dict = {}
+                            break
         return booked_check_app, walkin_app
 
     def send_sms_reminder(self, citizen, office_obj):
@@ -301,9 +288,8 @@ class SendLineReminderWalkin(Resource):
             sms_sent = False
             validate_check = True
             # code/function call to send sms notification,
-            if citizen.reminder_flag:
-                if (citizen.reminder_flag == 2):
-                    validate_check =  False
+            if citizen.reminder_flag and (citizen.reminder_flag == 2):
+                validate_check =  False
             if validate_check:
                 sms_sent = send_walkin_reminder_sms(citizen, office_obj, request.headers['Authorization'].replace('Bearer ', ''))
                 if (sms_sent):
@@ -320,9 +306,8 @@ class SendLineReminderWalkin(Resource):
             # code/function call to send first email notification,
             email_sent = False
             validate_check = True
-            if citizen.reminder_flag:
-                if (citizen.reminder_flag == 2):
-                    validate_check =  False
+            if citizen.reminder_flag and (citizen.reminder_flag == 2):
+                validate_check =  False
             if validate_check:
                 email_sent = get_walkin_reminder_email_contents(citizen, office_obj)
                 if email_sent:

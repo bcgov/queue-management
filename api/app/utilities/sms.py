@@ -51,9 +51,9 @@ def is_valid_phone(phone_number: str):
     """Return if the phone_number is valid or not."""
     if phone_number:
         phone_number = phone_number.replace(' ', '').replace('(', '').replace(')', '')
-        return re.match(
-            r'[\+\d]?(\d{2,3}[-\.\s]??\d{2,3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})',
-            phone_number) is not None
+        # Redoing this phone number regex which is unnecessarily complex.
+        # It strips spaces and () but then checked for them (?) and also accepted 7 digit numbers (?)
+        return re.match(r'\+?1?[-\.]?\d{3}[-\.]?\d{3}[-\.]?\d{4}', phone_number) is not None
     return False
 
 

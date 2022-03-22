@@ -351,31 +351,31 @@ export default class Login extends Vue {
         } else {
           console.log('Token not refreshed')
         }
-        const secondsLeft = Math.round(
+        const successSecondsLeft = Math.round(
           this.$keycloak.tokenParsed.exp +
             this.$keycloak.timeSkew -
             new Date().getTime() / 1000
         )
         console.log(
           '    --> After refresh.  Token now valid for ' +
-            secondsLeft +
+            successSecondsLeft +
             ' seconds'
         )
       })
       .error((error: any) => {
         console.log('Failed to refresh token')
         console.log(error)
-        const secondsLeft = Math.round(
+        const errorSecondsLeft = Math.round(
           this.$keycloak.tokenParsed.exp +
             this.$keycloak.timeSkew -
             new Date().getTime() / 1000
         )
         console.log(
           '    --> After refresh.  Token now valid for ' +
-            secondsLeft +
+            errorSecondsLeft +
             ' seconds'
         )
-        if (secondsLeft < 90) {
+        if (errorSecondsLeft < 90) {
           this.logoutTokenExpired()
         }
       })

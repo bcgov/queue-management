@@ -1080,13 +1080,13 @@ export default class EditGroupExamBookingModal extends Vue {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       const time = moment(this.time).format('HH:mm:ssZ').toString()
       // JSTOTS INFO removed new from moment. no need to use new with moment
-      const start = moment(`${date}T${time}`)
-      const end = start.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
+      const startNoBook = moment(`${date}T${time}`)
+      const end = startNoBook.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
       const bookingPost: any = {
         exam_id,
         invigilator_id: null,
         sbc_staff_invigilated: false,
-        start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        start_time: startNoBook.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         booking_name: this.actionedExam.exam_name
       }
@@ -1493,9 +1493,6 @@ export default class EditGroupExamBookingModal extends Vue {
 <style scoped>
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }

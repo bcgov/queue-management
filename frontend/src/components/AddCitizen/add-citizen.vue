@@ -213,7 +213,7 @@ export default class AddCitizen extends Vue {
   }
 
   onDrag (event: any) {
-    const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
+    const { deltaX, deltaY, first, last } = event
     if (first) {
       this.dragged = true
       return

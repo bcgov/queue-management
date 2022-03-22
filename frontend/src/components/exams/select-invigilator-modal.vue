@@ -127,6 +127,3 @@ export default class SelectInvigilatorModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>
