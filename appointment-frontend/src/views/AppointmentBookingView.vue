@@ -201,9 +201,7 @@ export default class AppointmentBookingView extends Vue {
   ]
 
   private showBackButton (bookingStep) {
-    if (bookingStep.step <= 1) {
-      return false
-    } else if (bookingStep.step === 3 && this.$store.state.isAppointmentEditMode) {
+    if ((bookingStep.step <= 1) || (bookingStep.step === 3 && this.$store.state.isAppointmentEditMode)) {
       return false
     }
     return true

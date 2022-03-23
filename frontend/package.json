@@ -127,7 +127,8 @@
     "vue-loader": "15.9.6",
     "vue-style-loader": "4.1.3",
     "vue-template-compiler": "^2.6.14",
-    "vuetify-loader": "^1.7.2"
+    "vuetify-loader": "^1.7.2",
+    "url-parse": "~1.5.10"
   },
   "engines": {
     "node": ">= 4.0.0",

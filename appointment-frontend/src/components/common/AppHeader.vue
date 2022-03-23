@@ -20,7 +20,7 @@
       contain
       @click="goTo('home')"
     ></v-img>
-    <v-toolbar-title v-if="!isWalkin">Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
+    <v-toolbar-title v-if="!isWalkin">Service BC Appointments</v-toolbar-title>
     <v-spacer></v-spacer>
     <template v-if="((!isAuthenticated) && (!isWalkin))">
       <div class='d-flex'>
