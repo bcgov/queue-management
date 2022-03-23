@@ -29,7 +29,7 @@ jobs:
     - name: Artifactory Setup
       shell: bash
       run: |
-        find / -name .pip -print
+        find / -name pip.conf -print |& grep -v Permission
         #mkdir /opt/app-root/src/.pip
         #touch /opt/app-root/src/.pip/pip.conf
         #echo "[global]" >> ~/.pip/pip.conf
