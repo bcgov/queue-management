@@ -9,7 +9,7 @@ jobs:
   check-out:
     name: Check out
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Check out
       uses: actions/checkout@v2
@@ -31,6 +31,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
     - name: build
       uses: ./.github/workflows/reusable-build-dockerfile.yaml
       with:
