@@ -334,7 +334,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       }
     } else {
       // Removed redundant "await" on next line
-      const resp = this.deleteDraftAppointment()
+      this.deleteDraftAppointment()
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
