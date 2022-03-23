@@ -29,7 +29,7 @@ jobs:
     - name: Artifactory Setup
       shell: bash
       run: |
-        find / -name pip.conf -print |& grep -v Permission
+        # find / -name pip.conf -print |& grep -v Permission
         mkdir ~/.pip
         echo "[global]" > ~/.pip/pip.conf
         echo "index-url = https://${{ secrets.ARTIFACTORY_USERNAME }}:${{ secrets.ARTIFACTORY_PASSWORD }}@${{ secrets.ARTIFACTORY_REGISTRY }}/artifactory/api/pypi/pypi-remote/simple" >> ~/.pip/pip.conf
