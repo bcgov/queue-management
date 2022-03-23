@@ -44,7 +44,7 @@ jobs:
 
     steps:
     - name: build
-      uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+      uses: ./.github/workflows/reusable-build-dockerfile.yaml@master
       with:
         directory: api
         image-name: queue-management-api
