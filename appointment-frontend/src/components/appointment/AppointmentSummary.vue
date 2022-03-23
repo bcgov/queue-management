@@ -309,7 +309,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         send_email_reminders: enableEmailReminder,
         send_sms_reminders: enableSmsReminder
       }
-      const response = await this.updateUserAccount(userUpdate)
+      await this.updateUserAccount(userUpdate)
     }
     if (!this.anyActiveDLKT) {
       try {
