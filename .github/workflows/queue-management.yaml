@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  checkout:
+  check-out:
     name: Check out
     runs-on: ubuntu-latest
     
@@ -16,6 +16,7 @@ jobs:
 
   build-api:
     name: Build /api
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +27,7 @@ jobs:
 
   build-appointment-frontend:
     name: Build /appointment-frontend
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -37,6 +39,7 @@ jobs:
 
   build-feedback-api:
     name: Build /feedback-api
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -47,6 +50,7 @@ jobs:
 
   build-frontend:
     name: Build /frontend
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -58,6 +62,7 @@ jobs:
 
   build-jobs-appointment-reminder:
     name: Build /jobs/appointment-reminder
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -68,6 +73,7 @@ jobs:
 
   build-notifications-api:
     name: Build /notifications-api
+    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
