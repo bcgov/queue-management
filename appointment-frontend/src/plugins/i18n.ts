@@ -4,10 +4,12 @@ import Vue from 'vue'
 Vue.use(VueI18n)
 
 function loadLocaleMessages (): LocaleMessages {
-  const locales = require.context('../locales', true, /[A-Za-z0-9-_,\s]+\.json$/i)
+  // the "i" on the end of the regex indicates case insensitivity, so the "A-Z" is redundant. Just use "a-z".
+  const locales = require.context('../locales', true, /[a-z0-9-_,\s]+\.json$/i)
   const messages: LocaleMessages = {}
   locales.keys().forEach((key) => {
-    const matched = key.match(/([A-Za-z0-9-_]+)\./i)
+    // the "i" on the end of the regex indicates case insensitivity, so the "A-Z" is redundant. Just use "a-z".
+    const matched = key.match(/([a-z0-9-_]+)\./i)
     if (matched && matched.length > 1) {
       const locale = matched[1]
       messages[locale] = locales(key)

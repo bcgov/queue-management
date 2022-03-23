@@ -309,7 +309,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         send_email_reminders: enableEmailReminder,
         send_sms_reminders: enableSmsReminder
       }
-      const response = await this.updateUserAccount(userUpdate)
+      await this.updateUserAccount(userUpdate)
     }
     if (!this.anyActiveDLKT) {
       try {
@@ -332,7 +332,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
       }
     } else {
-      const resp = await this.deleteDraftAppointment()
+      await this.deleteDraftAppointment()
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
