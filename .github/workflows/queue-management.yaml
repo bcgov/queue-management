@@ -11,10 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: build
+    - name: Get Image Tag
+      id: get-image-tag
       shell: bash
       run: |
-        echo Build complete
+        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
+        if [ $IMAGE_TAG == "bcgov-master" ]; then
+          # Will eventually change this to "latest" but for now don't
+          # replace the image that is created by the Jenkins build.
+          IMAGE_TAG=actions-latest
+        fi
+        echo "::set-output name=image-tag::$IMAGE_TAG"
+
+    - name: Setup and Build
+      id: build_image
+      uses: redhat-actions/s2i-build@v2
+      with:
+        path_context: ./api
+        builder_image: registry.access.redhat.com/ubi8/python-38:latest
+        image: queue-management-api
+        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+
+# Push Image to Quay registry
+#     - name: Push To Quay Action
+#       uses: redhat-actions/push-to-registry@v2
+#       with:
+#         image: ${{ steps.build_image.outputs.image }}
+#         tags: ${{ steps.build_image.outputs.tags }}
+#         registry: quay.io/${{ secrets.QUAY_USERNAME }}
+#         username: ${{ secrets.QUAY_USERNAME }}
+#         password: ${{ secrets.QUAY_PASSWORD }}
 
   build-appointment-frontend:
     name: Build /appointment-frontend
