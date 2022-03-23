@@ -29,10 +29,11 @@ jobs:
     - name: Artifactory Setup
       shell: bash
       run: |
-        mkdir /opt/app-root/src/.pip
-        touch /opt/app-root/src/.pip/pip.conf
-        echo "[global]" >> ~/.pip/pip.conf
-        echo "index-url = https://${{ secrets.ARTIFACTORY_USERNAME }}:${{ secrets.ARTIFACTORY_PASSWORD }}@${{ secrets.ARTIFACTORY_REGISTRY }}/artifactory/api/pypi/pypi-remote/simple" >> ~/.pip/pip.conf
+        find / -name .pip -print
+        #mkdir /opt/app-root/src/.pip
+        #touch /opt/app-root/src/.pip/pip.conf
+        #echo "[global]" >> ~/.pip/pip.conf
+        #echo "index-url = https://${{ secrets.ARTIFACTORY_USERNAME }}:${{ secrets.ARTIFACTORY_PASSWORD }}@${{ secrets.ARTIFACTORY_REGISTRY }}/artifactory/api/pypi/pypi-remote/simple" >> ~/.pip/pip.conf
 
     - name: s2i Build
       id: build_image
