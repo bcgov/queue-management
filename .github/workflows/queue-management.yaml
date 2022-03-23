@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - name: build
-      uses: ./.github/workflows/reusable-build-dockerfile
+      uses: ./.github/workflows/reusable-build-dockerfile.yaml
       with:
         directory: appointment-frontend
         image-name: appointment-frontend
@@ -43,7 +43,7 @@ jobs:
 
     steps:
     - name: build
-      uses: ./.github/workflows/reusable-build-dockerfile
+      uses: ./.github/workflows/reusable-build-dockerfile.yaml
       with:
         directory: api
         image-name: queue-management-api
