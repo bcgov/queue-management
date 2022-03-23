@@ -68,6 +68,15 @@ jobs:
         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
 
+    - name: Push Image to QMS
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
+        username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+        password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+
   build-feedback-api:
     name: Build /feedback-api
     runs-on: ubuntu-latest
