@@ -29,6 +29,8 @@ jobs:
     - name: Artifactory Setup
       shell: bash
       run: |
+        echo "AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}" >> $GITHUB_ENV
+        echo "AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}" >> $GITHUB_ENV
         # find / -name pip.conf -print |& grep -v Permission
         #mkdir ~/.pip
         #echo "[global]" > ~/.pip/pip.conf
