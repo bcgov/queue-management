@@ -31,7 +31,7 @@ jobs:
       uses: redhat-actions/s2i-build@v2
       with:
         path_context: ./api
-        builder_image: registry.access.redhat.com/rhscl/python-38-rhel7 #registry.access.redhat.com/ubi8/python-38:latest
+        builder_image: centos/python-38-centos7 # registry.access.redhat.com/rhscl/python-38-rhel7 #registry.access.redhat.com/ubi8/python-38:latest
         image: queue-management-api
         tags: ${{ steps.get-image-tag.outputs.image-tag }}
 
