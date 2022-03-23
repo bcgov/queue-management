@@ -6,17 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-out:
-    name: Check out
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check out
-      uses: actions/checkout@v2
-
   build-api:
     name: Build /api
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +18,6 @@ jobs:
 
   build-appointment-frontend:
     name: Build /appointment-frontend
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -78,18 +68,8 @@ jobs:
         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
 
-    - name: Push Image to QMS
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-        username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-        password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
   build-feedback-api:
     name: Build /feedback-api
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -100,19 +80,60 @@ jobs:
 
   build-frontend:
     name: Build /frontend
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
-    - name: build
-      uses: ./.github/workflows/reusable-build-dockerfile.yaml@master
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Login to Artifactory to Pull Images in build-image
+      uses: redhat-actions/podman-login@v1
       with:
-        directory: api
-        image-name: queue-management-api
+        registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+    - name: Get Image Tag
+      id: get-image-tag
+      shell: bash
+      run: |
+        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
+        if [ $IMAGE_TAG == "bcgov-master" ]; then
+          # Will eventually change this to "latest" but for now don't
+          # replace the image that is created by the Jenkins build.
+          IMAGE_TAG=actions-latest
+        fi
+        echo "::set-output name=image-tag::$IMAGE_TAG"
+
+    - name: Buildah Action
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        containerfiles: frontend/Dockerfile
+        context: frontend
+        image: frontend
+        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+
+    - name: Push Image to The Q
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
+        username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+        password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
+    - name: Push Image to QMS
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
+        username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+        password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
 
   build-jobs-appointment-reminder:
     name: Build /jobs/appointment-reminder
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
@@ -123,7 +144,6 @@ jobs:
 
   build-notifications-api:
     name: Build /notifications-api
-    needs: check-out
     runs-on: ubuntu-latest
 
     steps:
