@@ -180,7 +180,7 @@ def upgrade():
         sa.Column('start_time', sa.DateTime(), nullable=False),
         sa.Column('accurate_time_ind', sa.Integer(), nullable=False),
         sa.Column('priority', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['counter_id'], ['counter.counter_id'], ),
+        sa.ForeignKeyConstraint(['counter_id'], [counter_id_const], ),
         sa.ForeignKeyConstraint(['cs_id'], ['citizenstate.cs_id'], ),
         sa.ForeignKeyConstraint(['office_id'], [office_id_const], ),
         sa.PrimaryKeyConstraint('citizen_id')
@@ -200,7 +200,7 @@ def upgrade():
         sa.Column('pesticide_designate', sa.Integer(), nullable=False),
         sa.Column('finance_designate', sa.Integer(), nullable=False),
         sa.Column('liaison_designate', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['counter_id'], ['counter.counter_id'], ),
+        sa.ForeignKeyConstraint(['counter_id'], [counter_id_const], ),
         sa.ForeignKeyConstraint(['csr_state_id'], ['csrstate.csr_state_id'], ),
         sa.ForeignKeyConstraint(['office_id'], [office_id_const], ),
         sa.ForeignKeyConstraint(['role_id'], ['role.role_id'], ),
