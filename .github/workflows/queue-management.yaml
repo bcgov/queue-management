@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
     - name: Get Image Tag
       id: get-image-tag
       shell: bash
