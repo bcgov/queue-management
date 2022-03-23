@@ -6,6 +6,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  checkout:
+    name: Check out
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
   build-api:
     name: Build /api
     runs-on: ubuntu-latest
