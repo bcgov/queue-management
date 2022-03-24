@@ -43,7 +43,7 @@ jobs:
     - name: test
       shell: bash
       run: |
-        echo 4 $AF_USERID
+        echo 4 $AF_USERID | oc -d
 
     - name: s2i Build
       id: build_image
