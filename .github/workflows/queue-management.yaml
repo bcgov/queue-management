@@ -29,12 +29,20 @@ jobs:
     - name: Artifactory Setup
       shell: bash
       run: |
+        echo 1 $AF_USERID
+        export AF_USERID=walter
+        echo 2 $AF_USERID
         echo "AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}" >> $GITHUB_ENV
+        echo 3 $AF_USERID
         echo "AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}" >> $GITHUB_ENV
         # find / -name pip.conf -print |& grep -v Permission
         #mkdir ~/.pip
         #echo "[global]" > ~/.pip/pip.conf
         #echo "index-url = https://${{ secrets.ARTIFACTORY_USERNAME }}:${{ secrets.ARTIFACTORY_PASSWORD }}@${{ secrets.ARTIFACTORY_REGISTRY }}/artifactory/api/pypi/pypi-remote/simple" >> ~/.pip/pip.conf
+
+    - name: test
+      shell: bash
+      run: echo 4 $AF_USERID
 
     - name: s2i Build
       id: build_image
