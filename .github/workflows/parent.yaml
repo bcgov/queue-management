@@ -1,0 +1,14 @@
+name: Parent
+on:
+  workflow_dispatch:
+
+jobs:
+  parent:
+    name: Parent
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: echo
+      shell: bash
+      run: |
+        echo Hello
