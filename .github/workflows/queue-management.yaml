@@ -42,7 +42,8 @@ jobs:
 
     - name: test
       shell: bash
-      run: echo 4 $AF_USERID
+      run: |
+        echo 4 $AF_USERID
 
     - name: s2i Build
       id: build_image
