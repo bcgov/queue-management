@@ -26,18 +26,20 @@ jobs:
         fi
         echo "::set-output name=image-tag::$IMAGE_TAG"
 
-    - name: Artifactory Credentials
-      shell: bash
-      run: |
-        echo "AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}" >> $GITHUB_ENV
-        echo "AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}" >> $GITHUB_ENV
+#     - name: Artifactory Credentials
+#       shell: bash
+#       run: |
+#         echo "AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}" >> $GITHUB_ENV
+#         echo "AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}" >> $GITHUB_ENV
 
     - name: s2i Build
       id: build_image
       uses: redhat-actions/s2i-build@v2
       with:
         builder_image: registry.access.redhat.com/ubi8/python-38:latest
-        env_vars: AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}, AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
+        env_vars: |-
+          AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
+          AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: queue-management-api
         path_context: ./api
         tags: ${{ steps.get-image-tag.outputs.image-tag }}
