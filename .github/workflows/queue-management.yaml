@@ -36,9 +36,10 @@ jobs:
       id: build_image
       uses: redhat-actions/s2i-build@v2
       with:
-        path_context: ./api
         builder_image: registry.access.redhat.com/ubi8/python-38:latest
+        env_vars: AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}, AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: queue-management-api
+        path_context: ./api
         tags: ${{ steps.get-image-tag.outputs.image-tag }}
 
 # Push Image to Quay registry
