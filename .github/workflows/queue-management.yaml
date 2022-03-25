@@ -69,13 +69,6 @@ jobs:
     - name: Check out
       uses: actions/checkout@v2
 
-    #- name: build
-    #  uses: ./.github/workflows/reusable-build-dockerfile.yaml
-    #  with:
-    #    directory: appointment-frontend
-    #    image-name: appointment-frontend
-    # Can't get above to work, just copy it all and figure out later.
-
     - name: Login to Artifactory to Pull Images in build-image
       uses: redhat-actions/podman-login@v1
       with:
@@ -144,26 +137,26 @@ jobs:
         fi
         echo "::set-output name=image-tag::$IMAGE_TAG"
 
-    - name: Buildah Action
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        containerfiles: feedback-api/Dockerfile
-        context: feedback-api
-        image: feedback-api
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
-
-#     - name: s2i Build
+#     - name: Buildah Action
 #       id: build-image
-#       uses: redhat-actions/s2i-build@v2
+#       uses: redhat-actions/buildah-build@v2
 #       with:
-#         builder_image: registry.access.redhat.com/ubi8/python-38:latest
-#         env_vars: |-
-#           AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
-#           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
+#         containerfiles: feedback-api/Dockerfile
+#         context: feedback-api
 #         image: feedback-api
-#         path_context: ./feedback-api
 #         tags: ${{ steps.get-image-tag.outputs.image-tag }}
+
+    - name: s2i Build
+      id: build-image
+      uses: redhat-actions/s2i-build@v2
+      with:
+        builder_image: registry.access.redhat.com/ubi8/python-38:latest
+        env_vars: |-
+          AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
+          AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
+        image: feedback-api
+        path_context: ./feedback-api
+        tags: ${{ steps.get-image-tag.outputs.image-tag }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
