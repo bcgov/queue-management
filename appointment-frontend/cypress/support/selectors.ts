@@ -47,8 +47,6 @@ export const SELECTOR_STEP_3_DATE_PICKER =
 // Step 4.
 export const SELECTOR_STEP_4_BUTTON_BCEID =
   '[data-cy="step-4-button-bceid"]'
-export const SELECTOR_STEP_4_IMAGE_BCEID_CREATE =
-  '[data-cy="step-4-image-bceid-create"]'
 export const SELECTOR_STEP_4_IMAGE_BCEID_LOGIN =
   '[data-cy="step-4-image-bceid-login"]'
 export const SELECTOR_STEP_4_IMAGE_BCSC =

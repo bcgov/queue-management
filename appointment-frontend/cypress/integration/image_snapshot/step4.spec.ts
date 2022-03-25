@@ -23,7 +23,6 @@ import {
   SELECTOR_STEP_2_BUTTON_NEXT,
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
   SELECTOR_STEP_3_BUTTON_TIMESLOT,
-  SELECTOR_STEP_4_IMAGE_BCEID_CREATE,
   SELECTOR_STEP_4_IMAGE_BCEID_LOGIN,
   SELECTOR_STEP_4_IMAGE_BCSC
 } from '../../support/selectors'
@@ -83,7 +82,6 @@ describe('step 4', () => {
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
-    cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_CREATE)
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_LOGIN)
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCSC)
   })
