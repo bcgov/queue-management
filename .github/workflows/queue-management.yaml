@@ -40,7 +40,7 @@ jobs:
       shell: bash
       run: |
         echo foo
-        oc project
+        oc list pods
 
   build-api:
     name: /api
