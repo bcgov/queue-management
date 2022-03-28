@@ -72,7 +72,7 @@ jobs:
   build-appointment-frontend:
     name: Build /appointment-frontend
     needs: create-image-tags
-    uses: ${GITHUB_REPOSITORY}/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
