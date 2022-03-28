@@ -11,7 +11,7 @@ jobs:
     - name: debug
       shell: bash
       run: |
-        ls -la /home/runner/work/queue-management
+        ls -la /home/runner/work/queue-management/queue-management
 
     - name: child
       uses: ./.github/workflows/child
