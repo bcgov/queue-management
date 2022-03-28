@@ -1,0 +1,82 @@
+name: Build Source to Image (S2I)
+on:
+  workflow_call:
+    inputs:
+      directory:
+        required: true
+        type: string
+      image-name:
+        required: true
+        type: string
+      image-tags:
+        required: true
+        type: string
+    secrets:
+      # Bit of a pain we have to pass these in,
+      # rather than just read the secrets.
+      artifactory-password:
+        required: true
+      artifactory-registry:
+        required: true
+      artifactory-username:
+        required: true
+      namespace-qms:
+        required: true
+      namespace-qms-password:
+        required: true
+      namespace-qms-username:
+        required: true
+      namespace-theq:
+        required: true
+      namespace-theq-password:
+        required: true
+      namespace-theq-username:
+        required: true
+      openshift-registry:
+        required: true
+
+jobs:
+  build:
+    name: Build Source to Image (S2I)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Login to Artifactory to Pull Images in build-image
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ secrets.artifactory-registry }}
+        username: ${{ secrets.artifactory-username }}
+        password: ${{ secrets.artifactory-password }}
+
+    - name: s2i Build
+      id: build-image
+      uses: redhat-actions/s2i-build@v2
+      with:
+        builder_image: registry.access.redhat.com/ubi8/python-38:latest
+        env_vars: |-
+          AF_USERID=${{ secrets.artifactory-username }}
+          AF_PASSWD=${{ secrets.artifactory-password }}
+        image: ${{ inputs.image-name }}
+        path_context: ${{ inputs.directory }}
+        tags: ${{ inputs.image-tags }}
+
+    - name: Push Image to The Q
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
+        username: ${{ secrets.namespace-theq-username }}
+        password: ${{ secrets.namespace-theq-password }}
+
+    - name: Push Image to QMS
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
+        username: ${{ secrets.namespace-qms-username }}
+        password: ${{ secrets.namespace-qms-password }}
