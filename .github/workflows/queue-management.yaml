@@ -29,18 +29,17 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: https://api.silver.devops.gov.bc.ca:6443 # ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.TOKEN }}
-#         openshift_username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         openshift_password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.NAMESPACE_THEQ }}
+        openshift_server_url: https://api.silver.devops.gov.bc.ca:6443 # ${{ secrets.OPENSHIFT_SERVER }}
+        openshift_token: ${{ secrets.TOKEN }}
 
     - name: Tag image (temp)
       shell: bash
       run: |
         echo foo
         oc get pods
+        oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
 
   build-api:
     name: /api
