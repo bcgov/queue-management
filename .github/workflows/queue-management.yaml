@@ -23,13 +23,15 @@ on:
 #     - run: echo${{needs.job1.outputs.output1}} ${{needs.job1.outputs.output2}}
 
 jobs:
-  get-image-tags:
-    name: Get Image Tags
+  create-image-tags:
+    name: Create Image Tags
     runs-on: ubuntu-latest
+    outputs:
+      image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
 
     steps:
     - name: Get Image Tags
-      id: get-image-tagsy
+      id: get-image-tags
       shell: bash
       run: |
         IMAGE_TAGS=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
@@ -45,7 +47,7 @@ jobs:
 
   build-api:
     name: Build /api
-    needs: get-image-tags
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +57,7 @@ jobs:
     - name: Get Image Tag
       id: get-image-tagx
       shell: bash
-      run: echo x ${{ needs.get-image-tags.outputs.image-tags }}
+      run: echo x ${{ needs.create-image-tags.outputs.image-tags }}
 
 #     - name: Get Image Tag
 #       id: get-image-tag
@@ -79,7 +81,7 @@ jobs:
           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: queue-management-api
         path_context: api
-        tags: ${{ needs.get-image-tags.outputs.image-tags }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
