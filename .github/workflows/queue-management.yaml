@@ -55,7 +55,7 @@ jobs:
     - name: Get Image Tag
       id: get-image-tag
       shell: bash
-      run: echo x ${{ needs.get-image-tags.outputs.image-tags }}
+      run: echo x ${{ jobs.get-image-tags.outputs.image-tags }}
 
 #     - name: Get Image Tag
 #       id: get-image-tag
@@ -79,7 +79,7 @@ jobs:
           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: queue-management-api
         path_context: api
-        tags: ${{ needs.get-image-tags.outputs.image-tags }}
+        tags: ${{ jobs.get-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
