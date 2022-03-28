@@ -68,15 +68,15 @@ jobs:
       with:
         image: ${{ steps.build-image.outputs.image }}
         tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-        username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-        password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
+        username: ${{ secrets.namespace-theq-username }}
+        password: ${{ secrets.namespace-theq-password }}
 
     - name: Push Image to QMS
       uses: redhat-actions/push-to-registry@v2
       with:
         image: ${{ steps.build-image.outputs.image }}
         tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-        username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-        password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
+        username: ${{ secrets.namespace-qms-username }}
+        password: ${{ secrets.namespace-qms-password }}
