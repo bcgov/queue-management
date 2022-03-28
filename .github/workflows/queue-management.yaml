@@ -72,45 +72,54 @@ jobs:
   build-appointment-frontend:
     name: Build /appointment-frontend
     needs: create-image-tags
-    runs-on: ubuntu-latest
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-    steps:
-    - name: Check out
-      uses: actions/checkout@v2
+#   build-appointment-frontend:
+#     name: Build /appointment-frontend
+#     needs: create-image-tags
+#     runs-on: ubuntu-latest
 
-    - name: Login to Artifactory to Pull Images in build-image
-      uses: redhat-actions/podman-login@v1
-      with:
-        registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#     steps:
+#     - name: Check out
+#       uses: actions/checkout@v2
 
-    - name: Buildah Action
-      id: build-image
-      uses: redhat-actions/buildah-build@v2
-      with:
-        containerfiles: appointment-frontend/Dockerfile
-        context: appointment-frontend
-        image: appointment-frontend
-        tags: ${{ needs.create-image-tags.outputs.image-tags }}
+#     - name: Login to Artifactory to Pull Images in build-image
+#       uses: redhat-actions/podman-login@v1
+#       with:
+#         registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+#         username: ${{ secrets.ARTIFACTORY_USERNAME }}
+#         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-    - name: Push Image to The Q
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-        username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-        password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+#     - name: Buildah Action
+#       id: build-image
+#       uses: redhat-actions/buildah-build@v2
+#       with:
+#         containerfiles: appointment-frontend/Dockerfile
+#         context: appointment-frontend
+#         image: appointment-frontend
+#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-    - name: Push Image to QMS
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-        username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-        password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+#     - name: Push Image to The Q
+#       uses: redhat-actions/push-to-registry@v2
+#       with:
+#         image: ${{ steps.build-image.outputs.image }}
+#         tags: ${{ steps.build-image.outputs.tags }}
+#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
+#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
+#     - name: Push Image to QMS
+#       uses: redhat-actions/push-to-registry@v2
+#       with:
+#         image: ${{ steps.build-image.outputs.image }}
+#         tags: ${{ steps.build-image.outputs.tags }}
+#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
+#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
 
   ##############################################################################
 
