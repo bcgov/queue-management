@@ -20,4 +20,4 @@ jobs:
 
   child:
     name: child
-    uses: walter-moar/queue-management/.github/workflows/child@v1
+    uses: walter-moar/queue-management/.github/workflows/child.yaml@v1
