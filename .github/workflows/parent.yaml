@@ -13,10 +13,11 @@ jobs:
       run: |
         ls -la /home/runner/work/queue-management/queue-management
 
-    - name: child
-      uses: walter-moar/queue-management/.github/workflows/child@v1
-
     - name: echo
       shell: bash
       run: |
         echo Hello
+
+  child:
+    name: child
+    uses: walter-moar/queue-management/.github/workflows/child@v1
