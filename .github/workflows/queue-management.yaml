@@ -72,12 +72,23 @@ jobs:
   build-appointment-frontend:
     name: Build /appointment-frontend
     needs: create-image-tags
-    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: ${GITHUB_REPOSITORY}/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
+    
 #   build-appointment-frontend:
 #     name: Build /appointment-frontend
 #     needs: create-image-tags
