@@ -26,10 +26,8 @@ jobs:
         echo $IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
-  ##############################################################################
-
   build-api:
-    name: Build /api
+    name: /api
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
@@ -47,46 +45,9 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: s2i Build
-#       id: build-image
-#       uses: redhat-actions/s2i-build@v2
-#       with:
-#         builder_image: registry.access.redhat.com/ubi8/python-38:latest
-#         env_vars: |-
-#           AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
-#           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
-#         image: queue-management-api
-#         path_context: api
-#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Push Image to The Q
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Push Image to QMS
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
-  ##############################################################################
 
   build-appointment-frontend:
-    name: Build /appointment-frontend
+    name: /appointment-frontend
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
@@ -104,11 +65,9 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-    
-  ##############################################################################
 
   build-feedback-api:
-    name: Build /feedback-api
+    name: /feedback-api
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
@@ -126,46 +85,9 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: s2i Build
-#       id: build-image
-#       uses: redhat-actions/s2i-build@v2
-#       with:
-#         builder_image: registry.access.redhat.com/ubi8/python-38:latest
-#         env_vars: |-
-#           AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
-#           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
-#         image: feedback-api
-#         path_context: ./feedback-api
-#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Push Image to The Q
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Push Image to QMS
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
-  ##############################################################################
 
   build-frontend:
-    name: Build /frontend
+    name: /frontend
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
@@ -183,49 +105,9 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: Login to Artifactory to Pull Images in build-image
-#       uses: redhat-actions/podman-login@v1
-#       with:
-#         registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#         username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-
-#     - name: Buildah Action
-#       id: build-image
-#       uses: redhat-actions/buildah-build@v2
-#       with:
-#         containerfiles: frontend/Dockerfile
-#         context: frontend
-#         image: queue-management-frontend
-#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Push Image to The Q
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Push Image to QMS
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
-  ##############################################################################
 
   build-jobs-appointment-reminder:
-    name: Build /jobs/appointment-reminder
+    name: /jobs/appointment-reminder
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
@@ -244,50 +126,8 @@ jobs:
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-#   runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: Login to Artifactory to Pull Images in build-image
-#       uses: redhat-actions/podman-login@v1
-#       with:
-#         registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#         username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-
-#     - name: Buildah Action
-#       id: build-image
-#       uses: redhat-actions/buildah-build@v2
-#       with:
-#         containerfiles: jobs/appointment_reminder/Dockerfile
-#         context: jobs/appointment_reminder
-#         image: send-appointment-reminder-crond
-#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Push Image to The Q
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Push Image to QMS
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
-  ##############################################################################
-
   build-notifications-api:
-    name: Build /notifications-api
+    name: /notifications-api
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
@@ -305,43 +145,6 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: s2i Build
-#       id: build-image
-#       uses: redhat-actions/s2i-build@v2
-#       with:
-#         builder_image: registry.access.redhat.com/ubi8/python-38:latest
-#         env_vars: |-
-#           AF_USERID=${{ secrets.ARTIFACTORY_USERNAME }}
-#           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
-#         image: notifications-api
-#         path_context: ./notifications-api
-#         tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Push Image to The Q
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_THEQ }}
-#         username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Push Image to QMS
-#       uses: redhat-actions/push-to-registry@v2
-#       with:
-#         image: ${{ steps.build-image.outputs.image }}
-#         tags: ${{ steps.build-image.outputs.tags }}
-#         registry: ${{ secrets.OPENSHIFT_REGISTRY }}/${{ secrets.NAMESPACE_QMS }}
-#         username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#         password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-
-  ##############################################################################
 
   deploy-theq-dev:
     name: Deploy to TheQ dev
