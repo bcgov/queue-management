@@ -38,7 +38,6 @@ jobs:
       shell: bash
       run: |
         echo foo
-        oc get pods
         oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
 
   build-api:
