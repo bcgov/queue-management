@@ -38,6 +38,7 @@ jobs:
           # replace the image that is created by the Jenkins build.
           IMAGE_TAGS=actions-latest
         fi
+        echo $IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
   ##############################################################################
@@ -50,6 +51,11 @@ jobs:
     steps:
     - name: Check out
       uses: actions/checkout@v2
+
+    - name: Get Image Tag
+      id: get-image-tag
+      shell: bash
+      run: echo x ${{ needs.get-image-tags.outputs.image-tags }}
 
 #     - name: Get Image Tag
 #       id: get-image-tag
