@@ -8,6 +8,9 @@ on:
       image-name:
         required: true
         type: string
+      image-tags:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -15,11 +18,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Echo
-      shell: bash
-      run: |
-        echo echo
-
     - name: Check out
       uses: actions/checkout@v2
 
@@ -30,18 +28,6 @@ jobs:
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
     - name: Buildah Action
       id: build-image
       uses: redhat-actions/buildah-build@v2
@@ -49,7 +35,7 @@ jobs:
         containerfiles: ${{ inputs.directory }}/Dockerfile
         context: ${{ inputs.directory }}
         image: ${{ inputs.image-name }}
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ inputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
