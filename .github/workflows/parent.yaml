@@ -8,6 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: debug
+      shell: bash
+      run: |
+        ls -laR /home/runner/work/queue-management/queue-management/.github
+
     - name: child
       uses: ./.github/workflows/child
 
