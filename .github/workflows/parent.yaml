@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: child
-      uses: ./.github/workflows/child.yaml
+      uses: ./.github/workflows/child
 
     - name: echo
       shell: bash
