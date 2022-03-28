@@ -11,6 +11,27 @@ on:
       image-tags:
         required: true
         type: string
+#     secrets:
+#       artifactory-password:
+#         required: true
+#       artifactory-registry:
+#         required: true
+#       artifactory-username:
+#         required: true
+#       namespace-qms:
+#         required: true
+#       namespace-qms-password:
+#         required: true
+#       namespace-qms-username:
+#         required: true
+#       namespace-theq:
+#         required: true
+#       namespace-theq-password:
+#         required: true
+#       namespace-theq-username:
+#         required: true
+#       openshift-registry:
+#         required: true
 
 jobs:
   build:
@@ -18,6 +39,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - id: step1
+      run: echo x ${{ secrets.ARTIFACTORY_REGISTRY }}
+
     - name: Check out
       uses: actions/checkout@v2
 
