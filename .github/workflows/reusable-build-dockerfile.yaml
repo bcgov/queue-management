@@ -11,27 +11,27 @@ on:
       image-tags:
         required: true
         type: string
-#     secrets:
-#       artifactory-password:
-#         required: true
-#       artifactory-registry:
-#         required: true
-#       artifactory-username:
-#         required: true
-#       namespace-qms:
-#         required: true
-#       namespace-qms-password:
-#         required: true
-#       namespace-qms-username:
-#         required: true
-#       namespace-theq:
-#         required: true
-#       namespace-theq-password:
-#         required: true
-#       namespace-theq-username:
-#         required: true
-#       openshift-registry:
-#         required: true
+    secrets:
+      artifactory-password:
+        required: true
+      artifactory-registry:
+        required: true
+      artifactory-username:
+        required: true
+      namespace-qms:
+        required: true
+      namespace-qms-password:
+        required: true
+      namespace-qms-username:
+        required: true
+      namespace-theq:
+        required: true
+      namespace-theq-password:
+        required: true
+      namespace-theq-username:
+        required: true
+      openshift-registry:
+        required: true
 
 jobs:
   build:
@@ -50,9 +50,9 @@ jobs:
     - name: Login to Artifactory to Pull Images in build-image
       uses: redhat-actions/podman-login@v1
       with:
-        registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+        registry: ${{ secrets.artifactory-registry }}
+        username: ${{ secrets.artifactory-username }}
+        password: ${{ secrets.artifactory-password }}
 
     - name: Buildah Action
       id: build-image
