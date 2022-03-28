@@ -23,15 +23,16 @@ jobs:
           # replace the image that is created by the Jenkins build.
           IMAGE_TAGS=actions-latest
         fi
-        echo $IMAGE_TAGS
+        echo Using tag(s): \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: https://api.silver.devops.gov.bc.ca:6443 # ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-        openshift_password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+        openshift_token: ${{ secrets.TOKEN }}
+#         openshift_username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+#         openshift_password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.NAMESPACE_THEQ }}
 
