@@ -1,0 +1,10 @@
+on:
+  workflow_call:
+  
+jobs:
+  example_job:
+    name: example
+    runs-on: ubuntu-latest
+    steps:
+      - id: step1
+        run: echo child
