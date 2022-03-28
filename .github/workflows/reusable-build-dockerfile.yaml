@@ -37,10 +37,12 @@ jobs:
   build:
     name: Build Image
     runs-on: ubuntu-latest
+    env:
+      foo: ${{ secrets.ARTIFACTORY_REGISTRY }}
 
     steps:
     - id: step1
-      run: echo x ${{ secrets.ARTIFACTORY_REGISTRY }}
+      run: echo x ${{ secrets.ARTIFACTORY_REGISTRY }}; echo y ${{ env.foo }}
 
     - name: Check out
       uses: actions/checkout@v2
