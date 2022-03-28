@@ -23,7 +23,7 @@ jobs:
           # replace the image that is created by the Jenkins build.
           IMAGE_TAGS=actions-latest
         fi
-        echo Using tag(s): \"$IMAGE_TAGS\"
+        echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
     - name: Log in to OpenShift 
