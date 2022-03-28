@@ -11,18 +11,10 @@ module.exports = {
         crypto: require.resolve('crypto-browserify'),
         buffer: require.resolve('buffer/'),
         util: require.resolve('util/'),
-        stream: require.resolve('stream-browserify')
+        stream: require.resolve('stream-browserify'),
+        jsonwebtoken: require.resolve('jsonwebtoken')
       }
     }
-  },
-  chainWebpack: config => {
-    config.module
-      .rule('images')
-      .set('parser', {
-        dataUrlCondition: {
-          maxSize: 4 * 1024 // 4KiB
-        }
-      })
   },
   // publicPath: process.env.VUE_APP_PATH,
   runtimeCompiler: true,

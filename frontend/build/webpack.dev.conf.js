@@ -20,7 +20,12 @@ module.exports = merge(baseWebpackConfig, {
   externals: { Keycloak: 'Keycloak' },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': config.dev.env
+      'process.env': JSON.stringify(config.dev.env),
+      'process.type': JSON.stringify(process.type),
+      'process.version': JSON.stringify(process.version)
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
