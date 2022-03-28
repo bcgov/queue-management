@@ -12,8 +12,6 @@ on:
         required: true
         type: string
     secrets:
-      # Bit of a pain we have to pass these in,
-      # rather than just read the secrets.
       artifactory-password:
         required: true
       artifactory-registry:
