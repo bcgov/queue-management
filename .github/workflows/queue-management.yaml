@@ -4,23 +4,6 @@ concurrency:
   cancel-in-progress: true
 on:
   workflow_dispatch:
-#   job1:
-#     runs-on: ubuntu-latest
-#     # Map a step output to a job output
-#     outputs:
-#       output1: ${{steps.step1.outputs.test}}
-#       output2: ${{steps.step2.outputs.test}}
-#     steps:
-#     - id: step1
-#       run: echo "::set-output name=test::hello"
-#     - id: step2
-#       run: echo"::set-output name=test::world"
-  
-#   job2:
-#     runs-on: ubuntu-latest
-#     needs: job1
-#     steps:
-#     - run: echo${{needs.job1.outputs.output1}} ${{needs.job1.outputs.output2}}
 
 jobs:
   create-image-tags:
@@ -53,23 +36,6 @@ jobs:
     steps:
     - name: Check out
       uses: actions/checkout@v2
-
-    - name: Get Image Tag
-      id: get-image-tagx
-      shell: bash
-      run: echo x ${{ needs.create-image-tags.outputs.image-tags }}
-
-#     - name: Get Image Tag
-#       id: get-image-tag
-#       shell: bash
-#       run: |
-#         IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-#         if [ $IMAGE_TAG == "bcgov-master" ]; then
-#           # Will eventually change this to "latest" but for now don't
-#           # replace the image that is created by the Jenkins build.
-#           IMAGE_TAG=actions-latest
-#         fi
-#         echo "::set-output name=image-tag::$IMAGE_TAG"
 
     - name: s2i Build
       id: build-image
@@ -105,6 +71,7 @@ jobs:
 
   build-appointment-frontend:
     name: Build /appointment-frontend
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
@@ -118,18 +85,6 @@ jobs:
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
     - name: Buildah Action
       id: build-image
       uses: redhat-actions/buildah-build@v2
@@ -137,7 +92,7 @@ jobs:
         containerfiles: appointment-frontend/Dockerfile
         context: appointment-frontend
         image: appointment-frontend
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
@@ -161,23 +116,12 @@ jobs:
 
   build-feedback-api:
     name: Build /feedback-api
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
     - name: Check out
       uses: actions/checkout@v2
-
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
 
     - name: s2i Build
       id: build-image
@@ -189,7 +133,7 @@ jobs:
           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: feedback-api
         path_context: ./feedback-api
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
@@ -213,6 +157,7 @@ jobs:
 
   build-frontend:
     name: Build /frontend
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
@@ -226,18 +171,6 @@ jobs:
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
     - name: Buildah Action
       id: build-image
       uses: redhat-actions/buildah-build@v2
@@ -245,7 +178,7 @@ jobs:
         containerfiles: frontend/Dockerfile
         context: frontend
         image: queue-management-frontend
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
@@ -269,6 +202,7 @@ jobs:
 
   build-jobs-appointment-reminder:
     name: Build /jobs/appointment-reminder
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
@@ -282,18 +216,6 @@ jobs:
         username: ${{ secrets.ARTIFACTORY_USERNAME }}
         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
     - name: Buildah Action
       id: build-image
       uses: redhat-actions/buildah-build@v2
@@ -301,7 +223,7 @@ jobs:
         containerfiles: jobs/appointment_reminder/Dockerfile
         context: jobs/appointment_reminder
         image: send-appointment-reminder-crond
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
@@ -325,23 +247,12 @@ jobs:
 
   build-notifications-api:
     name: Build /notifications-api
+    needs: create-image-tags
     runs-on: ubuntu-latest
 
     steps:
     - name: Check out
       uses: actions/checkout@v2
-
-    - name: Get Image Tag
-      id: get-image-tag
-      shell: bash
-      run: |
-        IMAGE_TAG=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAG == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAG=actions-latest
-        fi
-        echo "::set-output name=image-tag::$IMAGE_TAG"
 
     - name: s2i Build
       id: build-image
@@ -353,7 +264,7 @@ jobs:
           AF_PASSWD=${{ secrets.ARTIFACTORY_PASSWORD }}
         image: notifications-api
         path_context: ./notifications-api
-        tags: ${{ steps.get-image-tag.outputs.image-tag }}
+        tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
