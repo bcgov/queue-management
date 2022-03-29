@@ -40,9 +40,9 @@ jobs:
         echo foo
         oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
 
-  tag-theq-dev:
-    name: Tag The Q dev
-    needs: get-image-tags
+  testing:
+    name: testing
+    needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       namespace: ${{ secrets.NAMESPACE_THEQ }}
