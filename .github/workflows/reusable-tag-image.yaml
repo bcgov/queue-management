@@ -2,7 +2,7 @@ name: Tag Image
 on:
   workflow_call:
     inputs:
-      image-name:
+      image-names:
         required: true
         type: string
       image-tags:
