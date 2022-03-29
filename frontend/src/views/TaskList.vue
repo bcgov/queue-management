@@ -4,9 +4,16 @@
       v-if="isServiceFLowEnabled"
       :bpmApiUrl="configs.BPM_URL"
       :token="token"
+      :formIO="{
+        apiUrl: configs.FORM_IO_API_URL,
+        resourceId: configs.FORM_IO_RESOURCE_ID,
+        reviewerId: configs.FORM_IO_RESOURCE_ID,
+        reviewer: configs.FORM_IO_REVIEWER,
+        userRoles: userKeyclockGroups
+      }"
       :formIOApiUrl="configs.FORM_IO_API_URL"
       :formIOResourceId="configs.FORM_IO_RESOURCE_ID"
-      :formIOReviewerId="configs.FORM_IO_REVIEWER_ID"
+      :formIOReviewerId="configs.FORM_IO_RESOURCE_ID"
       :formIOReviewer="configs.FORM_IO_REVIEWER"
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
