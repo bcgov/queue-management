@@ -32,7 +32,7 @@ jobs:
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.NAMESPACE_THEQ }}
         openshift_server_url: https://api.silver.devops.gov.bc.ca:6443 # ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+        openshift_token: ${{ secrets.TOKEN }}
 
     - name: Tag image (temp)
       shell: bash
