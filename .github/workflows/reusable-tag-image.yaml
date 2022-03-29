@@ -1,0 +1,37 @@
+name: Tag Image
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        required: true
+        type: string
+      image-tags:
+        required: true
+        type: string
+    secrets:
+      namespace:
+        required: true
+      openshift-api:
+        required: true
+      openshift-token:
+        required: true
+
+jobs:
+  build:
+    name: Tag Image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        insecure_skip_tls_verify: true
+        namespace: ${{ secrets.namespace }}
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.openshift-token }}
+
+    - name: Tag Image
+      shell: bash
+      run: |
+        IMAGE_TAG=${{ image-tags }}
+        oc tag ${{ image-name }}:$IMAGE_TAG ${{ image-name }}:dev-github-actions
