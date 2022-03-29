@@ -34,4 +34,4 @@ jobs:
       shell: bash
       run: |
         IMAGE_TAG=${{ inputs.image-tags }}
-        oc tag ${{ inputs.image-name }}:$IMAGE_TAG ${{ inputs.image-name }}:dev-github-actions
+        oc tag ${{ inputs.image-names }}:$IMAGE_TAG ${{ inputs.image-names }}:dev-github-actions
