@@ -40,6 +40,18 @@ jobs:
         echo foo
         oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
 
+  tag-theq-dev:
+    name: Tag The Q dev
+    needs: get-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+
   build-api:
     name: /api
     needs: create-image-tags
@@ -160,97 +172,108 @@ jobs:
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-  deploy-theq-dev:
+  approve-theq-dev:
     name: Deploy to TheQ dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
-          echo Deploy complete
- 
+          echo Approved
+
+  tag-theq-dev:
+    name: Tag The Q dev
+    needs: approve-theq-dev
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+
   newman-theq-dev:
     name: Newman tests in TheQ dev
-    needs: deploy-theq-dev
-  
+    needs: tag-theq-dev
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Newman tests complete
- 
+
   deploy-theq-test:
     name: Deploy to TheQ test
     needs: newman-theq-dev
     environment: theq-test
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Deploy complete
- 
+
   deploy-theq-prod:
     name: Deploy to TheQ prod
     needs: deploy-theq-test
     environment: theq-prod
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Deploy complete
- 
+
   deploy-qms-dev:
     name: Deploy to QMS dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Deploy complete
- 
+
   newman-qms-dev:
     name: Newman tests in QMS dev
     needs: deploy-qms-dev
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Newman tests complete
- 
+
   deploy-qms-test:
     name: Deploy to QMS test
     needs: newman-qms-dev
     environment: qms-test
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Deploy complete
- 
+
   deploy-qms-prod:
     name: Deploy to QMS prod
     needs: deploy-qms-test
     environment: qms-prod
-  
+
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
         run: |
           echo Deploy complete
- 
