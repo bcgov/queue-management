@@ -26,19 +26,19 @@ jobs:
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
-    - name: Log in to OpenShift 
-      uses: redhat-actions/oc-login@v1
-      with:
-        insecure_skip_tls_verify: true
-        namespace: ${{ secrets.NAMESPACE_THEQ }}
-        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
-        openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+#     - name: Log in to OpenShift 
+#       uses: redhat-actions/oc-login@v1
+#       with:
+#         insecure_skip_tls_verify: true
+#         namespace: ${{ secrets.NAMESPACE_THEQ }}
+#         openshift_server_url: ${{ secrets.OPENSHIFT_API }}
+#         openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
 
-    - name: Tag image (temp)
-      shell: bash
-      run: |
-        echo foo
-        oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
+#     - name: Tag image (temp)
+#       shell: bash
+#       run: |
+#         echo foo
+#         oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
 
   testing:
     name: testing
