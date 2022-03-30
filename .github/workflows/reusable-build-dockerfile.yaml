@@ -32,6 +32,9 @@ on:
         required: true
       openshift-registry:
         required: true
+    outputs:
+      image-tags:
+        value: ${{ inputs.image-tags }}
 
 jobs:
   build:
@@ -75,7 +78,3 @@ jobs:
         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
         username: ${{ secrets.namespace-qms-username }}
         password: ${{ secrets.namespace-qms-password }}
-
-    - name: Echo the tags
-      shell: bash
-      run: echo "::set-output name=image-tags::${{ steps.build-image.outputs.tags }}"
