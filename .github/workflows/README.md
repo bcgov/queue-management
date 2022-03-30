@@ -10,6 +10,7 @@ Notes:
 - It's kludgy but the "approve" steps have the tags as an output variable. This is so the "tag" steps don't have to *need* `create-image-tags` - doing so makes the graph harder to understand.
 
 Gotchas:
+- Building during cluster operations can have failures when trying to pull images from Artifactory. Re-run then failed jobs.
 - Pushing images to -tools namespaces can be slow when cluster operations are being done. Artifactory?
 
 TODO:
