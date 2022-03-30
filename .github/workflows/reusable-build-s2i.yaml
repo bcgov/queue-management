@@ -78,3 +78,8 @@ jobs:
         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
         username: ${{ secrets.namespace-qms-username }}
         password: ${{ secrets.namespace-qms-password }}
+
+    - name: echo tags
+      shell: bash
+      run: |
+        echo "::set-output name=image-tags::${{ steps.build-image.outputs.tags }}"
