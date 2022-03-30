@@ -11,5 +11,5 @@ Note:
 TODO:
 1. update the image tagger to take multiple image names
 1. tag with both `latest` and `PR123`
-1. newman tests
+1. newman tests - how to wait for rollout?
 1. Only allow non-dev tagging from bcgov/master
