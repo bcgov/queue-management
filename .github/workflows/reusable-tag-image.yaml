@@ -40,4 +40,4 @@ jobs:
         # Remove TEMP when we actually start replacing Jenkins.
         TEMP=-github-actions
         # TODO - multiple image names
-        oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
+        echo oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
