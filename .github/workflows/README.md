@@ -21,3 +21,4 @@ TODO:
 1. Only allow non-dev tagging from bcgov/master
 1. document the environments
 1. document the secrets
+1. document service accounts
