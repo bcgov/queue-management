@@ -7,11 +7,11 @@ GitHub actions to:
 
 Notes:
 - There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow?
-- It's kludgy but the "approve" steps have the tags as an output variable. This is so the "tag" steps don't have to *need* `create-image-tags` - doing so makes the graph harder to understand.
+- It's kludgy but the "approve" steps have the tags as an output variable. Otherwise, the "tag" steps have a *needs* for `create-image-tags`, and that makes the workflow graph harder to understand.
 
 Gotchas:
-- Building during cluster operations can have failures when trying to pull images from Artifactory. Re-run then failed jobs.
-- Pushing images to -tools namespaces can be slow when cluster operations are being done. Artifactory?
+- Building during cluster operations can have failures when trying to pull images from Artifactory. Wait for all builds to complete and then "Re-run failed jobs".
+- Pushing images to -tools namespaces can be slow when cluster operations are being done. Would it be better to push to Artifactory?
 
 TODO:
 1. export tags from the approve to clean up the graph.
