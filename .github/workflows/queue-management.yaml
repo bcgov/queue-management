@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: deploy
-        run: echo Approved ${{ needs.build-api.outputs.image-tags }}
+        run: echo Approved
 
   tag-theq-dev:
     name: Tag The Q dev
@@ -190,6 +190,8 @@ jobs:
     name: Approve Deploy to The Q test
     needs: newman-theq
     environment: theq-test
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
@@ -213,6 +215,8 @@ jobs:
     name: Approve Deploy to The Q prod
     needs: tag-theq-test
     environment: theq-prod
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
@@ -238,6 +242,8 @@ jobs:
     name: Approve Deploy to QMS dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
@@ -270,6 +276,8 @@ jobs:
     name: Approve Deploy to QMS test
     needs: newman-qms
     environment: qms-test
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
@@ -293,6 +301,8 @@ jobs:
     name: Approve Deploy to QMS prod
     needs: tag-qms-test
     environment: qms-prod
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
