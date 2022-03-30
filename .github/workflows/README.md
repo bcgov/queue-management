@@ -13,4 +13,5 @@ TODO:
 1. tag with both `latest` and `PR123`
 1. newman tests - how to wait for rollout?
 1. Only allow non-dev tagging from bcgov/master
-1. document the secrets
+1. document the environments
+3. document the secrets
