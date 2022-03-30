@@ -22,3 +22,4 @@ TODO:
 1. document the environments
 1. document the secrets
 1. document service accounts
+1. parallelize the image pushes
