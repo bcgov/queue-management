@@ -152,6 +152,15 @@ jobs:
 
   ##### DEPLOY THE Q ###############################################################################
 
+  testing:
+    name: Axpprove Deploy to The Q dev
+    needs: build-api
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy
+        run: echo Approved ${{ needs.build-api.outputs.image-tags }}
+
   approve-theq-dev:
     name: Approve Deploy to The Q dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
