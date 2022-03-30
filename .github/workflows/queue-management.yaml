@@ -186,7 +186,7 @@ jobs:
 
   tag-theq-dev:
     name: Tag The Q dev
-    needs: approve-theq-dev
+    needs: [create-image-tags, approve-theq-dev]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       namespace: ${{ secrets.NAMESPACE_THEQ }}
