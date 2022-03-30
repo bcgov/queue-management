@@ -26,32 +26,6 @@ jobs:
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
-#     - name: Log in to OpenShift 
-#       uses: redhat-actions/oc-login@v1
-#       with:
-#         insecure_skip_tls_verify: true
-#         namespace: ${{ secrets.NAMESPACE_THEQ }}
-#         openshift_server_url: ${{ secrets.OPENSHIFT_API }}
-#         openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-#     - name: Tag image (temp)
-#       shell: bash
-#       run: |
-#         echo foo
-#         oc tag appointment-frontend:walter-moar-master appointment-frontend:walter-moar-master-dev
-
-  testing:
-    name: testing
-    needs: create-image-tags
-    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-    secrets:
-      namespace: ${{ secrets.NAMESPACE_THEQ }}
-      openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-    with:
-      image-names: appointment-frontend
-      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
   build-api:
     name: /api
     needs: create-image-tags
