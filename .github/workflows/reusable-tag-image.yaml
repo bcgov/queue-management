@@ -5,7 +5,10 @@ on:
       image-names:
         required: true
         type: string
-      image-tags:
+      tag-from:
+        required: true
+        type: string
+      tag-to:
         required: true
         type: string
     secrets:
@@ -25,6 +28,7 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
+        # TODO: fix this.
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.namespace }}
         openshift_server_url: ${{ secrets.openshift-api }}
@@ -33,5 +37,7 @@ jobs:
     - name: Tag Image
       shell: bash
       run: |
-        IMAGE_TAG=${{ inputs.image-tags }}
-        oc tag ${{ inputs.image-names }}:$IMAGE_TAG ${{ inputs.image-names }}:dev-github-actions
+        # Remove TEMP when we actually start replacing Jenkins.
+        TEMP=-github-actions
+        # TODO - multiple image names
+        oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
