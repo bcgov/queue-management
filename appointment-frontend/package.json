@@ -5,12 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
-    "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit --testPathPattern=.",
+    "lint": "vue-cli-service lint",
     "preinstall": "npx npm-force-resolutions"
-  },
-  "resolutions": {
-    "yargs-parser": "15.0.1"
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
@@ -44,20 +41,22 @@
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.5.0",
     "@types/jest": "^26.0.24",
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-e2e-nightwatch": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-plugin-pwa": "^4.5.15",
-    "@vue/cli-plugin-typescript": "^4.5.15",
-    "@vue/cli-plugin-unit-jest": "^4.5.15",
-    "@vue/cli-service": "^4.5.15",
+    "@vue/cli-plugin-babel": "^5.0.4",
+    "@vue/cli-plugin-e2e-nightwatch": "^5.0.4",
+    "@vue/cli-plugin-eslint": "^5.0.4",
+    "@vue/cli-plugin-pwa": "^5.0.4",
+    "@vue/cli-plugin-typescript": "^5.0.4",
+    "@vue/cli-plugin-unit-jest": "^5.0.4",
+    "@vue/cli-service": "^5.0.4",
     "@vue/eslint-config-standard": "^6.1.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "1.1.3",
+    "@vue/vue2-jest": "^27.0.0-alpha.3",
     "babel-core": "6.26.3",
     "babel-eslint": "^10.0.1",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^7.20.0",
+    "jest": "^27.1.0",
     "jest-localstorage-mock": "^2.4.18",
     "sass": "^1.49.4",
     "sass-loader": "^10.2.1",
@@ -65,11 +64,14 @@
     "stylus": "^0.54.7",
     "stylus-loader": "^5.0.0",
     "ts-jest": "^26.5.6",
-    "typescript": "^4.5.5",
-    "vue-cli-plugin-vuetify": "^2.4.5",
-    "vue-template-compiler": "^2.6.14",
-    "workbox-webpack-plugin": "^6.4.2",
+    "typescript": "~4.5.5",
+    "url-parse": "~1.5.10",
     "vm2": "^3.9.7",
-    "url-parse": "~1.5.10"
+    "vue-cli-plugin-vuetify": "^2.4.8",
+    "vue-template-compiler": "^2.6.14",
+    "workbox-webpack-plugin": "^6.4.2"
+  },
+  "resolutions": {
+    "yargs-parser": "15.0.1"
   }
 }
