@@ -3,10 +3,11 @@
 GitHub actions to:
 - build images using either Dockerfile or Source to Image (S2I) builds.
 - push images to two different -tools namespaces
-- tag the images in the two -tools namespaces for `dev`, `test`, and `prod`
+- tag the images in the two -tools namespaces for `dev`, then `test`, and then `prod`
 
 Notes:
 - There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow?
+- It's kludgy but the "approve" step has the tags as an output variable. This is so the "tag" steps don't have to *need* `create-image-tags`, because doing so makes the graph harder to understand.
 
 Gotchas:
 - Pushing images to -tools namespaces can be slow when cluster operations are being done. Artifactory?
