@@ -156,6 +156,8 @@ jobs:
     name: Approve Deploy to The Q dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
+    outputs:
+      image-tags: ${{ needs.build-api.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
