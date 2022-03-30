@@ -81,5 +81,4 @@ jobs:
 
     - name: Echo the tags
       shell: bash
-      run: |
-        echo "::set-output name=image-tags::${{ steps.build-image.outputs.tags }}"
+      run: echo "::set-output name=image-tags::${{ steps.build-image.outputs.tags }}"
