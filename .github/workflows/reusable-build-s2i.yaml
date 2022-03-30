@@ -34,12 +34,14 @@ on:
         required: true
     outputs:
       image-tags:
-        value: abc123
+        value:  ${{ jobs.build.outputs.image-tags }}
 
 jobs:
   build:
     name: S2I Build
     runs-on: ubuntu-latest
+    outputs:
+      image-tags: ${{ steps.build-image.outputs.tags }}
 
     steps:
     - name: Check out
