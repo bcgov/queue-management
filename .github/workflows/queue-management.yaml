@@ -195,8 +195,10 @@ jobs:
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
       image-names: appointment-frontend
-      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: dev
 
+  # TODO - how to wait for deploy?
   newman-theq-dev:
     name: Newman tests in TheQ dev
     needs: tag-theq-dev
@@ -229,7 +231,8 @@ jobs:
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
       image-names: appointment-frontend
-      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: test
 
   approve-theq-prod:
     name: Approve Deploy to TheQ prod
@@ -252,7 +255,8 @@ jobs:
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
       image-names: appointment-frontend
-      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: prod
 
   approve-qms-dev:
     name: Approve Deploy to QMS dev
@@ -275,11 +279,13 @@ jobs:
       openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
     with:
       image-names: appointment-frontend
-      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: dev
 
+  # TODO - how to wait for deploy?
   newman-qms-dev:
     name: Newman tests in QMS dev
-    needs: deploy-qms-dev
+    needs: tag-qms-dev
 
     runs-on: ubuntu-latest
     steps:
