@@ -147,7 +147,7 @@ jobs:
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   approve-theq-dev:
-    name: Approve Deploy to TheQ dev
+    name: Approve Deploy to The Q dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
 
@@ -182,7 +182,7 @@ jobs:
           echo Newman tests complete
 
   approve-theq-test:
-    name: Approve Deploy to TheQ test
+    name: Approve Deploy to The Q test
     needs: newman-theq
     environment: theq-test
 
@@ -206,7 +206,7 @@ jobs:
       tag-to: test
 
   approve-theq-prod:
-    name: Approve Deploy to TheQ prod
+    name: Approve Deploy to The Q prod
     needs: tag-theq-test
     environment: theq-prod
 
@@ -264,8 +264,8 @@ jobs:
         run: |
           echo Newman tests complete
 
-  deploy-qms-test:
-    name: Deploy to QMS test
+  approve-qms-test:
+    name: Approve Deploy to QMS test
     needs: newman-qms
     environment: qms-test
 
@@ -273,17 +273,41 @@ jobs:
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Deploy complete
+        run: echo Approved
 
-  deploy-qms-prod:
-    name: Deploy to QMS prod
-    needs: deploy-qms-test
+  tag-qms-test:
+    name: Tag QMS test
+    needs: [approve-qms-test, create-image-tags]
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: test
+
+  approve-qms-prod:
+    name: Approve Deploy to QMS prod
+    needs: tag-qms-test
     environment: qms-prod
 
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Deploy complete
+        run: echo Approved
+
+  tag-qms-prod:
+    name: Tag QMS prod
+    needs: [approve-qms-prod, create-image-tags]
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
+      tag-to: prod
