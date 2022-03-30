@@ -34,7 +34,7 @@ on:
         required: true
     outputs:
       image-tags:
-        value:  ${{ jobs.build.outputs.image-tags }}
+        value: ${{ jobs.build.outputs.image-tags }}
 
 jobs:
   build:
