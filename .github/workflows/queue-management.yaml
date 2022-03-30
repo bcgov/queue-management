@@ -146,8 +146,6 @@ jobs:
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-  # Note: can't use an environment on a "uses" job, so there are two steps for each approve and tag.
-
   approve-theq-dev:
     name: Approve Deploy to TheQ dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
@@ -172,8 +170,7 @@ jobs:
       tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: dev
 
-  # TODO - how to wait for deploy?
-  newman-theq-dev:
+  newman-theq:
     name: Newman tests in TheQ dev
     needs: tag-theq-dev
 
@@ -186,7 +183,7 @@ jobs:
 
   approve-theq-test:
     name: Approve Deploy to TheQ test
-    needs: newman-theq-dev
+    needs: newman-theq
     environment: theq-test
 
     runs-on: ubuntu-latest
@@ -197,7 +194,7 @@ jobs:
 
   tag-theq-test:
     name: Tag The Q test
-    needs: [create-image-tags, approve-theq-test]
+    needs: [approve-theq-test, create-image-tags]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       namespace: ${{ secrets.NAMESPACE_THEQ }}
@@ -221,7 +218,7 @@ jobs:
 
   tag-theq-prod:
     name: Tag The Q prod
-    needs: [create-image-tags, approve-theq-prod]
+    needs: [approve-theq-prod, create-image-tags]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       namespace: ${{ secrets.NAMESPACE_THEQ }}
@@ -245,7 +242,7 @@ jobs:
 
   tag-qms-dev:
     name: Tag QMS dev
-    needs: [create-image-tags, approve-theq-dev]
+    needs: [approve-qms-dev, create-image-tags]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       namespace: ${{ secrets.NAMESPACE_QMS }}
@@ -256,8 +253,7 @@ jobs:
       tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: dev
 
-  # TODO - how to wait for deploy?
-  newman-qms-dev:
+  newman-qms:
     name: Newman tests in QMS dev
     needs: tag-qms-dev
 
@@ -270,7 +266,7 @@ jobs:
 
   deploy-qms-test:
     name: Deploy to QMS test
-    needs: newman-qms-dev
+    needs: newman-qms
     environment: qms-test
 
     runs-on: ubuntu-latest
