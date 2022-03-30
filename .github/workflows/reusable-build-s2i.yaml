@@ -34,7 +34,7 @@ on:
         required: true
     outputs:
       image-tags:
-        value: ${{ inputs.image-tags }}
+        value: abc123
 
 jobs:
   build:
