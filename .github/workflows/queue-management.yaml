@@ -172,8 +172,10 @@ jobs:
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
+  # Note: can't use an environment on a "uses" job, so there are two steps for each approve and tag.
+
   approve-theq-dev:
-    name: Deploy to TheQ dev
+    name: Approve Deploy to TheQ dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
 
@@ -181,8 +183,7 @@ jobs:
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Approved
+        run: echo Approved
 
   tag-theq-dev:
     name: Tag The Q dev
@@ -207,8 +208,8 @@ jobs:
         run: |
           echo Newman tests complete
 
-  deploy-theq-test:
-    name: Deploy to TheQ test
+  approve-theq-test:
+    name: Approve Deploy to TheQ test
     needs: newman-theq-dev
     environment: theq-test
 
@@ -216,23 +217,45 @@ jobs:
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Deploy complete
+        run: echo Approved
 
-  deploy-theq-prod:
-    name: Deploy to TheQ prod
-    needs: deploy-theq-test
+  tag-theq-test:
+    name: Tag The Q test
+    needs: [create-image-tags, approve-theq-test]
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+
+  approve-theq-prod:
+    name: Approve Deploy to TheQ prod
+    needs: tag-theq-test
     environment: theq-prod
 
     runs-on: ubuntu-latest
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Deploy complete
+        run: echo Approved
 
-  deploy-qms-dev:
-    name: Deploy to QMS dev
+  tag-theq-prod:
+    name: Tag The Q prod
+    needs: [create-image-tags, approve-theq-prod]
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+
+  approve-qms-dev:
+    name: Approve Deploy to QMS dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
 
@@ -240,8 +263,19 @@ jobs:
     steps:
       - name: deploy
         shell: bash
-        run: |
-          echo Deploy complete
+        run: echo Approved
+
+  tag-qms-dev:
+    name: Tag QMS dev
+    needs: [create-image-tags, approve-theq-dev]
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+    with:
+      image-names: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   newman-qms-dev:
     name: Newman tests in QMS dev
