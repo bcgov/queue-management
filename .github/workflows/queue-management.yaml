@@ -155,7 +155,7 @@ jobs:
     steps:
       - name: deploy
         shell: bash
-        run: echo Approved
+        run: echo Approved ${{ needs.build-api.outputs.image-tags }}
 
   tag-theq-dev:
     name: Tag The Q dev
