@@ -6,7 +6,7 @@ GitHub actions to:
  - tag the images in the two -tools namespaces for `dev`, `test`, and `prod`
 
 Note:
- - There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an environment. Perhaps it would be better to not have the reusable workflow?
+ - There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow?
 
 TODO:
 1. update the image tagger to take multiple image names
