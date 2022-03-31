@@ -17,7 +17,6 @@ Gotchas:
 
 TODO:
 1. Make sure the S2I build images are the right ones
-1. export tags from the approve to clean up the graph
 1. update the image tagger to take multiple image names
 1. tag with both `latest` and `PR123`
 1. newman tests - how to wait for rollout?
