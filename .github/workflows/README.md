@@ -25,3 +25,4 @@ TODO:
 1. document service accounts
 1. parallelize the image pushes
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
+1. passing the image tags from job to job is lousy. composite actions? artifacts, but how to pass those to reusable workflows?
