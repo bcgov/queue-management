@@ -1,18 +1,19 @@
 # GitHub Actions
 
-GitHub actions to:
-- build images using either Dockerfile or Source to Image (S2I) builds.
-- push images to two different -tools namespaces
-- tag the images in the two -tools namespaces for `dev`, then `test`, and then `prod`
-- run newman tests
+The GitHub Action `queue-management.yaml` will:
+- Build images using either Dockerfile or Source to Image (S2I) builds
+- Push the built images to two different `-tools` namespaces
+- Use GitHub `environments` to define approvers for deployment to `-dev`, `-test`, and `-prod` namespaces
+- Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
+- Run newman tests against one `-dev` namespace after deployment
 
 Notes:
-- There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow?
-- It's kludgy but the "approve" steps have the tags as an output variable. Otherwise, the "tag" steps have a *needs* for `create-image-tags`, and that makes the workflow graph harder to understand.
+- There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help? What about using Artifacts?
+- It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "teg" jobs. One option would be that the "tag" steps have a *needs* for `create-image-tags`, but that makes the workflow graph harder to understand.
 
 Gotchas:
-- Building during cluster operations can have failures when trying to pull images from Artifactory. Run the workflow again and it should eventually work.
-- Pushing images to -tools namespaces can be slow when cluster operations are being done. Would it be better to push to Artifactory?
+- Building during cluster operations can have failures when trying to pull images from Artifactory. Running the workflow again will eventually work but isn't ideal.
+- Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster?
 
 TODO:
 1. Make sure the S2I build images are the right ones
@@ -26,5 +27,3 @@ TODO:
 1. document service accounts
 1. parallelize the image pushes
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
-1. passing the image tags from job to job is lousy. composite actions? artifacts, but how to pass those to reusable workflows?
-1. Can we use the `extra-args` in `push-to-registry` to make the long pushes faster?
