@@ -18,26 +18,29 @@ on:
         required: true
       openshift-token:
         required: true
+    outputs:
+      tag-from:
+        value: ${{ jobs.build.outputs.tag-from }}
 
 jobs:
   build:
     name: Tag Image
     runs-on: ubuntu-latest
+    outputs:
+      tag-from: ${{ inputs.tag-from }}
 
     steps:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        # TODO: fix this.
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.namespace }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.openshift-token }}
 
     - name: Tag Image
+      id: tag-image
       shell: bash
       run: |
-        # Remove TEMP when we actually start replacing Jenkins.
         TEMP=-github-actions
-        # TODO - multiple image names
         echo oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
