@@ -1,6 +1,7 @@
 # GitHub Actions
 
-The GitHub Action `queue-management.yaml` will:
+The GitHub Action `queue-management.yaml` is _currently_ only run manually. It will:
+
 - Build images using either Dockerfile or Source to Image (S2I) builds
 - Push the built images to two different `-tools` namespaces
 - Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
@@ -43,3 +44,4 @@ In each of these environments set up `Environment protection rules` with at leas
 1. document service accounts
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. https://github.com/marketplace/actions/owasp-zap-full-scan
+1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
