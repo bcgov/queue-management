@@ -23,7 +23,6 @@ jobs:
         npm init -y
         npm install newman
 
-        exit 1
         ./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
             -e postman_env.json \
             --delay-request 250 \
@@ -39,6 +38,8 @@ jobs:
             --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
             --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
             --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
+
+        exit 1
 
   create-image-tags:
     needs: newman-tests
