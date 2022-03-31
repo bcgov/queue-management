@@ -3,7 +3,7 @@
 The GitHub Action `queue-management.yaml` will:
 - Build images using either Dockerfile or Source to Image (S2I) builds
 - Push the built images to two different `-tools` namespaces
-- Use GitHub `environments` to define approvers for deployment to `-dev`, `-test`, and `-prod` namespaces
+- Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
 - Run newman tests against one `-dev` namespace after deployment
 
