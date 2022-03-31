@@ -16,7 +16,6 @@ Gotchas:
 - Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 
 TODO:
-1. Make sure the S2I build images are the right ones
 1. update the image tagger to take multiple image names
 1. tag with both `latest` and `PR123`
 1. newman tests - how to wait for rollout?
