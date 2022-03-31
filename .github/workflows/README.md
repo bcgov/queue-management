@@ -24,3 +24,4 @@ TODO:
 1. document the secrets
 1. document service accounts
 1. parallelize the image pushes
+1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
