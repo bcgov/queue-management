@@ -189,9 +189,9 @@ jobs:
     outputs:
       image-tags: ${{ needs.build-api.outputs.image-tags }}
 
-#     steps:
-#       - name: Deployment Approval
-#         run: echo Approved
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
 
   tag-theq-dev:
     name: Tag The Q dev
