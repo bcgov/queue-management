@@ -211,15 +211,39 @@ jobs:
       tag-to: dev
 
   newman-theq:
-    name: Newman tests in TheQ dev
+    name: Newman Tests in TheQ dev
     needs: tag-theq-dev
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.tag-theq-dev.outputs.tag-from }}
 
-    runs-on: ubuntu-latest
     steps:
-      - name: newman
-        run: echo Newman tests complete
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: NPM Install
+      run: |
+        cd api/postman
+        npm init -y
+        npm install newman
+
+    - name: Run Newman Tests
+      run: |
+        api/postman/node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
+            -e postman_env.json \
+            --delay-request 250 \
+            --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
+            --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID }}' \
+            --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET }}' \
+            --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
+            --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
+            --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL }}' \
+            --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
+            --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
+            --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
+            --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
+            --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
+            --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
 
   approve-theq-test:
     name: Approve Deploy to The Q test
@@ -298,23 +322,12 @@ jobs:
       tag-from: ${{ needs.approve-qms-dev.outputs.image-tags }}
       tag-to: dev
 
-  newman-qms:
-    name: Newman tests in QMS dev
-    needs: tag-qms-dev
-    outputs:
-      image-tags: ${{ needs.tag-qms-dev.outputs.tag-from }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: deploy
-        run: echo Newman tests complete
-
   approve-qms-test:
     name: Approve Deploy to QMS test
-    needs: newman-qms
+    needs: tag-qms-dev
     environment: qms-test
     outputs:
-      image-tags: ${{ needs.newman-qms.outputs.image-tags }}
+      image-tags: ${{ needs.tag-qms-dev.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
