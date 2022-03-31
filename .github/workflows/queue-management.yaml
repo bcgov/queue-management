@@ -355,7 +355,7 @@ jobs:
     needs: tag-qms-dev
     environment: qms-test
     outputs:
-      image-tags: ${{ needs.tag-qms-dev.outputs.image-tags }}
+      image-tags: ${{ needs.tag-qms-dev.outputs.tag-from }}
 
     runs-on: ubuntu-latest
     steps:
