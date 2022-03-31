@@ -39,7 +39,6 @@ In each of these environments set up `Environment protection rules` with at leas
 1. tag with both `latest` and `PR123`
 1. newman tests - how to wait for rollout?
 1. Only allow non-dev tagging from bcgov/master
-1. document the environments
 1. document the secrets
 1. document service accounts
 1. parallelize the image pushes
