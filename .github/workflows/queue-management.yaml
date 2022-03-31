@@ -9,40 +9,40 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-  newman-tests:
-    name: newman
-    runs-on: ubuntu-latest
+#   newman-tests:
+#     name: newman
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Check out
-      uses: actions/checkout@v2
+#     steps:
+#     - name: Check out
+#       uses: actions/checkout@v2
 
-    - name: tests
-      run: |
-        cd api/postman
-        npm init -y
-        npm install newman
+#     - name: tests
+#       run: |
+#         cd api/postman
+#         npm init -y
+#         npm install newman
 
-        ./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
-            -e postman_env.json \
-            --delay-request 250 \
-            --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
-            --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID }}' \
-            --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET }}' \
-            --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
-            --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-            --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL }}' \
-            --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
-            --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-            --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
-            --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
-            --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
-            --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
+#         ./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
+#             -e postman_env.json \
+#             --delay-request 250 \
+#             --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
+#             --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID }}' \
+#             --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET }}' \
+#             --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
+#             --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
+#             --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL }}' \
+#             --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
+#             --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
+#             --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
+#             --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
+#             --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
+#             --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
 
-        exit 1
+#         exit 1
 
   create-image-tags:
-    needs: newman-tests
+#     needs: newman-tests
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
