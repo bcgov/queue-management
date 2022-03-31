@@ -9,6 +9,23 @@ jobs:
 
   ##### SETUP ######################################################################################
 
+  newman-tests:
+    name: newman
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: tests
+      run: |
+        cd api/postman
+        npm init -y
+        npm install newman
+        echo 1: ${USERID} 2: ${PASSWORD} 3: ${USERID_NONQTXN} 4: ${PASSWORD_NONQTXN} 5: ${CLIENT_SECRET} 6: ${API_URL} 7: ${AUTH_URL} 8: ${CLIENTID} 9: ${REALM} 10: ${PUBLIC_API_URL} 11: ${PUBLIC_USERID} 12: ${PASSWORD_PUBLIC_USER}
+        exit 1
+        #./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json --delay-request 250 -e postman_env.json --global-var 'userid=${USERID}' --global-var 'password=${PASSWORD}' --global-var 'userid_nonqtxn=${USERID_NONQTXN}' --global-var 'password_nonqtxn=${PASSWORD_NONQTXN}' --global-var 'client_secret=${CLIENT_SECRET}' --global-var 'url=${API_URL}' --global-var 'auth_url=${AUTH_URL}' --global-var 'clientid=${CLIENTID}' --global-var 'realm=${REALM}' --global-var public_url=${PUBLIC_API_URL} --global-var public_user_id=${PUBLIC_USERID} --global-var public_user_password=${PASSWORD_PUBLIC_USER}
+
   create-image-tags:
     name: Create Image Tags
     runs-on: ubuntu-latest
