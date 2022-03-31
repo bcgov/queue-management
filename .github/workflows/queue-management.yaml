@@ -17,7 +17,7 @@ jobs:
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
-          target: ${{ ZAP_STAFFURL }}
+          target: ${{ secrets.ZAP_STAFFURL }}
 
 #   owasp-public:
 #     name: OWASP ZAP Scan of Appointments dev
@@ -27,7 +27,7 @@ jobs:
 #       - name: OWASP ZAP Scan
 #         uses: zaproxy/action-full-scan@v0.3.0
 #         with:
-#           target: ${{ ZAP_APPTMNTURL }}
+#           target: ${{ secrets.ZAP_APPTMNTURL }}
 
   devwork:
 #     needs: [owasp-staff, owasp-public]
