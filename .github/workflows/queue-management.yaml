@@ -9,15 +9,15 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-#   owasp-staff:
-#     name: OWASP ZAP Scan of The Q dev
-#     runs-on: ubuntu-latest
+  owasp-staff:
+    name: OWASP ZAP Scan of The Q dev
+    runs-on: ubuntu-latest
     
-#     steps:
-#       - name: OWASP ZAP Scan
-#         uses: zaproxy/action-full-scan@v0.3.0
-#         with:
-#           target: ${{ ZAP_STAFFURL }}
+    steps:
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          target: ${{ ZAP_STAFFURL }}
 
 #   owasp-public:
 #     name: OWASP ZAP Scan of Appointments dev
@@ -29,47 +29,16 @@ jobs:
 #         with:
 #           target: ${{ ZAP_APPTMNTURL }}
 
-#   devwork:
+  devwork:
 #     needs: [owasp-staff, owasp-public]
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: exit
-#       run: exit 1
-
-#   devwork:
-#     name: newman
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Check out
-#       uses: actions/checkout@v2
-
-#     - name: tests
-#       run: |
-#         cd api/postman
-#         npm init -y
-#         npm install newman
-
-#         ./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
-#             -e postman_env.json \
-#             --delay-request 250 \
-#             --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
-#             --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID }}' \
-#             --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET }}' \
-#             --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
-#             --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-#             --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL }}' \
-#             --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
-#             --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-#             --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
-#             --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
-#             --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
-#             --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
-
-#         exit 1
+    needs: owasp-staff
+    runs-on: ubuntu-latest
+    steps:
+    - name: exit
+      run: exit 1
 
   create-image-tags:
-#     needs: devwork
+    needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
@@ -216,13 +185,13 @@ jobs:
     name: Approve Deploy to The Q dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.build-api.outputs.image-tags }}
 
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deployment Approval
-        run: echo Approved
+#     steps:
+#       - name: Deployment Approval
+#         run: echo Approved
 
   tag-theq-dev:
     name: Tag The Q dev
@@ -277,10 +246,10 @@ jobs:
     name: Approve Deploy to The Q test
     needs: newman-theq
     environment: theq-test
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.newman-theq.outputs.image-tags }}
 
-    runs-on: ubuntu-latest
     steps:
       - name: Deployment Approval
         run: echo Approved
@@ -302,10 +271,10 @@ jobs:
     name: Approve Deploy to The Q prod
     needs: tag-theq-test
     environment: theq-prod
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.tag-theq-test.outputs.tag-from }}
 
-    runs-on: ubuntu-latest
     steps:
       - name: Deployment Approval
         run: echo Approved
@@ -329,10 +298,10 @@ jobs:
     name: Approve Deploy to QMS dev
     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.build-api.outputs.image-tags }}
 
-    runs-on: ubuntu-latest
     steps:
       - name: Deployment Approval
         run: echo Approved
@@ -354,10 +323,10 @@ jobs:
     name: Approve Deploy to QMS test
     needs: tag-qms-dev
     environment: qms-test
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.tag-qms-dev.outputs.tag-from }}
 
-    runs-on: ubuntu-latest
     steps:
       - name: Deployment Approval
         run: echo Approved
@@ -379,10 +348,10 @@ jobs:
     name: Approve Deploy to QMS prod
     needs: tag-qms-test
     environment: qms-prod
+    runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.tag-qms-test.outputs.tag-from }}
 
-    runs-on: ubuntu-latest
     steps:
       - name: Deployment Approval
         run: echo Approved
