@@ -91,141 +91,130 @@ jobs:
   ##### BUILD ######################################################################################
 
   build-api:
-    name: fake build
-    runs-on: ubuntu-latest
+    name: /api
     needs: create-image-tags
-    outputs:
-      image-tags: ${{ needs.get-image-tags.outputs.image-tags }}
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-    steps:
-    - name: Get Image Tags
-      run: echo done
-    
-#   build-api:
-#     name: /api
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+  build-appointment-frontend:
+    name: /appointment-frontend
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-#   build-appointment-frontend:
-#     name: /appointment-frontend
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+  build-feedback-api:
+    name: /feedback-api
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-#   build-feedback-api:
-#     name: /feedback-api
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+  build-frontend:
+    name: /frontend
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-#   build-frontend:
-#     name: /frontend
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+  build-jobs-appointment-reminder:
+    name: /jobs/appointment-reminder
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
-#   build-jobs-appointment-reminder:
-#     name: /jobs/appointment-reminder
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-
-#   build-notifications-api:
-#     name: /notifications-api
-#     needs: create-image-tags
-#     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
-#     secrets:
-#       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-#       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-#       namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-#       namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
-#       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-#     with:
-#       directory: appointment-frontend
-#       image-name: appointment-frontend
-#       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+  build-notifications-api:
+    name: /notifications-api
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   ##### DEPLOY THE Q ###############################################################################
 
   approve-theq-dev:
     name: Approve Deploy to The Q dev
-#     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
+    needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: theq-dev
     outputs:
       image-tags: ${{ needs.build-api.outputs.image-tags }}
@@ -338,7 +327,7 @@ jobs:
 
   approve-qms-dev:
     name: Approve Deploy to QMS dev
-#     needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
+    needs: [build-api, build-appointment-frontend, build-feedback-api, build-frontend, build-jobs-appointment-reminder, build-notifications-api]
     environment: qms-dev
     outputs:
       image-tags: ${{ needs.build-api.outputs.image-tags }}
