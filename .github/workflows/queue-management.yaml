@@ -27,7 +27,7 @@ jobs:
         fi
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
-
+          
   ##### BUILD ######################################################################################
 
   build-api:
@@ -161,7 +161,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-theq-dev:
@@ -180,10 +180,12 @@ jobs:
   newman-theq:
     name: Newman tests in TheQ dev
     needs: tag-theq-dev
+    outputs:
+      image-tags: ${{ needs.tag-theq-dev.outputs.tag-from }}
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: newman
         run: echo Newman tests complete
 
   approve-theq-test:
@@ -191,11 +193,11 @@ jobs:
     needs: newman-theq
     environment: theq-test
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.newman-theq.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-theq-test:
@@ -216,11 +218,11 @@ jobs:
     needs: tag-theq-test
     environment: theq-prod
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.tag-theq-test.outputs.tag-from }}
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-theq-prod:
@@ -247,7 +249,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-qms-dev:
@@ -266,6 +268,8 @@ jobs:
   newman-qms:
     name: Newman tests in QMS dev
     needs: tag-qms-dev
+    outputs:
+      image-tags: ${{ needs.tag-qms-dev.outputs.tag-from }}
 
     runs-on: ubuntu-latest
     steps:
@@ -277,11 +281,11 @@ jobs:
     needs: newman-qms
     environment: qms-test
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.newman-qms.outputs.image-tags }}
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-qms-test:
@@ -302,11 +306,11 @@ jobs:
     needs: tag-qms-test
     environment: qms-prod
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.tag-qms-test.outputs.tag-from }}
 
     runs-on: ubuntu-latest
     steps:
-      - name: deploy
+      - name: Deployment Approval
         run: echo Approved
 
   tag-qms-prod:
