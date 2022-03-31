@@ -5,7 +5,7 @@ The GitHub Action `queue-management.yaml` will:
 - Push the built images to two different `-tools` namespaces
 - Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
-- Run newman tests against one `-dev` namespace after deployment
+- After deployment run newman tests against one `-dev` namespace
 
 Notes:
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
@@ -25,3 +25,4 @@ TODO:
 1. document service accounts
 1. parallelize the image pushes
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
+1. https://github.com/marketplace/actions/owasp-zap-full-scan
