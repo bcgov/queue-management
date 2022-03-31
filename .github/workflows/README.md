@@ -10,7 +10,7 @@ Notes:
 - It's kludgy but the "approve" steps have the tags as an output variable. Otherwise, the "tag" steps have a *needs* for `create-image-tags`, and that makes the workflow graph harder to understand.
 
 Gotchas:
-- Building during cluster operations can have failures when trying to pull images from Artifactory. Wait for all builds to complete and then "Re-run failed jobs".
+- Building during cluster operations can have failures when trying to pull images from Artifactory. Run the workflow again and it should eventually work.
 - Pushing images to -tools namespaces can be slow when cluster operations are being done. Would it be better to push to Artifactory?
 
 TODO:
