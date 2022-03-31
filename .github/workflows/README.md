@@ -4,6 +4,7 @@ GitHub actions to:
 - build images using either Dockerfile or Source to Image (S2I) builds.
 - push images to two different -tools namespaces
 - tag the images in the two -tools namespaces for `dev`, then `test`, and then `prod`
+- run newman tests
 
 Notes:
 - There are separate jobs for "approve" and "tag" because the tag steps use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow?
