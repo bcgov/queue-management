@@ -8,8 +8,8 @@ The GitHub Action `queue-management.yaml` will:
 - Run newman tests against one `-dev` namespace after deployment
 
 Notes:
-- There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help? What about using Artifacts?
-- It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand.
+- There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
+- It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
 
 Gotchas:
 - Building during cluster operations can have failures when trying to pull images from Artifactory. Running the workflow again will eventually work but isn't ideal.
