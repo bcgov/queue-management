@@ -1,4 +1,4 @@
-# GitHub Actions
+# GitHub Actions CI/CD Pipeline
 
 The GitHub Action `queue-management.yaml` is _currently_ only run manually. It will:
 
