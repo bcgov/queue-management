@@ -229,7 +229,8 @@ jobs:
 
     - name: Run Newman Tests
       run: |
-        api/postman/node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
+        cd api/postman
+        node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
             -e postman_env.json \
             --delay-request 250 \
             --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
