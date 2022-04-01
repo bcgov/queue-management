@@ -194,7 +194,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-theq-dev.outputs.image-tags }}
       tag-to: dev
 
@@ -311,7 +311,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
       tag-to: test
 
@@ -336,7 +336,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-theq-prod.outputs.image-tags }}
       tag-to: prod
 
@@ -363,7 +363,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-qms-dev.outputs.image-tags }}
       tag-to: dev
 
@@ -388,7 +388,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-qms-test.outputs.image-tags }}
       tag-to: test
 
@@ -413,6 +413,6 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.approve-qms-prod.outputs.image-tags }}
       tag-to: prod
