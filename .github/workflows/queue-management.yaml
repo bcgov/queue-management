@@ -170,7 +170,7 @@ jobs:
     environment: theq-dev
     runs-on: ubuntu-latest
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
 
     steps:
       - name: Deployment Approval
@@ -339,7 +339,7 @@ jobs:
     environment: qms-dev
     runs-on: ubuntu-latest
     outputs:
-      image-tags: ${{ needs.build-api.outputs.image-tags }}
+      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
 
     steps:
       - name: Deployment Approval
