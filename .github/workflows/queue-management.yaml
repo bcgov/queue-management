@@ -198,12 +198,24 @@ jobs:
       tag-from: ${{ needs.approve-theq-dev.outputs.image-tags }}
       tag-to: dev
 
-  newman-theq:
-    name: Newman Tests in TheQ dev
+  wait-for-rollout:
+    name: Wait for Image Rollout
     needs: tag-theq-dev
+    environment: theq-dev
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ needs.tag-theq-dev.outputs.tag-from }}
+
+    steps:
+      - name: Rollout Confirmed
+        run: echo Confirmed
+
+  newman-theq:
+    name: Newman Tests in TheQ dev
+    needs: wait-for-rollout
+    runs-on: ubuntu-latest
+    outputs:
+      image-tags: ${{ needs.wait-for-rollout.outputs.image-tags }}
 
     steps:
     - name: Check out
@@ -236,7 +248,7 @@ jobs:
 
   owasp-staff:
     name: OWASP ZAP Scan of The Q dev
-    needs: tag-theq-dev
+    needs: wait-for-rollout
     runs-on: ubuntu-latest
 
     steps:
@@ -262,7 +274,7 @@ jobs:
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointments dev
-    needs: tag-theq-dev
+    needs: wait-for-rollout
     runs-on: ubuntu-latest
     
     steps:
