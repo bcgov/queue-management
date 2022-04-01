@@ -56,5 +56,4 @@ TODO
 1. Document the secrets
 1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
-1. Don't think the Artifactory login is needed for S2I builds
 1. Are reusable workflow inputs required by default?
