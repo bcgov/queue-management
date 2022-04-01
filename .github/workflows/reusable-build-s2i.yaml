@@ -66,6 +66,9 @@ jobs:
         path_context: ${{ inputs.directory }}
         tags: ${{ inputs.image-tags }}
 
+    - name: date1
+      run: date
+
     - name: Push Image to The Q
       uses: redhat-actions/push-to-registry@v2
       with:
@@ -75,6 +78,9 @@ jobs:
         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
         username: ${{ secrets.namespace-theq-username }}
         password: ${{ secrets.namespace-theq-password }}
+
+    - name: date2
+      run: date
 
     - name: Push Image to QMS
       uses: redhat-actions/push-to-registry@v2
