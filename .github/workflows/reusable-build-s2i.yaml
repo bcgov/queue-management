@@ -47,7 +47,7 @@ jobs:
     - name: Check out
       uses: actions/checkout@v2
 
-    - name: Login to Artifactory to Pull Images in Buildah Action
+    - name: Login to Artifactory to Pull Images in S2I Build
       env:
         ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
         ARTIFACTORY_USERNAME: ${{ secrets.artifactory-username }}    
