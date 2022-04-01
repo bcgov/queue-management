@@ -63,28 +63,28 @@ jobs:
         image: ${{ inputs.image-name }}
         tags: ${{ inputs.image-tags }}
 
-    - name: date1
-      run: date
+#     - name: date1
+#       run: date
 
-    - name: Push Image to The Q
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        extra-args: --log-level=info
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
-        username: ${{ secrets.namespace-theq-username }}
-        password: ${{ secrets.namespace-theq-password }}
+#     - name: Push Image to The Q
+#       uses: redhat-actions/push-to-registry@v2
+#       with:
+#         extra-args: --log-level=info
+#         image: ${{ steps.build-image.outputs.image }}
+#         tags: ${{ steps.build-image.outputs.tags }}
+#         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
+#         username: ${{ secrets.namespace-theq-username }}
+#         password: ${{ secrets.namespace-theq-password }}
 
-    - name: date2
-      run: date
+#     - name: date2
+#       run: date
 
-    - name: Push Image to QMS
-      uses: redhat-actions/push-to-registry@v2
-      with:
-        extra-args: --log-level=info
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
-        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
-        username: ${{ secrets.namespace-qms-username }}
-        password: ${{ secrets.namespace-qms-password }}
+#     - name: Push Image to QMS
+#       uses: redhat-actions/push-to-registry@v2
+#       with:
+#         extra-args: --log-level=info
+#         image: ${{ steps.build-image.outputs.image }}
+#         tags: ${{ steps.build-image.outputs.tags }}
+#         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
+#         username: ${{ secrets.namespace-qms-username }}
+#         password: ${{ secrets.namespace-qms-password }}
