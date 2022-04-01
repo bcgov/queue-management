@@ -9,28 +9,28 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-  work:
-    name: testing
-    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-    secrets:
-      namespace: ${{ secrets.NAMESPACE_THEQ }}
-      openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-    with:
-      image-names: api appointment-frontend feedback-api notifications-api
-      tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
-      tag-to: dev
+#   work:
+#     name: testing
+#     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+#     secrets:
+#       namespace: ${{ secrets.NAMESPACE_THEQ }}
+#       openshift-api: ${{ secrets.OPENSHIFT_API }}
+#       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+#     with:
+#       image-names: api appointment-frontend feedback-api notifications-api
+#       tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
+#       tag-to: dev
     
-  devwork:
-    runs-on: ubuntu-latest
-    needs: work
-    steps:
-    - name: exit
-#       run: exit 0
-      run: exit 1
+#   devwork:
+#     runs-on: ubuntu-latest
+#     needs: work
+#     steps:
+#     - name: exit
+# #       run: exit 0
+#       run: exit 1
 
   create-image-tags:
-    needs: devwork
+#     needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
