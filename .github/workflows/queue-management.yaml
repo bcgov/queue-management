@@ -17,12 +17,13 @@ jobs:
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
+          allow_issue_writing: false
           target: ${{ secrets.ZAP_STAFFURL }}
 
       - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
-          name: Staff Front End Report
+          name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
   owasp-public:
@@ -33,17 +34,18 @@ jobs:
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
+          allow_issue_writing: false
           target: ${{ secrets.ZAP_APPTMNTURL }}
 
       - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
-          name: Appointment Front End Report
+          name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
 
   devwork:
-#     needs: [owasp-staff, owasp-public]
-    needs: owasp-staff
+    needs: [owasp-staff, owasp-public]
+#     needs: owasp-staff
     runs-on: ubuntu-latest
     steps:
     - name: exit
