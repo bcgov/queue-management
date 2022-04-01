@@ -44,8 +44,6 @@ TODO
 - Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 
 ## Requirements for MVP
-1. Update the image tagger to take multiple image names
-1. How do we wait for image rollouts before running Newman and OWASP tests? Easy answer is get approval from a reviewer
 1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
@@ -56,4 +54,4 @@ TODO
 1. Document the secrets
 1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
-1. Are reusable workflow inputs required by default?
+1. The approval step to wait for image rollouts before Newman and OWASP tests is hokey. Better to use `oc` to watch the rollouts.
