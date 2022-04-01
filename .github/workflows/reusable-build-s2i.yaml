@@ -47,12 +47,17 @@ jobs:
     - name: Check out
       uses: actions/checkout@v2
 
-#     - name: Login to Artifactory to Pull Images in Buildah Action
-#       uses: redhat-actions/podman-login@v1
-#       with:
-#         registry: ${{ secrets.artifactory-registry }}
-#         username: ${{ secrets.artifactory-username }}
-#         password: ${{ secrets.artifactory-password }}
+    - name: Login to Artifactory to Pull Images in Buildah Action
+      env:
+        ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
+        ARTIFACTORY_USERNAME: ${{ secrets.artifactory-username }}    
+        ARTIFACTORY_PASSWORD: ${{ secrets.artifactory-password }}    
+      if: env.ARTIFACTORY_REGISTRY && env.ARTIFACTORY_USERNAME && env.ARTIFACTORY_PASSWORD
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ secrets.artifactory-registry }}
+        username: ${{ secrets.artifactory-username }}
+        password: ${{ secrets.artifactory-password }}
 
     - name: S2I Build
       id: build-image
