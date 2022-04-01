@@ -29,7 +29,11 @@ In each of these environments set up `Environment protection rules` with at leas
 
 ### OpenShift Service Accounts
 
+TODO
+
 ### GitHub Secrets
+
+TODO
 
 ## Notes
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
@@ -40,15 +44,15 @@ In each of these environments set up `Environment protection rules` with at leas
 - Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 
 ## Requirements for MVP
-1. update the image tagger to take multiple image names
-1. newman and owasp tests - how to wait for rollout?
-1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
+1. Update the image tagger to take multiple image names
+1. How do we wait for image rollouts before running Newman and OWASP tests? Easy answer is get approval from a reviewer
+1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
-1. tag with both `latest` and `PR123`
+1. Tag with both `latest` and `PR123`
 1. Only allow non-dev tagging from bcgov/master
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
-1. document service accounts
-1. document the secrets
+1. Document service accounts
+1. Document the secrets
 1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
