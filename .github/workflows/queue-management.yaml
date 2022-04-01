@@ -67,8 +67,8 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: appointment-frontend
-      image-name: appointment-frontend
+      directory: api
+      image-name: queue-management-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   build-appointment-frontend:
@@ -107,8 +107,8 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: appointment-frontend
-      image-name: appointment-frontend
+      directory: feedback-api
+      image-name: feedback-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   build-frontend:
@@ -127,8 +127,8 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: appointment-frontend
-      image-name: appointment-frontend
+      directory: frontend
+      image-name: queue-management-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   build-jobs-appointment-reminder:
@@ -147,8 +147,8 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: appointment-frontend
-      image-name: appointment-frontend
+      directory: jobs/appointment-reminder
+      image-name: send-appointment-reminder-crond
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   build-notifications-api:
