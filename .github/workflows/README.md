@@ -27,6 +27,10 @@ Set up the following environments in your repository Settings:
 
 In each of these environments set up `Environment protection rules` with at least one `Required reviewer`.
 
+### OpenShift Service Accounts
+
+### GitHub Secrets
+
 ## Notes
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
 - It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
@@ -40,8 +44,8 @@ In each of these environments set up `Environment protection rules` with at leas
 1. tag with both `latest` and `PR123`
 1. newman and owasp tests - how to wait for rollout?
 1. Only allow non-dev tagging from bcgov/master
-1. document the secrets
 1. document service accounts
+1. document the secrets
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 1. Is there a way to not have hard coded organization and repo names?
