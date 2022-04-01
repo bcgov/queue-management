@@ -9,17 +9,28 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-#   devwork:
-# #     needs: [owasp-staff, owasp-public]
-# #     needs: owasp-staff
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: exit
+  work:
+    name: testing
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+    with:
+      image-names: api appointment-frontend feedback-api notifications-api
+      tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
+      tag-to: dev
+    
+  devwork:
+    runs-on: ubuntu-latest
+    needs: work
+    steps:
+    - name: exit
 #       run: exit 0
-# #       run: exit 1
+      run: exit 1
 
   create-image-tags:
-#     needs: devwork
+    needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
@@ -241,15 +252,15 @@ jobs:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
-      - name: Delete Default report
-        run: |
-          curl -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts
-          which jq
-#          curl -X DELETE -H "Accept: application/vnd.github.v3+json" \
-#              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts/42
+#       - name: Delete Default report
+#         run: | # Note - curls works and jq exists.
+#           curl -H "Accept: application/vnd.github.v3+json" \
+#               https://api.github.com/repos/walter-moar/queue-management/actions/artifacts
+#           which jq
+# #          curl -X DELETE -H "Accept: application/vnd.github.v3+json" \
+# #              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts/42
 
-  owasp-public:
+  owasp-appointment:
     name: OWASP ZAP Scan of Appointments dev
     needs: tag-theq-dev
     runs-on: ubuntu-latest
@@ -269,7 +280,7 @@ jobs:
 
   approve-theq-test:
     name: Approve Deploy to The Q test
-    needs: [newman-theq, owasp-staff, owasp-public]
+    needs: [newman-theq, owasp-staff, owasp-appointment]
     environment: theq-test
     runs-on: ubuntu-latest
     outputs:
