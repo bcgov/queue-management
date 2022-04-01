@@ -225,6 +225,7 @@ jobs:
 
   owasp-staff:
     name: OWASP ZAP Scan of The Q dev
+    needs: tag-theq-dev
     runs-on: ubuntu-latest
 
     steps:
@@ -250,6 +251,7 @@ jobs:
 
   owasp-public:
     name: OWASP ZAP Scan of Appointments dev
+    needs: tag-theq-dev
     runs-on: ubuntu-latest
     
     steps:
