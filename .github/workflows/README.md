@@ -6,7 +6,7 @@ The GitHub Action `queue-management.yaml` is _currently_ only run manually. It w
 - Push the built images to two different `-tools` namespaces
 - Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
-- After deployment run newman tests against one `-dev` namespace
+- After deployment run Newman and OWASP ZAP tests against one `-dev` namespace
 
 ## Setup
 
