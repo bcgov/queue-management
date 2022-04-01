@@ -46,5 +46,5 @@ jobs:
         for i in ${{ inputs.image-names }}; do
             COMMAND="oc tag $i:${{ inputs.tag-from }} $i:${{ inputs.tag-to }}$TEMP"
             echo $COMMAND
-            $COMMAND
+            # $COMMAND
         done
