@@ -42,5 +42,8 @@ jobs:
       id: tag-image
       shell: bash
       run: |
-        TEMP=-github-actions
-        echo oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
+        for i in ${{ inputs.image-names }}; do
+            echo $i
+        done
+        # TEMP=-github-actions
+        # echo oc tag ${{ inputs.image-names }}:${{ inputs.tag-from }} ${{ inputs.image-names }}:${{ inputs.tag-to }}$TEMP
