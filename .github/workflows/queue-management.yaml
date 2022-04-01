@@ -76,6 +76,9 @@ jobs:
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
@@ -93,6 +96,9 @@ jobs:
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
@@ -110,6 +116,9 @@ jobs:
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
