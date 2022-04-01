@@ -147,7 +147,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: jobs/appointment-reminder
+      directory: jobs/appointment_reminder
       image-name: send-appointment-reminder-crond
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
