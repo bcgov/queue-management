@@ -46,3 +46,4 @@ In each of these environments set up `Environment protection rules` with at leas
 1. https://github.com/marketplace/actions/owasp-zap-full-scan
 1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 1. Is there a way to not have hard coded organization and repo names?
+1. Delete the OWASP ZAP artifact `zap_scan`
