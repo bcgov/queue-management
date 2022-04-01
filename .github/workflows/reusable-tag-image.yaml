@@ -42,8 +42,9 @@ jobs:
       id: tag-image
       shell: bash
       run: |
-        TEMP=#-github-actions
+        TEMP=-github-actions
         for i in ${{ inputs.image-names }}; do
             COMMAND=oc tag $i:${{ inputs.tag-from }} $i:${{ inputs.tag-to }}$TEMP
             echo $COMMAND
+            $COMMAND
         done
