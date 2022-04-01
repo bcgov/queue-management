@@ -211,7 +211,7 @@ jobs:
         run: echo Confirmed
 
   newman-theq:
-    name: Newman Tests in TheQ dev
+    name: Newman Tests in The Q dev
     needs: wait-for-rollout
     runs-on: ubuntu-latest
     outputs:
