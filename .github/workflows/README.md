@@ -39,12 +39,9 @@ TODO
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
 - It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
 
-## Gotchas
-- Building during cluster operations can have failures when trying to pull images from Artifactory. Running the workflow again will eventually work but isn't ideal.
-- Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
-
 ## Requirements for MVP
-1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
+1. Pushing images sometimes takes over an hour, for no discernable reason. This is a showstopper.
+1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More? Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 
 ## Enhancements Backlog
 1. Tag with both `latest` and `PR123`
