@@ -174,7 +174,7 @@ jobs:
   ##### DEPLOY THE Q ###############################################################################
 
   approve-theq-dev:
-    name: Approve Deploy to The Q dev
+    name: 1. Approve Deploy to The Q dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: theq-dev
     runs-on: ubuntu-latest
@@ -343,7 +343,7 @@ jobs:
   ##### DEPLOY QMS #################################################################################
 
   approve-qms-dev:
-    name: Approve Deploy to QMS dev
+    name: 2. Approve Deploy to QMS dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: qms-dev
     runs-on: ubuntu-latest
