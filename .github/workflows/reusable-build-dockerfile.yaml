@@ -47,7 +47,7 @@ jobs:
     - name: Check out
       uses: actions/checkout@v2
 
-    - name: Login to Artifactory to Pull Images in build-image
+    - name: Login to Artifactory to Pull Images in Buildah Action
       uses: redhat-actions/podman-login@v1
       with:
         registry: ${{ secrets.artifactory-registry }}
