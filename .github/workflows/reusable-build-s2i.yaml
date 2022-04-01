@@ -13,11 +13,11 @@ on:
         type: string
     secrets:
       artifactory-password:
-        required: true
+        required: false
       artifactory-registry:
-        required: true
+        required: false
       artifactory-username:
-        required: true
+        required: false
       namespace-qms:
         required: true
       namespace-qms-password:
