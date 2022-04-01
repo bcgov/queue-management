@@ -19,6 +19,15 @@ jobs:
         with:
           target: ${{ secrets.ZAP_STAFFURL }}
 
+      - name: next
+        run: ls -al report_html.html
+      
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: Staff Front Report
+          path: report_html.html
+
 #   owasp-public:
 #     name: OWASP ZAP Scan of Appointments dev
 #     runs-on: ubuntu-latest
