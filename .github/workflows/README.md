@@ -39,14 +39,16 @@ In each of these environments set up `Environment protection rules` with at leas
 - Building during cluster operations can have failures when trying to pull images from Artifactory. Running the workflow again will eventually work but isn't ideal.
 - Pushing images to `-tools` namespaces can be slow or fail when cluster operations are being done. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 
-## TODO
+## Requirements for MVP
 1. update the image tagger to take multiple image names
-1. tag with both `latest` and `PR123`
 1. newman and owasp tests - how to wait for rollout?
+1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
+
+## Enhancements Backlog
+1. tag with both `latest` and `PR123`
 1. Only allow non-dev tagging from bcgov/master
+1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. document service accounts
 1. document the secrets
-1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
-1. figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
