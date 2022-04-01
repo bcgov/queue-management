@@ -12,6 +12,12 @@ on:
         required: true
         type: string
     secrets:
+      artifactory-password:
+        required: true
+      artifactory-registry:
+        required: true
+      artifactory-username:
+        required: true
       namespace-qms:
         required: true
       namespace-qms-password:
@@ -40,6 +46,13 @@ jobs:
     steps:
     - name: Check out
       uses: actions/checkout@v2
+
+    - name: Login to Artifactory to Pull Images in Buildah Action
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ secrets.artifactory-registry }}
+        username: ${{ secrets.artifactory-username }}
+        password: ${{ secrets.artifactory-password }}
 
     - name: S2I Build
       id: build-image
