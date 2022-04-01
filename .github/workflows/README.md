@@ -44,11 +44,11 @@ TODO
 1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
-1. Tag with both `latest` and `PR123`
-1. Only allow non-dev tagging from bcgov/master
-1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. Document service accounts
 1. Document the secrets
+1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
+1. Only allow non-dev tagging from bcgov/master
+1. Tag with both `latest` and `PR123`
 1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
 1. The approval step to wait for image rollouts before Newman and OWASP tests is hokey. Better to use `oc` to watch the rollouts.
