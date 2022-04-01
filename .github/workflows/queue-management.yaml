@@ -167,8 +167,8 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      directory: appointment-frontend
-      image-name: appointment-frontend
+      directory: notifications-api
+      image-name: notifications-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
 
   ##### DEPLOY THE Q ###############################################################################
@@ -194,7 +194,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
     with:
-      image-names: appointment-frontend
+      image-names: appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond
       tag-from: ${{ needs.approve-theq-dev.outputs.image-tags }}
       tag-to: dev
 
