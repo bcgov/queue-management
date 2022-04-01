@@ -19,24 +19,27 @@ jobs:
         with:
           target: ${{ secrets.ZAP_STAFFURL }}
 
-      - name: next
-        run: ls -al report_html.html
-      
-      - name: upload
+      - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
-          name: Staff Front Report
+          name: Staff Front End Report
           path: report_html.html
 
-#   owasp-public:
-#     name: OWASP ZAP Scan of Appointments dev
-#     runs-on: ubuntu-latest
+  owasp-public:
+    name: OWASP ZAP Scan of Appointments dev
+    runs-on: ubuntu-latest
     
-#     steps:
-#       - name: OWASP ZAP Scan
-#         uses: zaproxy/action-full-scan@v0.3.0
-#         with:
-#           target: ${{ secrets.ZAP_APPTMNTURL }}
+    steps:
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          target: ${{ secrets.ZAP_APPTMNTURL }}
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: Appointment Front End Report
+          path: report_html.html
 
   devwork:
 #     needs: [owasp-staff, owasp-public]
