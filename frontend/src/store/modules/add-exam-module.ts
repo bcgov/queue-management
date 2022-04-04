@@ -347,7 +347,7 @@ export const addExamModule = {
         }
       }
     },
-    addPesticideSteps (state, getters) {
+    addPesticideSteps (_state, getters) {
       return [
         ...getters.pesticideStep1,
         ...getters.pesticideStep2,
@@ -355,7 +355,7 @@ export const addExamModule = {
         ...getters.pesticideStep4
       ]
     },
-    pesticideStep1 (state, getters, rootState) {
+    pesticideStep1 (state, _getters, rootState) {
       const { capturedExam, pesticide_offsite_invigilators } = rootState
       const pesticideTypeQ = {
         key: 'exam_type_id',
@@ -392,7 +392,7 @@ export const addExamModule = {
       }
       return [step1]
     },
-    pesticideStep2 (state, getters, rootState) {
+    pesticideStep2 (state, _getters, rootState) {
       const { capturedExam } = rootState
       let step2
 
@@ -413,7 +413,7 @@ export const addExamModule = {
       }
       return [step2]
     },
-    pesticideStep3 (state, getters, rootState) {
+    pesticideStep3 (state, _getters, rootState) {
       const { capturedExam } = rootState
 
       if (capturedExam.ind_or_group === 'individual') {
@@ -426,7 +426,7 @@ export const addExamModule = {
       }
       return [state.pesticideStep3]
     },
-    pesticideStep4 (state, getters, rootState) {
+    pesticideStep4 (state, _getters, _rootState) {
       const step4 = { ...state.pesticideStep4_summary }
       return [step4]
     }
