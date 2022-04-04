@@ -107,6 +107,3 @@ export default class ButtonsAdmin extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>
