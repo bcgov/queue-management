@@ -258,13 +258,15 @@ jobs:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
-#       - name: Delete Default report
-#         run: | # Note - curls works and jq exists.
-#           curl -H "Accept: application/vnd.github.v3+json" \
-#               https://api.github.com/repos/walter-moar/queue-management/actions/artifacts
-#           which jq
-# #          curl -X DELETE -H "Accept: application/vnd.github.v3+json" \
-# #              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts/42
+      - name: Delete Default reports
+        run: |
+          for i in $(curl -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/walter-moar/queue-management/actions/artifacts \
+            jq ".artifacts[] | select(.name="zap_scan") | .id')
+          do
+            echo curl -X DELETE -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts/$i
+          done
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointments dev
@@ -283,6 +285,16 @@ jobs:
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
+
+      - name: Delete Default reports
+        run: |
+          for i in $(curl -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/walter-moar/queue-management/actions/artifacts \
+            jq ".artifacts[] | select(.name="zap_scan") | .id')
+          do
+            echo curl -X DELETE -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/walter-moar/queue-management/actions/artifacts/$i
+          done
 
   approve-theq-test:
     name: Approve Deploy to The Q test
