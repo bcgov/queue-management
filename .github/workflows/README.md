@@ -81,5 +81,5 @@ There are many GitHub Secrets that are needed to run the Actions:
 ## Enhancements Backlog
 1. Only allow non-dev tagging from bcgov/master
 1. Tag with both `latest` and `PR123`
-1. Delete the OWASP ZAP artifact `zap_scan` - but using the API requires authentication.
+1. Delete the OWASP ZAP artifact `zap_scan` - using the API doesn't work as the Artifact hasn't been marked as `complete` yet.
 1. It's lousy to use an approval step to wait for image rollouts before Newman and OWASP tests. Can `oc` be used to watch the rollouts?
