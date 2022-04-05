@@ -139,7 +139,7 @@ export default class CommonUtils {
   static isAllowedBrowsers () {
     const allowedBrowerNLowestVersion = { 'Chrome': [24], 'Firefox': [29], 'Safari': [10], 'Opera': [15] }
     if (allowedBrowerNLowestVersion.hasOwnProperty(CommonUtils.getBrowser()['name'])) {
-      if (CommonUtils.getBrowser()['version'] >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
+      if (Number(CommonUtils.getBrowser()['version']) >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
         return {
           'is_allowed': true,
           'current_browser': CommonUtils.getBrowser()['name'],
