@@ -75,13 +75,11 @@ There are many GitHub Secrets that are needed to run the Actions:
 - The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available and perhaps this is good enough? Details here: https://github.com/actions/upload-artifact/issues/53
 
 ## Requirements for MVP
-1. **Showstopper**: Pushing images sometimes takes over an hour, for no discernable reason. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
+1. Pushing images sometimes takes over an hour, for no discernable reason - could be due to cluster patching? Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
-1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. Only allow non-dev tagging from bcgov/master
 1. Tag with both `latest` and `PR123`
-1. Is there a way to not have hard coded organization and repo names?
 1. Delete the OWASP ZAP artifact `zap_scan`
-1. The approval step to wait for image rollouts before Newman and OWASP tests is hokey. Better to use `oc` to watch the rollouts.
+1. It's lousy to use an approval step to wait for image rollouts before Newman and OWASP tests. Can `oc` be used to watch the rollouts?
