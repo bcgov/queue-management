@@ -41,22 +41,25 @@ class CSRConfig(Base):
         return current_user.role.role_code != 'GA'
 
     can_delete = False
+    # Defining String constants to appease SonarQube
+    office_name_const = 'office.office_name'
+    role_desc_const = 'role.role_desc'
 
-    column_list = ['username', 'office.office_name', 'office_manager', 'pesticide_designate', 'finance_designate',
-                   'ita2_designate', 'role.role_desc', 'deleted']
+    column_list = ['username', office_name_const, 'office_manager', 'pesticide_designate', 'finance_designate',
+                   'ita2_designate', role_desc_const, 'deleted']
     column_labels = {
         'username': 'Username',
-        'office.office_name': 'Office',
+        office_name_const: 'Office',
         'office_manager': 'Office Exam Manager',
         'pesticide_designate': 'Environment Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
         'ita2_designate': 'ITA Liaison/Program Specialist',
-        'role.role_desc': 'Role',
+        role_desc_const: 'Role',
         'deleted': 'Deleted'
     }
     column_searchable_list = ('username',)
-    column_sortable_list = ('username', 'office.office_name', 'office_manager', 'pesticide_designate',
-                            'finance_designate', 'ita2_designate', 'role.role_desc', 'deleted')
+    column_sortable_list = ('username', office_name_const, 'office_manager', 'pesticide_designate',
+                            'finance_designate', 'ita2_designate', role_desc_const, 'deleted')
     column_default_sort = 'username'
     form_args = {
         'csr_state': {'default': 'Logout'},

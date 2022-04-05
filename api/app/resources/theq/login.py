@@ -19,6 +19,8 @@ from app.models.theq import CSR
 from qsystem import api, application
 from app.auth.auth import jwt
 
+# Defining String constants to appease SonarQube
+admin_index_const = "admin.index"
 
 @api.route("/login/", methods=["GET"])
 class Login(Resource):
@@ -41,11 +43,11 @@ class Login(Resource):
 
                 login_user(csr)
                 if application.config['USE_HTTPS']:
-                    return redirect(url_for("admin.index",
+                    return redirect(url_for(admin_index_const,
                                             _scheme=application.config['PREFERRED_URL_SCHEME'],
                                             _external=application.config['USE_HTTPS']))
                 else:
-                    return redirect(url_for("admin.index"))
+                    return redirect(url_for(admin_index_const))
             else:
                 return abort(401, self.auth_string)
         else:
@@ -59,8 +61,8 @@ class Logout(Resource):
     def get(self):
         logout_user()
         if application.config['USE_HTTPS']:
-            return redirect(url_for("admin.index",
+            return redirect(url_for(admin_index_const,
                             _scheme=application.config['PREFERRED_URL_SCHEME'],
                             _external=application.config['USE_HTTPS']))
         else:
-            return redirect(url_for("admin.index"))
+            return redirect(url_for(admin_index_const))
