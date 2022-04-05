@@ -29,7 +29,11 @@ In each of these environments set up `Environment protection rules` with at leas
 
 ### OpenShift Service Accounts
 
-TODO
+A Service Account is used to push images to OpenShift, and then to tag those images for deployment to different environments. The Service Account called `github-actions` needs to be set up in the two namespaces where the images are pushed. Using [the OpenShift template](openshift/service_account.yaml), for each of the two namespaces run:
+
+```
+$  oc process -f service-account.yaml | oc -n <namespace> apply -f -
+```
 
 ### GitHub Secrets
 
@@ -44,7 +48,6 @@ TODO
 1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
-1. Document service accounts
 1. Document the secrets
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. Only allow non-dev tagging from bcgov/master
