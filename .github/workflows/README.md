@@ -37,11 +37,40 @@ $  oc process -f service-account.yaml | oc -n <namespace> apply -f -
 
 ### GitHub Secrets
 
-TODO
+There are many GitHub Secrets that are needed to run the Actions:
+
+| Secret Name | Description |
+| ----------- | ----------- |
+| ARTIFACTORY_PASSWORD | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
+| ARTIFACTORY_REGISTRY | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
+| ARTIFACTORY_USERNAME | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
+| NAMESPACE_QMS | The `-tools` namespace name for the "QMS" deployment |
+| NAMESPACE_QMS_USERNAME | The Service Account name `github-actions` |
+| NAMESPACE_QMS_PASSWORD | The token for the Service Account `github-actions` |
+| NAMESPACE_THEQ |  The `-tools` namespace name for the "The Q" deployment |
+| NAMESPACE_THEQ_USERNAME | The Service Account name `github-actions` |
+| NAMESPACE_THEQ_PASSWORD | The token for the Service Account `github-actions` |
+| OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
+| OPENSHIFT_REGISTRY |  |
+| POSTMAN_AUTH_URL | The Keycloak server used to authenticate Postman clients |
+| POSTMAN_CLIENTID |  |
+| POSTMAN_CLIENT_SECRET |  |
+| POSTMAN_PASSWORD |  |
+| POSTMAN_PASSWORD_NONQTXN |  |
+| POSTMAN_PUBLIC_API_URL |  |
+| POSTMAN_PUBLIC_USERID |  |
+| POSTMAN_PASSWORD_PUBLIC_USER |  |
+| POSTMAN_REALM |  |
+| POSTMAN_API_URL |  |
+| POSTMAN_USERID |  |
+| POSTMAN_USERID_NONQTXN |  |
+| ZAP_STAFFURL |  |
+| ZAP_APPTMNTURL |  |
 
 ## Notes
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
 - It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
+- The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available. Perhaps this is good enough? https://github.com/actions/upload-artifact/issues/53
 
 ## Requirements for MVP
 1. **Showstopper**: Pushing images sometimes takes over an hour, for no discernable reason. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
