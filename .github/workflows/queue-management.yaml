@@ -261,16 +261,17 @@ jobs:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
-      - name: Delete Default Report Artifacts
-        run: |
-          for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
-            jq -r '.artifacts[] | select(.name="zap_scan") | .url')
-          do
-            echo Deleting $url
-            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
-              --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
-          done
+        # This doesn't work - the new zap_scan file isn't marked as complete yet so can't be GETted, let alone deleted.
+#       - name: Delete Default Report Artifacts
+#         run: |
+#           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
+#             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
+#             jq -r '.artifacts[] | select(.name="zap_scan") | .url')
+#           do
+#             echo Deleting $url
+#             curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
+#               --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
+#           done
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointments dev
@@ -290,16 +291,16 @@ jobs:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
 
-      - name: Delete Default Report Artifacts
-        run: |
-          for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
-            jq -r '.artifacts[] | select(.name="zap_scan") | .url')
-          do
-            echo Deleting $url
-            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
-              --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
-          done
+#       - name: Delete Default Report Artifacts
+#         run: |
+#           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
+#             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
+#             jq -r '.artifacts[] | select(.name="zap_scan") | .url')
+#           do
+#             echo Deleting $url
+#             curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
+#               --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
+#           done
 
   approve-theq-test:
     name: Approve Deploy to The Q test
