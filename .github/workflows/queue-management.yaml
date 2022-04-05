@@ -32,7 +32,8 @@ jobs:
 #       run: exit 0
       run: exit 1
 
-  create-image-tags:     needs: devwork
+  create-image-tags:
+    needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
