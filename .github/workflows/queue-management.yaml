@@ -252,13 +252,13 @@ jobs:
           allow_issue_writing: false
           target: ${{ secrets.ZAP_STAFFURL }}
 
-      - name: Upload Report
+      - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
-      - name: Delete Default Reports
+      - name: Delete Default Report Artifacts
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
@@ -281,13 +281,13 @@ jobs:
           allow_issue_writing: false
           target: ${{ secrets.ZAP_APPTMNTURL }}
 
-      - name: Upload Report
+      - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
 
-      - name: Delete Default Reports
+      - name: Delete Default Report Artifacts
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
             --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
