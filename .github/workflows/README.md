@@ -51,33 +51,32 @@ There are many GitHub Secrets that are needed to run the Actions:
 | NAMESPACE_THEQ_USERNAME | The Service Account name `github-actions` |
 | NAMESPACE_THEQ_PASSWORD | The token for the Service Account `github-actions` |
 | OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
-| OPENSHIFT_REGISTRY |  |
+| OPENSHIFT_REGISTRY | The Image Registry used for pushing images to `-tools` namespaces |
 | POSTMAN_AUTH_URL | The Keycloak server used to authenticate Postman clients |
-| POSTMAN_CLIENTID |  |
-| POSTMAN_CLIENT_SECRET |  |
-| POSTMAN_PASSWORD |  |
-| POSTMAN_PASSWORD_NONQTXN |  |
-| POSTMAN_PUBLIC_API_URL |  |
-| POSTMAN_PUBLIC_USERID |  |
-| POSTMAN_PASSWORD_PUBLIC_USER |  |
-| POSTMAN_REALM |  |
-| POSTMAN_API_URL |  |
-| POSTMAN_USERID |  |
-| POSTMAN_USERID_NONQTXN |  |
-| ZAP_STAFFURL |  |
-| ZAP_APPTMNTURL |  |
+| POSTMAN_CLIENTID | The Keycloak Client used to run Postman tests |
+| POSTMAN_CLIENT_SECRET | The Client Secret used to run Postman tests |
+| POSTMAN_PASSWORD | The Password of the Keycloak user used to run The Q tests |
+| POSTMAN_PASSWORD_NONQTXN | The Password of the Keycloak user used to run non-Q tests |
+| POSTMAN_PUBLIC_API_URL | The API URL used to run the non-Q tests |
+| POSTMAN_PUBLIC_USERID | The Username of the Keycloak user used to run public API tests |
+| POSTMAN_PASSWORD_PUBLIC_USER | The Password of the Keycloak user used to run public API tests |
+| POSTMAN_REALM | The Keycloak realm used to run the Postman tests |
+| POSTMAN_API_URL | The API URL used to run The Q tests |
+| POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
+| POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
+| ZAP_STAFFURL | The URL of The Q used for running the OWASP ZAP tests |
+| ZAP_APPTMNTURL | The URL of the Appointments application used for running the OWASP ZAP tests |
 
 ## Notes
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
 - It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
-- The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available. Perhaps this is good enough? https://github.com/actions/upload-artifact/issues/53
+- The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available and perhaps this is good enough? Details here: https://github.com/actions/upload-artifact/issues/53
 
 ## Requirements for MVP
 1. **Showstopper**: Pushing images sometimes takes over an hour, for no discernable reason. Would it be better to push to Artifactory? Can we use the `extra-args` in `push-to-registry` to make the long pushes faster? (do retries and reduce timeout, etc? - wild speculation)
 1. Figure out additional triggers for running action. PR merge. Manual against a PR. Developer against a fork branch. More?
 
 ## Enhancements Backlog
-1. Document the secrets
 1. Fix `insecure_skip_tls_verify=true` in reusable-tag-image
 1. Only allow non-dev tagging from bcgov/master
 1. Tag with both `latest` and `PR123`
