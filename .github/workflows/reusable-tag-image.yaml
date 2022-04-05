@@ -33,7 +33,7 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        insecure_skip_tls_verify: true
+#         insecure_skip_tls_verify: true
         namespace: ${{ secrets.namespace }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.openshift-token }}
