@@ -67,6 +67,8 @@ There are many GitHub Secrets that are needed to run the Actions:
 | ZAP_STAFFURL | The URL of The Q used for running the OWASP ZAP tests |
 | ZAP_APPTMNTURL | The URL of the Appointments application used for running the OWASP ZAP tests |
 
+(note: there is a script to set these up automatically, but it can't be committed)
+
 ## Notes
 - There are separate jobs for "approve" and "tag" because the tag jobs use a reusable workflow and can't have an `environment`. Perhaps it would be better to not have the reusable workflow? Would Composite Actions help?
 - It's kludgy that the build tags have to be passed into and out of every job so they can be used for the "tag" jobs. One option would be that the "tag" jobs have a `needs` for `create-image-tags`, but that makes the workflow graph harder to understand. Would Composite Actions help? What about using Artifacts?
