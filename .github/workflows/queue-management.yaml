@@ -9,28 +9,30 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-#   work:
-#     name: testing
-#     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-#     secrets:
-#       namespace: ${{ secrets.NAMESPACE_THEQ }}
-#       openshift-api: ${{ secrets.OPENSHIFT_API }}
-#       openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-#     with:
-#       image-names: api appointment-frontend feedback-api notifications-api
-#       tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
-#       tag-to: dev
+  work:
+    name: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Default Report Artifacts
+        run: |
+          for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
+            jq '.artifacts[] | select(.name="zap_scan") | .url')
+          do
+            echo Deleting $url
+            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
+              --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
+          done
 
-#   devwork:
-#     runs-on: ubuntu-latest
-#     needs: work
-#     steps:
-#     - name: exit
-# #       run: exit 0
-#       run: exit 1
+  devwork:
+    runs-on: ubuntu-latest
+    needs: work
+    steps:
+    - name: exit
+#       run: exit 0
+      run: exit 1
 
-  create-image-tags:
-#     needs: devwork
+  create-image-tags:     needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
@@ -261,12 +263,12 @@ jobs:
       - name: Delete Default Report Artifacts
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
             jq '.artifacts[] | select(.name="zap_scan") | .url')
           do
             echo Deleting $url
-            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" $url
+            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
+              --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
           done
 
   owasp-appointment:
@@ -290,12 +292,12 @@ jobs:
       - name: Delete Default Report Artifacts
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
             jq '.artifacts[] | select(.name="zap_scan") | .url')
           do
             echo Deleting $url
-            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" $url
+            curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
+              --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
           done
 
   approve-theq-test:
