@@ -261,6 +261,7 @@ jobs:
       - name: Delete Default Reports
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
             jq '.artifacts[] | select(.name="zap_scan") | .url')
           do
@@ -289,6 +290,7 @@ jobs:
       - name: Delete Default Reports
         run: |
           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
             jq '.artifacts[] | select(.name="zap_scan") | .url')
           do
