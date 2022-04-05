@@ -406,7 +406,7 @@ jobs:
 
   approve-qms-prod:
     name: Approve Deploy to QMS prod
-    if: ${{ GITHUB_REPOSITORY_OWNER == 'bcgov' }}
+    if: ${{ github.repository.owner == 'bcgov' }}
     needs: tag-qms-test
     environment: qms-prod
     runs-on: ubuntu-latest
