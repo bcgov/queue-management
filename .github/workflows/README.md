@@ -52,16 +52,16 @@ There are many GitHub Secrets that are needed to run the Actions:
 | NAMESPACE_THEQ_PASSWORD | The token for the Service Account `github-actions` |
 | OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
 | OPENSHIFT_REGISTRY | The Image Registry used for pushing images to `-tools` namespaces |
+| POSTMAN_API_URL | The API URL used to run The Q tests |
 | POSTMAN_AUTH_URL | The Keycloak server used to authenticate Postman clients |
-| POSTMAN_CLIENTID | The Keycloak Client used to run Postman tests |
 | POSTMAN_CLIENT_SECRET | The Client Secret used to run Postman tests |
+| POSTMAN_CLIENTID | The Keycloak Client used to run Postman tests |
 | POSTMAN_PASSWORD | The Password of the Keycloak user used to run The Q tests |
 | POSTMAN_PASSWORD_NONQTXN | The Password of the Keycloak user used to run non-Q tests |
+| POSTMAN_PASSWORD_PUBLIC_USER | The Password of the Keycloak user used to run public API tests |
 | POSTMAN_PUBLIC_API_URL | The API URL used to run the non-Q tests |
 | POSTMAN_PUBLIC_USERID | The Username of the Keycloak user used to run public API tests |
-| POSTMAN_PASSWORD_PUBLIC_USER | The Password of the Keycloak user used to run public API tests |
 | POSTMAN_REALM | The Keycloak realm used to run the Postman tests |
-| POSTMAN_API_URL | The API URL used to run The Q tests |
 | POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
 | POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
 | ZAP_APPTMNTURL | The URL of the Appointments application used for running the OWASP ZAP tests |
