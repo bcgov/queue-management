@@ -10,10 +10,10 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-  setup:
-    name: Building for PR ${{ github.event.inputs.pr-number }}
+  aside:
+    name: Building refs/pull/${{ github.event.inputs.pr-number }}/head
     runs-on: ubuntu-latest
-  
+
     steps:
     - name: echo
       run: echo Building for PR ${{ github.event.inputs.pr-number }}
