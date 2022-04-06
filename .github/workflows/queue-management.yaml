@@ -9,31 +9,7 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-#   work:
-#     name: testing
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Delete Default Report Artifacts
-#         run: |
-#           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-#             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
-#             jq -r '.artifacts[] | select(.name="zap_scan") | .url')
-#           do
-#             echo Deleting $url
-#             curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
-#               --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
-#           done
-
-#   devwork:
-#     runs-on: ubuntu-latest
-#     needs: work
-#     steps:
-#     - name: exit
-# #       run: exit 0
-#       run: exit 1
-
   create-image-tags:
-#     needs: devwork
     name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
@@ -47,7 +23,7 @@ jobs:
         if [ $IMAGE_TAGS == "bcgov-master" ]; then
           # Will eventually change this to "latest" but for now don't
           # replace the image that is created by the Jenkins build.
-          IMAGE_TAGS=actions-latest
+          IMAGE_TAGS=latest-github-actions
         fi
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
@@ -221,7 +197,6 @@ jobs:
     - name: NPM Install
       run: |
         cd api/postman
-        # npm init -y
         npm install newman
 
     - name: Run Newman Tests
