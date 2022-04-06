@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: echo
-      run: echo Building for PR ${{ github.event.inputs.pr-number }}
+    - name: Output
+      run: echo Building refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
 
   create-image-tags:
     name: Create Image Tags
@@ -39,28 +39,51 @@ jobs:
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
-  build:
-    name: Dockerfile Build
+  ##### BUILD ######################################################################################
+
+  appointment-frontend:
+    name: appointment-frontend
     needs: create-image-tags
-    runs-on: ubuntu-latest
-#     outputs:
-#       image-tags: ${{ steps.build-image.outputs.tags }}
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      namespaces: ${{ github.event.inputs.namespace }}
 
-    steps:
-    - name: echo
-      run: |
-        echo ${{ github.event.inputs.pr-number }}
-        echo refs/pull/${{ github.event.inputs.pr-number }}/head
+#   build:
+#     name: Dockerfile Build
+#     needs: create-image-tags
+#     runs-on: ubuntu-latest
+# #     outputs:
+# #       image-tags: ${{ steps.build-image.outputs.tags }}
 
-    - name: Check out
-      uses: actions/checkout@v2
-      with:
-          ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+#     steps:
+#     - name: echo
+#       run: |
+#         echo ${{ github.event.inputs.pr-number }}
+#         echo refs/pull/${{ github.event.inputs.pr-number }}/head
+
+#     - name: Check out
+#       uses: actions/checkout@v2
+#       with:
+#           ref: refs/pull/${{ github.event.inputs.pr-number }}/head
           
-    - name: meow
-      run: |
-        # ls -laR
-        cat .github/workflows/README.md
+#     - name: meow
+#       run: |
+#         # ls -laR
+#         cat .github/workflows/README.md
 
 #     - name: Login to Artifactory to Pull Images in Buildah Build
 #       uses: redhat-actions/podman-login@v1
