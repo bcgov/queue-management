@@ -1,4 +1,4 @@
-name: Build Pull Request ${{ github.event.inputs.pr-number }}
+name: Build Pull Request
 on:
   workflow_dispatch:
     inputs:
