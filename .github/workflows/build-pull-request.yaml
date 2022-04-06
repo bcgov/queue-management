@@ -5,13 +5,19 @@ on:
       pr-number:
         description: Pull Request Number
         required: true
+      namespace:
+        type: choice
+        description: Namespace
+        options: 
+        - QMS
+        - TheQ
 
 jobs:
 
   ##### SETUP ######################################################################################
 
   note:
-    name: Building refs/pull/${{ github.event.inputs.pr-number }}/head
+    name: Building refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
 
     steps:
