@@ -22,6 +22,8 @@ from shutil import copy2
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
+# Defining String constants to appease SonarQube
+msg_const = "    --> Message: "
 
 @api.route("/upload/", methods=["POST"])
 class Categories(Resource):
@@ -41,7 +43,7 @@ class Categories(Resource):
                 os.mkdir(uploadpath)
         except Exception as error:
             print("==> Error trying to create directory: " + uploadpath)
-            print("    --> Message: " + str(error))
+            print(msg_const + str(error))
 
         #   Save uploaded video file
         for file in request.files.getlist("file"):
@@ -59,7 +61,7 @@ class Categories(Resource):
                 file.save(destination)
             except Exception as error:
                 print("==> Error trying to save file: " + filename)
-                print("    --> Message: " + str(error))
+                print(msg_const + str(error))
 
         #  Get and save the updated manifest.
         data = form.get("manifest")
@@ -70,4 +72,4 @@ class Categories(Resource):
                 myfile.write(data)
         except Exception as error:
             print("==> Error trying to update file: " + output_file)
-            print("    --> Message: " + str(error))
+            print(msg_const + str(error))

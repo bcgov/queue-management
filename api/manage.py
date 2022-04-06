@@ -11,6 +11,11 @@ import pytz
 migrate = Migrate(application, db)
 manager = Manager(application)
 
+# Defining String constants to appease SonarQube
+back_office_const = "Back Office"
+chalkboard_const = "Loves using chalk boards to communicate to examinees"
+fakey_email_const = "bartwuzhere@gmail.com"
+
 class Bootstrap(Command):
 
     def run(self):
@@ -56,7 +61,7 @@ class Bootstrap(Command):
             channel_name="Phone"
         )
         channel3 = theq.Channel(
-            channel_name="Back Office"
+            channel_name=back_office_const
         )
         channel4 = theq.Channel(
             channel_name="Email/Fax/Mail"
@@ -192,7 +197,7 @@ class Bootstrap(Command):
             csr_state_desc="Serving a citizen"
         )
         csr_state5 = theq.CSRState(
-            csr_state_name="Back Office",
+            csr_state_name=back_office_const,
             csr_state_desc="Currently doing back office work"
         )
         db.session.add(csr_state_logout)
@@ -240,9 +245,9 @@ class Bootstrap(Command):
             actual_service_ind = 0
         )
         category_back_office = theq.Service(
-            service_code = "Back Office",
-            service_name = "Back Office",
-            service_desc = "Back Office",
+            service_code = back_office_const,
+            service_name = back_office_const,
+            service_desc = back_office_const,
             prefix = "B",
             display_dashboard_ind = 0,
             actual_service_ind = 0
@@ -663,9 +668,9 @@ class Bootstrap(Command):
         invigilator_three = bookings.Invigilator(
             invigilator_name="Bart Simpson",
             office_id=office_test.office_id,
-            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            invigilator_notes=chalkboard_const,
             contact_phone="555-555-5555",
-            contact_email="bartwuzhere@gmail.com",
+            contact_email=fakey_email_const,
             contract_number="c-000003",
             contract_expiry_date="2019-01-31"
         )
@@ -673,9 +678,9 @@ class Bootstrap(Command):
         pesticide_invigilator_one = bookings.Invigilator(
             invigilator_name="Pest 1",
             office_id=office_pesticide_office.office_id,
-            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            invigilator_notes=chalkboard_const,
             contact_phone="555-555-5555",
-            contact_email="bartwuzhere@gmail.com",
+            contact_email=fakey_email_const,
             contract_number="c-000003",
             contract_expiry_date="2019-01-31"
         )
@@ -683,9 +688,9 @@ class Bootstrap(Command):
         pesticide_invigilator_two = bookings.Invigilator(
             invigilator_name="Pest 2",
             office_id=office_pesticide_office.office_id,
-            invigilator_notes="Loves using chalk boards to communicate to examinees",
+            invigilator_notes=chalkboard_const,
             contact_phone="555-555-5555",
-            contact_email="bartwuzhere@gmail.com",
+            contact_email=fakey_email_const,
             contract_number="c-000003",
             contract_expiry_date="2019-01-31"
         )
