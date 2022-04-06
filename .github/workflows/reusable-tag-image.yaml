@@ -24,7 +24,7 @@ on:
 
 jobs:
   build:
-    name: Tag Image
+    name: Tag Images
     runs-on: ubuntu-latest
     outputs:
       tag-from: ${{ inputs.tag-from }}
@@ -37,13 +37,10 @@ jobs:
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.openshift-token }}
 
-    - name: Tag Image
-      id: tag-image
-      shell: bash
+    - name: Tag Images
       run: |
-        TEMP=-github-actions
-        for i in ${{ inputs.image-names }}; do
-            COMMAND="oc tag $i:${{ inputs.tag-from }} $i:${{ inputs.tag-to }}$TEMP"
-            echo $COMMAND
-            # $COMMAND
+        for image in ${{ inputs.image-names }}; do
+          COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}-github-actions"
+          echo $COMMAND
+          # $COMMAND
         done
