@@ -10,7 +10,7 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-  aside:
+  note:
     name: Building refs/pull/${{ github.event.inputs.pr-number }}/head
     runs-on: ubuntu-latest
 
@@ -20,6 +20,7 @@ jobs:
 
   create-image-tags:
     name: Create Image Tags
+    needs: note
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
