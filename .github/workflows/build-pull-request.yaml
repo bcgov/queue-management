@@ -11,7 +11,7 @@ jobs:
   ##### SETUP ######################################################################################
 
   create-image-tags:
-    name: Create Image Tags
+    name: Create Image Tags ${{ steps.get-image-tags.outputs.image-tags }}
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
@@ -50,6 +50,7 @@ jobs:
     - name: meow
       run: |
         ls -laR
+        cat .github/workflows/README.md
 
 #     - name: Login to Artifactory to Pull Images in Buildah Build
 #       uses: redhat-actions/podman-login@v1
