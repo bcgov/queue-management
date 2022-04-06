@@ -1,4 +1,4 @@
-name: Build Pull Request
+name: Build Pull Request ${{ github.event.inputs.pr-number }}
 on:
   workflow_dispatch:
     inputs:
@@ -10,8 +10,16 @@ jobs:
 
   ##### SETUP ######################################################################################
 
+  setup:
+    name: Building for PR ${{ github.event.inputs.pr-number }}
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: echo
+      run: echo Building for PR ${{ github.event.inputs.pr-number }}
+
   create-image-tags:
-    name: Create Image Tags ${{ github.event.inputs.pr-number }}
+    name: Create Image Tags
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
@@ -49,7 +57,7 @@ jobs:
           
     - name: meow
       run: |
-        ls -laR
+        # ls -laR
         cat .github/workflows/README.md
 
 #     - name: Login to Artifactory to Pull Images in Buildah Build
