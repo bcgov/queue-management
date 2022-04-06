@@ -1,10 +1,10 @@
 name: Build Pull Request
 on:
   workflow_dispatch:
-inputs:
-  pr-number:
-    description: Pull Request Number:
-    required: true
+    inputs:
+      pr-number:
+        description: Pull Request Number
+        required: true
 
 jobs:
 
