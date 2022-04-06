@@ -64,8 +64,8 @@ There are many GitHub Secrets that are needed to run the Actions:
 | POSTMAN_API_URL | The API URL used to run The Q tests |
 | POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
 | POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
-| ZAP_STAFFURL | The URL of The Q used for running the OWASP ZAP tests |
 | ZAP_APPTMNTURL | The URL of the Appointments application used for running the OWASP ZAP tests |
+| ZAP_STAFFURL | The URL of The Q used for running the OWASP ZAP tests |
 
 (note: there is a script to set these up automatically, but it can't be committed)
 
