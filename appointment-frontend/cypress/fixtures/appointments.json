@@ -1,0 +1,73 @@
+{
+  "appointment": {
+      "recurring_uuid": null,
+      "contact_information": "walter.moar@gov.bc.ca",
+      "online_flag": true,
+      "start_time": "2022-02-04T17:00:00+00:00",
+      "blackout_flag": "N",
+      "stat_flag": false,
+      "is_draft": false,
+      "citizen_id": 4789580,
+      "service_id": 522,
+      "service": {
+          "parent_id": 25,
+          "parent": {
+              "service_name": "MCFD"
+          },
+          "prefix": "A",
+          "online_link": "https://www2.gov.bc.ca/gov/content/health/managing-your-health/child-behaviour-development/special-needs/autism-spectrum-disorder/autism-funding",
+          "email_paragraph": null,
+          "is_dlkt": null,
+          "online_availability": "Availability.SHOW",
+          "service_desc": "MCFD - Providing information, pathfinding, CATs assistance, printing of forms etc.",
+          "css_colour": null,
+          "service_id": 522,
+          "service_name": "Autism Funding ",
+          "display_dashboard_ind": 1,
+          "timeslot_duration": 45,
+          "deleted": null,
+          "external_service_name": "Autism Funding",
+          "actual_service_ind": 1,
+          "service_code": "MCFD - 013"
+      },
+      "office_id": 232,
+      "checked_in_time": null,
+      "comments": ". Phone: 381",
+      "appointment_id": 101266,
+      "office": {
+          "automatic_reminder_at": null,
+          "appointments_days_limit": 30,
+          "office_number": 61,
+          "timezone": {
+              "timezone_name": "America/Vancouver",
+              "timezone_id": 3
+          },
+          "digital_signage_message_2": "",
+          "digital_signage_message": 1,
+          "appointment_duration": 30,
+          "check_in_notification": 0,
+          "digital_signage_message_3": "test 123",
+          "exams_enabled_ind": 1,
+          "longitude": -121.297478,
+          "show_currently_waiting_bottom": 1,
+          "currently_waiting": 1,
+          "online_status": "Status.SHOW",
+          "max_person_appointment_per_day": 1,
+          "telephone": "250 395-7832",
+          "check_in_reminder_msg": "",
+          "office_id": 232,
+          "deleted": null,
+          "appointments_enabled_ind": 1,
+          "office_name": "100 Mile House",
+          "latitude": 51.644455,
+          "digital_signage_message_1": "testing to see if the new marquee is working or not",
+          "civic_address": "300 South, BC-97, 100 Mile House, BC",
+          "sb_id": 7,
+          "external_map_link": null,
+          "office_appointment_message": null
+      },
+      "citizen_name": "Walter Moar",
+      "end_time": "2022-02-04T17:45:00+00:00"
+  },
+  "errors": {}
+}

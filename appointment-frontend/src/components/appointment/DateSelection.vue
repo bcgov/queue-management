@@ -17,6 +17,7 @@
           header-color="primary"
           full-width
           @click:date="goto('available');dateClicked('true')"
+          data-cy="step-3-date-picker"
         ></v-date-picker>
       </v-col>
       <v-col
@@ -48,7 +49,9 @@
                 outlined
                 block
                 @click="selectTimeSlot(timeslot)"
-                color="primary">
+                color="primary"
+                data-cy="step-3-button-timeslot"
+              >
                 {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
               </v-btn>
             </v-col>

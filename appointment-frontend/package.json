@@ -5,6 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
+    "cy": "cypress run",
+    "cy:open": "cypress open",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit --testPathPattern=.",
     "preinstall": "npx npm-force-resolutions"
@@ -43,7 +45,9 @@
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.5.0",
+    "@types/cypress-image-snapshot": "^3.1.6",
     "@types/jest": "^26.0.24",
+    "@types/puppeteer": "^5.4.5",
     "@vue/cli-plugin-babel": "^4.5.15",
     "@vue/cli-plugin-e2e-nightwatch": "^4.5.15",
     "@vue/cli-plugin-eslint": "^4.5.15",
@@ -56,9 +60,13 @@
     "@vue/test-utils": "1.1.3",
     "babel-core": "6.26.3",
     "babel-eslint": "^10.0.1",
+    "cypress": "^9.5.2",
+    "cypress-image-snapshot": "^4.0.1",
     "eslint": "^7.32.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-vue": "^7.20.0",
     "jest-localstorage-mock": "^2.4.18",
+    "puppeteer": "^13.5.1",
     "sass": "^1.49.4",
     "sass-loader": "^10.2.1",
     "sinon": "^10.0.0",
