@@ -28,12 +28,7 @@ jobs:
     - name: Get Image Tags
       id: get-image-tags
       run: |
-        IMAGE_TAGS=$GITHUB_REPOSITORY_OWNER-$GITHUB_REF_NAME
-        if [ $IMAGE_TAGS == "bcgov-master" ]; then
-          # Will eventually change this to "latest" but for now don't
-          # replace the image that is created by the Jenkins build.
-          IMAGE_TAGS=latest-github-actions
-        fi
+        IMAGE_TAGS=pr${{ steps.get-image-tags.outputs.image-tags }}
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
