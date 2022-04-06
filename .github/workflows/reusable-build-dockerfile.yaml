@@ -11,6 +11,9 @@ on:
       image-tags:
         required: true
         type: string
+      namespaces:
+        required: true
+        type: string
     secrets:
       artifactory-password:
         required: true
@@ -67,6 +70,7 @@ jobs:
       run: date
 
     - name: Push Image to The Q
+      if: ${{ contains(inputs.namespaces, "TheQ") }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
@@ -80,6 +84,7 @@ jobs:
       run: date
 
     - name: Push Image to QMS
+      if: ${{ contains(inputs.namespaces, "QMS") }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
