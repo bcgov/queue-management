@@ -11,7 +11,7 @@ jobs:
   ##### SETUP ######################################################################################
 
   create-image-tags:
-    name: Create Image Tags ${{ steps.get-image-tags.outputs.image-tags }}
+    name: Create Image Tags ${{ github.event.inputs.pr-number }}
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
