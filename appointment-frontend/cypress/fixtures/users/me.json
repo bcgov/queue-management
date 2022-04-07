@@ -1,0 +1,12 @@
+[
+  {
+      "display_name": "Walter Moar",
+      "email": "walter.moar@gov.bc.ca",
+      "last_name": null,
+      "send_email_reminders": false,
+      "send_sms_reminders": true,
+      "telephone": "381",
+      "user_id": 12706,
+      "username": "basic_walter@bceid"
+  }
+]
