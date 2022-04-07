@@ -53,7 +53,7 @@ jobs:
       id: get-image-tags
       run: |
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
-        echo Using tags: \"$IMAGE_TAGS\"
+        echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
   ##### BUILD ######################################################################################
