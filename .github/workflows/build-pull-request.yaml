@@ -204,6 +204,13 @@ jobs:
       token: ${{ steps.parse.outputs.token }}
 
     steps:
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.NAMESPACE_THEQ }}
+        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
+        openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
     - name: Parse Environment
       id: parse
       run: |
@@ -218,6 +225,21 @@ jobs:
           echo "::set-output name=namespace::"${{ secrets.NAMESPACE_THEQ }}
           echo "::set-output name=token::"${{ secrets.NAMESPACE_THEQ_PASSWORD }}
         fi
+        echo "::set-output name=namespace::"${{ secrets.NAMESPACE_THEQ }}
+        echo "::set-output name=token::"${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
+        #DEPLOY_TEST=$(if [[ "${{ github.event.inputs.namespace }}" == *Test ]]; then echo true; else echo false; fi)
+        #echo "::set-output name=push-qms::"$PUSH_QMS
+        #namespace: ${{ secrets.NAMESPACE_THEQ }}
+        #openshift-api: ${{ secrets.OPENSHIFT_API }}
+        #openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ steps.parse.outputs.namespace }}
+        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
+        openshift_token: ${{ steps.parse.outputs.token }}
 
   tag:
     name: Tag
