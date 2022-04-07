@@ -211,11 +211,11 @@ jobs:
         echo "::set-output name=environment::$ENVIRONMENT"
 
         if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-          echo "::set-output name=namespace::${{ secrets.NAMESPACE_QMS }}"
-          echo "::set-output name=token::${{ secrets.NAMESPACE_QMS_PASSWORD }}"
+          echo "::set-output name=namespace::"${{ secrets.NAMESPACE_QMS }}
+          echo "::set-output name=token::"${{ secrets.NAMESPACE_QMS_PASSWORD }}
         else
-          echo "::set-output name=namespace::${{ secrets.NAMESPACE_THEQ }}"
-          echo "::set-output name=token::${{ secrets.NAMESPACE_THEQ_PASSWORD }}"
+          echo "::set-output name=namespace::"${{ secrets.NAMESPACE_THEQ }}
+          echo "::set-output name=token::"${{ secrets.NAMESPACE_THEQ_PASSWORD }}
         fi
 
   tag:
