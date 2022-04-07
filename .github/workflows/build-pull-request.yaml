@@ -34,15 +34,12 @@ jobs:
         echo 1 $?
         [[ "${{ github.event.inputs.namespace }}" != QMS* ]]
         echo "::set-output name=push-qms::$?"
-
         [[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
         echo 2 $?
         [[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
         echo "::set-output name=push-theq::$?"
-
         [[ "${{ github.event.inputs.namespace }}" != *Dev ]]
         echo "::set-output name=deploy-dev::$?"
-
         [[ "${{ github.event.inputs.namespace }}" != *Test ]]
         echo "::set-output name=deploy-test::$?"
 
