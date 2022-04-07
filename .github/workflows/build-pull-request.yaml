@@ -218,14 +218,8 @@ jobs:
         echo ENVIRONMENT:$ENVIRONMENT
         echo "::set-output name=environment::$ENVIRONMENT"
 
-  # Interesting GitHub Action-ism is that we cannot return secrets as output variables.
-  # This means we cannot abstract the "namespace" and "openshift-token" values into
-  # output variables and then have a single generic tag job here - so have two jobs and
-  # use "if"s to only run one of them.
-
   tag:
-#     if: needs.parse-environment.outputs.deploy-theq == 'true'
-    name: Tag The Q
+    name: Tag
     needs: parse-environment
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -236,17 +230,3 @@ jobs:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.parse-environment.outputs.image-tags }}
       tag-to: ${{ needs.parse-environment.outputs.environment }}
-
-#   tag-qms:
-#     if: needs.parse-environment.outputs.deploy-qms == 'true'
-#     name: Tag QMS
-#     needs: parse-environment
-#     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-#     secrets:
-#       namespace: ${{ secrets.NAMESPACE_QMS }}
-#       openshift-api: ${{ secrets.OPENSHIFT_API }}
-#       openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-#     with:
-#       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-#       tag-from: ${{ needs.parse-environment.outputs.image-tags }}
-#       tag-to: ${{ needs.parse-environment.outputs.environment }}
