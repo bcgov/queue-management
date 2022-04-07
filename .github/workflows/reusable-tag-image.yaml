@@ -39,6 +39,7 @@ jobs:
 
     - name: Tag Images
       run: |
+        echo $secrets.namespace | od -c
         for image in ${{ inputs.image-names }}; do
           COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}-github-actions"
           echo $COMMAND
