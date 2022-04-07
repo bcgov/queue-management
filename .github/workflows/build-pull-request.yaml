@@ -223,30 +223,30 @@ jobs:
   # output variables and then have a single generic tag job here - so have two jobs and
   # use "if"s to only run one of them.
 
-  tag-theq:
-    if: needs.parse-environment.outputs.deploy-theq == 'true'
+  tag:
+#     if: needs.parse-environment.outputs.deploy-theq == 'true'
     name: Tag The Q
     needs: parse-environment
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
-      namespace: ${{ secrets.NAMESPACE_THEQ }}
+      namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.parse-environment.outputs.image-tags }}
       tag-to: ${{ needs.parse-environment.outputs.environment }}
 
-  tag-qms:
-    if: needs.parse-environment.outputs.deploy-qms == 'true'
-    name: Tag QMS
-    needs: parse-environment
-    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-    secrets:
-      namespace: ${{ secrets.NAMESPACE_QMS }}
-      openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-    with:
-      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.parse-environment.outputs.image-tags }}
-      tag-to: ${{ needs.parse-environment.outputs.environment }}
+#   tag-qms:
+#     if: needs.parse-environment.outputs.deploy-qms == 'true'
+#     name: Tag QMS
+#     needs: parse-environment
+#     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+#     secrets:
+#       namespace: ${{ secrets.NAMESPACE_QMS }}
+#       openshift-api: ${{ secrets.OPENSHIFT_API }}
+#       openshift-token: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+#     with:
+#       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
+#       tag-from: ${{ needs.parse-environment.outputs.image-tags }}
+#       tag-to: ${{ needs.parse-environment.outputs.environment }}
