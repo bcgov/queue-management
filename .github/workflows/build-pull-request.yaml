@@ -31,8 +31,12 @@ jobs:
       id: parse
       run: |
         [[ github.event.inputs.namespace != QMS* ]]
+        echo $?
+        [[ github.event.inputs.namespace != QMS* ]]
         echo "::set-output name=push-qms::$?"
 
+        [[ github.event.inputs.namespace != TheQ* ]]
+        echo $?
         [[ github.event.inputs.namespace != TheQ* ]]
         echo "::set-output name=push-theq::$?"
 
