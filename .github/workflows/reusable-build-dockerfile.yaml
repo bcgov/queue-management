@@ -12,11 +12,13 @@ on:
         required: true
         type: string
       push-qms:
-        required: true
+        required: false
         type: boolean
+        default: true
       push-theq:
-        required: true
+        required: false
         type: boolean
+        default: true
     secrets:
       artifactory-password:
         required: true
