@@ -11,6 +11,12 @@ on:
       image-tags:
         required: true
         type: string
+      push-qms:
+        required: true
+        type: boolean
+      push-theq:
+        required: true
+        type: boolean
     secrets:
       artifactory-password:
         required: false
@@ -75,6 +81,7 @@ jobs:
       run: date
 
     - name: Push Image to The Q
+      if: ${{ inputs.push-theq }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
@@ -88,6 +95,7 @@ jobs:
       run: date
 
     - name: Push Image to QMS
+      if: ${{ inputs.push-qms }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
