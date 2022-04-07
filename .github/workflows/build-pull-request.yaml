@@ -21,8 +21,8 @@ jobs:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
-      push-qms: ${{ steps.parse.outputs.deploy-qms }}
-      push-theq: ${{ steps.parse.outputs.deploy-theq }}
+      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-theq: ${{ steps.parse.outputs.push-theq }}
       deploy-dev: ${{ steps.parse.outputs.deploy-dev }}
       deploy-test: ${{ steps.parse.outputs.deploy-test }}
 
@@ -31,10 +31,10 @@ jobs:
       id: parse
       run: |
         [[ github.event.inputs.namespace != QMS* ]]
-        echo "::set-output name=deploy-qms::$?"
+        echo "::set-output name=push-qms::$?"
 
         [[ github.event.inputs.namespace != TheQ* ]]
-        echo "::set-output name=deploy-theq::$?"
+        echo "::set-output name=push-theq::$?"
 
         [[ github.event.inputs.namespace != *Dev ]]
         echo "::set-output name=deploy-dev::$?"
@@ -55,8 +55,8 @@ jobs:
     - name: Get Image Tags
       id: get-image-tags
       run: |
-        echo A needs.create-image-tags.outputs.push-qms
-        echo B needs.create-image-tags.outputs.push-theq
+        echo A ${{ needs.parse-namespace.outputs.push-qms }}
+        echo B ${{ needs.parse-namespace.outputs.push-theq }}
 
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
