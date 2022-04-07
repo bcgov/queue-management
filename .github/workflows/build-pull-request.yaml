@@ -60,8 +60,8 @@ jobs:
       run: |
         echo ::debug:: 1 ${{ needs.parse-namespace.outputs.push-qms }}
         echo ::debug:: 2 ${{ needs.parse-namespace.outputs.push-theq }}
-        echo 1 ${{ needs.parse-namespace.outputs.push-qms }}
-        echo 2 ${{ needs.parse-namespace.outputs.push-theq }}
+        echo 1 ${{ needs.parse-namespace.outputs.push-qms == 'true' }}
+        echo 2 ${{ needs.parse-namespace.outputs.push-theq == 'true' }}
 
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
