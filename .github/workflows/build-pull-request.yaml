@@ -18,7 +18,7 @@ jobs:
   ##### SETUP ######################################################################################
 
   parse-namespace:
-    name: Building refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       push-qms: ${{ steps.parse.outputs.deploy-qms }}
@@ -80,8 +80,8 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-qms: ${{ needs.create-image-tags.outputs.push-qms }}
-      push-theq: ${{ needs.create-image-tags.outputs.push-theq }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms != 0 }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq != 0 }}
 
 #   build:
 #     name: Dockerfile Build
