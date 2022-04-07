@@ -11,9 +11,12 @@ on:
       image-tags:
         required: true
         type: string
-      namespaces:
+      push-qms:
         required: true
-        type: string
+        type: boolean
+      push-theq:
+        required: true
+        type: boolean
     secrets:
       artifactory-password:
         required: true
@@ -66,11 +69,11 @@ jobs:
         image: ${{ inputs.image-name }}
         tags: ${{ inputs.image-tags }}
 
-    - name: date1
-      run: date
+#     - name: date1
+#       run: date
 
     - name: Push Image to The Q
-      if: ${{ contains(inputs.namespaces, 'TheQ') }}
+      if: ${{ inputs.push-theq }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
@@ -80,11 +83,11 @@ jobs:
         username: ${{ secrets.namespace-theq-username }}
         password: ${{ secrets.namespace-theq-password }}
 
-    - name: date2
-      run: date
+#     - name: date2
+#       run: date
 
     - name: Push Image to QMS
-      if: ${{ contains(inputs.namespaces, 'QMS') }}
+      if: ${{ inputs.push-qms }}
       uses: redhat-actions/push-to-registry@v2
       with:
         extra-args: --log-level=info
