@@ -68,6 +68,9 @@ jobs:
         username: ${{ secrets.artifactory-username }}
         password: ${{ secrets.artifactory-password }}
 
+    - name: Debug for errors
+      run: df -h
+
     - name: Buildah Build
       id: build-image
       uses: redhat-actions/buildah-build@v2
@@ -76,6 +79,9 @@ jobs:
         context: ${{ inputs.directory }}
         image: ${{ inputs.image-name }}
         tags: ${{ inputs.image-tags }}
+
+    - name: Debug for errors
+      run: df -h
 
     - name: Debug - time before The Q
       run: date
