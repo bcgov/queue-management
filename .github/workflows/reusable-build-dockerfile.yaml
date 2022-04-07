@@ -68,8 +68,12 @@ jobs:
         username: ${{ secrets.artifactory-username }}
         password: ${{ secrets.artifactory-password }}
 
+    # There is a sporadic error "error happened during read: unexpected EOF" when pulling
+    # Artifactory images. It was suggested that perhaps it was due to /var/tmp being full.
+    # Maybe this will indicate something strange when it does happen.
+
     - name: Debug for errors
-      run: df -h
+      run: cd /var/tmp; df -h .
 
     - name: Buildah Build
       id: build-image
@@ -81,7 +85,7 @@ jobs:
         tags: ${{ inputs.image-tags }}
 
     - name: Debug for errors
-      run: df -h
+      run: cd /var/tmp; df -h .
 
     - name: Debug - time before The Q
       run: date
