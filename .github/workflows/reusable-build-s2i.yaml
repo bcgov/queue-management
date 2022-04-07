@@ -89,10 +89,10 @@ jobs:
       run: date
 
     - name: Push Image to The Q
-      if: ${{ inputs.push-theq }}
+      if: inputs.push-theq
       uses: redhat-actions/push-to-registry@v2
       with:
-        extra-args: --log-level=info
+        extra-args: --log-level=debug
         image: ${{ steps.build-image.outputs.image }}
         tags: ${{ steps.build-image.outputs.tags }}
         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
@@ -103,10 +103,10 @@ jobs:
       run: date
 
     - name: Push Image to QMS
-      if: ${{ inputs.push-qms }}
+      if: inputs.push-qms
       uses: redhat-actions/push-to-registry@v2
       with:
-        extra-args: --log-level=info
+        extra-args: --log-level=debug
         image: ${{ steps.build-image.outputs.image }}
         tags: ${{ steps.build-image.outputs.tags }}
         registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
