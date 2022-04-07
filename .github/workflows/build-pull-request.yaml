@@ -218,18 +218,6 @@ jobs:
           echo "::set-output name=token::${{ secrets.NAMESPACE_THEQ_PASSWORD }}"
         fi
 
-#   approve-theq-dev:
-#     name: Approve Deploy to The Q dev
-#     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
-#     environment: theq-dev
-#     runs-on: ubuntu-latest
-#     outputs:
-#       image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
-
-#     steps:
-#       - name: Deployment Approval
-#         run: echo Approved
-
   tag:
     name: Tag
     needs: parse-environment
