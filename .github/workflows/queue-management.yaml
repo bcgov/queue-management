@@ -25,7 +25,7 @@ jobs:
           # replace the image that is created by the Jenkins build.
           IMAGE_TAGS=latest-github-actions
         fi
-        echo Using tags: \"$IMAGE_TAGS\"
+        echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
 
   ##### BUILD ######################################################################################
