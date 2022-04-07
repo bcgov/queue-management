@@ -32,31 +32,13 @@ jobs:
       run: |
         PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == TheQ* ]]; then echo true; else echo false; fi)
+        DEPLOY_DEV=$(if [[ "${{ github.event.inputs.namespace }}" == *Dev ]]; then echo true; else echo false; fi)
+        DEPLOY_TEST=$(if [[ "${{ github.event.inputs.namespace }}" == *Test ]]; then echo true; else echo false; fi)
 
         echo "::set-output name=push-qms::"$PUSH_QMS
         echo "::set-output name=push-theq::"$PUSH_THEQ
-
-        #[[ "${{ github.event.inputs.namespace }}" == QMS* ]] && echo "::set-output name=push-qms::true"
-        #[[ "${{ github.event.inputs.namespace }}" == TheQ* ]] && echo "::set-output name=push-theq::true"
-        #[[ \"${{ github.event.inputs.namespace }}\" == QMS* ]]"
-        #[[ "${{ github.event.inputs.namespace }}" == TheQ* ]] && echo "::set-output name=push-theq::true"
-
-        #if [ "${{ github.event.inputs.namespace }}" == TheQ* ]; then
-        #fi
-        #[[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
-        #echo 2 $?
-        #[[ "${{ github.event.inputs.namespace }}" != QMS* ]]
-        #echo 1 $?
-        #[[ "${{ github.event.inputs.namespace }}" != QMS* ]]
-        #echo "::set-output name=push-qms::$?"
-        #[[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
-        #echo 2 $?
-        #[[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
-        #echo "::set-output name=push-theq::$?"
-        #[[ "${{ github.event.inputs.namespace }}" != *Dev ]]
-        #echo "::set-output name=deploy-dev::$?"
-        #[[ "${{ github.event.inputs.namespace }}" != *Test ]]
-        #echo "::set-output name=deploy-test::$?"
+        echo "::set-output name=deploy-dev::"$DEPLOY_DEV
+        echo "::set-output name=deploy-test::"$DEPLOY_TEST
 
   create-image-tags:
     name: Create Image Tags
@@ -71,9 +53,6 @@ jobs:
     - name: Get Image Tags
       id: get-image-tags
       run: |
-        echo A ${{ needs.parse-namespace.outputs.push-qms }}
-        echo B ${{ needs.parse-namespace.outputs.push-theq }}
-
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
