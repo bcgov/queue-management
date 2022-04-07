@@ -50,11 +50,6 @@ jobs:
       image-tags: ${{ steps.build-image.outputs.tags }}
 
     steps:
-    - name: debug1
-      run: |
-        echo 1 ${{ inputs.push-qms }}
-        echo 2 ${{ inputs.push-theq }}
-
     - name: Check out
       uses: actions/checkout@v2
 
@@ -74,13 +69,8 @@ jobs:
         image: ${{ inputs.image-name }}
         tags: ${{ inputs.image-tags }}
 
-#     - name: date1
-#       run: date
-
-    - name: debug
-      run: |
-        echo 1 ${{ inputs.push-qms }}
-        echo 2 ${{ inputs.push-theq }}
+    - name: Debug - time before The Q
+      run: date
 
     - name: Push Image to The Q
       if: ${{ inputs.push-theq }}
@@ -93,8 +83,8 @@ jobs:
         username: ${{ secrets.namespace-theq-username }}
         password: ${{ secrets.namespace-theq-password }}
 
-#     - name: date2
-#       run: date
+    - name: Debug - time before QMS
+      run: date
 
     - name: Push Image to QMS
       if: ${{ inputs.push-qms }}
