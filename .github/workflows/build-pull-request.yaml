@@ -224,7 +224,7 @@ jobs:
   # use "if"s to only run one of them.
 
   tag-theq:
-    if: ${{ needs.parse-environment.outputs.deploy-theq == 'true' }}
+    if: needs.parse-environment.outputs.deploy-theq == 'true'
     name: Tag The Q
     needs: parse-environment
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
@@ -238,7 +238,7 @@ jobs:
       tag-to: ${{ needs.parse-environment.outputs.environment }}
 
   tag-qms:
-    if: ${{ needs.parse-environment.outputs.deploy-qms == 'true' }}
+    if: needs.parse-environment.outputs.deploy-qms == 'true'
     name: Tag QMS
     needs: parse-environment
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
