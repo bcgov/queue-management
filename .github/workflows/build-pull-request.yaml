@@ -190,3 +190,55 @@ jobs:
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
       push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  ##### DEPLOY ####################################################################################
+
+  parse-environment:
+    name: Get Environment
+    needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.parse.outputs.environment }}
+      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
+      namespace: ${{ steps.parse.outputs.namespace }}
+      token: ${{ steps.parse.outputs.token }}
+
+    steps:
+    - name: Parse Environment
+      id: parse
+      run: |
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | cut -d' ' -f2 | tr '[:upper:]' '[:lower:]')
+        echo "::set-output name=environment::$ENVIRONMENT"
+
+        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+          echo "::set-output name=namespace::${{ secrets.NAMESPACE_QMS }}"
+          echo "::set-output name=token::${{ secrets.NAMESPACE_QMS_PASSWORD }}"
+        else
+          echo "::set-output name=namespace::${{ secrets.NAMESPACE_THEQ }}"
+          echo "::set-output name=token::${{ secrets.NAMESPACE_THEQ_PASSWORD }}"
+        fi
+
+#   approve-theq-dev:
+#     name: Approve Deploy to The Q dev
+#     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+#     environment: theq-dev
+#     runs-on: ubuntu-latest
+#     outputs:
+#       image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
+
+#     steps:
+#       - name: Deployment Approval
+#         run: echo Approved
+
+  tag:
+    name: Tag
+    needs: parse-environment
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ needs.parse-environment.outputs.namespace }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ needs.parse-environment.outputs.token }}
+    with:
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
+      tag-from: ${{ needs.parse-environment.outputs.image-tags }}
+      tag-to: ${{ needs.parse-environment.outputs.environment }}
