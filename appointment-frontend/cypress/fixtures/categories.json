@@ -1,0 +1,462 @@
+{
+    "categories": [
+        {
+            "service_code": "Back Office",
+            "parent": null,
+            "service_name": "Back Office",
+            "external_service_name": null,
+            "prefix": "B",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.HIDE",
+            "is_dlkt": null,
+            "service_id": 1,
+            "service_desc": "Back Office"
+        },
+        {
+            "service_code": "BC Hydro",
+            "parent": null,
+            "service_name": "BC Hydro",
+            "external_service_name": "BC Hydro",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 4,
+            "service_desc": "BC Hydro"
+        },
+        {
+            "service_code": "BC Registry",
+            "parent": null,
+            "service_name": "BC Registry",
+            "external_service_name": "BC Registry",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 7,
+            "service_desc": "BC Registry"
+        },
+        {
+            "service_code": "CTAX",
+            "parent": null,
+            "service_name": "Consumer Tax",
+            "external_service_name": "Provincial Sales Tax",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": 15,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 10,
+            "service_desc": "Consumer Tax"
+        },
+        {
+            "service_code": "Exams",
+            "parent": null,
+            "service_name": "Exams",
+            "external_service_name": "Exams",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.HIDE",
+            "is_dlkt": null,
+            "service_id": 13,
+            "service_desc": "Exams"
+        },
+        {
+            "service_code": "F&W",
+            "parent": null,
+            "service_name": "Fish & Wildlife",
+            "external_service_name": "Fish & Wildlife",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 16,
+            "service_desc": "Fish & Wildlife"
+        },
+        {
+            "service_code": "ICBC",
+            "parent": null,
+            "service_name": "ICBC",
+            "external_service_name": "Driver Licensing & ID",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 19,
+            "service_desc": "ICBC"
+        },
+        {
+            "service_code": "ICBC - Autoplan",
+            "parent": null,
+            "service_name": "ICBC - Autoplan",
+            "external_service_name": "ICBC - Autoplan",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 22,
+            "service_desc": "ICBC - Autoplan"
+        },
+        {
+            "service_code": "ID Verification",
+            "parent": null,
+            "service_name": "ID Verification",
+            "external_service_name": "BC Services Card Verification",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 52,
+            "service_desc": "ID Verification"
+        },
+        {
+            "service_code": "LCRB",
+            "parent": null,
+            "service_name": "LCRB",
+            "external_service_name": "Liquor Licensing",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 504,
+            "service_desc": "LCRB"
+        },
+        {
+            "service_code": "MCFD",
+            "parent": null,
+            "service_name": "MCFD",
+            "external_service_name": "Child Care (Ministry of Children and Families)",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 25,
+            "service_desc": "MCFD"
+        },
+        {
+            "service_code": "MSP",
+            "parent": null,
+            "service_name": "MSP",
+            "external_service_name": "Medical Services Plan",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 28,
+            "service_desc": "Medical Services Plan"
+        },
+        {
+            "service_code": "Other",
+            "parent": null,
+            "service_name": "Other",
+            "external_service_name": "Other",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.HIDE",
+            "is_dlkt": null,
+            "service_id": 31,
+            "service_desc": "Other"
+        },
+        {
+            "service_code": "PTAX",
+            "parent": null,
+            "service_name": "Property Tax",
+            "external_service_name": "Rural Property Tax",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 34,
+            "service_desc": "Property Tax"
+        },
+        {
+            "service_code": "Redirects",
+            "parent": null,
+            "service_name": "Redirects",
+            "external_service_name": "Redirects",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.HIDE",
+            "is_dlkt": null,
+            "service_id": 37,
+            "service_desc": "Redirects"
+        },
+        {
+            "service_code": "RTB",
+            "parent": null,
+            "service_name": "Residential Tenancy",
+            "external_service_name": "Residential Tenancy",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": 45,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 40,
+            "service_desc": "Residential Tenancy"
+        },
+        {
+            "service_code": "SDPR - 3rd Party",
+            "parent": null,
+            "service_name": "SDPR",
+            "external_service_name": "Income and Disability Assistance - 3rd Party",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 43,
+            "service_desc": "SDPR - 3rd Party"
+        },
+        {
+            "service_code": "SDPR - POC",
+            "parent": null,
+            "service_name": "SDPR - POC",
+            "external_service_name": "Income & Disability Assistance ",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 46,
+            "service_desc": "SDPR - POC"
+        },
+        {
+            "service_code": "VSTATS",
+            "parent": null,
+            "service_name": "Vital Stats",
+            "external_service_name": "Vital Statistics",
+            "prefix": "A",
+            "actual_service_ind": 0,
+            "timeslot_duration": null,
+            "email_paragraph": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0,
+            "parent_id": null,
+            "online_link": null,
+            "online_availability": "Availability.SHOW",
+            "is_dlkt": null,
+            "service_id": 49,
+            "service_desc": "Vital Stats"
+        }
+    ],
+    "errors": {
+        "0": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "1": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "2": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "3": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "4": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "5": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "6": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "7": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "8": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "9": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "10": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "11": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "12": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "13": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "14": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "15": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "16": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "17": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        },
+        "18": {
+            "_schema": [
+                "Invalid input type."
+            ]
+        }
+    }
+}

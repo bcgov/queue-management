@@ -695,7 +695,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=1,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='COFQ - 3HR Single Exam',
@@ -704,7 +704,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='COFQ - 3HR Single Exam - Own Reader',
@@ -713,7 +713,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='COFQ - 3HR Single Exam - SBC Reader',
@@ -722,7 +722,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='COFQ - 3HR Single Exam - Time Extension',
@@ -731,7 +731,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='IPSE - 4HR Group Exam',
@@ -740,7 +740,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=1,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='IPSE - 4HR Single Exam',
@@ -749,7 +749,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='IPSE - 4HR Single Exam - Own Reader',
@@ -758,7 +758,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='IPSE - 4HR Single Exam - SBC Reader',
@@ -767,7 +767,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='IPSE - 4HR Single Exam - Time Extension',
@@ -776,7 +776,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='SLE - 3HR Group Exam',
@@ -785,7 +785,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=1,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='SLE - 3HR Single Exam',
@@ -794,7 +794,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='SLE - 3HR Single Exam - Own Reader',
@@ -803,7 +803,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='SLE - 3HR Single Exam - SBC Reader',
@@ -812,7 +812,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='SLE - 3HR Single Exam - Time Extension',
@@ -821,7 +821,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Monthly Session Exam',
@@ -830,7 +830,7 @@ class Bootstrap(Command):
             method_type='Written',
             ita_ind=1,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Veterinary Exam',
@@ -839,7 +839,7 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Milk Grader',
@@ -848,7 +848,7 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=0,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Industrial Vegetation',
@@ -857,7 +857,7 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=0,
-            pesticide_exam_ind=1,
+            pesticide_exam_ind=1
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Structural-General',
@@ -866,7 +866,7 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=0,
-            pesticide_exam_ind=1,
+            pesticide_exam_ind=1
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Dispenser-Commercial',
@@ -875,7 +875,7 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=0,
-            pesticide_exam_ind=1,
+            pesticide_exam_ind=1
         ))
         db.session.add(bookings.ExamType(
             exam_type_name='Group Environment Exam',
@@ -884,12 +884,12 @@ class Bootstrap(Command):
             method_type='written',
             ita_ind=0,
             group_exam_ind=1,
-            pesticide_exam_ind=0,
+            pesticide_exam_ind=0
         ))
         db.session.commit()
 
-        logging.info('--> Bookings: Exams - No exams added')
-        logging.info('--> Bookings: Appointments - No appointments added')
+        logging.info('--> Booking: Exams - No exams added')
+        logging.info('--> Booking: Appointments - No appointments added')
 
 
 class MigrateWrapper(Command):

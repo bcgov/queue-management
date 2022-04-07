@@ -8,6 +8,7 @@
             :items="locationListData"
             :item-text="'office_name'"
             :filter="officeSearchFilter"
+            data-cy="step-1-combobox-office"
             label="Select Office"
             outlined
             color="primary"
@@ -46,6 +47,7 @@
                       block
                       color="primary"
                       class="pl-5 mt-0 mt-md-2"
+                      data-cy="step-1-button-book-appointment"
                       large
                       @click="selectLocation(location)"
                     >
@@ -95,6 +97,7 @@
                         class='mt-0 mt-md-2 float-right'
                         large
                         @click="showLocationServices(location)"
+                        data-cy="step-1-button-available-services"
                       >
                         Available Services
                     </v-btn>
@@ -109,8 +112,13 @@
                   </a>
                 </template>
                 <template v-else>
-                  <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
-                    </v-img>
+                  <v-img
+                    v-if="location.civic_address"
+                    :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))"
+                    :alt="location.civic_address || 'No address'"
+                    class='static-map'
+                    data-cy="step-1-image-map"
+                  ></v-img>
                 </template>
                 <div class="text-center mt-2 body-2" v-if="location.civic_address">
                   <template v-if='location.external_map_link'>

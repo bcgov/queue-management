@@ -17,6 +17,7 @@
             @input="clickSelection"
             @keyup="setKeyPressed"
             auto-select-first="true"
+            data-cy="step-2-combobox-service"
             hide-details
           >
             <template v-slot:selection="data">
@@ -40,6 +41,7 @@
             large
             @click="proceedBooking"
             color="primary"
+            data-cy="step-2-button-next"
           >
             Next
             <v-icon right small class="ml-1">mdi-arrow-right</v-icon>

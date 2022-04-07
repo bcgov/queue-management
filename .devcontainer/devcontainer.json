@@ -1,76 +1,91 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// Copyright 2022 Province of British Columbia
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy of
+// the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
+// For format details, see https://aka.ms/devcontainer.json. For config options,
+// see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/python-3-postgres
 // Update the VARIANT arg in docker-compose.yml to pick a Python version
 {
-    "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": "docker-compose.yml",
 
-    // Add the IDs of extensions you want installed when the container is created.
-    "extensions": [
-        "bierner.markdown-preview-github-styles",
-        "dbaeumer.vscode-eslint",
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "mtxr.sqltools",
-        "mtxr.sqltools-driver-pg",
-        "octref.vetur",
-        "sonarsource.sonarlint-vscode"
-    ],
-
-    // Use 'forwardPorts' to make a list of ports inside the container
-    // available locally:
-    "forwardPorts": [
-        5432 // PostgreSQL
-    ],
-
-    "name": "Queue Management",
-
-    "portsAttributes": {
-        "5000": {
-            "label": "Queue Management API",
-            "onAutoForward": "silent"
-        },
-        "5432": {
-            "label": "PostgreSQL",
-            "onAutoForward": "silent"
-        },
-        "8080": {
-            "label": "Queue Management Frontend",
-            "onAutoForward": "silent"
-        },
-        "8081": {
-            "label": "Appointments Frontend",
-            "onAutoForward": "silent"
-        }
+  // Add the extensions you want installed when the container is created.
+  "extensions": [
+    "bierner.markdown-preview-github-styles",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "octref.vetur",
+    "sonarsource.sonarlint-vscode"
+  ],
+  // Use 'forwardPorts' to make a list of ports inside the container
+  // available locally:
+  "forwardPorts": [
+    5432, // PostgreSQL
+    10000 // Xpra X forwarder (for Cypress)
+  ],
+  "name": "Queue Management",
+  "portsAttributes": {
+    "5000": {
+      "label": "Queue Management API",
+      "onAutoForward": "silent"
     },
-
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "/bin/bash .devcontainer/postCreateCommand.sh",
-
-    // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "vscode",
-
-    "service": "app",
-
-    // Set *default* container specific settings.json values on container create.
-    "settings": {
-        "python.languageServer": "Pylance",
-        "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
-        "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
-        "python.pythonPath": "/usr/local/bin/python",
-        // "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
-        "sonarlint.ls.javaHome": "/usr/lib/jvm/default-java",
-        "sqltools.connections": [{
-            "database": "postgres",
-            "driver": "PostgreSQL",
-            "name": "Container database",
-            "password": "postgres",
-            "port": 5432,
-            "previewLimit": 50,
-            "server": "localhost",
-            "username": "postgres"
-        }]
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
     },
-
-    "workspaceFolder": "/workspace"
+    "8080": {
+      "label": "Queue Management Frontend",
+      "onAutoForward": "silent"
+    },
+    "8081": {
+      "label": "Appointments Frontend",
+      "onAutoForward": "silent"
+    },
+    "10000": {
+      "label": "Xpra (Cypress)",
+      "onAutoForward": "silent",
+    }
+  },
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "/bin/bash .devcontainer/postCreateCommand.sh",
+  // Comment out to connect as root instead. More info:
+  // https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode",
+  "service": "app",
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "xxxpython.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+    "python.pythonPath": "/usr/local/bin/python",
+    // "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
+    "sonarlint.ls.javaHome": "/usr/lib/jvm/default-java",
+    "sqltools.connections": [
+      {
+        "database": "postgres",
+        "driver": "PostgreSQL",
+        "name": "Container database",
+        "password": "postgres",
+        "port": 5432,
+        "previewLimit": 50,
+        "server": "localhost",
+        "username": "postgres"
+      }
+    ]
+  },
+  "workspaceFolder": "/workspace"
 }

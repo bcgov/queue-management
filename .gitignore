@@ -48,6 +48,12 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+# Cypress.io testing
+appointment-frontend/cypress.env.json
+appointment-frontend/cypress/screenshots/
+appointment-frontend/cypress/snapshots/All Integration Specs/
+appointment-frontend/cypress/snapshots/image_snapshot/*/__diff_output__
+
 # Translations
 *.mo
 *.pot
@@ -112,6 +118,7 @@ queue-env/
 !.vscode/launch.json
 
 # Project specific include/excludes
+api/postman/package-lock.json
 /frontend/public/static/keycloak/
 !frontend/build
 api/client_secrets/secrets.json

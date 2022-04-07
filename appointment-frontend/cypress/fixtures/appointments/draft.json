@@ -1,0 +1,73 @@
+{
+  "appointment": {
+    "recurring_uuid": null,
+    "appointment_id": 1,
+    "checked_in_time": null,
+    "service_id": 85,
+    "citizen_id": null,
+    "end_time": "2022-01-19T17:40:00+00:00",
+    "blackout_flag": "N",
+    "online_flag": false,
+    "stat_flag": false,
+    "office": {
+      "civic_address": "403-771 Vernon Ave,Victoria",
+      "digital_signage_message_1": "",
+      "timezone": {
+        "timezone_name": "America/Vancouver",
+        "timezone_id": 3
+      },
+      "exams_enabled_ind": 1,
+      "appointments_days_limit": 180,
+      "external_map_link": null,
+      "office_number": 94,
+      "telephone": "250 387-6121",
+      "show_currently_waiting_bottom": 1,
+      "digital_signage_message": null,
+      "automatic_reminder_at": 3,
+      "office_name": "Victoria",
+      "currently_waiting": null,
+      "appointment_duration": 30,
+      "office_appointment_message": "9am \u201310am reserved for seniors and people with underlying health issues.",
+      "check_in_notification": 1,
+      "sb_id": 1,
+      "latitude": 48.458359,
+      "office_id": 3,
+      "digital_signage_message_2": "",
+      "deleted": null,
+      "max_person_appointment_per_day": 99,
+      "digital_signage_message_3": "",
+      "longitude": -123.377106,
+      "check_in_reminder_msg": "you are 3rd in line -  please head back to the office",
+      "online_status": "Status.SHOW",
+      "appointments_enabled_ind": 1
+    },
+    "citizen_name": "Draft",
+    "contact_information": null,
+    "start_time": "2022-01-19T17:20:00+00:00",
+    "service": {
+      "service_desc": "VSTATS-LCON, Application process, affidavit, etc.",
+      "service_code": "VSTATS - 003",
+      "deleted": null,
+      "prefix": "A",
+      "timeslot_duration": 20,
+      "css_colour": null,
+      "display_dashboard_ind": 1,
+      "service_name": "Legal Name Change",
+      "parent_id": 49,
+      "online_link": "https://www2.gov.bc.ca/gov/content/life-events/order-certificates-copies",
+      "is_dlkt": null,
+      "service_id": 85,
+      "online_availability": "Availability.SHOW",
+      "external_service_name": "Legal Change of Name",
+      "email_paragraph": null,
+      "parent": {
+        "service_name": "Vital Stats"
+      },
+      "actual_service_ind": 1
+    },
+    "comments": null,
+    "is_draft": true,
+    "office_id": 3
+  },
+  "warning": {}
+}
