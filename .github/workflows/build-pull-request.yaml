@@ -37,6 +37,8 @@ jobs:
 
         echo ::debug::A $PUSH_QMS
         echo ::debug::B $PUSH_THEQ
+        echo A $PUSH_QMS
+        echo B $PUSH_THEQ
 
         echo "::set-output name=push-qms::"$PUSH_QMS
         echo "::set-output name=push-theq::"$PUSH_THEQ
@@ -58,6 +60,8 @@ jobs:
       run: |
         echo ::debug:: 1 ${{ needs.parse-namespace.outputs.push-qms }}
         echo ::debug:: 2 ${{ needs.parse-namespace.outputs.push-theq }}
+        echo 1 ${{ needs.parse-namespace.outputs.push-qms }}
+        echo 2 ${{ needs.parse-namespace.outputs.push-theq }}
 
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
