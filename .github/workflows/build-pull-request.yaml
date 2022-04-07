@@ -198,10 +198,10 @@ jobs:
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ steps.parse.outputs.environment }}
+      environment: ${{ steps.parse2.outputs.environment }}
       image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
-      namespace: ${{ steps.parse.outputs.namespace }}
-      token: ${{ steps.parse.outputs.token }}
+      namespace: ${{ steps.parse2.outputs.namespace }}
+      token: ${{ steps.parse2.outputs.token }}
 
     steps:
     - name: Log in to OpenShift 
@@ -212,7 +212,7 @@ jobs:
         openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
 
     - name: Parse Environment
-      id: parse
+      id: parse2
       run: |
         ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | cut -d' ' -f2 | tr '[:upper:]' '[:lower:]')
         echo "::set-output name=environment::"$ENVIRONMENT
@@ -237,9 +237,22 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ steps.parse.outputs.namespace }}
+        namespace: ${{ steps.parse2.outputs.namespace }}
         openshift_server_url: ${{ secrets.OPENSHIFT_API }}
-        openshift_token: ${{ steps.parse.outputs.token }}
+        openshift_token: ${{ steps.parse2.outputs.token }}
+
+  dumbo:
+    name: Dumbo
+    needs: parse-environment
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ needs.parse-environment.outputs.namespace }}
+        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
+        openshift_token: ${{ needs.parse-environment.outputs.token }}
 
   tag:
     name: Tag
