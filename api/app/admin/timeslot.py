@@ -81,23 +81,26 @@ class TimeslotConfig(Base):
     create_modal = False
     edit_modal = False
 
+    # Defining String constants to appease SonarQube
+    office_name_const = 'office.office_name'
+
     column_list = [
-        'office.office_name',
+        office_name_const,
         'start_time',
         'end_time',
         'day_of_week',
         'no_of_slots'
     ]
     column_labels = {
-        'office.office_name': 'Office Name',
+        office_name_const: 'Office Name',
         'start_time': 'Start Time (HH:MM format)',
         'end_time': 'End Time (HH:MM format)',
         'day_of_week': 'Day of week',
         'no_of_slots': 'No of appointment available per slot'
     }
-    column_searchable_list = ('office.office_name',)
+    column_searchable_list = (office_name_const,)
     column_sortable_list = [
-        'office.office_name',
+        office_name_const,
         'start_time',
         'end_time',
         'day_of_week',

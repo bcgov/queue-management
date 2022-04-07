@@ -12,9 +12,11 @@ module.exports = {
   // publicPath: process.env.VUE_APP_PATH,
   transpileDependencies: ['vuetify', 'vuex-persist'],
   devServer: {
-    overlay: {
-      warnings: true,
-      errors: true
+    client: {
+      overlay: {
+        warnings: true,
+        errors: true
+      }
     },
     // Configure local API calls to hit OpenShift dev
     proxy: {

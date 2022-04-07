@@ -22,6 +22,9 @@ from app.models import theq, bookings
 migrate = Migrate(application, db)
 manager = Manager(application)
 
+# Defining String constants to appease SonarQube
+back_office_const = "Back Office"
+chalkboard_const = "Loves using chalk boards to communicate to examinees"
 
 class Bootstrap(Command):
     '''
@@ -194,8 +197,8 @@ class Bootstrap(Command):
             csr_state_desc='Serving a citizen'
         )
         csr_state5 = theq.CSRState(
-            csr_state_name='Back Office',
-            csr_state_desc='Currently doing back office work'
+            csr_state_name=back_office_const,
+            csr_state_desc="Currently doing back office work"
         )
         db.session.add(csr_state_logout)
         db.session.add(csr_state2)
@@ -242,12 +245,12 @@ class Bootstrap(Command):
             actual_service_ind=0
         )
         category_back_office = theq.Service(
-            service_code='Back Office',
-            service_name='Back Office',
-            service_desc='Back Office',
-            prefix='B',
-            display_dashboard_ind=0,
-            actual_service_ind=0
+            service_code = back_office_const,
+            service_name = back_office_const,
+            service_desc = back_office_const,
+            prefix = "B",
+            display_dashboard_ind = 0,
+            actual_service_ind = 0
         )
         category_exams = theq.Service(
             service_code='Exams',
