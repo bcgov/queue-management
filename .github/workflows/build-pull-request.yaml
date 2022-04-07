@@ -30,20 +30,20 @@ jobs:
     - name: Parse Namespace
       id: parse
       run: |
-        [[ ${{ github.event.inputs.namespace }} != QMS* ]]
+        [[ "${{ github.event.inputs.namespace }}" != QMS* ]]
         echo $?
-        [[ ${{ github.event.inputs.namespace }} != QMS* ]]
+        [[ "${{ github.event.inputs.namespace }}" != QMS* ]]
         echo "::set-output name=push-qms::$?"
 
-        [[ ${{ github.event.inputs.namespace }} != TheQ* ]]
+        [[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
         echo $?
-        [[ ${{ github.event.inputs.namespace }} != TheQ* ]]
+        [[ "${{ github.event.inputs.namespace }}" != TheQ* ]]
         echo "::set-output name=push-theq::$?"
 
-        [[ ${{ github.event.inputs.namespace }} != *Dev ]]
+        [[ "${{ github.event.inputs.namespace }}" != *Dev ]]
         echo "::set-output name=deploy-dev::$?"
 
-        [[ ${{ github.event.inputs.namespace }} != *Test ]]
+        [[ "${{ github.event.inputs.namespace }}" != *Test ]]
         echo "::set-output name=deploy-test::$?"
 
   create-image-tags:
