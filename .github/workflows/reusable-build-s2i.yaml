@@ -77,7 +77,7 @@ jobs:
         path_context: ${{ inputs.directory }}
         tags: ${{ inputs.image-tags }}
 
-    - name: date1
+    - name: Debug - time before The Q
       run: date
 
     - name: Push Image to The Q
@@ -91,7 +91,7 @@ jobs:
         username: ${{ secrets.namespace-theq-username }}
         password: ${{ secrets.namespace-theq-password }}
 
-    - name: date2
+    - name: Debug - time before QMS
       run: date
 
     - name: Push Image to QMS
