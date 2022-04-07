@@ -55,6 +55,9 @@ jobs:
     - name: Get Image Tags
       id: get-image-tags
       run: |
+        echo A needs.create-image-tags.outputs.push-qms
+        echo B needs.create-image-tags.outputs.push-theq
+
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
