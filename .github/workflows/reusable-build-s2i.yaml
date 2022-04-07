@@ -3,8 +3,9 @@ on:
   workflow_call:
     inputs:
       ref:
-        required: true
+        required: false
         type: string
+        default: master
       directory:
         required: true
         type: string
