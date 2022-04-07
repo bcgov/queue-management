@@ -1,6 +1,11 @@
 <template>
   <v-col>
-    <v-col class="feedback_view" :class="showFeedbackArea ? 'feedback_view_expanded':''" v-show="!$vuetify.breakpoint.xs">
+    <v-col
+      class="feedback_view"
+      :class="showFeedbackArea ? 'feedback_view_expanded':''"
+      v-show="!$vuetify.breakpoint.xs"
+      data-cy="feedback"
+    >
           <v-row class="feedback_container" :class="getFeedbackViewStyle()">
             <v-col>
               <v-col class="feedback_strip_parent">

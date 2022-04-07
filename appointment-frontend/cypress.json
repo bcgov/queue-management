@@ -1,0 +1,27 @@
+{
+  "baseUrl": "http://localhost:8081",
+  "chromeWebSecurity": true,
+  "env": {
+    "cypress-plugin-snapshots": {
+      "imageConfig": {
+        "threshold": 0,
+        "thresholdType": "percent"
+      },
+      "screenshotConfig": {
+        "blackout": [],
+        "capture": "fullPage",
+        "clip": null,
+        "disableTimersAndAnimations": true,
+        "log": false,
+        "scale": false,
+        "timeout": 30000
+      }
+    }
+  },
+  "ignoreTestFiles": [
+    "**/__snapshots__/*",
+    "**/__image_snapshots__/*"
+  ],
+  "supportFile": "cypress/support/index.ts",
+  "video": false
+}

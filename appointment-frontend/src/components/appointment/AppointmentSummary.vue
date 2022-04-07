@@ -9,6 +9,7 @@
               <div class="d-flex justify-center">
                 <v-checkbox
                   v-model="termsOfServiceConsent"
+                  data-cy="step-5-checkbox-consent"
                 >
                   <template v-slot:label>
                     <div>
@@ -24,6 +25,7 @@
                   :disabled="!termsOfServiceConsent"
                   :loading="isLoading"
                   color="primary"
+                  data-cy="step-5-button-confirm"
                 >{{submitBtnText}}</v-btn>
               </div>
             </v-col>
@@ -62,7 +64,12 @@
                       <img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'>
                     </a>
                   </template>
-                  <template v-else><img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'></template>
+                  <template v-else><img
+                    :src="require('@/assets/img/officemaps/' + staticMapData.office_number)"
+                    :alt="staticMapData.civic_address"
+                    class='map-view'
+                    data-cy="step-5-image-map"
+                  ></template>
             </v-col>
           </v-row>
         </v-card>
@@ -73,7 +80,7 @@
       max-width="540"
       persistent
     >
-      <v-card>
+      <v-card data-cy="step-5-dialog-appointment">
         <v-card-title
           v-bind:class="{'green': dialogPopup.isSuccess, 'red': !dialogPopup.isSuccess}"
           class="lighten-3 d-block"

@@ -24,6 +24,7 @@
             :src="require('@/assets/img/BCServicesCard.png')"
             max-width="132"
             contain
+            data-cy="step-4-image-bcsc"
           ></v-img>
         </v-col>
       </v-row>
@@ -34,6 +35,7 @@
           large
           color="primary"
           @click="login(idpHint.BCEID)"
+          data-cy="step-4-button-bceid"
         >
         Login with Basic BCeID
         </v-btn>
@@ -50,6 +52,7 @@
             :src="require('@/assets/img/bceid_logo.jpg')"
             max-width="132"
             contain
+            data-cy="step-4-image-bceid-login"
           ></v-img>
         </v-col>
       </v-row>
@@ -67,34 +70,14 @@
             Get a BC Services Card
           </v-btn>
         </v-col>
-        <v-col class="align-row-2 bcsc-btn" v-if="!($vuetify.breakpoint.xs)">
-          <v-btn
-            width="250"
-            large
-            color="primary"
-            @click="createBCEID(BCEIDRegistrationURL)"
-          >
-            Register for Basic BCeID account
-          </v-btn>
-        </v-col>
-        <v-col class="align-row-2 bcsc-btn" v-if="($vuetify.breakpoint.xs)">
-          <v-btn
-            width="250"
-            large
-            color="primary"
-            @click="createBCEID(BCEIDRegistrationURL)"
-          >
-            Register for Basic BCeID account
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row class="align-new-row">
-        <v-col>
-          <a class="link-w-icon mt-6" @click="clickHyperlink('https://www2.gov.bc.ca/gov/content/home/privacy','Info: Privacy Statement')"
-            target="_blank" rel="noopener noreferrer">
-            <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-            <span>Privacy Statement</span>
-          </a>
+        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
+        <v-img
+            v-if="!($vuetify.breakpoint.xs)"
+            class="login-logo"
+            :src="require('@/assets/img/bceid_logo.jpg')"
+            max-width="132"
+            contain
+          ></v-img>
         </v-col>
       </v-row>
     </v-col>
