@@ -35,11 +35,6 @@ jobs:
         DEPLOY_DEV=$(if [[ "${{ github.event.inputs.namespace }}" == *Dev ]]; then echo true; else echo false; fi)
         DEPLOY_TEST=$(if [[ "${{ github.event.inputs.namespace }}" == *Test ]]; then echo true; else echo false; fi)
 
-        echo ::debug::A $PUSH_QMS
-        echo ::debug::B $PUSH_THEQ
-        echo A $PUSH_QMS
-        echo B $PUSH_THEQ
-
         echo "::set-output name=push-qms::"$PUSH_QMS
         echo "::set-output name=push-theq::"$PUSH_THEQ
         echo "::set-output name=deploy-dev::"$DEPLOY_DEV
@@ -58,11 +53,6 @@ jobs:
     - name: Get Image Tags
       id: get-image-tags
       run: |
-        echo ::debug:: 1 ${{ needs.parse-namespace.outputs.push-qms }}
-        echo ::debug:: 2 ${{ needs.parse-namespace.outputs.push-theq }}
-        echo 1 ${{ needs.parse-namespace.outputs.push-qms == 'true' }}
-        echo 2 ${{ needs.parse-namespace.outputs.push-theq == 'true' }}
-
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo Using tags: \"$IMAGE_TAGS\"
         echo "::set-output name=image-tags::$IMAGE_TAGS"
@@ -90,42 +80,3 @@ jobs:
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
       push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
-
-#   build:
-#     name: Dockerfile Build
-#     needs: create-image-tags
-#     runs-on: ubuntu-latest
-# #     outputs:
-# #       image-tags: ${{ steps.build-image.outputs.tags }}
-
-#     steps:
-#     - name: echo
-#       run: |
-#         echo ${{ github.event.inputs.pr-number }}
-#         echo refs/pull/${{ github.event.inputs.pr-number }}/head
-
-#     - name: Check out
-#       uses: actions/checkout@v2
-#       with:
-#           ref: refs/pull/${{ github.event.inputs.pr-number }}/head
-          
-#     - name: meow
-#       run: |
-#         # ls -laR
-#         cat .github/workflows/README.md
-
-#     - name: Login to Artifactory to Pull Images in Buildah Build
-#       uses: redhat-actions/podman-login@v1
-#       with:
-#         registry: ${{ secrets.artifactory-registry }}
-#         username: ${{ secrets.artifactory-username }}
-#         password: ${{ secrets.artifactory-password }}
-
-#     - name: Buildah Build
-#       id: build-image
-#       uses: redhat-actions/buildah-build@v2
-#       with:
-#         containerfiles: ${{ inputs.directory }}/Dockerfile
-#         context: ${{ inputs.directory }}
-#         image: ${{ inputs.image-name }}
-#         tags: ${{ inputs.image-tags }}
