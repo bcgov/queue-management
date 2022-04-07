@@ -4,7 +4,7 @@
     v-model="isModelOpen"
     max-width="570"
   >
-    <v-card>
+    <v-card data-cy="step-1-dialog-service-list">
       <v-toolbar dark flat color="primary">
         <v-toolbar-title>Location Services for {{selectedLocationName}}</v-toolbar-title>
         <v-spacer></v-spacer>

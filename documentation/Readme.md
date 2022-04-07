@@ -20,6 +20,7 @@ This repo is configured to use Visual Studio Code's *Remote - Containers* (aka *
 To run the code in devcontainers you need:
 1. VSCode
 1. WSL2 with a Linux distribution (we like LTS Ubuntu)
+1. *docker-compose* installed in your WSL2 Linux
 1. *dockerd* running in your WSL2 Linux
 
 Clone the code in this repo:
@@ -168,10 +169,8 @@ It's probably a good idea to delete your database volume when changing the versi
 
 **TODO: Complete these: How do I...**
 
-1. Front Ends, hot reload?
 1. Do stuff with analytics?
 1. Run Redis?
-1. Anything else?
 
 ## To use FRONTEND:
 
