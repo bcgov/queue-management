@@ -59,20 +59,31 @@ There are many GitHub Secrets that are needed to run the Actions:
 | NAMESPACE_THEQ_PASSWORD | The token for the Service Account `github-actions` |
 | OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
 | OPENSHIFT_REGISTRY | The Image Registry used for pushing images to `-tools` namespaces |
-| POSTMAN_API_URL | The API URL used to run The Q tests |
-| POSTMAN_AUTH_URL | The Keycloak server used to authenticate Postman clients |
-| POSTMAN_CLIENT_SECRET | The Client Secret used to run Postman tests |
-| POSTMAN_CLIENTID | The Keycloak Client used to run Postman tests |
+| POSTMAN_API_URL_QMS_DEV | The API URL used to run The Q tests |
+| POSTMAN_API_URL_THEQ_DEV | The API URL used to run The Q tests |
+| POSTMAN_API_URL_THEQ_TEST | The API URL used to run The Q tests |
+| POSTMAN_AUTH_URL_DEV | The Keycloak server used to authenticate Postman clients |
+| POSTMAN_AUTH_URL_TEST | The Keycloak server used to authenticate Postman clients |
+| POSTMAN_CLIENT_SECRET_DEV | The Client Secret used to run Postman tests |
+| POSTMAN_CLIENT_SECRET_TEST | The Client Secret used to run Postman tests |
+| POSTMAN_CLIENTID_DEV | The Keycloak Client used to run Postman tests |
+| POSTMAN_CLIENTID_TEST | The Keycloak Client used to run Postman tests |
 | POSTMAN_PASSWORD | The Password of the Keycloak user used to run The Q tests |
 | POSTMAN_PASSWORD_NONQTXN | The Password of the Keycloak user used to run non-Q tests |
 | POSTMAN_PASSWORD_PUBLIC_USER | The Password of the Keycloak user used to run public API tests |
-| POSTMAN_PUBLIC_API_URL | The API URL used to run the non-Q tests |
+| POSTMAN_PUBLIC_API_URL_QMS_DEV | The API URL used to run the non-Q tests |
+| POSTMAN_PUBLIC_API_URL_THEQ_DEV | The API URL used to run the non-Q tests |
+| POSTMAN_PUBLIC_API_URL_THEQ_TEST | The API URL used to run the non-Q tests |
 | POSTMAN_PUBLIC_USERID | The Username of the Keycloak user used to run public API tests |
 | POSTMAN_REALM | The Keycloak realm used to run the Postman tests |
 | POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
 | POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
-| ZAP_APPTMNTURL | The URL of the Appointments application used for running the OWASP ZAP tests |
-| ZAP_STAFFURL | The URL of The Q used for running the OWASP ZAP tests |
+| ZAP_APPTMNTURL_QMS_DEV | The URL of the Appointments application used for running the OWASP ZAP tests |
+| ZAP_APPTMNTURL_THEQ_DEV | The URL of the Appointments application used for running the OWASP ZAP tests |
+| ZAP_APPTMNTURL_THEQ_TEST | The URL of the Appointments application used for running the OWASP ZAP tests |
+| ZAP_STAFFURL_QMS_DEV | The URL of The Q used for running the OWASP ZAP tests |
+| ZAP_STAFFURL_THEQ_DEV | The URL of The Q used for running the OWASP ZAP tests |
+| ZAP_STAFFURL_THEQ_TEST | The URL of The Q used for running the OWASP ZAP tests |
 
 (note: there is a script to set these up automatically, but it can't be committed)
 
