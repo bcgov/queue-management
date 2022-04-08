@@ -23,7 +23,7 @@ jobs:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
-      push-sdpr: ${{ steps.parse.outputs.push-sdpr }}
+      push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
 
     steps:
@@ -33,7 +33,7 @@ jobs:
       run: |
         PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == "QMS *" ]]; then echo true; else echo false; fi)
         echo PUSH_QMS:$PUSH_QMS
-        echo "::set-output name=push-sdpr::$PUSH_QMS"
+        echo "::set-output name=push-qms::$PUSH_QMS"
 
         PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == "The Q *" ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.parse-namespace.outputs.push-sdpr }}
+      push-qms: ${{ needs.parse-namespace.outputs.push-qms }}
       push-theq: ${{ needs.parse-namespace.outputs.push-theq }}
 
     steps:
@@ -69,16 +69,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   feedback-api:
@@ -89,16 +89,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: feedback-api
       image-name: feedback-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   notifications-api:
@@ -109,16 +109,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: notifications-api
       image-name: notifications-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   queue-management-api:
@@ -132,16 +132,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: api
       image-name: queue-management-api
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   queue-management-frontend:
@@ -155,16 +155,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: frontend
       image-name: queue-management-frontend
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   send-appointment-reminder-crond:
@@ -178,16 +178,16 @@ jobs:
       namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
       namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
       namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-sdpr: ${{ secrets.NAMESPACE_QMS }}
-      namespace-sdpr-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-sdpr-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: jobs/appointment_reminder
       image-name: send-appointment-reminder-crond
       image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
-      push-sdpr: ${{ needs.create-image-tags.outputs.push-sdpr == 'true' }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
 
   ##### DEPLOY ####################################################################################
@@ -197,7 +197,7 @@ jobs:
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     runs-on: ubuntu-latest
     outputs:
-      deploy-sdpr: ${{ steps.parse.outputs.deploy-sdpr }}
+      deploy-qms: ${{ steps.parse.outputs.deploy-qms }}
       deploy-theq: ${{ steps.parse.outputs.deploy-theq }}
       environment-tag: ${{ steps.parse.outputs.environment-tag }}
       image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
@@ -208,7 +208,7 @@ jobs:
       run: |
         DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == "QMS *" ]]; then echo true; else echo false; fi)
         echo DEPLOY_QMS:$DEPLOY_QMS
-        echo "::set-output name=deploy-sdpr::$DEPLOY_QMS"
+        echo "::set-output name=deploy-qms::$DEPLOY_QMS"
 
         DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == "The Q *" ]]; then echo true; else echo false; fi)
         echo DEPLOY_THEQ:$DEPLOY_THEQ
