@@ -75,10 +75,15 @@ jobs:
     - name: Debug for errors
       run: cd /var/tmp; df -h .
 
+    - name: hmm
+      run: |
+        echo "BUILD_LOGLEVEL=2" >> $GITHUB_ENV
+        echo "NPM_CONFIG_LOGLEVEL=notice" >> $GITHUB_ENV
+
     - name: Buildah Build
-      env:
-        BUILD_LOGLEVEL: 2
-        NPM_CONFIG_LOGLEVEL: notice
+#       env:
+#         BUILD_LOGLEVEL: 2
+#         NPM_CONFIG_LOGLEVEL: notice
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
