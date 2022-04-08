@@ -31,11 +31,11 @@ jobs:
     - name: Parse Namespace
       id: parse
       run: |
-        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == "QMS *" ]]; then echo true; else echo false; fi)
+        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
 
-        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == "The Q *" ]]; then echo true; else echo false; fi)
+        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
 
@@ -206,11 +206,11 @@ jobs:
     - name: Parse Tag
       id: parse
       run: |
-        DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == "QMS *" ]]; then echo true; else echo false; fi)
+        DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         echo DEPLOY_QMS:$DEPLOY_QMS
         echo "::set-output name=deploy-qms::$DEPLOY_QMS"
 
-        DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == "The Q *" ]]; then echo true; else echo false; fi)
+        DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo DEPLOY_THEQ:$DEPLOY_THEQ
         echo "::set-output name=deploy-theq::$DEPLOY_THEQ"
 
