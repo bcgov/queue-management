@@ -230,3 +230,14 @@ jobs:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.parse-environment.outputs.image-tags }}
       tag-to: ${{ needs.parse-environment.outputs.environment }}
+
+#   wait-for-rollout:
+#     name: Wait for Image Rollout
+#     needs: tag
+#     environment: theq-dev
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Rollout Confirmed
+#         run: echo Confirmed
+
