@@ -6,7 +6,7 @@ on:
         description: "Pull Request Number:"
         type: string
         required: true
-      environment:
+      namespace:
         description: "Deploy To:"
         type: choice
         required: true
