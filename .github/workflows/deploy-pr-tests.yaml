@@ -239,7 +239,7 @@ jobs:
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.parse-environment-tag.outputs.image-tags }}
-      tag-to: ${{ needs.parse-environmen-tagt.outputs.environment-tag }}
+      tag-to: ${{ needs.parse-environment-tag.outputs.environment-tag }}
 
   wait-for-rollout:
     name: Wait for Image Rollout
