@@ -192,18 +192,18 @@ jobs:
 
   ##### DEPLOY ####################################################################################
 
-  parse-environment:
-    name: Get Environment
+  parse-environment-tag:
+    name: Parse Environment Tag
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     runs-on: ubuntu-latest
     outputs:
       deploy-sdpr: ${{ steps.parse.outputs.deploy-sdpr }}
       deploy-theq: ${{ steps.parse.outputs.deploy-theq }}
-      environment: ${{ steps.parse.outputs.environment }}
+      environment-tag: ${{ steps.parse.outputs.environment-tag }}
       image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
 
     steps:
-    - name: Parse Environment
+    - name: Parse Tag
       id: parse
       run: |
         DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == "QMS *" ]]; then echo true; else echo false; fi)
@@ -218,25 +218,54 @@ jobs:
         echo ENVIRONMENT_TAG:$ENVIRONMENT_TAG
         echo "::set-output name=environment-tag::$ENVIRONMENT_TAG"
 
-  tag:
-    name: Tag
-    needs: parse-environment
-    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-    secrets:
-      namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
-      openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
-    with:
-      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.parse-environment.outputs.image-tags }}
-      tag-to: ${{ needs.parse-environment.outputs.environment-tag }}
+    - name: tagit
+      uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+      with:
+        image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
+        tag-from: ${{ needs.parse-environment-tag.outputs.image-tags }}
+        tag-to: ${{ needs.parse-environmen-tagt.outputs.environment-tag }}
+        namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
+        openshift-api: ${{ secrets.OPENSHIFT_API }}
+        openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
+
+#   tag:
+#     name: Tag
+#     needs: parse-environment-tag
+#     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+#     secrets:
+#       namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
+#       openshift-api: ${{ secrets.OPENSHIFT_API }}
+#       openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
+#     with:
+#       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
+#       tag-from: ${{ needs.parse-environment-tag.outputs.image-tags }}
+#       tag-to: ${{ needs.parse-environmen-tagt.outputs.environment-tag }}
 
   wait-for-rollout:
     name: Wait for Image Rollout
-    needs: tag
+    needs: parse-environment-tag
     environment: ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Rollout Confirmed
         run: echo Confirmed
+
+  owasp-staff:
+    name: OWASP ZAP Scan
+    needs: wait-for-rollout
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          allow_issue_writing: false
+          target: ${{ secrets.ZAP_STAFFURL }}
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: OWASP ZAP - Staff Front End Report
+          path: report_html.html
+
