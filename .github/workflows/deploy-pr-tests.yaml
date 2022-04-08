@@ -1,0 +1,236 @@
+name: Pull Request Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull Request Number:"
+        type: string
+        required: true
+      namespace:
+        description: "Deploy To:"
+        type: choice
+        required: true
+        options:
+        - TheQ Dev
+        - QMS Dev
+        - TheQ Test
+
+jobs:
+
+  ##### SETUP ######################################################################################
+
+  parse-namespace:
+    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    runs-on: ubuntu-latest
+    outputs:
+      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-theq: ${{ steps.parse.outputs.push-theq }}
+
+    steps:
+    # Use the "namespace" input value to figure out which "-tools" namespace to push the images.
+    - name: Parse Namespace
+      id: parse
+      run: |
+        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
+        echo PUSH_QMS:$PUSH_QMS
+        echo "::set-output name=push-qms::$PUSH_QMS"
+        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == TheQ* ]]; then echo true; else echo false; fi)
+        echo PUSH_THEQ:$PUSH_THEQ
+        echo "::set-output name=push-theq::$PUSH_THEQ"
+  create-image-tags:
+    name: Create Image Tags
+    needs: parse-namespace
+    runs-on: ubuntu-latest
+    outputs:
+      image-tags: ${{ steps.get-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.parse-namespace.outputs.push-qms }}
+      push-theq: ${{ needs.parse-namespace.outputs.push-theq }}
+
+    steps:
+    - name: Get Image Tags
+      id: get-image-tags
+      run: |
+        IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
+        echo IMAGE_TAGS:$IMAGE_TAGS
+        echo "::set-output name=image-tags::$IMAGE_TAGS"
+  ##### BUILD ######################################################################################
+
+  appointment-frontend:
+    name: appointment-frontend
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: appointment-frontend
+      image-name: appointment-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  feedback-api:
+    name: feedback-api
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: feedback-api
+      image-name: feedback-api
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  notifications-api:
+    name: notifications-api
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: notifications-api
+      image-name: notifications-api
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  queue-management-api:
+    name: queue-management-api
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: api
+      image-name: queue-management-api
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  queue-management-frontend:
+    name: queue-management-frontend
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: frontend
+      image-name: queue-management-frontend
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  send-appointment-reminder-crond:
+    name: send-appointment-reminder-crond
+    needs: create-image-tags
+    uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
+      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
+      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
+      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
+      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      directory: jobs/appointment_reminder
+      image-name: send-appointment-reminder-crond
+      image-tags: ${{ needs.create-image-tags.outputs.image-tags }}
+      push-qms: ${{ needs.create-image-tags.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.create-image-tags.outputs.push-theq == 'true' }}
+
+  ##### DEPLOY ####################################################################################
+
+  parse-environment:
+    name: Get Environment
+    needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+    runs-on: ubuntu-latest
+    outputs:
+      deploy-qms: ${{ steps.parse.outputs.deploy-qms }}
+      deploy-theq: ${{ steps.parse.outputs.deploy-theq }}
+      environment: ${{ steps.parse.outputs.environment }}
+      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
+
+    steps:
+    - name: Parse Environment
+      id: parse
+      run: |
+        DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
+        echo DEPLOY_QMS:$DEPLOY_QMS
+        echo "::set-output name=deploy-qms::$DEPLOY_QMS"
+        DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == TheQ* ]]; then echo true; else echo false; fi)
+        echo DEPLOY_THEQ:$DEPLOY_THEQ
+        echo "::set-output name=deploy-theq::$DEPLOY_THEQ"
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | cut -d' ' -f2 | tr '[:upper:]' '[:lower:]')
+        echo ENVIRONMENT:$ENVIRONMENT
+        echo "::set-output name=environment::$ENVIRONMENT"
+  tag:
+    name: Tag
+    needs: parse-environment
+    uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
+    with:
+      image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
+      tag-from: ${{ needs.parse-environment.outputs.image-tags }}
+      tag-to: ${{ needs.parse-environment.outputs.environment }}
+
+  wait-for-rollout:
+    name: Wait for Image Rollout
+    needs: tag
+    environment: theq-dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Rollout Confirmed
+        run: echo Confirmed
