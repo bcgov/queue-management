@@ -234,7 +234,7 @@ jobs:
   wait-for-rollout:
     name: Wait for Image Rollout
     needs: tag
-    environment: ${{ inputs.environment }}
+    environment: ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
 
     steps:
