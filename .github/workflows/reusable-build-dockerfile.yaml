@@ -52,6 +52,9 @@ jobs:
   build:
     name: Dockerfile Build
     runs-on: ubuntu-latest
+    env: |
+      BUILD_LOGLEVEL: 2
+      NPM_CONFIG_LOGLEVEL: notice
     outputs:
       image-tags: ${{ steps.build-image.outputs.tags }}
 
