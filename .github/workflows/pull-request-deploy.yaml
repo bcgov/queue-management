@@ -1,4 +1,4 @@
-name: Build Pull Request
+name: Pull Request Deploy
 on:
   workflow_dispatch:
     inputs:
