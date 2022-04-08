@@ -321,7 +321,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!this.anyActiveDLKT) {
       try {
         // Removed redundant "await"
-        const resp = this.createAppointment()
+        const resp = await this.createAppointment()
         if (resp.appointment_id) {
           const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
           this.callSnowplow(mySP)
