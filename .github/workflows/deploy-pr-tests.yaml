@@ -6,14 +6,14 @@ on:
         description: "Pull Request Number:"
         type: string
         required: true
-      namespace:
+      environment:
         description: "Deploy To:"
         type: choice
         required: true
         options:
-        - TheQ Dev
-        - QMS Dev
-        - TheQ Test
+        - theq-dev
+        - qms-dev
+        - theq-test
 
 jobs:
 
@@ -31,12 +31,14 @@ jobs:
     - name: Parse Namespace
       id: parse
       run: |
-        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
+        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == qms-* ]]; then echo true; else echo false; fi)
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
-        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == TheQ* ]]; then echo true; else echo false; fi)
+
+        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == theq-* ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
+
   create-image-tags:
     name: Create Image Tags
     needs: parse-namespace
@@ -53,6 +55,7 @@ jobs:
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
+
   ##### BUILD ######################################################################################
 
   appointment-frontend:
@@ -203,15 +206,18 @@ jobs:
     - name: Parse Environment
       id: parse
       run: |
-        DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
+        DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == qms-* ]]; then echo true; else echo false; fi)
         echo DEPLOY_QMS:$DEPLOY_QMS
         echo "::set-output name=deploy-qms::$DEPLOY_QMS"
-        DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == TheQ* ]]; then echo true; else echo false; fi)
+
+        DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == theq-* ]]; then echo true; else echo false; fi)
         echo DEPLOY_THEQ:$DEPLOY_THEQ
         echo "::set-output name=deploy-theq::$DEPLOY_THEQ"
-        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | cut -d' ' -f2 | tr '[:upper:]' '[:lower:]')
+
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | cut -d'-' -f2)
         echo ENVIRONMENT:$ENVIRONMENT
         echo "::set-output name=environment::$ENVIRONMENT"
+
   tag:
     name: Tag
     needs: parse-environment
@@ -228,7 +234,7 @@ jobs:
   wait-for-rollout:
     name: Wait for Image Rollout
     needs: tag
-    environment: theq-dev
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
 
     steps:
