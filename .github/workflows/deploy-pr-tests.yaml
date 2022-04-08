@@ -218,16 +218,6 @@ jobs:
         echo ENVIRONMENT_TAG:$ENVIRONMENT_TAG
         echo "::set-output name=environment-tag::$ENVIRONMENT_TAG"
 
-#     - name: tagit
-#       uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
-#       with:
-#         image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-#         tag-from: ${{ needs.parse-environment-tag.outputs.image-tags }}
-#         tag-to: ${{ needs.parse-environmen-tagt.outputs.environment-tag }}
-#         namespace: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
-#         openshift-api: ${{ secrets.OPENSHIFT_API }}
-#         openshift-token: ${{ needs.parse-environment.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
-
   tag:
     name: Tag
     needs: parse-environment-tag
@@ -254,15 +244,23 @@ jobs:
   owasp-staff:
     name: OWASP ZAP Scan
     needs: wait-for-rollout
-    environment: ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get Parameters
+        id: parse
+        run: |
+          if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+            ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}
+          else
+            ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}
+          fi
+
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
-          target: ${{ secrets.ZAP_STAFFURL }}
+          target: $ZAP_STAFFURL
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
