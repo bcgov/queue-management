@@ -52,9 +52,6 @@ jobs:
   build:
     name: Dockerfile Build
     runs-on: ubuntu-latest
-    env:
-      BUILD_LOGLEVEL: 2
-      NPM_CONFIG_LOGLEVEL: notice
     outputs:
       image-tags: ${{ steps.build-image.outputs.tags }}
 
@@ -79,6 +76,9 @@ jobs:
       run: cd /var/tmp; df -h .
 
     - name: Buildah Build
+      env:
+        BUILD_LOGLEVEL: 2
+        NPM_CONFIG_LOGLEVEL: notice
       id: build-image
       uses: redhat-actions/buildah-build@v2
       with:
