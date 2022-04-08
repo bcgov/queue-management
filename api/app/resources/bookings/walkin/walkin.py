@@ -29,6 +29,9 @@ from app.auth.auth import jwt
 from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 
+# Defining String constants to appease SonarQube
+api_down_const = 'API is down'
+
 @api.route("/citizen/all-walkin/<string:id>/", methods=["GET"])
 class WalkinDetail(Resource):
 
@@ -70,7 +73,7 @@ class WalkinDetail(Resource):
             return {}
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500
 
     def get_my_office_timezone(self, citizen=False, office=False):
         office_id = False
@@ -346,7 +349,7 @@ class SmartBoradQDetails(Resource):
             return {}
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500
 
 @api.route("/smardboard/Q-details/upcoming/<string:id>", methods=["GET"])
 class SmartBoradQDetails(Resource):
@@ -378,4 +381,4 @@ class SmartBoradQDetails(Resource):
             return {}
         except exc.SQLAlchemyError as e:
             print(e)
-            return {'message': 'API is down'}, 500
+            return {'message': api_down_const}, 500

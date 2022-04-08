@@ -53,7 +53,7 @@ class OfficeConfig(Base):
 
     @_list_columns.setter
     def _list_columns(self, value):
-        pass
+        pass # This is empty for some reason.
 
     def get_query(self):
         if current_user.role.role_code == 'SUPPORT':
@@ -108,7 +108,9 @@ class OfficeConfig(Base):
             ("1", 'On - Show Currently Waiting  from bottom in Smartboard')
         ],
     }
-    column_labels = {'sb': 'Smartboard', 'timezone.timezone_name': 'Timezone Name'}
+    # Defining String constants to appease SonarQube
+    timezone_name_const = 'timezone.timezone_name'
+    column_labels = {'sb': 'Smartboard', timezone_name_const: 'Timezone Name'}
     column_searchable_list = ('office_name',)
     column_sortable_list = ['office_name', 'sb', 'deleted', 'exams_enabled_ind']
     column_list_GA = ['office_name',
@@ -118,7 +120,7 @@ class OfficeConfig(Base):
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
                    'counters',
-                   'timezone.timezone_name',
+                   timezone_name_const,
                    'latitude',
                    'longitude',
                    'office_appointment_message',
@@ -148,7 +150,7 @@ class OfficeConfig(Base):
                    'exams_enabled_ind',
                    'appointments_enabled_ind',
                    'counters',
-                   'timezone.timezone_name',
+                   timezone_name_const,
                    'latitude',
                    'longitude',
                    'office_appointment_message',
@@ -270,7 +272,7 @@ class OfficeConfig(Base):
     }
 
     column_labels = {'sb': 'Smartboard Layout',
-                     'timezone.timezone_name': 'Timezone Name',
+                     timezone_name_const: 'Timezone Name',
                      'exams_enabled_ind': 'Exams Enabled',
                      'appointments_enabled_ind': 'Appointments Enabled',
                      'office_appointment_message': 'Online Appointment Message',

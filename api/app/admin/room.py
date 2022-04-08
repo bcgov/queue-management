@@ -59,8 +59,11 @@ class RoomConfig(Base):
     edit_modal = False
     can_delete = False
 
+    # Defining String constants to appease SonarQube
+    office_name_const = 'office.office_name'
+
     column_list = [
-        'office.office_name',
+        office_name_const,
         'room_name',
         'capacity',
         'color',
@@ -72,7 +75,7 @@ class RoomConfig(Base):
         'booking'
     ]
 
-    column_labels = {'office.office_name': 'Office Name',
+    column_labels = {office_name_const: 'Office Name',
                      'deleted': 'Deleted'}
 
     form_create_rules = (
@@ -96,11 +99,11 @@ class RoomConfig(Base):
         'capacity',
         'color',
         'deleted',
-        'office.office_name'
+        office_name_const
     ]
 
     column_searchable_list = {
-        'office.office_name'
+        office_name_const
     }
     
 
