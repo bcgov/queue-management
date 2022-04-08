@@ -1,4 +1,11 @@
-# GitHub Actions CI/CD Pipeline
+# GitHub Actions CI/CD Pipelines
+
+The GitHub Action `build-pull-request.yaml` is only run manually. It will:
+
+- Take a pull request number and environment as input parameters
+- Build images using either Dockerfile or Source to Image (S2I) builds
+- Push the built images to the required `-tools` namespace
+- Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
 
 The GitHub Action `queue-management.yaml` is _currently_ only run manually. It will:
 
