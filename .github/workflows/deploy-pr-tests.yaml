@@ -241,9 +241,11 @@ jobs:
       - name: Rollout Confirmed
         run: echo Confirmed
 
+  ##### TEST ######################################################################################
+
   newman-theq-dev:
     name: Newman Tests
-    if: github.event.inputs.namespace == "The Q Dev"
+    if: github.event.inputs.namespace == 'The Q Dev'
     needs: wait-for-rollout
     runs-on: ubuntu-latest
 
