@@ -1,4 +1,4 @@
-name: Pull Request Deploy New ${{ github.event.inputs.pr-number }}
+name: Pull Request Deploy New
 on:
   workflow_dispatch:
     inputs:
