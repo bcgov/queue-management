@@ -243,6 +243,7 @@ jobs:
 
   ##### TEST ######################################################################################
 
+  # Only run Newman for The Q dev - other environments will fail due to the data that is set up.
   newman-theq-dev:
     name: Newman Tests
     if: github.event.inputs.namespace == 'The Q Dev'
@@ -363,4 +364,3 @@ jobs:
         with:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
-
