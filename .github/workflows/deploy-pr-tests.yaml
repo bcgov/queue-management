@@ -251,16 +251,16 @@ jobs:
         id: parse
         run: |
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-            export ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}
+            echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
           else
-            export ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}
+            echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
           fi
 
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
-          target: $ZAP_STAFFURL
+          target: ${{ env.ZAP_STAFFURL }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
