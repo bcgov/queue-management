@@ -9,6 +9,27 @@ jobs:
 
   ##### SETUP ######################################################################################
 
+  wait-for-rollouts:
+    name: Wait for rollouts
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.NAMESPACE_THEQ }}
+        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
+        openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+
+    - name: Tag Images
+      run: |
+        echo foo
+        #for image in ${{ inputs.image-names }}; do
+        #  COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}"
+        #  echo $COMMAND
+        #  # $COMMAND
+        #done
+
   create-image-tags:
     name: Create Image Tags
     runs-on: ubuntu-latest
@@ -27,6 +48,8 @@ jobs:
         fi
         echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
+        
+        # oc -n df1ee0-tools get istag appointment-frontend:pr3
 
   ##### BUILD ######################################################################################
 
