@@ -241,6 +241,64 @@ jobs:
       - name: Rollout Confirmed
         run: echo Confirmed
 
+  newman-theq:
+    name: Newman Tests
+    needs: wait-for-rollout
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+
+    - name: Get Parameters
+      run: |
+          if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+            echo "POSTMAN_API_URL=${{ secrets.POSTMAN_API_URL_QMS_DEV }}" >> $GITHUB_ENV
+            echo "POSTMAN_AUTH_URL=${{ secrets.POSTMAN_AUTH_URL_DEV }}" >> $GITHUB_ENV
+            echo "POSTMAN_CLIENT_SECRET=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}" >> $GITHUB_ENV
+            echo "POSTMAN_CLIENTID=${{ secrets.POSTMAN_CLIENTID_DEV }}" >> $GITHUB_ENV
+            echo "POSTMAN_PUBLIC_API_URL=${{ secrets.POSTMAN_PUBLIC_API_URL_QMS_DEV }}" >> $GITHUB_ENV
+          else
+            ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+            if [ $ENVIRONMENT == "dev" ]; then
+              echo "POSTMAN_API_URL=${{ secrets.POSTMAN_API_URL_THEQ_DEV }}" >> $GITHUB_ENV
+              echo "POSTMAN_AUTH_URL=${{ secrets.POSTMAN_AUTH_URL_DEV }}" >> $GITHUB_ENV
+              echo "POSTMAN_CLIENT_SECRET=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}" >> $GITHUB_ENV
+              echo "POSTMAN_CLIENTID=${{ secrets.POSTMAN_CLIENTID_DEV }}" >> $GITHUB_ENV
+              echo "POSTMAN_PUBLIC_API_URL=${{ secrets.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}" >> $GITHUB_ENV
+            else
+              echo "POSTMAN_API_URL=${{ secrets.POSTMAN_API_URL_THEQ_TEST }}" >> $GITHUB_ENV
+              echo "POSTMAN_AUTH_URL=${{ secrets.POSTMAN_AUTH_URL_TEST }}" >> $GITHUB_ENV
+              echo "POSTMAN_CLIENT_SECRET=${{ secrets.POSTMAN_CLIENT_SECRET_TEST }}" >> $GITHUB_ENV
+              echo "POSTMAN_CLIENTID=${{ secrets.POSTMAN_CLIENTID_TEST }}" >> $GITHUB_ENV
+              echo "POSTMAN_PUBLIC_API_URL=${{ secrets.POSTMAN_PUBLIC_API_URL_THEQ_TEST }}" >> $GITHUB_ENV
+            fi
+          fi
+
+    - name: NPM Install
+      run: |
+        cd api/postman
+        npm install newman
+
+    - name: Run Newman Tests
+      run: |
+        cd api/postman
+        node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
+          -e postman_env.json \
+          --delay-request 250 \
+          --global-var 'auth_url=${{ env.POSTMAN_AUTH_URL }}' \
+          --global-var 'clientid=${{ env.POSTMAN_CLIENTID }}' \
+          --global-var 'client_secret=${{ env.POSTMAN_CLIENT_SECRET }}' \
+          --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
+          --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
+          --global-var 'public_url=${{ env.POSTMAN_PUBLIC_API_URL }}' \
+          --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
+          --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
+          --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
+          --global-var 'url=${{ env.POSTMAN_API_URL }}' \
+          --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
+          --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
+          
   owasp-staff:
     name: OWASP ZAP Scan
     needs: wait-for-rollout
@@ -248,7 +306,6 @@ jobs:
 
     steps:
       - name: Get Parameters
-        id: parse
         run: |
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
             echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
@@ -280,7 +337,6 @@ jobs:
 
     steps:
       - name: Get Parameters
-        id: parse
         run: |
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
