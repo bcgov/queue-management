@@ -251,13 +251,13 @@ jobs:
         id: parse
         run: |
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-            echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
           else
             ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
             if [ $ENVIRONMENT == "dev" ]; then
-              echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
+              echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
             else
-              echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
+              echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
             fi
           fi
 
@@ -265,7 +265,39 @@ jobs:
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
-          target: ${{ env.ZAP_STAFFURL }}
+          target: ${{ env.ZAP_URL }}
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: OWASP ZAP - Staff Front End Report
+          path: report_html.html
+
+  owasp-appointment:
+    name: OWASP ZAP Scan of Appointments
+    needs: wait-for-rollout
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Parameters
+        id: parse
+        run: |
+          if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
+          else
+            ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+            if [ $ENVIRONMENT == "dev" ]; then
+              echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
+            else
+              echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          allow_issue_writing: false
+          target: ${{ env.ZAP_URL }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
