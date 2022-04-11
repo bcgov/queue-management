@@ -253,7 +253,12 @@ jobs:
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
             echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
           else
-            echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
+            ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+            if [ $ENVIRONMENT == "dev" ]; then
+              echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
+            else
+              echo "ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
+            fi
           fi
 
       - name: OWASP ZAP Scan
