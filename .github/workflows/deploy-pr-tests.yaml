@@ -251,9 +251,9 @@ jobs:
         id: parse
         run: |
           if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-            ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}
+            export ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}
           else
-            ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}
+            export ZAP_STAFFURL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}
           fi
 
       - name: OWASP ZAP Scan
