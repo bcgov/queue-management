@@ -1,11 +1,14 @@
 # GitHub Actions CI/CD Pipelines
 
-The GitHub Action `build-pull-request.yaml` is only run manually. It will:
+The GitHub Action `pull-request-build.yaml` is only run manually. It will:
 
 - Take a pull request number and environment as input parameters
 - Build images using either Dockerfile or Source to Image (S2I) builds
 - Push the built images to the required `-tools` namespace
 - Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
+- Wait for rollout of the new images in the deployment environment
+- Run OWASP ZAP tests
+- Run Newman tests if the deployment environment is The Q dev
 
 The GitHub Action `queue-management.yaml` is _currently_ only run manually. It will:
 
@@ -17,11 +20,11 @@ The GitHub Action `queue-management.yaml` is _currently_ only run manually. It w
 
 ## Setup
 
-The following setup is needed to run the Actions.
+The following setup items are needed to run the Actions.
 
 ### Environments
 
-The Actions use GitHub `Environments` to provide a way to approve when a build is deployed to an environment. When the approval job is reached, the reviewers for the defined environment will be notified that their approval is needed to allow the deployment.
+The Actions use GitHub `Environments` to require approval before a build is deployed to an environment. When the approval job is reached, the reviewers for the defined environment will be notified that their approval is needed to allow the deployment.
 
 Set up the following environments in your repository Settings:
 
@@ -34,14 +37,17 @@ Set up the following environments in your repository Settings:
 
 In each of these environments set up `Environment protection rules` with at least one `Required reviewer`.
 
-TODO: document how to set up for new members.
-
 ### OpenShift Service Accounts
 
-A Service Account is used to push images to OpenShift, and then to tag those images for deployment to different environments. The Service Account called `github-actions` needs to be set up in the two namespaces where the images are pushed. Using [the OpenShift template](openshift/service_account.yaml), for each of the two namespaces run:
+A Service Account is used to:
+- push images to OpenShift `-tools` namespaces
+- tag images for deployment to different environments
+- wait for new images to roll out before tests are run
+
+The Service Account named `github-actions` needs to be set up in all the `-tools`, `-dev`, `-test`, and `-prod` namespaces for each of the two environments. Using [the OpenShift template](openshift/service_account.yaml) run:
 
 ```
-$  oc process -f service-account.yaml | oc -n <namespace> apply -f -
+$ oc process -f service-account.yaml | oc -n <namespace> apply -f -
 ```
 
 ### GitHub Secrets
