@@ -44,7 +44,9 @@ A Service Account is used to:
 - tag images for deployment to different environments
 - wait for new images to roll out before tests are run
 
-The Service Account named `github-actions` needs to be set up in all the `-tools`, `-dev`, `-test`, and `-prod` namespaces for both QMS and The Q. Using [the OpenShift template](openshift/service_account.yaml) run:
+The Service Account named `github-actions` needs to be set up in all the `-tools`, `-dev`, `-test`, and `-prod` namespaces for both QMS and The Q. This Service Account will have the bare minimum of permissions that are needed to perform the `oc` calls needed for these Actions.
+
+Using [the OpenShift template](openshift/service_account.yaml) run:
 
 ```
 $ oc process -f service-account.yaml | oc -n <namespace> apply -f -
