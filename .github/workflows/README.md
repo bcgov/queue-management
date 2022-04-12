@@ -34,6 +34,8 @@ Set up the following environments in your repository Settings:
 
 In each of these environments set up `Environment protection rules` with at least one `Required reviewer`.
 
+TODO: document how to set up for new members.
+
 ### OpenShift Service Accounts
 
 A Service Account is used to push images to OpenShift, and then to tag those images for deployment to different environments. The Service Account called `github-actions` needs to be set up in the two namespaces where the images are pushed. Using [the OpenShift template](openshift/service_account.yaml), for each of the two namespaces run:
