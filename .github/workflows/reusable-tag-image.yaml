@@ -49,6 +49,7 @@ jobs:
 
   wait-for-rollouts:
     name: Wait for Rollouts
+    needs: tag
     runs-on: ubuntu-latest
 
     steps:
