@@ -54,17 +54,16 @@ class AppointmentDelete(Resource):
             SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         # Do not log snowplow events or send emails if it's a draft.
-        if not appointment.is_draft:
+        # If the appointment is public user's and if staff deletes it send email
+        if not appointment.is_draft and csr:
 
-            # If the appointment is public user's and if staff deletes it send email
-            if csr:
-                office = Office.find_by_id(appointment.office_id)
+            office = Office.find_by_id(appointment.office_id)
 
-                # Send blackout email
-                try:
-                    send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
-                except Exception as exc:
-                    pprint(f'Error on token generation - {exc}')
+            # Send blackout email
+            try:
+                send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
+            except Exception as exc:
+                pprint(f'Error on token generation - {exc}')
 
         db.session.delete(appointment)
         db.session.commit()

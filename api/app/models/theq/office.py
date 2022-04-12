@@ -27,39 +27,42 @@ class Status(enum.Enum):
 
 
 class Office(Base):
-
+    # Defining String constants to appease SonarQube
+    office_id_const = 'office.office_id'
+    service_id_const = 'service.service_id'
+    
     office_service = db.Table(
         'office_service',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id_const, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id_const, ondelete="CASCADE"), primary_key=True))
 
     office_quick_list = db.Table(
         'office_quick_list',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id_const, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id_const, ondelete="CASCADE"), primary_key=True))
 
     office_back_office_list = db.Table(
         'office_back_office_list',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id_const, ondelete="CASCADE"), primary_key=True),
         db.Column('service_id', db.Integer,
-                db.ForeignKey('service.service_id', ondelete="CASCADE"), primary_key=True))
+                db.ForeignKey(service_id_const, ondelete="CASCADE"), primary_key=True))
 
     office_counter= db.Table(
         'office_counter',
         db.Column('office_id', db.Integer,
-                db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                db.ForeignKey(office_id_const, ondelete="CASCADE"), primary_key=True),
         db.Column('counter_id', db.Integer,
                 db.ForeignKey('counter.counter_id', ondelete="CASCADE"), primary_key=True))
 
     office_timeslot = db.Table(
         'office_timeslot',
         db.Column('office_id', db.Integer,
-                  db.ForeignKey('office.office_id', ondelete="CASCADE"), primary_key=True),
+                  db.ForeignKey(office_id_const, ondelete="CASCADE"), primary_key=True),
         db.Column('time_slot_id', db.Integer,
                   db.ForeignKey('timeslot.time_slot_id', ondelete="CASCADE"), primary_key=True))
 

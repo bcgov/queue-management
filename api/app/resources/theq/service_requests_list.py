@@ -26,12 +26,15 @@ from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
 
+# Defining String constants to appease SonarQube
+csr_const = "    --> CSR:       "
+json_data_const = "    --> json_data: "
 
 def get_service_request(self, json_data, csr):
 
     if not json_data:
         print("==> No json_data in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
+        print(csr_const + csr.username)
         return (None, "No input data received for creating service request", 400)
 
     try:
@@ -39,21 +42,21 @@ def get_service_request(self, json_data, csr):
 
     except ValidationError as err:
         print("==> ValidationError in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
+        print(csr_const + csr.username)
         print(err)
         return (None, err.messages, 422)
     except KeyError as err:
         print("==> No service_request parameter in POST /service_requests/")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data))
+        print(csr_const + csr.username)
+        print(json_data_const + json.dumps(json_data))
         print(err)
         return (None, str(err), 422)
 
     #  If service request is null, an error.
     if service_request is None:
         print("==> service_request is None in POST /service_requests/, error in schema.load")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        print(csr_const + csr.username)
+        print(json_data_const + json.dumps(json_data['service_request']))
         return (None, "Service request is none trying to create service request", 400)
 
     #  All OK.  Return the service request.
@@ -66,13 +69,13 @@ def get_service(service_request, json_data, csr):
         service = Service.query.get(service_request.service_id)
     except:
         print("==> An exception getting service info")
-        print("    --> CSR:       " + csr.username)
-        print("    --> json_data: " + json.dumps(json_data['service_request']))
+        print(csr_const + csr.username)
+        print(json_data_const + json.dumps(json_data['service_request']))
         return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
 
     if service.parent_id is None:
         print("==> CSR has selected a category, rather than a service.  This should not be possible")
-        print("    --> CSR:       " + csr.username)
+        print(csr_const + csr.username)
         print("    --> Service:   " + service.service_name)
         return (None, "CSR has selected a category, rather than a service. Should not be possible", 400)
 
@@ -110,8 +113,8 @@ class ServiceRequestsList(Resource):
 
         except:
             print("==> An exception getting citizen info")
-            print("    --> CSR:       " + csr.username)
-            print("    --> json_data: " + json.dumps(json_data['service_request']))
+            print(csr_const + csr.username)
+            print(json_data_const + json.dumps(json_data['service_request']))
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400

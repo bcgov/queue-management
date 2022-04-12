@@ -1,0 +1,426 @@
+{
+  "offices": [
+    {
+      "digital_signage_message_1": null,
+      "digital_signage_message": null,
+      "max_person_appointment_per_day": 1,
+      "check_in_reminder_msg": null,
+      "appointment_duration": 30,
+      "online_status": "Status.SHOW",
+      "timeslots": [],
+      "check_in_notification": null,
+      "sb": {
+        "sb_type": "nocallonsmartboard",
+        "sb_id": 3
+      },
+      "appointments_days_limit": 30,
+      "digital_signage_message_3": null,
+      "office_id": 2,
+      "office_appointment_message": null,
+      "office_name": "100 Mile House",
+      "office_number": 1,
+      "appointments_enabled_ind": 1,
+      "exams_enabled_ind": 0,
+      "sb_id": 3,
+      "counters": [
+        {
+          "counter_name": "Quick Trans",
+          "counter_id": 1
+        },
+        {
+          "counter_name": "Counter",
+          "counter_id": 2
+        }
+      ],
+      "timezone": {
+        "timezone_name": "America/Creston",
+        "timezone_id": 4
+      },
+      "civic_address": "100 Mile House, BC",
+      "quick_list": [],
+      "telephone": "999-999-9999",
+      "digital_signage_message_2": null,
+      "deleted": null,
+      "back_office_list": [],
+      "external_map_link": null,
+      "show_currently_waiting_bottom": null,
+      "currently_waiting": null,
+      "automatic_reminder_at": null,
+      "longitude": -121.295,
+      "latitude": 51.644
+    },
+    {
+      "digital_signage_message_1": null,
+      "digital_signage_message": null,
+      "max_person_appointment_per_day": 1,
+      "check_in_reminder_msg": null,
+      "appointment_duration": 30,
+      "online_status": "Status.HIDE",
+      "timeslots": [],
+      "check_in_notification": null,
+      "sb": {
+        "sb_type": "callbyname",
+        "sb_id": 1
+      },
+      "appointments_days_limit": 30,
+      "digital_signage_message_3": null,
+      "office_id": 4,
+      "office_appointment_message": null,
+      "office_name": "Pesticide Offsite",
+      "office_number": 997,
+      "appointments_enabled_ind": 0,
+      "exams_enabled_ind": 1,
+      "sb_id": 1,
+      "counters": [
+        {
+          "counter_name": "Quick Trans",
+          "counter_id": 1
+        },
+        {
+          "counter_name": "Counter",
+          "counter_id": 2
+        }
+      ],
+      "timezone": {
+        "timezone_name": "America/Vancouver",
+        "timezone_id": 1
+      },
+      "civic_address": null,
+      "quick_list": [],
+      "telephone": null,
+      "digital_signage_message_2": null,
+      "deleted": null,
+      "back_office_list": [],
+      "external_map_link": null,
+      "show_currently_waiting_bottom": null,
+      "currently_waiting": null,
+      "automatic_reminder_at": null,
+      "longitude": null,
+      "latitude": null
+    },
+    {
+      "digital_signage_message_1": null,
+      "digital_signage_message": null,
+      "max_person_appointment_per_day": 10,
+      "check_in_reminder_msg": null,
+      "appointment_duration": 30,
+      "online_status": "Status.SHOW",
+      "timeslots": [],
+      "check_in_notification": null,
+      "sb": {
+        "sb_type": "callbyticket",
+        "sb_id": 2
+      },
+      "appointments_days_limit": 30,
+      "digital_signage_message_3": null,
+      "office_id": 1,
+      "office_appointment_message": "Test Message",
+      "office_name": "Test Office",
+      "office_number": 999,
+      "appointments_enabled_ind": 1,
+      "exams_enabled_ind": 1,
+      "sb_id": 2,
+      "counters": [
+        {
+          "counter_name": "Quick Trans",
+          "counter_id": 1
+        },
+        {
+          "counter_name": "Counter",
+          "counter_id": 2
+        }
+      ],
+      "timezone": {
+        "timezone_name": "America/Vancouver",
+        "timezone_id": 1
+      },
+      "civic_address": "4000 Seymour",
+      "quick_list": [],
+      "telephone": "999-999-9999",
+      "digital_signage_message_2": null,
+      "deleted": null,
+      "back_office_list": [],
+      "external_map_link": null,
+      "show_currently_waiting_bottom": null,
+      "currently_waiting": null,
+      "automatic_reminder_at": null,
+      "longitude": -123.377106,
+      "latitude": 48.458359
+    },
+    {
+      "quick_list": [
+        {
+          "service_desc": "Customer Crisis Fund - SC1148 - Providnng CCF information, assisting with online or manual applications, submitting manual applications.",
+          "service_code": "BC Hydro - 002",
+          "deleted": null,
+          "prefix": "A",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 1,
+          "service_name": "BC Hydro - CCF",
+          "parent_id": 4,
+          "online_link": "https://app.bchydro.com/ccf-application",
+          "is_dlkt": null,
+          "service_id": 502,
+          "online_availability": "Availability.SHOW",
+          "external_service_name": "BC Hydro Customer Crisis Fund (CCF)",
+          "email_paragraph": "",
+          "parent": {
+            "service_name": "BC Hydro"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "MHR - Providing information, Transport permits, Basic Transfers, forms, etc.",
+          "service_code": "BC Registry - 003",
+          "deleted": null,
+          "prefix": "A",
+          "timeslot_duration": 30,
+          "css_colour": null,
+          "display_dashboard_ind": 1,
+          "service_name": "Manufactured Homes",
+          "parent_id": 7,
+          "online_link": "https://www2.gov.bc.ca/gov/content/housing-tenancy/owning-a-home/manufactured-home-registry",
+          "is_dlkt": null,
+          "service_id": 145,
+          "online_availability": "Availability.DISABLE",
+          "external_service_name": "Manufactured, Mobile or Trailer Homes",
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "BC Registry"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "BC Reg -Name Approval Request, Society/Prop/Part reg. assistance or payment, change of business name, certification of good standing, change of business nature, annual report, change of directors, change of address, etc.",
+          "service_code": "BC Registry - 002",
+          "deleted": null,
+          "prefix": "A",
+          "timeslot_duration": 30,
+          "css_colour": null,
+          "display_dashboard_ind": 1,
+          "service_name": "Business Registration and Management",
+          "parent_id": 7,
+          "online_link": "https://onestop.gov.bc.ca/",
+          "is_dlkt": null,
+          "service_id": 154,
+          "online_availability": "Availability.DISABLE",
+          "external_service_name": "Business Registration and Management",
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "BC Registry"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "BC Hydro- SC1043  Payments, general information or program assistance (excluding CCF).",
+          "service_code": "BC Hydro - 001",
+          "deleted": null,
+          "prefix": "A",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 1,
+          "service_name": "BC Hydro - Payment/Services",
+          "parent_id": 4,
+          "online_link": "https://app.bchydro.com/accounts-billing/bill-payment/ways-to-pay.html",
+          "is_dlkt": null,
+          "service_id": 130,
+          "online_availability": "Availability.DISABLE",
+          "external_service_name": "BC Hydro Payment",
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "BC Hydro"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "BC Reg -Providing Information, other payments, forms, etc.",
+          "service_code": "BC Registry - 004",
+          "deleted": null,
+          "prefix": "A",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 1,
+          "service_name": "Other - BC Reg",
+          "parent_id": 7,
+          "online_link": null,
+          "is_dlkt": null,
+          "service_id": 157,
+          "online_availability": "Availability.HIDE",
+          "external_service_name": null,
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "BC Registry"
+          },
+          "actual_service_ind": 1
+        }
+      ],
+      "civic_address": "403-771 Vernon Ave,Victoria",
+      "digital_signage_message_1": "",
+      "timezone": {
+        "timezone_name": "America/Vancouver",
+        "timezone_id": 3
+      },
+      "timeslots": [
+        {
+          "day_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "end_time": "12:00:00",
+          "no_of_slots": 2,
+          "office": 202,
+          "start_time": "11:00:00"
+        },
+        {
+          "day_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "end_time": "10:45:00",
+          "no_of_slots": 2,
+          "office": 202,
+          "start_time": "09:45:00"
+        },
+        {
+          "day_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "end_time": "12:00:00",
+          "no_of_slots": 2,
+          "office": 202,
+          "start_time": "09:00:00"
+        },
+        {
+          "day_of_week": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "end_time": "23:00:00",
+          "no_of_slots": 2,
+          "office": 202,
+          "start_time": "13:00:00"
+        }
+      ],
+      "exams_enabled_ind": 1,
+      "appointments_days_limit": 180,
+      "back_office_list": [
+        {
+          "service_desc": "All calls and reporting correlated to the COVID Traveler project.  TRACK EACH CALL separately.  ",
+          "service_code": "Back Office - 021",
+          "deleted": null,
+          "prefix": "B",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 0,
+          "service_name": "COVID Traveler Calls ",
+          "parent_id": 1,
+          "online_link": null,
+          "is_dlkt": null,
+          "service_id": 654,
+          "online_availability": "Availability.HIDE",
+          "external_service_name": null,
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "Back Office"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "Client Liaison/Program Specialist for ITA; Includes Job Aid work, CSR related meetings, document creation, field assistance, etc.",
+          "service_code": "Exams - 009",
+          "deleted": null,
+          "prefix": "B",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 0,
+          "service_name": "Liaison/Prog Specialist-ITA",
+          "parent_id": 13,
+          "online_link": null,
+          "is_dlkt": null,
+          "service_id": 533,
+          "online_availability": "Availability.HIDE",
+          "external_service_name": null,
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "Exams"
+          },
+          "actual_service_ind": 1
+        },
+        {
+          "service_desc": "Checking and reading emails, sending emails, etc. (for all circumstances)",
+          "service_code": "Back Office - 004",
+          "deleted": null,
+          "prefix": "B",
+          "timeslot_duration": null,
+          "css_colour": null,
+          "display_dashboard_ind": 0,
+          "service_name": "Emails (All)",
+          "parent_id": 1,
+          "online_link": null,
+          "is_dlkt": null,
+          "service_id": 253,
+          "online_availability": "Availability.HIDE",
+          "external_service_name": null,
+          "email_paragraph": null,
+          "parent": {
+            "service_name": "Back Office"
+          },
+          "actual_service_ind": 1
+        }
+      ],
+      "sb": {
+        "sb_type": "callbyname",
+        "sb_id": 1
+      },
+      "external_map_link": null,
+      "office_number": 94,
+      "telephone": "250 387-6121",
+      "show_currently_waiting_bottom": 1,
+      "digital_signage_message": null,
+      "automatic_reminder_at": 3,
+      "office_name": "Victoria",
+      "currently_waiting": null,
+      "appointment_duration": 30,
+      "office_appointment_message": "9am \u201310am reserved for seniors and people with underlying health issues.",
+      "check_in_notification": 1,
+      "sb_id": 1,
+      "latitude": 48.458359,
+      "office_id": 3,
+      "digital_signage_message_2": "",
+      "deleted": null,
+      "max_person_appointment_per_day": 99,
+      "digital_signage_message_3": "",
+      "longitude": -123.377106,
+      "counters": [
+        {
+          "counter_name": "Quick Trans",
+          "counter_id": 1
+        },
+        {
+          "counter_name": "Counter",
+          "counter_id": 2
+        }
+      ],
+      "check_in_reminder_msg": "you are 3rd in line -  please head back to the office",
+      "online_status": "Status.SHOW",
+      "appointments_enabled_ind": 1
+    }
+  ],
+  "errors": {}
+}

@@ -7,6 +7,7 @@
     <v-img
       v-if="!isWalkin"
       class="mx-2 bc-logo"
+      data-cy="header-image-bcgov"
       :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
       max-width="132"
       contain
@@ -20,7 +21,7 @@
       contain
       @click="goTo('home')"
     ></v-img>
-    <v-toolbar-title v-if="!isWalkin">Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
+    <v-toolbar-title v-if="!isWalkin">Service BC Appointments</v-toolbar-title>
     <v-spacer></v-spacer>
     <template v-if="((!isAuthenticated) && (!isWalkin))">
       <div class='d-flex'>

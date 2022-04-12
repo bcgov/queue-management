@@ -1420,7 +1420,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const user_contact_info = this.user_contact_info
     const createStatAxioObject = this.createStatAxioObject
     const rrule_array = this.rrule_array
-    const stat_dates = this.stat_dates
     const bulkApiCall = this.bulkApiCall
     const getOfficeRooms =  this.getOfficeRooms
     this.rrule_array = this.stat_dates
@@ -1454,28 +1453,19 @@ export default class AppointmentBlackoutModal extends Vue {
                 const office_room = await getOfficeRooms({'office_id': self.$store.state.user.office.office_id})
                 await office_room.forEach(function (room) {
                   const blackout_booking: any = {}
-                  if (room.id == '_offsite') {
-                    blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                    blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                    blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
-                    blackout_booking.booking_contact_information = user_contact_info,
-                    blackout_booking.stat_flag = true,
-                    blackout_booking.blackout_notes = item.note,
-                    blackout_booking.office_id = self.$store.state.user.office.office_id,
-                    blackout_booking.recurring_uuid = recurring_uuid
-                    blackout_booking.for_stat = true
-                  } else {
-                    blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                    blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                    blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name,
-                    blackout_booking.booking_contact_information = user_contact_info,
+                  // Removed duplicated code in the following "if" stmt. Dec23/21
+                  if (room.id != '_offsite') {
                     blackout_booking.room_id = room.id
-                    blackout_booking.stat_flag = true,
-                    blackout_booking.blackout_notes = item.note,
-                    blackout_booking.office_id = self.$store.state.user.office.office_id,
-                    blackout_booking.recurring_uuid = recurring_uuid
-                    blackout_booking.for_stat = true
                   }
+                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                  blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name
+                  blackout_booking.booking_contact_information = user_contact_info
+                  blackout_booking.stat_flag = true
+                  blackout_booking.blackout_notes = item.note
+                  blackout_booking.office_id = self.$store.state.user.office.office_id
+                  blackout_booking.recurring_uuid = recurring_uuid
+                  blackout_booking.for_stat = true
                   axiosArray.push(self.postBookingStat(blackout_booking))
                 })
               }
@@ -1500,28 +1490,18 @@ export default class AppointmentBlackoutModal extends Vue {
                   const office_room = await getOfficeRooms({'office_id': office.office_id})
                   await office_room.forEach(function (room) {
                     const blackout_booking: any = {}
-                    if (room.id == '_offsite') {
-                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                      blackout_booking.booking_contact_information = user_contact_info,
-                      blackout_booking.stat_flag = true,
-                      blackout_booking.blackout_notes = item.note,
-                      blackout_booking.office_id = office.office_id,
-                      blackout_booking.recurring_uuid = recurring_uuid
-                      blackout_booking.for_stat = true
-                    } else {
-                      blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                      blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      blackout_booking.booking_name = stat_user_name+'_'+office.office_name,
-                      blackout_booking.booking_contact_information = user_contact_info,
+                    if (room.id != '_offsite') {
                       blackout_booking.room_id = room.id
-                      blackout_booking.stat_flag = true,
-                      blackout_booking.blackout_notes = item.note,
-                      blackout_booking.office_id = office.office_id,
-                      blackout_booking.recurring_uuid = recurring_uuid
-                      blackout_booking.for_stat = true
                     }
+                    blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.booking_name = stat_user_name+'_'+office.office_name
+                    blackout_booking.booking_contact_information = user_contact_info
+                    blackout_booking.stat_flag = true
+                    blackout_booking.blackout_notes = item.note
+                    blackout_booking.office_id = office.office_id
+                    blackout_booking.recurring_uuid = recurring_uuid
+                    blackout_booking.for_stat = true
                     axiosArray.push(self.postBookingStat(blackout_booking))
                   })
                 })

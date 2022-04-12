@@ -1,6 +1,11 @@
 <template>
   <v-col>
-    <v-col class="feedback_view" :class="showFeedbackArea ? 'feedback_view_expanded':''" v-show="!$vuetify.breakpoint.xs">
+    <v-col
+      class="feedback_view"
+      :class="showFeedbackArea ? 'feedback_view_expanded':''"
+      v-show="!$vuetify.breakpoint.xs"
+      data-cy="feedback"
+    >
           <v-row class="feedback_container" :class="getFeedbackViewStyle()">
             <v-col>
               <v-col class="feedback_strip_parent">
@@ -356,7 +361,7 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
     this.feedbackRequest.variables.citizen_name.value = this.citizenName === '' ? 'None' : this.citizenName
     this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
-    this.feedbackRequest.variables.citizen_email.value = this.email === '' ? 'None' : this.email
+    this.feedbackRequest.variables.citizen_email.value = this.email === '' ? 'None' : this.email.trim()
     this.feedbackRequest.variables.service_date.value = this.getCurrentDateinFormat()
     this.feedbackRequest.variables.submit_date_time.value = this.getCurrentDateinFormat()
     const resp = await this.submitFeedback(this.feedbackRequest)
@@ -423,14 +428,18 @@ export default class Feedback extends Vue {
     const phoneCondition = this.phone !== undefined && this.phone !== ''
     const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
+      const formatResponse = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@\w+([.-]?\w+)*(\.\w+\s*)+$/.test(this.email) ? true : 'Email must be valid'
       if (emailCondition) {
-        const formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
       if (phoneCondition) {
+        if (this.email) {
+          this.emailRules = [formatResponse]
+        } else {
+          this.emailRules = [true]
+        }
         this.phoneRules = [true]
-        this.emailRules = [true]
       }
     } else {
       this.emailRules = ['Email or Phone is required']
