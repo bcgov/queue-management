@@ -12,18 +12,22 @@ on:
         required: true
         type: string
     secrets:
-      namespace:
+      namespace-deploys:
+        required: true
+      namespace-builds:
         required: true
       openshift-api:
         required: true
-      openshift-token:
+      token-deploys:
+        required: true
+      token-builds:
         required: true
     outputs:
       tag-from:
         value: ${{ jobs.build.outputs.tag-from }}
 
 jobs:
-  build:
+  tag:
     name: Tag Images
     runs-on: ubuntu-latest
     outputs:
@@ -33,9 +37,9 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ secrets.namespace }}
+        namespace: ${{ secrets.namespace-builds }}
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.openshift-token }}
+        openshift_token: ${{ secrets.token-builds }}
 
     - name: Tag Images
       run: |
@@ -43,4 +47,41 @@ jobs:
           COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}"
           echo $COMMAND
           # $COMMAND
+        done
+
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.namespace-deploys }}
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.token-deploys }}
+
+    - name: Wait for Rollouts
+      run: |
+        #
+        # Parameters: namespace deployment-config
+        #
+        wait_for_rollout () {
+          NAMESPACE_DEPLOY=$1
+          DEPLOYMENT_CONFIG=$2
+
+          STATUS=
+          while [ "$STATUS" != "Complete" ]; do
+            VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
+            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
+            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
+
+            echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
+
+            sleep 1
+          done
+        }
+
+        for image in ${{ inputs.image-names }}; do
+          wait_for_rollout ${{ secrets.namespace-deploys }} $image
         done
