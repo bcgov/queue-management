@@ -25,9 +25,12 @@ jobs:
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
+      namespace: ${{ steps.parse.outputs.namespace }}
       push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
+      token-builds: ${{ steps.parse.outputs.token-builds }}
+      token-deploys: ${{ steps.parse.outputs.token-deploys }}
 
     steps:
     # Use the input values to create more code-friendly values.
@@ -42,17 +45,43 @@ jobs:
         echo IMAGE_TAG:$IMAGE_TAG
         echo "::set-output name=image-tag::$IMAGE_TAG"
 
-        PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
+        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+          NAMESPACE=${{ secrets.NAMESPACE_QMS }}
+          PUSH_QMS=true
+          PUSH_THEQ=false
+          TOKEN_BUILDS=${{ secrets.NAMESPACE_QMS_PASSWORD }}
+          TOKEN_DEPLOYS=${{ secrets.NAMESPACE_QMS_DEV_PASSWORD }}
+        else
+          NAMESPACE=${{ secrets.NAMESPACE_THEQ }}
+          PUSH_QMS=false
+          PUSH_THEQ=true
+          TOKEN_BUILDS=${{ secrets.NAMESPACE_THEQ_PASSWORD }}
+          
+          if [ $ENVIRONMENT == "dev" ]; then
+            TOKEN_DEPLOYS=${{ secrets.NAMESPACE_THEQ_DEV_PASSWORD }}
+          else
+            TOKEN_DEPLOYS=${{ secrets.NAMESPACE_THEQ_TEST_PASSWORD }}
+          fi
+        fi
+
+        echo NAMESPACE:$NAMESPACE
+        echo "::set-output name=namespace::$NAMESPACE"
+
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
 
-        PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
+
+        echo TOKEN_BUILDS:$TOKEN_BUILDS
+        echo "::set-output name=token-builds::$TOKEN_BUILDS"
 
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
         echo "::set-output name=ref::$REF"
+
+        echo TOKEN_DEPLOYS:$TOKEN_DEPLOYS
+        echo "::set-output name=token-deploys::$TOKEN_DEPLOYS"
 
   ##### BUILD ######################################################################################
 
@@ -195,23 +224,14 @@ jobs:
     needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
-      namespace: ${{ needs.parse-inputs.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ || secrets.NAMESPACE_QMS }}
+      namespace: ${{ needs.parse-inputs.outputs.namespace }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      openshift-token: ${{ needs.parse-inputs.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
+      token-builds: ${{ needs.parse-inputs.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
+      token-deploys: ${{ needs.parse-inputs.outputs.deploy-theq == 'true' && secrets.NAMESPACE_THEQ_PASSWORD || secrets.NAMESPACE_QMS_PASSWORD }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
-
-  wait-for-rollout:
-    name: Wait for Image Rollout
-    needs: tag
-    environment: ${{ github.event.inputs.namespace }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Rollout Confirmed
-        run: echo Confirmed
 
   ##### TEST ######################################################################################
 
@@ -219,7 +239,7 @@ jobs:
   newman-theq-dev:
     name: Newman Tests
     if: github.event.inputs.namespace == 'The Q Dev'
-    needs: [parse-inputs, wait-for-rollout]
+    needs: [parse-inputs, tag]
     runs-on: ubuntu-latest
 
     steps:
@@ -252,7 +272,7 @@ jobs:
 
   owasp-staff:
     name: OWASP ZAP Scan
-    needs: [parse-inputs, wait-for-rollout]
+    needs: [parse-inputs, tag]
     runs-on: ubuntu-latest
 
     steps:
@@ -280,7 +300,7 @@ jobs:
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointments
-    needs: [parse-inputs, wait-for-rollout]
+    needs: [parse-inputs, tag]
     runs-on: ubuntu-latest
 
     steps:
