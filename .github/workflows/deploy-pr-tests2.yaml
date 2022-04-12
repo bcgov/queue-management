@@ -70,7 +70,7 @@ jobs:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: appointment-frontend
       image-name: appointment-frontend
-      image-tags: ${{ needs.parse-inputs.outputs.image-tags }}
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
@@ -90,7 +90,7 @@ jobs:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: feedback-api
       image-name: feedback-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tags }}
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
@@ -110,7 +110,7 @@ jobs:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: notifications-api
       image-name: notifications-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tags }}
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
@@ -133,7 +133,7 @@ jobs:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: api
       image-name: queue-management-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tags }}
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
@@ -156,7 +156,7 @@ jobs:
       ref: refs/pull/${{ github.event.inputs.pr-number }}/head
       directory: frontend
       image-name: queue-management-frontend
-      image-tags: ${{ needs.parse-inputs.outputs.image-tags }}
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
