@@ -257,7 +257,7 @@ jobs:
         run: |
           if [ "${{ needs.parse-inputs.outputs.push-qms }}" == "true" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
-          else if [ ${{ needs.parse-inputs.outputs.environment }} == "dev" ]; then
+          elif [ "${{ needs.parse-inputs.outputs.environment }}" == "dev" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
           else
             echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
@@ -285,7 +285,7 @@ jobs:
         run: |
           if [ "${{ needs.parse-inputs.outputs.push-qms }}" == "true" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
-          else if [ ${{ needs.parse-inputs.outputs.environment }} == "dev" ]; then
+          elif [ ${{ needs.parse-inputs.outputs.environment }} == "dev" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
           else
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
