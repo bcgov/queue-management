@@ -12,15 +12,15 @@ on:
         required: true
         type: string
     secrets:
-      namespace-deploys:
-        required: true
       namespace-builds:
+        required: true
+      namespace-deploys:
         required: true
       openshift-api:
         required: true
-      token-deploys:
-        required: true
       token-builds:
+        required: true
+      token-deploys:
         required: true
     outputs:
       tag-from:
