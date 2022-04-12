@@ -80,7 +80,7 @@ jobs:
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: appointment-frontend
-      image-name: appointment-frontend
+      image-name: appointment-nginx-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
@@ -166,7 +166,7 @@ jobs:
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: frontend
-      image-name: queue-management-frontend
+      image-name: queue-management-nginx-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
