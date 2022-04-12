@@ -59,33 +59,31 @@ There are many GitHub Secrets that are needed to run the Actions:
 | ARTIFACTORY_PASSWORD | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
 | ARTIFACTORY_REGISTRY | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
 | ARTIFACTORY_USERNAME | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
-| NAMESPACE_QMS | The `-tools` namespace name for the "QMS" deployment |
-| NAMESPACE_QMS_USERNAME | The Service Account name `github-actions` |
-| NAMESPACE_QMS_PASSWORD | The token for the Service Account `github-actions` |
-| NAMESPACE_THEQ |  The `-tools` namespace name for the "The Q" deployment |
-| NAMESPACE_THEQ_USERNAME | The Service Account name `github-actions` |
-| NAMESPACE_THEQ_PASSWORD | The token for the Service Account `github-actions` |
+| LICENCE_PLATE_QMS | The six character "licence plate" prefix for the QMS namespaces |
+| LICENCE_PLATE_THEQ | The six character "licence plate" prefix for The Q namespaces |
 | OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
 | OPENSHIFT_REGISTRY | The Image Registry used for pushing images to `-tools` namespaces |
-| POSTMAN_API_URL_QMS_DEV | The QMS dev API URL used to run tests |
 | POSTMAN_API_URL_THEQ_DEV | The Q dev API URL used to run tests |
-| POSTMAN_API_URL_THEQ_TEST | The Q test API URL used to run tests |
 | POSTMAN_AUTH_URL_DEV | The Keycloak server used to authenticate Postman clients in dev |
-| POSTMAN_AUTH_URL_TEST | The Keycloak server used to authenticate Postman clients in test |
 | POSTMAN_CLIENT_SECRET_DEV | The Client Secret used to run Postman tests in dev |
-| POSTMAN_CLIENT_SECRET_TEST | The Client Secret used to run Postman tests in test |
 | POSTMAN_CLIENTID_DEV | The Keycloak Client used to run Postman tests in dev |
-| POSTMAN_CLIENTID_TEST | The Keycloak Client used to run Postman tests in test |
 | POSTMAN_PASSWORD | The Password of the Keycloak user used to run The Q tests |
 | POSTMAN_PASSWORD_NONQTXN | The Password of the Keycloak user used to run non-Q tests |
 | POSTMAN_PASSWORD_PUBLIC_USER | The Password of the Keycloak user used to run public API tests |
-| POSTMAN_PUBLIC_API_URL_QMS_DEV | The QMS dev API URL used to run the non-Q tests |
 | POSTMAN_PUBLIC_API_URL_THEQ_DEV | The Q dev API URL used to run the non-Q tests |
-| POSTMAN_PUBLIC_API_URL_THEQ_TEST | The Q test API URL used to run the non-Q tests |
 | POSTMAN_PUBLIC_USERID | The Username of the Keycloak user used to run public API tests |
 | POSTMAN_REALM | The Keycloak realm used to run the Postman tests |
 | POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
 | POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
+| SA_PASSWORD_QMS_DEV | The token for the Service Account `github-actions` in the QMS dev namespace |
+| SA_PASSWORD_QMS_TEST | The token for the Service Account `github-actions` in the QMS test namespace |
+| SA_PASSWORD_QMS_TOOLS | The token for the Service Account `github-actions` in the QMS tools namespace |
+| SA_PASSWORD_QMS_PROD | The token for the Service Account `github-actions` in the QMS prod namespace |
+| SA_PASSWORD_THEQ_DEV | The token for the Service Account `github-actions` in The Q dev namespace |
+| SA_PASSWORD_THEQ_TEST | The token for the Service Account `github-actions` in The Q test namespace |
+| SA_PASSWORD_THEQ_TOOLS | The token for the Service Account `github-actions` in The Q tools namespace |
+| SA_PASSWORD_THEQ_PROD | The token for the Service Account `github-actions` in The Q prod namespace |
+| SA_USERNAME | The name of the Service Account: `github-actions` in namespaces |
 | ZAP_APPTMNTURL_QMS_DEV | The URL of the QMS dev Appointments application used for running the OWASP ZAP tests |
 | ZAP_APPTMNTURL_THEQ_DEV | The URL of The Q dev Appointments application used for running the OWASP ZAP tests |
 | ZAP_APPTMNTURL_THEQ_TEST | The URL of The Q test Appointments application used for running the OWASP ZAP tests |
