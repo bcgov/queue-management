@@ -25,12 +25,9 @@ jobs:
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
-      licence-plate: ${{ steps.parse.outputs.licence-plate }}
       push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
-      token-builds: ${{ steps.parse.outputs.token-builds }}
-      token-deploys: ${{ steps.parse.outputs.token-deploys }}
 
     steps:
     # Use the input values to create more code-friendly values.
@@ -46,26 +43,12 @@ jobs:
         echo "::set-output name=image-tag::$IMAGE_TAG"
 
         if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-          LICENCE_PLATE=${{ secrets.LICENCE_PLATE_QMS }}
           PUSH_QMS=true
           PUSH_THEQ=false
-          TOKEN_BUILDS=${{ secrets.SA_PASSWORD_QMS_TOOLS }}
-          TOKEN_DEPLOYS=${{ secrets.SA_PASSWORD_QMS_DEV }}
         else
-          LICENCE_PLATE=${{ secrets.LICENCE_PLATE_THEQ }}
           PUSH_QMS=false
           PUSH_THEQ=true
-          TOKEN_BUILDS=${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
-          
-          if [ $ENVIRONMENT == "dev" ]; then
-            TOKEN_DEPLOYS=${{ secrets.SA_PASSWORD_THEQ_DEV }}
-          else
-            TOKEN_DEPLOYS=${{ secrets.SA_PASSWORD_THEQ_TEST }}
-          fi
         fi
-
-        echo LICENCE_PLATE:$LICENCE_PLATE
-        # echo "::set-output name=licence-plate::$LICENCE_PLATE"
 
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
@@ -76,12 +59,6 @@ jobs:
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
         echo "::set-output name=ref::$REF"
-
-        echo TOKEN_BUILDS:$TOKEN_BUILDS
-        # echo "::set-output name=token-builds::$TOKEN_BUILDS"
-
-        echo TOKEN_DEPLOYS:$TOKEN_DEPLOYS
-        # echo "::set-output name=token-deploys::$TOKEN_DEPLOYS"
 
   ##### BUILD ######################################################################################
 
