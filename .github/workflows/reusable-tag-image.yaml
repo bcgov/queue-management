@@ -37,7 +37,8 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-tools
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token-builds }}
+        openshift-username: serviceaccount
+        openshift_password: ${{ secrets.token-builds }}
 
     - name: Tag Images
       run: |
@@ -58,7 +59,8 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token-deploys }}
+        openshift-username: github-actions
+        openshift_password: ${{ secrets.token-deploys }}
 
     - name: Wait for Rollouts
       run: |
