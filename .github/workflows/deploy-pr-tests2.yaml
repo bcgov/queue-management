@@ -34,7 +34,7 @@ jobs:
         PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
-  
+
         PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
