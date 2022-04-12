@@ -244,7 +244,7 @@ jobs:
           --global-var 'url=${{ secrets.POSTMAN_API_URL_THEQ_DEV }}' \
           --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
           --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
-          
+
   owasp-staff:
     name: OWASP ZAP Scan
     needs: [parse-inputs, wait-for-rollout]
@@ -255,12 +255,10 @@ jobs:
         run: |
           if [ needs.parse-inputs.outputs.deploy-qms == "true" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
+          else if [ needs.parse-inputs.outputs.environment == "dev" ]; then
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
           else
-            if [ needs.parse-inputs.outputs.environment == "dev" ]; then
-              echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
-            else
-              echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
-            fi
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
           fi
 
       - name: OWASP ZAP Scan
@@ -285,12 +283,10 @@ jobs:
         run: |
           if [ needs.parse-inputs.outputs.deploy-qms == "true" ]; then
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
+          else if [ needs.parse-inputs.outputs.environment == "dev" ]; then
+            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
           else
-            if [ needs.parse-inputs.outputs.environment == "dev" ]; then
-              echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
-            else
-              echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
-            fi
+            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
           fi
 
       - name: OWASP ZAP Scan
