@@ -27,6 +27,7 @@ jobs:
       image-tag: ${{ steps.parse.outputs.image-tag }}
       push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
+      ref: ${{ steps.parse.outputs.ref }}
 
     steps:
     # Use the "namespace" input value to figure out which "-tools" namespace to push the images.
@@ -49,6 +50,10 @@ jobs:
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
 
+        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
+        echo REF:$REF
+        echo "::set-output name=ref::$REF"
+
   ##### BUILD ######################################################################################
 
   appointment-frontend:
@@ -67,7 +72,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: appointment-frontend
       image-name: appointment-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -87,7 +92,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: feedback-api
       image-name: feedback-api
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -107,7 +112,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: notifications-api
       image-name: notifications-api
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -130,7 +135,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: api
       image-name: queue-management-api
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -153,7 +158,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: frontend
       image-name: queue-management-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -176,7 +181,7 @@ jobs:
       namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: refs/pull/${{ github.event.inputs.pr-number }}/head
+      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: jobs/appointment_reminder
       image-name: send-appointment-reminder-crond
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
