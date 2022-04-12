@@ -12,7 +12,7 @@ on:
         required: true
         type: string
     secrets:
-      namespace:
+      licence-plate:
         required: true
       openshift-api:
         required: true
@@ -32,10 +32,10 @@ jobs:
       tag-from: ${{ inputs.tag-from }}
 
     steps:
-    - name: Log in to OpenShift 
+    - name: Log in to OpenShift Builds
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ secrets.namespace }}
+        namespace: ${{ secrets.licence-plate }}-tools
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.token-builds }}
 
@@ -52,15 +52,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Get Deployments Namespace
-      run: |
-        NAMESPACE_DEPLOY=$(echo "${{ secrets.namespace }}" | sed "s/-tools/-${{ inputs.tag-to }}")
-        echo "NAMESPACE_DEPLOYS=$NAMESPACE_DEPLOYS" >> $GITHUB_ENV
-
-    - name: Log in to OpenShift 
+    - name: Log in to OpenShift Deploys
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ env.NAMESPACE_DEPLOYS }}
+        namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.token-deploys }}
 
