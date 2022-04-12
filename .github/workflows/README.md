@@ -28,12 +28,12 @@ The Actions use GitHub `Environments` to require approval before a build is depl
 
 Set up the following environments in your repository Settings:
 
-1. `qms-dev`
-1. `qms-test`
-1. `qms-prod`
-1. `theq-dev`
-1. `theq-test`
-1. `theq-prod`
+1. `QMS Dev`
+1. `QMS Test`
+1. `QMS Prod`
+1. `The Q Dev`
+1. `The Q Test`
+1. `The Q Prod`
 
 In each of these environments set up `Environment protection rules` with at least one `Required reviewer`.
 
