@@ -65,7 +65,7 @@ jobs:
         fi
 
         echo LICENCE_PLATE:$LICENCE_PLATE
-        echo "::set-output name=licence-plate::$LICENCE_PLATE"
+        # echo "::set-output name=licence-plate::$LICENCE_PLATE"
 
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
@@ -78,10 +78,10 @@ jobs:
         echo "::set-output name=ref::$REF"
 
         echo TOKEN_BUILDS:$TOKEN_BUILDS
-        echo "::set-output name=token-builds::$TOKEN_BUILDS"
+        # echo "::set-output name=token-builds::$TOKEN_BUILDS"
 
         echo TOKEN_DEPLOYS:$TOKEN_DEPLOYS
-        echo "::set-output name=token-deploys::$TOKEN_DEPLOYS"
+        # echo "::set-output name=token-deploys::$TOKEN_DEPLOYS"
 
   ##### BUILD ######################################################################################
 
