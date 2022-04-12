@@ -30,8 +30,8 @@ jobs:
       ref: ${{ steps.parse.outputs.ref }}
 
     steps:
-    # Use the "namespace" input value to figure out which "-tools" namespace to push the images.
-    - name: Parse Namespace
+    # Use the input values to create more code-friendly values.
+    - name: Parse Inputs
       id: parse
       run: |
         ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
