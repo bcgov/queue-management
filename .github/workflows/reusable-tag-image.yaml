@@ -37,7 +37,7 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-tools
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift-username: serviceaccount
+        openshift-username: github-actions
         openshift_password: ${{ secrets.token-builds }}
 
     - name: Tag Images
