@@ -32,7 +32,7 @@ jobs:
       tag-from: ${{ inputs.tag-from }}
 
     steps:
-    - name: Log in to OpenShift Builds
+    - name: Log in to ${{ secrets.licence-plate }}-tools
       uses: redhat-actions/oc-login@v1
       with:
         namespace: ${{ secrets.licence-plate }}-tools
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Log in to OpenShift Deploys
+    - name: Log in to ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
       uses: redhat-actions/oc-login@v1
       with:
         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
