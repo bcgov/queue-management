@@ -82,5 +82,5 @@ jobs:
         }
 
         for image in ${{ inputs.image-names }}; do
-          wait_for_rollout ${{ env.NAMESPACE_DEPLOYS }} $image
+          wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
         done
