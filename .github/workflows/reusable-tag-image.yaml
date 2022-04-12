@@ -49,7 +49,7 @@ jobs:
 
   wait-for-rollouts:
     name: Wait for Rollouts
-#     needs: tag
+    needs: tag
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +58,7 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift-token: ${{ secrets.token-deploys }}
+        openshift_token: ${{ secrets.token-deploys }}
 
     - name: Wait for Rollouts
       run: |
