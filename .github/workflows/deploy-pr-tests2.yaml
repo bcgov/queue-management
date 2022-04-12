@@ -201,7 +201,7 @@ jobs:
     needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
-      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS-tools || secrets.LICENCE_PLATE_THEQ-tools }}
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token-builds: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
       token-deploys: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
