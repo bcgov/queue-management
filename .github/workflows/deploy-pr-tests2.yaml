@@ -34,9 +34,11 @@ jobs:
         PUSH_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
+  
         PUSH_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo PUSH_THEQ:$PUSH_THEQ
         echo "::set-output name=push-theq::$PUSH_THEQ"
+
   create-image-tags:
     name: Create Image Tags
     needs: parse-namespace
@@ -53,6 +55,7 @@ jobs:
         IMAGE_TAGS=pr${{ github.event.inputs.pr-number }}
         echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
+
   ##### BUILD ######################################################################################
 
   appointment-frontend:
@@ -206,12 +209,15 @@ jobs:
         DEPLOY_QMS=$(if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then echo true; else echo false; fi)
         echo DEPLOY_QMS:$DEPLOY_QMS
         echo "::set-output name=deploy-qms::$DEPLOY_QMS"
+ 
         DEPLOY_THEQ=$(if [[ "${{ github.event.inputs.namespace }}" == The\ Q* ]]; then echo true; else echo false; fi)
         echo DEPLOY_THEQ:$DEPLOY_THEQ
         echo "::set-output name=deploy-theq::$DEPLOY_THEQ"
+
         ENVIRONMENT_TAG=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
         echo ENVIRONMENT_TAG:$ENVIRONMENT_TAG
         echo "::set-output name=environment-tag::$ENVIRONMENT_TAG"
+
   tag:
     name: Tag
     needs: parse-environment-tag
@@ -258,6 +264,7 @@ jobs:
             echo "POSTMAN_PUBLIC_API_URL=${{ secrets.POSTMAN_PUBLIC_API_URL_QMS_DEV }}" >> $GITHUB_ENV
           else
             ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+
             if [ $ENVIRONMENT == "dev" ]; then
               echo "POSTMAN_API_URL=${{ secrets.POSTMAN_API_URL_THEQ_DEV }}" >> $GITHUB_ENV
               echo "POSTMAN_AUTH_URL=${{ secrets.POSTMAN_AUTH_URL_DEV }}" >> $GITHUB_ENV
@@ -272,10 +279,12 @@ jobs:
               echo "POSTMAN_PUBLIC_API_URL=${{ secrets.POSTMAN_PUBLIC_API_URL_THEQ_TEST }}" >> $GITHUB_ENV
             fi
           fi
+
     - name: NPM Install
       run: |
         cd api/postman
         npm install newman
+
     - name: Run Newman Tests
       run: |
         cd api/postman
@@ -313,6 +322,7 @@ jobs:
               echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
             fi
           fi
+
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
@@ -337,12 +347,14 @@ jobs:
             echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
           else
             ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+
             if [ $ENVIRONMENT == "dev" ]; then
               echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
             else
               echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
             fi
           fi
+
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
