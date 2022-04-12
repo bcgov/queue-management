@@ -12,9 +12,7 @@ on:
         required: true
         type: string
     secrets:
-      namespace-builds:
-        required: true
-      namespace-deploys:
+      namespace:
         required: true
       openshift-api:
         required: true
@@ -37,7 +35,7 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ secrets.namespace-builds }}
+        namespace: ${{ secrets.namespace }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.token-builds }}
 
@@ -54,10 +52,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get Deployments Namespace
+      run: |
+        NAMESPACE_DEPLOY=$(echo "${{ secrets.namespace }}" | sed "s/-tools/-${{ inputs.tag-to }}")
+        echo "NAMESPACE_DEPLOYS=$NAMESPACE_DEPLOYS" >> $GITHUB_ENV
+
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ secrets.namespace-deploys }}
+        namespace: ${{ env.NAMESPACE_DEPLOYS }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.token-deploys }}
 
@@ -83,5 +86,5 @@ jobs:
         }
 
         for image in ${{ inputs.image-names }}; do
-          wait_for_rollout ${{ secrets.namespace-deploys }} $image
+          wait_for_rollout ${{ env.NAMESPACE_DEPLOYS }} $image
         done
