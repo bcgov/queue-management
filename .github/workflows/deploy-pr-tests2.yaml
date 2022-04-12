@@ -25,7 +25,7 @@ jobs:
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
-      namespace: ${{ steps.parse.outputs.namespace }}
+      licence-plate: ${{ steps.parse.outputs.licence-plate }}
       push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
@@ -65,7 +65,7 @@ jobs:
         fi
 
         echo LICENCE_PLATE:$LICENCE_PLATE
-        echo "::set-output name=namespace::$LICENCE_PLATE"
+        echo "::set-output name=licence-plate::$LICENCE_PLATE"
 
         echo PUSH_QMS:$PUSH_QMS
         echo "::set-output name=push-qms::$PUSH_QMS"
@@ -224,7 +224,7 @@ jobs:
     needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
-      namespace: ${{ needs.parse-inputs.outputs.namespace }}
+      licence-plate: ${{ needs.parse-inputs.outputs.licence-plate }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token-builds: ${{ needs.parse-inputs.outputs.token-builds }}
       token-deploys: ${{ needs.parse-inputs.outputs.token-deploys }}
