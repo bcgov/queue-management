@@ -26,7 +26,7 @@ on:
 
 jobs:
   tag:
-    name: Tag Images
+    name: Tag Images from ${{ inputs.tag-from }} to ${{ inputs.tag-to }}
     runs-on: ubuntu-latest
     outputs:
       tag-from: ${{ inputs.tag-from }}
