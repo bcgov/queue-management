@@ -36,7 +36,8 @@ class InvigilatorList(Resource):
 
         try:
             invigilators = Invigilator.query.filter_by(office_id=csr.office_id)\
-                                            .filter(Invigilator.deleted.is_(None))
+                                            .filter(Invigilator.deleted.is_(None))\
+                                            .order_by(Invigilator.invigilator_name)
 
             result = self.invigilator_schema.dump(invigilators)
             return {'invigilators': result,
