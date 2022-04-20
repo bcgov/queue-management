@@ -16,7 +16,7 @@ on:
         required: true
       openshift-api:
         required: true
-      token-builds:
+      token:
         required: true
     outputs:
       tag-from:
@@ -35,7 +35,7 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-tools
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token-builds }}
+        openshift_token: ${{ secrets.token }}
 
     - name: Tag Images
       run: |
