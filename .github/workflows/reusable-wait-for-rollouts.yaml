@@ -1,0 +1,54 @@
+name: Wait for Rollouts
+on:
+  workflow_call:
+    inputs:
+      image-names:
+        required: true
+        type: string
+      tag-to:
+        required: true
+        type: string
+    secrets:
+      licence-plate:
+        required: true
+      openshift-api:
+        required: true
+      token:
+        required: true
+
+jobs:
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to OpenShift ${{ inputs.tag-to }}
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.token }}
+
+    - name: Wait for Rollouts
+      run: |
+        #
+        # Parameters: namespace deployment-config
+        #
+        wait_for_rollout () {
+          NAMESPACE_DEPLOY=$1
+          DEPLOYMENT_CONFIG=$2
+
+          STATUS=
+          while [ "$STATUS" != "Complete" ]; do
+            VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
+            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
+            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
+
+            echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
+            sleep 1
+          done
+        }
+
+        for image in ${{ inputs.image-names }}; do
+          wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
+        done

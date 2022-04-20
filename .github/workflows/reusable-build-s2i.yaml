@@ -1,0 +1,114 @@
+name: S2I Build
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: false
+        type: string
+        default: master
+      directory:
+        required: true
+        type: string
+      image-name:
+        required: true
+        type: string
+      image-tags:
+        required: true
+        type: string
+      push-qms:
+        required: false
+        type: boolean
+        default: true
+      push-theq:
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      artifactory-password:
+        required: false
+      artifactory-registry:
+        required: false
+      artifactory-username:
+        required: false
+      namespace-qms:
+        required: true
+      namespace-qms-password:
+        required: true
+      namespace-qms-username:
+        required: true
+      namespace-theq:
+        required: true
+      namespace-theq-password:
+        required: true
+      namespace-theq-username:
+        required: true
+      openshift-registry:
+        required: true
+    outputs:
+      image-tags:
+        value: ${{ jobs.build.outputs.image-tags }}
+
+jobs:
+  build:
+    name: S2I Build
+    runs-on: ubuntu-latest
+    outputs:
+      image-tags: ${{ steps.build-image.outputs.tags }}
+
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Login to Artifactory to Pull Images in S2I Build
+      env:
+        ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
+        ARTIFACTORY_USERNAME: ${{ secrets.artifactory-username }}    
+        ARTIFACTORY_PASSWORD: ${{ secrets.artifactory-password }}    
+      if: env.ARTIFACTORY_REGISTRY && env.ARTIFACTORY_USERNAME && env.ARTIFACTORY_PASSWORD
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ secrets.artifactory-registry }}
+        username: ${{ secrets.artifactory-username }}
+        password: ${{ secrets.artifactory-password }}
+
+    - name: S2I Build
+      id: build-image
+      uses: redhat-actions/s2i-build@v2
+      with:
+        builder_image: registry.access.redhat.com/ubi8/python-38:latest
+        env_vars: |-
+          AF_USERID=${{ secrets.artifactory-username }}
+          AF_PASSWD=${{ secrets.artifactory-password }}
+        image: ${{ inputs.image-name }}
+        path_context: ${{ inputs.directory }}
+        tags: ${{ inputs.image-tags }}
+
+    - name: Debug - time before The Q
+      run: date
+
+    - name: Push Image to The Q
+      if: inputs.push-theq
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        extra-args: --log-level=debug
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-theq }}
+        username: ${{ secrets.namespace-theq-username }}
+        password: ${{ secrets.namespace-theq-password }}
+
+    - name: Debug - time before QMS
+      run: date
+
+    - name: Push Image to QMS
+      if: inputs.push-qms
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        extra-args: --log-level=debug
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ secrets.openshift-registry }}/${{ secrets.namespace-qms }}
+        username: ${{ secrets.namespace-qms-username }}
+        password: ${{ secrets.namespace-qms-password }}
