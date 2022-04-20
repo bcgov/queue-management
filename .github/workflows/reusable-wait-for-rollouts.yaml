@@ -13,7 +13,7 @@ on:
         required: true
       openshift-api:
         required: true
-      token-deploys:
+      token:
         required: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       with:
         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
         openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token-deploys }}
+        openshift_token: ${{ secrets.token }}
 
     - name: Wait for Rollouts
       run: |
