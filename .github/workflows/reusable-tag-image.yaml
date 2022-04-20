@@ -42,5 +42,5 @@ jobs:
         for image in ${{ inputs.image-names }}; do
           COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}-github-actions"
           echo $COMMAND
-          $COMMAND
+          # $COMMAND
         done
