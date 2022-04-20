@@ -161,7 +161,8 @@ class KeyCloakService {
   }
 
   async isRolesAvailable (roles: string[]) {
-    const user = await this.getUserInfo()
+    // Removed redundant "await" on next line
+    const user = this.getUserInfo()
     let isAvailable = false
     if (user?.roles?.length) {
       roles.forEach(role => {
