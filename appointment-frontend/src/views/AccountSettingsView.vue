@@ -147,7 +147,8 @@ export default class AccountSettingsView extends Vue {
   private async beforeMount () {
     this.$store.commit('setNonStepperLocation', 'Account Settings')
     if (!this.currentUserProfile.user_id) {
-      await this.getUser()
+      // Removed redundant "await" on next line
+      this.getUser()
     }
     if (this.currentUserProfile) {
       this.name = this.username || ' '
