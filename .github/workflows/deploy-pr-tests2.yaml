@@ -30,10 +30,11 @@ jobs:
       ref: ${{ steps.parse.outputs.ref }}
 
     steps:
-    # Use the input values to create more code-friendly values.
+    # Use the input values to create more coding-friendly values.
     - name: Parse Inputs
       id: parse
       run: |
+        # Gets "dev" or "test".
         ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
         echo ENVIRONMENT:$ENVIRONMENT
         echo "::set-output name=environment::$ENVIRONMENT"
