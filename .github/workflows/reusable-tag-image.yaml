@@ -18,8 +18,8 @@ on:
         required: true
       token-builds:
         required: true
-      token-deploys:
-        required: true
+#       token-deploys:
+#         required: true
     outputs:
       tag-from:
         value: ${{ jobs.build.outputs.tag-from }}
@@ -47,40 +47,40 @@ jobs:
           # $COMMAND
         done
 
-  wait-for-rollouts:
-    name: Wait for Rollouts
-    needs: tag
-    runs-on: ubuntu-latest
+#   wait-for-rollouts:
+#     name: Wait for Rollouts
+#     needs: tag
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Log in to OpenShift ${{ inputs.tag-to }}
-      uses: redhat-actions/oc-login@v1
-      with:
-        namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
-        openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token-deploys }}
+#     steps:
+#     - name: Log in to OpenShift ${{ inputs.tag-to }}
+#       uses: redhat-actions/oc-login@v1
+#       with:
+#         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
+#         openshift_server_url: ${{ secrets.openshift-api }}
+#         openshift_token: ${{ secrets.token-deploys }}
 
-    - name: Wait for Rollouts
-      run: |
-        #
-        # Parameters: namespace deployment-config
-        #
-        wait_for_rollout () {
-          NAMESPACE_DEPLOY=$1
-          DEPLOYMENT_CONFIG=$2
+#     - name: Wait for Rollouts
+#       run: |
+#         #
+#         # Parameters: namespace deployment-config
+#         #
+#         wait_for_rollout () {
+#           NAMESPACE_DEPLOY=$1
+#           DEPLOYMENT_CONFIG=$2
 
-          STATUS=
-          while [ "$STATUS" != "Complete" ]; do
-            VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
-            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
-            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
+#           STATUS=
+#           while [ "$STATUS" != "Complete" ]; do
+#             VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
+#             STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
+#             WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
 
-            echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
+#             echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
 
-            sleep 1
-          done
-        }
+#             sleep 1
+#           done
+#         }
 
-        for image in ${{ inputs.image-names }}; do
-          wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
-        done
+#         for image in ${{ inputs.image-names }}; do
+#           wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
+#         done
