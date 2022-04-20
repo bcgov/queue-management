@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Log in to OpenShift ${{ inputs./icence }}
+    - name: Log in to OpenShift ${{ inputs.tag-to }}
       uses: redhat-actions/oc-login@v1
       with:
         namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
