@@ -204,7 +204,7 @@ jobs:
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token-builds: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
       image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
@@ -217,7 +217,7 @@ jobs:
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token-deploys: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
     with:
       image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
