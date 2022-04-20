@@ -18,8 +18,6 @@ on:
         required: true
       token-builds:
         required: true
-#       token-deploys:
-#         required: true
     outputs:
       tag-from:
         value: ${{ jobs.build.outputs.tag-from }}
