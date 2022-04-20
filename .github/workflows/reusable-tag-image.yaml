@@ -40,7 +40,7 @@ jobs:
     - name: Tag Images
       run: |
         for image in ${{ inputs.image-names }}; do
-          COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}"-github-actions --dry-run=server
+          COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}-github-actions --dry-run=server"
           echo $COMMAND
           $COMMAND
         done
