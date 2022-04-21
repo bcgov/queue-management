@@ -66,6 +66,7 @@ jobs:
   appointment-frontend-lint:
     name: Appointment Linter
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
       - name: Check out
