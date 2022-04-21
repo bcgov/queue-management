@@ -77,7 +77,7 @@ jobs:
           which pylint && pylint --version
           pip install pylint
           which pylint && pylint --version
-          pylint . #--recursive
+          # pylint . #--recursive
 
           which flake8 && flake8 --version
           pip install flake8
@@ -111,6 +111,21 @@ jobs:
 #           build: npm run build
           start: npm run serve -- --port 8081
           working-directory: appointment-frontend
+
+  queue-management-api-pylint:
+    name: Queue Management API Pylint
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Run Pylint
+        run: |
+          pip install pylint
+          cd api
+          pylint . #--recursive          
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
