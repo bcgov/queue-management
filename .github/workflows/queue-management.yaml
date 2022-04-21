@@ -201,16 +201,16 @@ jobs:
         node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
           -e postman_env.json \
           --delay-request 250 \
-          --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL }}' \
-          --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID }}' \
-          --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET }}' \
+          --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL_DEV }}' \
+          --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID_DEV }}' \
+          --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
           --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
           --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-          --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL }}' \
+          --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
           --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
           --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
           --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
-          --global-var 'url=${{ secrets.POSTMAN_API_URL }}' \
+          --global-var 'url=${{ secrets.POSTMAN_API_URL_THEQ_DEV }}' \
           --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
           --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
 
@@ -224,7 +224,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
-          target: ${{ secrets.ZAP_STAFFURL }}
+          target: ${{ secrets.ZAP_STAFFURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
@@ -254,24 +254,13 @@ jobs:
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
-          target: ${{ secrets.ZAP_APPTMNTURL }}
+          target: ${{ secrets.ZAP_APPTMNTURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
-
-#       - name: Delete Default Report Artifacts
-#         run: |
-#           for url in $(curl --no-progress-meter -H "Accept: application/vnd.github.v3+json" \
-#             https://api.github.com/repos/walter-moar/queue-management/actions/artifacts | \
-#             jq -r '.artifacts[] | select(.name="zap_scan") | .url')
-#           do
-#             echo Deleting $url
-#             curl --no-progress-meter -X DELETE -H "Accept: application/vnd.github.v3+json" \
-#               --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' $url
-#           done
 
   approve-theq-test:
     name: Approve Deploy to The Q Test
