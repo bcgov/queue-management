@@ -99,7 +99,7 @@ jobs:
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     continue-on-error: true
 
     steps:
