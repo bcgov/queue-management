@@ -72,6 +72,13 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Debug
+        run: |
+          pylint --version
+          flake8 --version
+          npm --version
+          node --version
+
       - name: NPM Install
         run: |
           cd appointment-frontend
@@ -115,8 +122,6 @@ jobs:
    
       - name: NPM Install
         run: |
-          npm --version
-          node --version
           cd frontend
           npm install
 
