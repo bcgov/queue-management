@@ -74,10 +74,10 @@ jobs:
 
       - name: Debug
         run: |
-          pylint --version
-          flake8 --version
-          npm --version
-          node --version
+          which pylint && pylint --version
+          which flake8 && flake8 --version
+          which npm && npm --version
+          which node && node --version
 
       - name: NPM Install
         run: |
