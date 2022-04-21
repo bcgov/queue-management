@@ -75,6 +75,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           build: npm run build
+          project: appointment-frontend
           start: npm start
 
   ##### BUILD ######################################################################################
