@@ -147,7 +147,7 @@ jobs:
   ##### DEPLOY THE Q ###############################################################################
 
   approve-theq-dev:
-    name: Approve Deploy to The Q dev
+    name: Approve Deploy to The Q Dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: The Q Dev
     runs-on: ubuntu-latest
@@ -157,7 +157,7 @@ jobs:
         run: echo Approved
 
   tag-theq-dev:
-    name: Tag The Q dev
+    name: Tag The Q Dev
     needs: [create-image-tags, approve-theq-dev]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -182,7 +182,7 @@ jobs:
       tag-to: dev
 
   newman-theq:
-    name: Newman Tests in The Q dev
+    name: Newman Tests in The Q Dev
     needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
@@ -215,7 +215,7 @@ jobs:
           --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
 
   owasp-staff:
-    name: OWASP ZAP Scan of The Q dev
+    name: OWASP ZAP Scan of The Q Dev
     needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
@@ -245,7 +245,7 @@ jobs:
 #           done
 
   owasp-appointment:
-    name: OWASP ZAP Scan of Appointments dev
+    name: OWASP ZAP Scan of Appointments Dev
     needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
@@ -274,7 +274,7 @@ jobs:
 #           done
 
   approve-theq-test:
-    name: Approve Deploy to The Q test
+    name: Approve Deploy to The Q Test
     needs: [newman-theq, owasp-staff, owasp-appointment]
     environment: The Q Test
     runs-on: ubuntu-latest
@@ -284,7 +284,7 @@ jobs:
         run: echo Approved
 
   tag-theq-test:
-    name: Tag The Q test
+    name: Tag The Q Test
     needs: [create-image-tags, approve-theq-test]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -297,7 +297,7 @@ jobs:
       tag-to: test
 
   approve-theq-prod:
-    name: Approve Deploy to The Q prod
+    name: Approve Deploy to The Q Prod
     needs: tag-theq-test
     environment: The Q Prod
     runs-on: ubuntu-latest
@@ -307,7 +307,7 @@ jobs:
         run: echo Approved
 
   tag-theq-prod:
-    name: Tag The Q prod
+    name: Tag The Q Prod
     needs: approve-theq-prod
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -322,7 +322,7 @@ jobs:
   ##### DEPLOY QMS #################################################################################
 
   approve-qms-dev:
-    name: Approve Deploy to QMS dev
+    name: Approve Deploy to QMS Dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: QMS Dev
     runs-on: ubuntu-latest
@@ -332,7 +332,7 @@ jobs:
         run: echo Approved
 
   tag-qms-dev:
-    name: Tag QMS dev
+    name: Tag QMS Dev
     needs: [create-image-tags, approve-qms-dev]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -345,7 +345,7 @@ jobs:
       tag-to: dev
 
   approve-qms-test:
-    name: Approve Deploy to QMS test
+    name: Approve Deploy to QMS Test
     needs: tag-qms-dev
     environment: QMS Test
     runs-on: ubuntu-latest
@@ -355,7 +355,7 @@ jobs:
         run: echo Approved
 
   tag-qms-test:
-    name: Tag QMS test
+    name: Tag QMS Test
     needs: [create-image-tags, approve-qms-test]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
@@ -368,7 +368,7 @@ jobs:
       tag-to: test
 
   approve-qms-prod:
-    name: Approve Deploy to QMS prod
+    name: Approve Deploy to QMS Prod
     needs: tag-qms-test
     environment: QMS Prod
     runs-on: ubuntu-latest
@@ -378,7 +378,7 @@ jobs:
         run: echo Approved
 
   tag-qms-prod:
-    name: Tag QMS prod
+    name: Tag QMS Prod
     needs: [create-image-tags, approve-qms-prod]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
