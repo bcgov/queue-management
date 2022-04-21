@@ -171,7 +171,7 @@ jobs:
 
   wait-for-rollouts:
     name: Wait for Rollouts
-    needs: approve-theq-dev
+    needs: tag-theq-dev
     uses: walter-moar/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
