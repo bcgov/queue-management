@@ -90,12 +90,12 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-#       - name: Cypress Run
-#         uses: cypress-io/github-action@v2
-#         with:
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        with:
 #           build: npm run build
-#           start: npm start
-#           working-directory: appointment-frontend
+          start: npm run serve -- --port 8081
+          working-directory: appointment-frontend
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
