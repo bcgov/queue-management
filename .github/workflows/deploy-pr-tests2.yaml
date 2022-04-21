@@ -61,11 +61,27 @@ jobs:
         echo REF:$REF
         echo "::set-output name=ref::$REF"
 
+  ##### TEST #######################################################################################
+
+  cypress-appointment-frontend:
+    needs: parse-inputs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        with:
+          build: npm run build
+          start: npm start
+
   ##### BUILD ######################################################################################
 
   appointment-frontend:
     name: appointment-frontend
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
