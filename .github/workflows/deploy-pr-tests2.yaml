@@ -61,9 +61,10 @@ jobs:
         echo REF:$REF
         echo "::set-output name=ref::$REF"
 
-  ##### TEST #######################################################################################
+  ##### TESTS ######################################################################################
 
   cypress-appointment-frontend:
+    name: Appointment Image Snapshots
     runs-on: ubuntu-latest
 
     steps:
