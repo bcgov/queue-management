@@ -17,6 +17,22 @@ on:
 
 jobs:
 
+  queue-management-api-pylint:
+    name: Queue Management API Pylint
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Run Pylint
+        run: |
+          pip install pylint
+          cd api
+          pylint *.py
+          pylint --recursive=true .
+
   ##### SETUP ######################################################################################
 
   parse-inputs:
@@ -111,21 +127,6 @@ jobs:
 #           build: npm run build
           start: npm run serve -- --port 8081
           working-directory: appointment-frontend
-
-  queue-management-api-pylint:
-    name: Queue Management API Pylint
-    runs-on: ubuntu-latest
-    continue-on-error: false
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Run Pylint
-        run: |
-          pip install pylint
-          cd api
-          pylint --recursive=true .
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
