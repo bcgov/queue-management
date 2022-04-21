@@ -9,27 +9,6 @@ jobs:
 
   ##### SETUP ######################################################################################
 
-  wait-for-rollouts:
-    name: Wait for rollouts
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Log in to OpenShift 
-      uses: redhat-actions/oc-login@v1
-      with:
-        namespace: ${{ secrets.NAMESPACE_THEQ }}
-        openshift_server_url: ${{ secrets.OPENSHIFT_API }}
-        openshift_token: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-
-    - name: Tag Images
-      run: |
-        echo foo
-        #for image in ${{ inputs.image-names }}; do
-        #  COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}"
-        #  echo $COMMAND
-        #  # $COMMAND
-        #done
-
   create-image-tags:
     name: Create Image Tags
     runs-on: ubuntu-latest
@@ -48,8 +27,6 @@ jobs:
         fi
         echo IMAGE_TAGS:$IMAGE_TAGS
         echo "::set-output name=image-tags::$IMAGE_TAGS"
-        
-        # oc -n df1ee0-tools get istag appointment-frontend:pr3
 
   ##### BUILD ######################################################################################
 
@@ -174,8 +151,6 @@ jobs:
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: theq-dev
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
 
     steps:
       - name: Deployment Approval
@@ -183,7 +158,7 @@ jobs:
 
   tag-theq-dev:
     name: Tag The Q dev
-    needs: approve-theq-dev
+    needs: [create-image-tags, approve-theq-dev]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
@@ -191,27 +166,25 @@ jobs:
       token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.approve-theq-dev.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: dev
 
-  wait-for-rollout:
-    name: Wait for Image Rollout
-    needs: tag-theq-dev
-    environment: theq-dev
-    runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.tag-theq-dev.outputs.tag-from }}
-
-    steps:
-      - name: Rollout Confirmed
-        run: echo Confirmed
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    needs: approve-theq-dev
+    uses: walter-moar/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_DEV }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
+      tag-to: dev
 
   newman-theq:
     name: Newman Tests in The Q dev
-    needs: wait-for-rollout
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.wait-for-rollout.outputs.image-tags }}
 
     steps:
     - name: Check out
@@ -243,7 +216,7 @@ jobs:
 
   owasp-staff:
     name: OWASP ZAP Scan of The Q dev
-    needs: wait-for-rollout
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
     steps:
@@ -273,7 +246,7 @@ jobs:
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointments dev
-    needs: wait-for-rollout
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
     steps:
@@ -305,8 +278,6 @@ jobs:
     needs: [newman-theq, owasp-staff, owasp-appointment]
     environment: theq-test
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.newman-theq.outputs.image-tags }}
 
     steps:
       - name: Deployment Approval
@@ -314,7 +285,7 @@ jobs:
 
   tag-theq-test:
     name: Tag The Q test
-    needs: approve-theq-test
+    needs: [create-image-tags, approve-theq-test]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
@@ -322,7 +293,7 @@ jobs:
       token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.approve-theq-test.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: test
 
   approve-theq-prod:
@@ -330,8 +301,6 @@ jobs:
     needs: tag-theq-test
     environment: theq-prod
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.tag-theq-test.outputs.tag-from }}
 
     steps:
       - name: Deployment Approval
@@ -357,8 +326,6 @@ jobs:
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: qms-dev
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.appointment-frontend.outputs.image-tags }}
 
     steps:
       - name: Deployment Approval
@@ -366,7 +333,7 @@ jobs:
 
   tag-qms-dev:
     name: Tag QMS dev
-    needs: approve-qms-dev
+    needs: [create-image-tags, approve-qms-dev]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
@@ -374,7 +341,7 @@ jobs:
       token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.approve-qms-dev.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: dev
 
   approve-qms-test:
@@ -382,8 +349,6 @@ jobs:
     needs: tag-qms-dev
     environment: qms-test
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.tag-qms-dev.outputs.tag-from }}
 
     steps:
       - name: Deployment Approval
@@ -391,7 +356,7 @@ jobs:
 
   tag-qms-test:
     name: Tag QMS test
-    needs: approve-qms-test
+    needs: [create-image-tags, approve-qms-test]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
@@ -399,17 +364,14 @@ jobs:
       token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.approve-qms-test.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: test
 
   approve-qms-prod:
     name: Approve Deploy to QMS prod
-#     if: ${{ github.repository.owner == 'bcgov' }}
     needs: tag-qms-test
     environment: qms-prod
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ needs.tag-qms-test.outputs.tag-from }}
 
     steps:
       - name: Deployment Approval
@@ -417,7 +379,7 @@ jobs:
 
   tag-qms-prod:
     name: Tag QMS prod
-    needs: approve-qms-prod
+    needs: [create-image-tags, approve-qms-prod]
     uses: walter-moar/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
@@ -425,5 +387,5 @@ jobs:
       token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
     with:
       image-names: appointment-frontend feedback-api notifications-api queue-management-api queue-management-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.approve-qms-prod.outputs.image-tags }}
+      tag-from: ${{ needs.create-image-tags.outputs.image-tags }}
       tag-to: prod
