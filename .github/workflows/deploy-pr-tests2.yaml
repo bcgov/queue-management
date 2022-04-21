@@ -116,6 +116,7 @@ jobs:
       - name: NPM Install
         run: |
           npm --version
+          node --version
           cd frontend
           npm install
 
