@@ -75,8 +75,15 @@ jobs:
       - name: Debug
         run: |
           which pylint && pylint --version
+          pip install pylint
+          which pylint && pylint --version
+
           which flake8 && flake8 --version
+          pip install flake8
+          which flake8 && flake8 --version
+          
           which npm && npm --version
+          
           which node && node --version
 
       - name: NPM Install
