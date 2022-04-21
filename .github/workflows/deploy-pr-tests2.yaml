@@ -77,6 +77,7 @@ jobs:
           which pylint && pylint --version
           pip install pylint
           which pylint && pylint --version
+          pylint --recursive
 
           which flake8 && flake8 --version
           pip install flake8
