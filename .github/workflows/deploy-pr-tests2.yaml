@@ -26,12 +26,14 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Run Pylint
+      - name: Install Pylint
         run: |
           pip install pylint
+
+      - name: Run Pylint
+        run: |
           cd api
-          pylint *.py
-          pylint --recursive=true .
+          pylint *.py app
 
   ##### SETUP ######################################################################################
 
