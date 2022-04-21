@@ -105,7 +105,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -125,7 +125,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -145,7 +145,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -168,7 +168,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -191,7 +191,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: parse-inputs
+    needs: [parse-inputs, cypress-appointment-frontend]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
