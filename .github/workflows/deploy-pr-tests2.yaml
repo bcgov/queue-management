@@ -106,6 +106,13 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Login to Artifactory
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+          username: ${{ secrets.ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+   
       - name: NPM Install
         run: |
           cd frontend
