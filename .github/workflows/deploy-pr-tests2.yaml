@@ -64,7 +64,6 @@ jobs:
   ##### TEST #######################################################################################
 
   cypress-appointment-frontend:
-    needs: parse-inputs
     runs-on: ubuntu-latest
 
     steps:
