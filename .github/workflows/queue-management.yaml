@@ -149,7 +149,7 @@ jobs:
   approve-theq-dev:
     name: Approve Deploy to The Q dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
-    environment: theq-dev
+    environment: The Q Dev
     runs-on: ubuntu-latest
 
     steps:
@@ -276,7 +276,7 @@ jobs:
   approve-theq-test:
     name: Approve Deploy to The Q test
     needs: [newman-theq, owasp-staff, owasp-appointment]
-    environment: theq-test
+    environment: The Q Test
     runs-on: ubuntu-latest
 
     steps:
@@ -299,7 +299,7 @@ jobs:
   approve-theq-prod:
     name: Approve Deploy to The Q prod
     needs: tag-theq-test
-    environment: theq-prod
+    environment: The Q Prod
     runs-on: ubuntu-latest
 
     steps:
@@ -324,7 +324,7 @@ jobs:
   approve-qms-dev:
     name: Approve Deploy to QMS dev
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
-    environment: qms-dev
+    environment: QMS Dev
     runs-on: ubuntu-latest
 
     steps:
@@ -347,7 +347,7 @@ jobs:
   approve-qms-test:
     name: Approve Deploy to QMS test
     needs: tag-qms-dev
-    environment: qms-test
+    environment: QMS Test
     runs-on: ubuntu-latest
 
     steps:
@@ -370,7 +370,7 @@ jobs:
   approve-qms-prod:
     name: Approve Deploy to QMS prod
     needs: tag-qms-test
-    environment: qms-prod
+    environment: QMS Prod
     runs-on: ubuntu-latest
 
     steps:
