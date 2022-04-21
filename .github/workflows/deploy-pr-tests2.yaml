@@ -82,9 +82,9 @@ jobs:
           which flake8 && flake8 --version
           pip install flake8
           which flake8 && flake8 --version
-          
+
           which npm && npm --version
-          
+
           which node && node --version
 
       - name: NPM Install
@@ -125,7 +125,7 @@ jobs:
         run: |
           pip install pylint
           cd api
-          pylint . #--recursive          
+          pylint --recursive=true .
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
@@ -142,7 +142,7 @@ jobs:
 #           registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
 #           username: ${{ secrets.ARTIFACTORY_USERNAME }}
 #           password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-   
+
       - name: NPM Install
         run: |
           cd frontend
