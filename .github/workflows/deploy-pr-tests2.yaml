@@ -63,7 +63,20 @@ jobs:
 
   ##### TESTS ######################################################################################
 
-  cypress-appointment-frontend:
+  appointment-frontend-lint:
+    name: Appointment Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Run Linter
+        run: |
+          npm install
+          npm run lint
+
+  appointment-frontend-cypress:
     name: Appointment Image Snapshots
     runs-on: ubuntu-latest
 
@@ -82,7 +95,7 @@ jobs:
 
   appointment-frontend:
     name: appointment-frontend
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -105,7 +118,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -125,7 +138,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -145,7 +158,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -168,7 +181,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -191,7 +204,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: [parse-inputs, cypress-appointment-frontend]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
