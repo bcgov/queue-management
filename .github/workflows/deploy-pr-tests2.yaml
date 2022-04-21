@@ -72,14 +72,18 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Run Linter
+      - name: NPM Install
         run: |
           cd appointment-frontend
           npm install
+
+      - name: Run Linter
+        run: |
+          cd appointment-frontend
           npm run lint
 
   appointment-frontend-cypress:
-    name: Appointment Image Snapshots
+    name: Appointment Cypress
     runs-on: ubuntu-latest
 
     steps:
