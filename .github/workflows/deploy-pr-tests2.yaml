@@ -99,19 +99,19 @@ jobs:
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     continue-on-error: true
 
     steps:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Login to Artifactory
-        uses: redhat-actions/podman-login@v1
-        with:
-          registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-          username: ${{ secrets.ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#       - name: Login to Artifactory
+#         uses: redhat-actions/podman-login@v1
+#         with:
+#           registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+#           username: ${{ secrets.ARTIFACTORY_USERNAME }}
+#           password: ${{ secrets.ARTIFACTORY_PASSWORD }}
    
       - name: NPM Install
         run: |
