@@ -6,9 +6,16 @@ module.exports = {
       alias: {
         vue: path.resolve('./node_modules/vue'),
         $assets: path.resolve('./src/assets/')
+      },
+      fallback: {
+        crypto: require.resolve('crypto-browserify'),
+        buffer: require.resolve('buffer'),
+        util: require.resolve('util'),
+        stream: require.resolve('stream-browserify')
       }
     }
   },
+
   // publicPath: process.env.VUE_APP_PATH,
   runtimeCompiler: true,
 
