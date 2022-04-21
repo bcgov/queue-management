@@ -38,12 +38,12 @@ jobs:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: appointment-frontend
@@ -55,12 +55,12 @@ jobs:
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: feedback-api
@@ -72,12 +72,12 @@ jobs:
     needs: create-image-tags
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: notifications-api
@@ -92,12 +92,12 @@ jobs:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: api
@@ -112,12 +112,12 @@ jobs:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: frontend
@@ -132,12 +132,12 @@ jobs:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
       artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-      namespace-theq: ${{ secrets.NAMESPACE_THEQ }}
-      namespace-theq-password: ${{ secrets.NAMESPACE_THEQ_PASSWORD }}
-      namespace-theq-username: ${{ secrets.NAMESPACE_THEQ_USERNAME }}
-      namespace-qms: ${{ secrets.NAMESPACE_QMS }}
-      namespace-qms-password: ${{ secrets.NAMESPACE_QMS_PASSWORD }}
-      namespace-qms-username: ${{ secrets.NAMESPACE_QMS_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       directory: jobs/appointment_reminder
