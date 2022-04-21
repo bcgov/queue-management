@@ -178,7 +178,7 @@ jobs:
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token: ${{ secrets.SA_PASSWORD_THEQ_DEV }}
     with:
-      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-dev }}
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-dev
       tag-to: dev
 
   newman-theq:
