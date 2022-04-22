@@ -19,6 +19,14 @@ jobs:
 
   job-appointment-reminder-pylint:
     name: Appointment Reminder Pylint
+    uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
+    with:
+      continue-on-error: true
+      directory: jobs/appointment_reminder
+      target: "*.py utils"
+
+  job-appointment-reminder-pylint2:
+    name: Appointment Reminder Pylint2
     runs-on: ubuntu-latest
     continue-on-error: true
 
