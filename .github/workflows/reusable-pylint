@@ -1,0 +1,35 @@
+name: Pylint
+on:
+  workflow_call:
+    inputs:
+      directory:
+        required: false
+        type: string
+        default: .
+      target:
+        required: false
+        type: string
+        default: *.py src
+
+jobs:
+  pylint:
+    name: Pylint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Install Requirements
+        run: |
+          cd ${{ inputs.directory }}
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pylint
+
+      - name: Run Pylint
+        run: |
+          cd ${{ inputs.directory }}
+          source env/bin/activate
+          pylint ${{ inputs.target }}
