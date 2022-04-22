@@ -17,10 +17,28 @@ on:
 
 jobs:
 
+  job-appointment-reminder-pylint:
+    name: Job Appointment Reminder Pylint
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Install Pylint
+        run: |
+          pip install pylint
+
+      - name: Run Pylint
+        run: |
+          cd jobs/appointment_reminder
+          pylint *.py utils
+
   queue-management-api-pylint:
     name: Queue Management API Pylint
     runs-on: ubuntu-latest
-    continue-on-error: false
+    continue-on-error: true
 
     steps:
       - name: Check out
@@ -38,7 +56,7 @@ jobs:
   feedback-api-pylint:
     name: Feedback API Pylint
     runs-on: ubuntu-latest
-    continue-on-error: false
+    continue-on-error: true
 
     steps:
       - name: Check out
