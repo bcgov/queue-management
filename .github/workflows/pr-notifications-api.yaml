@@ -1,0 +1,20 @@
+on:
+  pull_request:
+    paths:
+      - notifications-api/**
+
+jobs:
+  notifications-api-pylint:
+    name: Notifications API Pylint
+    uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
+    with:
+      continue-on-error: true
+      directory: notifications-api
+      target: "*.py src"
+
+  notifications-api-flake8:
+    name: Notifications API Flake8
+    uses: walter-moar/queue-management/.github/workflows/reusable-flake8.yaml@master
+    with:
+      continue-on-error: true
+      directory: notifications-api
