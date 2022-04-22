@@ -35,6 +35,30 @@ jobs:
           cd api
           pylint *.py app |& tee pylint.txt
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: queue-management-api-pylint.txt
+          path: pylint.txt
+
+  feedback-api-pylint:
+    name: Feedback API Pylint
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Install Pylint
+        run: |
+          pip install pylint
+
+      - name: Run Pylint
+        run: |
+          cd feedback-api
+          pylint *.py src |& tee pylint.txt
+
   ##### SETUP ######################################################################################
 
   parse-inputs:
