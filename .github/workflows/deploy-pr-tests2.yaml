@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: queue-management-api-pylint.txt
-          path: pylint.txt
+          path: api/pylint.txt
 
   feedback-api-pylint:
     name: Feedback API Pylint
