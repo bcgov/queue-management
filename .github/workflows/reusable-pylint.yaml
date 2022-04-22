@@ -11,9 +11,8 @@ on:
         type: string
         default: .
       target:
-        required: false
+        required: true
         type: string
-        default: "*.py src"
 
 jobs:
   pylint:
