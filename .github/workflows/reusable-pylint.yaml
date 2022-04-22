@@ -19,7 +19,7 @@ jobs:
   pylint:
     name: Pylint
     runs-on: ubuntu-latest
-    # continue-on-error: ${{ inputs.continue-on-error }}
+    continue-on-error: ${{ inputs.continue-on-error }}
 
     steps:
       - name: Check out
