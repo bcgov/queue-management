@@ -33,4 +33,4 @@ jobs:
         run: |
           cd ${{ inputs.directory }}
           source env/bin/activate
-          flake8 --exclude env
+          flake8 --exclude env,migrations
