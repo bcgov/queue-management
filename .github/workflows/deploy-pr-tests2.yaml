@@ -28,12 +28,10 @@ jobs:
 
       - name: Install Requirements
         run: |
+          cd jobs/appointment_reminder
           python -m venv env
           source env/bin/activate
           pip install -r requirements.txt
-
-      - name: Install Pylint
-        run: |
           pip install pylint
 
       - name: Run Pylint
