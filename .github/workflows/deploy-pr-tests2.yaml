@@ -33,13 +33,14 @@ jobs:
       - name: Run Pylint
         run: |
           cd api
-          pylint *.py app |& tee pylint.txt
+          pylint *.py app >& queue-management-api-pylint.txt
+          cat queue-management-api-pylint.txt
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: queue-management-api-pylint.txt
-          path: api/pylint.txt
+          name: queue-management-api-pylint
+          path: api/queue-management-api-pylint.txt
 
   feedback-api-pylint:
     name: Feedback API Pylint
