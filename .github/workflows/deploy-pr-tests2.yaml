@@ -31,8 +31,8 @@ jobs:
           cd jobs/appointment_reminder
           python -m venv env
           source env/bin/activate
-          pip install -r requirements.txt
-          pip install pylint
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pylint
 
       - name: Run Pylint
         run: |
@@ -49,9 +49,13 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Install Pylint
+      - name: Install Requirements
         run: |
-          pip install pylint
+          cd api
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pylint
 
       - name: Run Pylint
         run: |
@@ -67,9 +71,13 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Install Pylint
+      - name: Install Requirements
         run: |
-          pip install pylint
+          cd feedback-api
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pylint
 
       - name: Run Pylint
         run: |
