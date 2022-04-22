@@ -60,6 +60,7 @@ jobs:
       - name: Run Pylint
         run: |
           cd api
+          source env/bin/activate
           pylint *.py app
 
   feedback-api-pylint:
@@ -82,6 +83,7 @@ jobs:
       - name: Run Pylint
         run: |
           cd feedback-api
+          source env/bin/activate
           pylint *.py src
 
   ##### SETUP ######################################################################################
