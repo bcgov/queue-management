@@ -1,0 +1,11 @@
+on:
+  pull_request:
+    paths:
+      - frontend/**
+
+jobs:
+  queue-management-frontend-lint:
+    name: Queue Management Frontend Linter
+    uses: walter-moar/queue-management/.github/workflows/reusable-npm-lint.yaml@master
+    with:
+      directory: frontend
