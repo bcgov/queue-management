@@ -33,7 +33,7 @@ jobs:
       - name: Run Pylint
         run: |
           cd api
-          pylint *.py app --output=pylint.txt
+          pylint *.py app |& tee pylint.txt
 
   ##### SETUP ######################################################################################
 
