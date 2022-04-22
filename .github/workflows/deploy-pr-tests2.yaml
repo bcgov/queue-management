@@ -204,7 +204,7 @@ jobs:
 
   appointment-frontend:
     name: appointment-frontend
-    needs: [parse-inputs, job-appointment-reminder-pylint]
+    needs: [parse-inputs, job-appointment-reminder-pylint, queue-management-api-pylint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
