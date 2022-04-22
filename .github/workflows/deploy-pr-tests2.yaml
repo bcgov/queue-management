@@ -37,6 +37,7 @@ jobs:
       - name: Run Pylint
         run: |
           cd jobs/appointment_reminder
+          source env/bin/activate
           pylint *.py utils
 
   queue-management-api-pylint:
