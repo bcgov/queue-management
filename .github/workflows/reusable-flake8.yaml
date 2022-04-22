@@ -1,0 +1,36 @@
+name: Flake8
+on:
+  workflow_call:
+    inputs:
+      continue-on-error:
+        required: false
+        type: boolean
+        default: false
+      directory:
+        required: false
+        type: string
+        default: .
+
+jobs:
+  flake8:
+    name: Flake8
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ inputs.continue-on-error }}
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Install Requirements
+        run: |
+          cd ${{ inputs.directory }}
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt flake8
+
+      - name: Run Flake8
+        run: |
+          cd ${{ inputs.directory }}
+          source env/bin/activate
+          flake8 --exclude env
