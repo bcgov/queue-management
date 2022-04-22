@@ -64,7 +64,7 @@ jobs:
   ##### TESTS ######################################################################################
 
   appointment-frontend-cypress:
-    name: Appointment Cypress
+    name: Appointment Frontend Cypress
     runs-on: ubuntu-latest
 
     steps:
