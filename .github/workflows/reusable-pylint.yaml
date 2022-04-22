@@ -2,6 +2,10 @@ name: Pylint
 on:
   workflow_call:
     inputs:
+      continue-on-error:
+        required: false
+        type: boolean
+        default: false
       directory:
         required: false
         type: string
@@ -9,12 +13,13 @@ on:
       target:
         required: false
         type: string
-        default: *.py src
+        default: "*.py src"
 
 jobs:
   pylint:
     name: Pylint
     runs-on: ubuntu-latest
+    continue-on-error: ${{ inputs.continue-on-error }}
 
     steps:
       - name: Check out
