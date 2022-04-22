@@ -1,0 +1,10 @@
+on:
+  pull_request:
+  
+jobs:
+  appointment-frontend-lint:
+    name: Appointment Frontend Linter
+    uses: walter-moar/queue-management/.github/workflows/reusable-npm-lint.yaml@master
+    with:
+      continue-on-error: true
+      directory: appointment-frontend
