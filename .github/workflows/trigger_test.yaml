@@ -1,6 +1,8 @@
 on:
   pull_request:
-  
+    paths:
+      - appointment-frontend/**
+
 jobs:
   appointment-frontend-lint:
     name: Appointment Frontend Linter
