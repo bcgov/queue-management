@@ -8,5 +8,5 @@ jobs:
     name: Appointment Frontend Linter
     uses: walter-moar/queue-management/.github/workflows/reusable-npm-lint.yaml@master
     with:
-      continue-on-error: true
+      continue-on-error: false
       directory: appointment-frontend
