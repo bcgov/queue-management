@@ -17,6 +17,13 @@ on:
 
 jobs:
 
+  feedback-api-pylint:
+    name: Feedback API Pylint
+    uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
+    with:
+      continue-on-error: true
+      directory: feedback-api
+
   job-appointment-reminder-pylint:
     name: Appointment Reminder Pylint
     uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
@@ -25,59 +32,20 @@ jobs:
       directory: jobs/appointment_reminder
       target: "*.py utils"
 
+  notifications-api-pylint:
+    name: Notifications API Pylint
+    uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
+    with:
+      continue-on-error: true
+      directory: notifications-api
+
   queue-management-api-pylint:
     name: Queue Management API Pylint
     uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
     with:
-      continue-on-error: false
+      continue-on-error: true
       directory: api
       target: "*.py app"
-
-  notifications-api-pylint:
-    name: Notifications API Pylint
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Install Requirements
-        run: |
-          cd notifications-api
-          python -m venv env
-          source env/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt pylint
-
-      - name: Run Pylint
-        run: |
-          cd notifications-api
-          source env/bin/activate
-          pylint *.py src
-
-  feedback-api-pylint:
-    name: Feedback API Pylint
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Install Requirements
-        run: |
-          cd feedback-api
-          python -m venv env
-          source env/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt pylint
-
-      - name: Run Pylint
-        run: |
-          cd feedback-api
-          source env/bin/activate
-          pylint *.py src
 
   ##### SETUP ######################################################################################
 
