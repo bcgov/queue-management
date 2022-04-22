@@ -80,22 +80,10 @@ jobs:
 
   appointment-frontend-lint:
     name: Appointment Frontend Linter
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: NPM Install
-        run: |
-          cd appointment-frontend
-          npm install
-
-      - name: Run Linter
-        run: |
-          cd appointment-frontend
-          npm run lint
+    uses: walter-moar/queue-management/.github/workflows/reusable-npm-lint.yaml@master
+    with:
+      continue-on-error: true
+      directory: appointment-frontend
 
   feedback-api-pylint:
     name: Feedback API Pylint
@@ -159,22 +147,10 @@ jobs:
 
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
-    runs-on: ubuntu-18.04
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: NPM Install
-        run: |
-          cd frontend
-          npm install
-
-      - name: Run Linter
-        run: |
-          cd appointment-frontend
-          npm run lint
+    uses: walter-moar/queue-management/.github/workflows/reusable-npm-lint.yaml@master
+    with:
+      continue-on-error: true
+      directory: frontend
 
   ##### BUILD ######################################################################################
 
