@@ -17,6 +17,86 @@ on:
 
 jobs:
 
+  ##### SETUP ######################################################################################
+
+  parse-inputs:
+    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.parse.outputs.environment }}
+      image-tag: ${{ steps.parse.outputs.image-tag }}
+      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-theq: ${{ steps.parse.outputs.push-theq }}
+      ref: ${{ steps.parse.outputs.ref }}
+
+    steps:
+    # Use the input values to create more coding-friendly values.
+    - name: Parse Inputs
+      id: parse
+      run: |
+        # Gets "dev" or "test".
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+        echo ENVIRONMENT:$ENVIRONMENT
+        echo "::set-output name=environment::$ENVIRONMENT"
+
+        IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
+        echo IMAGE_TAG:$IMAGE_TAG
+        echo "::set-output name=image-tag::$IMAGE_TAG"
+
+        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+          PUSH_QMS=true
+          PUSH_THEQ=false
+        else
+          PUSH_QMS=false
+          PUSH_THEQ=true
+        fi
+
+        echo PUSH_QMS:$PUSH_QMS
+        echo "::set-output name=push-qms::$PUSH_QMS"
+
+        echo PUSH_THEQ:$PUSH_THEQ
+        echo "::set-output name=push-theq::$PUSH_THEQ"
+
+        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
+        echo REF:$REF
+        echo "::set-output name=ref::$REF"
+
+  ##### TESTS ######################################################################################
+
+  appointment-frontend-cypress:
+    name: Appointment Cypress
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        with:
+#           build: npm run build
+          start: npm run serve -- --port 8081
+          working-directory: appointment-frontend
+
+  appointment-frontend-lint:
+    name: Appointment Frontend Linter
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: NPM Install
+        run: |
+          cd appointment-frontend
+          npm install
+
+      - name: Run Linter
+        run: |
+          cd appointment-frontend
+          npm run lint
+
   feedback-api-pylint:
     name: Feedback API Pylint
     uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
@@ -77,101 +157,6 @@ jobs:
       continue-on-error: true
       directory: api
 
-  ##### SETUP ######################################################################################
-
-  parse-inputs:
-    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.parse.outputs.environment }}
-      image-tag: ${{ steps.parse.outputs.image-tag }}
-      push-qms: ${{ steps.parse.outputs.push-qms }}
-      push-theq: ${{ steps.parse.outputs.push-theq }}
-      ref: ${{ steps.parse.outputs.ref }}
-
-    steps:
-    # Use the input values to create more coding-friendly values.
-    - name: Parse Inputs
-      id: parse
-      run: |
-        # Gets "dev" or "test".
-        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
-        echo ENVIRONMENT:$ENVIRONMENT
-        echo "::set-output name=environment::$ENVIRONMENT"
-
-        IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
-        echo IMAGE_TAG:$IMAGE_TAG
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
-        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-          PUSH_QMS=true
-          PUSH_THEQ=false
-        else
-          PUSH_QMS=false
-          PUSH_THEQ=true
-        fi
-
-        echo PUSH_QMS:$PUSH_QMS
-        echo "::set-output name=push-qms::$PUSH_QMS"
-
-        echo PUSH_THEQ:$PUSH_THEQ
-        echo "::set-output name=push-theq::$PUSH_THEQ"
-
-        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
-        echo REF:$REF
-        echo "::set-output name=ref::$REF"
-
-  ##### TESTS ######################################################################################
-
-  appointment-frontend-lint:
-    name: Appointment Frontend Linter
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Debug
-        run: |
-          which pylint && pylint --version
-          pip install pylint
-          which pylint && pylint --version
-          # pylint . #--recursive
-
-          which flake8 && flake8 --version
-          pip install flake8
-          which flake8 && flake8 --version
-
-          which npm && npm --version
-
-          which node && node --version
-
-      - name: NPM Install
-        run: |
-          cd appointment-frontend
-          npm install
-
-      - name: Run Linter
-        run: |
-          cd appointment-frontend
-          npm run lint
-
-  appointment-frontend-cypress:
-    name: Appointment Cypress
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Cypress Run
-        uses: cypress-io/github-action@v2
-        with:
-#           build: npm run build
-          start: npm run serve -- --port 8081
-          working-directory: appointment-frontend
-
   queue-management-frontend-lint:
     name: Queue Management Frontend Linter
     runs-on: ubuntu-18.04
@@ -180,13 +165,6 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
-
-#       - name: Login to Artifactory
-#         uses: redhat-actions/podman-login@v1
-#         with:
-#           registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-#           username: ${{ secrets.ARTIFACTORY_USERNAME }}
-#           password: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: NPM Install
         run: |
@@ -202,7 +180,7 @@ jobs:
 
   appointment-frontend:
     name: appointment-frontend
-    needs: [parse-inputs, job-appointment-reminder-pylint, queue-management-api-pylint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -225,7 +203,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: [parse-inputs, appointment-frontend-lint, appointment-frontend-cypress, queue-management-frontend-lint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -245,7 +223,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: [parse-inputs, appointment-frontend-lint, appointment-frontend-cypress, queue-management-frontend-lint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -265,7 +243,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: [parse-inputs, appointment-frontend-lint, appointment-frontend-cypress, queue-management-frontend-lint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -288,7 +266,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: [parse-inputs, appointment-frontend-lint, appointment-frontend-cypress, queue-management-frontend-lint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -311,7 +289,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: [parse-inputs, appointment-frontend-lint, appointment-frontend-cypress, queue-management-frontend-lint]
+    needs: [parse-inputs, appointment-frontend-cypress, appointment-frontend-lint, feedback-api-pylint, feedback-api-flake8, job-appointment-reminder-pylint, job-appointment-reminder-flake8, notifications-api-pylint, notifications-api-flake8, queue-management-api-pylint, queue-management-api-flake8, queue-management-frontend-lint]
     uses: walter-moar/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
