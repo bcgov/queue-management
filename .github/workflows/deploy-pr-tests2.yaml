@@ -26,6 +26,12 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
+      - name: Install Requirements
+        run: |
+          python -m venv env
+          source env/bin/activate
+          pip install -r requirements.txt
+
       - name: Install Pylint
         run: |
           pip install pylint
