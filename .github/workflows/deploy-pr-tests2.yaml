@@ -25,51 +25,13 @@ jobs:
       directory: jobs/appointment_reminder
       target: "*.py utils"
 
-  job-appointment-reminder-pylint2:
-    name: Appointment Reminder Pylint2
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Install Requirements
-        run: |
-          cd jobs/appointment_reminder
-          python -m venv env
-          source env/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt pylint
-
-      - name: Run Pylint
-        run: |
-          cd jobs/appointment_reminder
-          source env/bin/activate
-          pylint *.py utils
-
   queue-management-api-pylint:
     name: Queue Management API Pylint
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v2
-
-      - name: Install Requirements
-        run: |
-          cd api
-          python -m venv env
-          source env/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt pylint
-
-      - name: Run Pylint
-        run: |
-          cd api
-          source env/bin/activate
-          pylint *.py app
+    uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
+    with:
+      continue-on-error: false
+      directory: api
+      target: "*.py app"
 
   notifications-api-pylint:
     name: Notifications API Pylint
