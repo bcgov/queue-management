@@ -25,6 +25,13 @@ jobs:
       directory: feedback-api
       target: "*.py src"
 
+  feedback-api-flake8:
+    name: Feedback API Flake8
+    uses: walter-moar/queue-management/.github/workflows/reusable-flake8.yaml@master
+    with:
+      continue-on-error: true
+      directory: feedback-api
+
   job-appointment-reminder-pylint:
     name: Appointment Reminder Pylint
     uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
@@ -32,6 +39,13 @@ jobs:
       continue-on-error: true
       directory: jobs/appointment_reminder
       target: "*.py utils"
+
+  job-appointment-reminder-flake8:
+    name: Appointment Reminder Flake8
+    uses: walter-moar/queue-management/.github/workflows/reusable-flake8.yaml@master
+    with:
+      continue-on-error: true
+      directory: jobs/appointment_reminder
 
   notifications-api-pylint:
     name: Notifications API Pylint
@@ -41,6 +55,13 @@ jobs:
       directory: notifications-api
       target: "*.py src"
 
+  notifications-api-flake8:
+    name: Notifications API Flake8
+    uses: walter-moar/queue-management/.github/workflows/reusable-flake8.yaml@master
+    with:
+      continue-on-error: true
+      directory: notifications-api
+
   queue-management-api-pylint:
     name: Queue Management API Pylint
     uses: walter-moar/queue-management/.github/workflows/reusable-pylint.yaml@master
@@ -48,6 +69,13 @@ jobs:
       continue-on-error: true
       directory: api
       target: "*.py app"
+
+  queue-management-api-flake8:
+    name: Queue Management API Flake8
+    uses: walter-moar/queue-management/.github/workflows/reusable-flake8.yaml@master
+    with:
+      continue-on-error: true
+      directory: api
 
   ##### SETUP ######################################################################################
 
