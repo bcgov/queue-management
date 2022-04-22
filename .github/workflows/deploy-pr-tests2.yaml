@@ -18,7 +18,7 @@ on:
 jobs:
 
   job-appointment-reminder-pylint:
-    name: Job Appointment Reminder Pylint
+    name: Appointment Reminder Pylint
     runs-on: ubuntu-latest
     continue-on-error: true
 
@@ -62,6 +62,29 @@ jobs:
           cd api
           source env/bin/activate
           pylint *.py app
+
+  notifications-api-pylint:
+    name: Notifications API Pylint
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Install Requirements
+        run: |
+          cd notifications-api
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pylint
+
+      - name: Run Pylint
+        run: |
+          cd notifications-api
+          source env/bin/activate
+          pylint *.py src
 
   feedback-api-pylint:
     name: Feedback API Pylint
