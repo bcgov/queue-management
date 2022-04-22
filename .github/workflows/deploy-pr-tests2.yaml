@@ -23,6 +23,7 @@ jobs:
     with:
       continue-on-error: true
       directory: feedback-api
+      target: "*.py src"
 
   job-appointment-reminder-pylint:
     name: Appointment Reminder Pylint
@@ -38,6 +39,7 @@ jobs:
     with:
       continue-on-error: true
       directory: notifications-api
+      target: "*.py src"
 
   queue-management-api-pylint:
     name: Queue Management API Pylint
