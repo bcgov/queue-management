@@ -33,7 +33,7 @@ class BookingSchema(BaseSchema):
     booking_name = fields.Str()
     end_time = fields.DateTime()
     fees = fields.Str()
-    room_id = fields.Int()
+    room_id = fields.Int(allow_none=True)
     start_time = fields.DateTime()
     shadow_invigilator_id = fields.Int(allow_none=True)
     office_id = fields.Int()
