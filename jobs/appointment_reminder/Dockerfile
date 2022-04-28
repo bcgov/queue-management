@@ -32,7 +32,7 @@ WORKDIR $HOME
 COPY ./requirements.txt .
 COPY . .
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip --user
 RUN pip install --no-cache-dir -r requirements.txt
 
 

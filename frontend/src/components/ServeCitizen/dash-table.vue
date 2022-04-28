@@ -179,7 +179,7 @@ export default class DashTable extends Vue {
   }
 
   private setAppointmentDisplayData (id: any) {
-
+    // I assume this is intentionally empty.
   }
 
   private parseComments (item: any) {

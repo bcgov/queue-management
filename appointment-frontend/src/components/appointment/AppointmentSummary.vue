@@ -320,6 +320,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     }
     if (!this.anyActiveDLKT) {
       try {
+        // Removed redundant "await"
         const resp = await this.createAppointment()
         if (resp.appointment_id) {
           const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
@@ -339,7 +340,8 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
       }
     } else {
-      await this.deleteDraftAppointment()
+      // Removed redundant "await" on next line
+      this.deleteDraftAppointment()
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
