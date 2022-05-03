@@ -10,6 +10,15 @@ The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
 - Run OWASP ZAP tests
 - Run Newman tests if the deployment environment is The Q dev
 
+The GitHub Action `master-deploy.yaml` is only run manually. It will:
+
+- Build images using either Dockerfile or Source to Image (S2I) builds
+- Push the built images to two different `-tools` namespaces
+- Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
+- Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
+- After deployment to The Q dev, wait for rollout of the new images
+- After deployment to The Q dev, run Newman and OWASP ZAP tests
+
 ## Setup
 
 The following setup items are needed to run the Actions.
@@ -87,8 +96,19 @@ There are many GitHub Secrets that are needed to run the Actions:
 
 (note: there is a script to set these up automatically, but it can't be committed)
 
+## Third-Party Actions
+
+The following actions are being used:
+
+- [actions/checkout](https://github.com/actions/checkout): checks the code out of the GitHub repository
+- [actions/upload-artifact](https://github.com/actions/upload-artifact): uploads the OWASP ZAP scan artifacts
+- [redhat-actions/buildah-build](https://github.com/redhat-actions/buildah-build): builds using a Dockerfile
+- [redhat-actions/oc-login](https://github.com/redhat-actions/oc-login): logs into OpenShift using `oc`
+- [redhat-actions/podman-login](https://github.com/redhat-actions/podman-login): logs into Artifactory to be able to pull images for builds
+- [redhat-actions/push-to-registry](https://github.com/redhat-actions/push-to-registry): pushes built images into the tools namespaces
+- [redhat-actions/s2i-build](https://github.com/redhat-actions/s2i-build): builds using Source to Image (S2I)
+- [zaproxy/action-full-scan](https://github.com/zaproxy/action-full-scan): runs an OWASP ZAP scan against the Staff Frontend and the Appointment Frontend
+
 ## Notes
 - The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available and perhaps this is good enough? Details here: https://github.com/actions/upload-artifact/issues/53
-
-## Enhancements Backlog
-1. Delete the OWASP ZAP artifact `zap_scan` - using the API doesn't work as the Artifact hasn't been marked as `complete` yet, so the GET API call won't get the Artifact.
+- There is an artifact called `zap-scan` that is created and should be ignored. Waiting on an enhancement from ZAP so that we can specify the name of the Artifact: https://github.com/zaproxy/action-baseline/issues/45

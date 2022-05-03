@@ -167,6 +167,7 @@ jobs:
       run: |
         cd api/postman
         npm install newman
+
     - name: Run Newman Tests
       run: |
         cd api/postman
@@ -196,6 +197,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
+          cmd_options: '-z "-config scanner.threadPerHost=20"'
           target: ${{ secrets.ZAP_STAFFURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
@@ -214,6 +216,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
+          cmd_options: '-z "-config scanner.threadPerHost=20"'
           target: ${{ secrets.ZAP_APPTMNTURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
