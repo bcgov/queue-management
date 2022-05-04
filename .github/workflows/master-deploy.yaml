@@ -1,71 +1,16 @@
-name: Pull Request Deploy
+name: Master Deploy
+concurrency: 
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 on:
   workflow_dispatch:
-    inputs:
-      pr-number:
-        description: "Pull Request Number:"
-        type: string
-        required: true
-      namespace:
-        description: "Deploy To:"
-        type: choice
-        required: true
-        options:
-        - The Q Dev
-        - QMS Dev
-        - The Q Test
 
 jobs:
-
-  ##### SETUP ##################################################################
-
-  parse-inputs:
-    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.parse.outputs.environment }}
-      image-tag: ${{ steps.parse.outputs.image-tag }}
-      push-qms: ${{ steps.parse.outputs.push-qms }}
-      push-theq: ${{ steps.parse.outputs.push-theq }}
-      ref: ${{ steps.parse.outputs.ref }}
-
-    steps:
-    # Use the input values to create more coding-friendly values.
-    - name: Parse Inputs
-      id: parse
-      run: |
-        # Gets "dev" or "test".
-        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
-        echo ENVIRONMENT:$ENVIRONMENT
-        echo "::set-output name=environment::$ENVIRONMENT"
-
-        IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
-        echo IMAGE_TAG:$IMAGE_TAG
-        echo "::set-output name=image-tag::$IMAGE_TAG"
-
-        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
-          PUSH_QMS=true
-          PUSH_THEQ=false
-        else
-          PUSH_QMS=false
-          PUSH_THEQ=true
-        fi
-
-        echo PUSH_QMS:$PUSH_QMS
-        echo "::set-output name=push-qms::$PUSH_QMS"
-
-        echo PUSH_THEQ:$PUSH_THEQ
-        echo "::set-output name=push-theq::$PUSH_THEQ"
-
-        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
-        echo REF:$REF
-        echo "::set-output name=ref::$REF"
 
   ##### BUILD ##################################################################
 
   appointment-frontend:
     name: appointment-frontend
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -79,16 +24,12 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: appointment-frontend
       image-name: appointment-nginx-frontend
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
   feedback-api:
     name: feedback-api
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -99,16 +40,12 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: feedback-api
       image-name: feedback-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
   notifications-api:
     name: notifications-api
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -119,16 +56,12 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: notifications-api
       image-name: notifications-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
   queue-management-api:
     name: queue-management-api
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -142,16 +75,12 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: api
       image-name: queue-management-api
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -165,16 +94,12 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: frontend
       image-name: queue-management-nginx-frontend
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -188,47 +113,50 @@ jobs:
       namespace-qms-username: ${{ secrets.SA_USERNAME }}
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
       directory: jobs/appointment_reminder
       image-name: send-appointment-reminder-crond
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+      image-tags: commit-${GITHUB_SHA::7} latest
 
-  ##### DEPLOY #################################################################
+  ##### DEPLOY THE Q ###########################################################
 
-  tag:
-    name: Tag
-    needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+  approve-theq-dev:
+    name: Approve Deploy to The Q Dev
+    needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+    environment: The Q Dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-theq-dev:
+    name: Tag The Q Dev
+    needs: approve-theq-dev
     uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
     secrets:
-      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
       image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
-      tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
-      tag-to: ${{ needs.parse-inputs.outputs.environment }}
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: dev
 
   wait-for-rollouts:
     name: Wait for Rollouts
-    needs: [parse-inputs, tag]
+    needs: tag-theq-dev
     uses: bcgov/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@master
     secrets:
-      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_DEV }}
     with:
-      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
-      tag-to: ${{ needs.parse-inputs.outputs.environment }}
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-dev
+      tag-to: dev
 
-  ##### TEST ###################################################################
-
-  # Only run Newman for The Q dev - other environments will fail due to data.
-  newman-theq-dev:
-    name: Newman Tests
-    if: github.event.inputs.namespace == 'The Q Dev'
-    needs: [parse-inputs, wait-for-rollouts]
+  newman-theq:
+    name: Newman Tests in The Q Dev
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
     steps:
@@ -261,26 +189,16 @@ jobs:
 
   owasp-staff:
     name: OWASP ZAP Scan of Staff Frontend
-    needs: [parse-inputs, wait-for-rollouts]
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get Parameters
-        run: |
-          if [ ${{ needs.parse-inputs.outputs.push-qms }} == true ]; then
-            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
-          elif [ ${{ needs.parse-inputs.outputs.environment }} == dev ]; then
-            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
-          else
-            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
-          fi
-
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
           cmd_options: '-z "-config scanner.threadPerHost=20"'
-          target: ${{ env.ZAP_URL }}
+          target: ${{ secrets.ZAP_STAFFURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
@@ -290,29 +208,162 @@ jobs:
 
   owasp-appointment:
     name: OWASP ZAP Scan of Appointment Frontend
-    needs: [parse-inputs, wait-for-rollouts]
+    needs: wait-for-rollouts
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get Parameters
-        run: |
-          if [ ${{ needs.parse-inputs.outputs.push-qms }} == true ]; then
-            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_QMS_DEV }}" >> $GITHUB_ENV
-          elif [ ${{ needs.parse-inputs.outputs.environment }} == dev ]; then
-            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_DEV }}" >> $GITHUB_ENV
-          else
-            echo "ZAP_URL=${{ secrets.ZAP_APPTMNTURL_THEQ_TEST }}" >> $GITHUB_ENV
-          fi
-
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.3.0
         with:
           allow_issue_writing: false
           cmd_options: '-z "-config scanner.threadPerHost=20"'
-          target: ${{ env.ZAP_URL }}
+          target: ${{ secrets.ZAP_APPTMNTURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
+
+  approve-theq-test:
+    name: Approve Deploy to The Q Test
+    needs: [newman-theq, owasp-staff, owasp-appointment]
+    environment: The Q Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-theq-test:
+    name: Tag The Q Test
+    needs: approve-theq-test
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: test
+
+  approve-theq-prod:
+    name: Approve Deploy to The Q Prod
+    needs: tag-theq-test
+    environment: The Q Prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-theq-stable:
+    name: Tag The Q Stable
+    needs: approve-theq-prod
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: prod
+      tag-to: stable
+
+  tag-theq-prod:
+    name: Tag The Q Prod
+    needs: tag-theq-stable
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: prod
+
+  ##### DEPLOY QMS #############################################################
+
+  approve-qms-dev:
+    name: Approve Deploy to QMS Dev
+    needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+    environment: QMS Dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-qms-dev:
+    name: Tag QMS Dev
+    needs: approve-qms-dev
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: dev
+
+  approve-qms-test:
+    name: Approve Deploy to QMS Test
+    needs: tag-qms-dev
+    environment: QMS Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-qms-test:
+    name: Tag QMS Test
+    needs: approve-qms-test
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: test
+
+  approve-qms-prod:
+    name: Approve Deploy to QMS Prod
+    needs: tag-qms-test
+    environment: QMS Prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deployment Approval
+        run: echo Approved
+
+  tag-qms-stable:
+    name: Tag QMS Stable
+    needs: approve-qms-prod
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: prod
+      tag-to: stable
+
+  tag-qms-prod:
+    name: Tag QMS Prod
+    needs: tag-qms-stable
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    secrets:
+      licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+    with:
+      image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond
+      tag-from: commit-${GITHUB_SHA::7}
+      tag-to: prod

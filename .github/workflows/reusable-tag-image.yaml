@@ -18,16 +18,11 @@ on:
         required: true
       token:
         required: true
-    outputs:
-      tag-from:
-        value: ${{ jobs.build.outputs.tag-from }}
 
 jobs:
   tag:
-    name: Tag from ${{ inputs.tag-from }} to ${{ inputs.tag-to }}
+    name: Tag to ${{ inputs.tag-to }}
     runs-on: ubuntu-latest
-    outputs:
-      tag-from: ${{ inputs.tag-from }}
 
     steps:
     - name: Log in to OpenShift tools
