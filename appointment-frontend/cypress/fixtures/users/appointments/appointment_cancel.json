@@ -1,0 +1,74 @@
+{
+    "appointments": [
+        {
+            "comments": "",
+            "office_id": 3,
+            "stat_flag": false,
+            "recurring_uuid": null,
+            "office": {
+                "check_in_reminder_msg": "",
+                "timezone": {
+                    "timezone_id": 1,
+                    "timezone_name": "America/Vancouver"
+                },
+                "currently_waiting": null,
+                "show_currently_waiting_bottom": null,
+                "appointments_enabled_ind": 1,
+                "check_in_notification": null,
+                "office_number": 94,
+                "office_name": "Victoria",
+                "exams_enabled_ind": 1,
+                "max_person_appointment_per_day": 10,
+                "appointments_days_limit": 30,
+                "deleted": null,
+                "online_status": "Status.SHOW",
+                "office_id": 3,
+                "external_map_link": null,
+                "office_appointment_message": "Test Message",
+                "latitude": 48.458359,
+                "longitude": -123.377106,
+                "telephone": "999-999-9999",
+                "digital_signage_message_3": "",
+                "automatic_reminder_at": null,
+                "civic_address": "4000 Seymour",
+                "digital_signage_message_2": "",
+                "appointment_duration": 30,
+                "digital_signage_message_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac convallis tellus, eu porta justo. Vestibulum posuere suscipit nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent eu porttitor velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent dapibus purus urna, in semper ligula malesuada sed. Duis fringilla augue ut elit semper sollicitudin. Integer non sapien libero. Donec dapibus blandit ante quis efficitur.",
+                "digital_signage_message": 1,
+                "sb_id": 1
+            },
+            "end_time": "2022-04-27T22:00:00+00:00",
+            "service": {
+                "service_desc": "MSP-Address or family changes, personal information updates, general status enquiries, billing information from Biller Direct, immigration documents to HIBC, needs PHN, etc.",
+                "prefix": "A",
+                "is_dlkt": null,
+                "css_colour": null,
+                "display_dashboard_ind": 1,
+                "service_code": "MSP - 001",
+                "external_service_name": "Account Enquiry/Update",
+                "parent_id": 28,
+                "online_link": null,
+                "online_availability": null,
+                "service_name": "Account Enquiry/Update",
+                "timeslot_duration": null,
+                "actual_service_ind": 1,
+                "parent": {
+                    "service_name": "MSP"
+                },
+                "service_id": 118,
+                "deleted": null,
+                "email_paragraph": ""
+            },
+            "contact_information": "walter.moar@gov.bc.ca",
+            "service_id": 7,
+            "appointment_id": 66,
+            "start_time": "2022-04-27T21:30:00+00:00",
+            "checked_in_time": null,
+            "blackout_flag": "N",
+            "online_flag": true,
+            "is_draft": false,
+            "citizen_id": 223,
+            "citizen_name": "SBC Cypress"
+        }
+    ]
+}

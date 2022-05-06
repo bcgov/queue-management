@@ -3,7 +3,7 @@
     <NoEmailAlert></NoEmailAlert>
     <v-row class="page-heading">
       <v-col cols="12" sm="6">
-        <h2>My Appointments</h2>
+        <h2 data-cy="appointment-cancel-my-appointments-summary">My Appointments</h2>
       </v-col>
       <v-col class="book-new-btn" cols="12" sm="6">
         <v-btn
@@ -57,6 +57,7 @@
               outlined
               color="primary"
               min-width="195"
+              data-cy="appointment-change-change-appointment"
               @click="changeAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
@@ -67,6 +68,7 @@
               color="error lighten-1"
               class="mt-4"
               min-width="195"
+              data-cy="appointment-cancel-cancel-appointment"
               @click="cancelAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-delete-outline</v-icon>
@@ -78,6 +80,7 @@
     </v-card>
     <v-alert
       v-if="!appointmentList.length"
+      data-cy="appointment-cancel-no-appointments"
       outlined
       color="grey darken-3"
       class="text-center mt-10"
@@ -110,6 +113,7 @@
             color="red darken-1"
             text
             @click="confirmDelete(true)"
+            data-cy="appointment-cancel-cancel-confirm"
           >
             Yes, Cancel it
           </v-btn>
