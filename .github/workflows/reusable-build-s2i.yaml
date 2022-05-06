@@ -44,18 +44,22 @@ on:
         required: true
       openshift-registry:
         required: true
-    outputs:
-      image-tags:
-        value: ${{ jobs.build.outputs.image-tags }}
 
 jobs:
   build:
     name: S2I Build
     runs-on: ubuntu-latest
-    outputs:
-      image-tags: ${{ steps.build-image.outputs.tags }}
 
     steps:
+    - name: Process Image Tags
+      run: |
+        # This is a little strange - we can put bash processing in an input
+        # parameter, such as "${GITHUB_SHA::7}". It will come in as that exact
+        # string, so we need to echo it in bash to process it into the string
+        # that we actually want.
+        echo '${{ inputs.image-tags }} =>' ${{ inputs.image-tags }}
+        echo "IMAGE_TAGS=${{ inputs.image-tags }}" >> $GITHUB_ENV
+
     - name: Check out
       uses: actions/checkout@v2
       with:
@@ -83,7 +87,7 @@ jobs:
           AF_PASSWD=${{ secrets.artifactory-password }}
         image: ${{ inputs.image-name }}
         path_context: ${{ inputs.directory }}
-        tags: ${{ inputs.image-tags }}
+        tags: ${{ env.IMAGE_TAGS }}
 
     - name: Debug - time before The Q
       run: date
