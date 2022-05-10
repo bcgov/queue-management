@@ -311,6 +311,7 @@ export default class UploadPesticideModal extends Vue {
   updateExam (putData) {
     this.putExamInfo(putData)
       .then(() => {
+        // I assume this is intentionally empty.
       })
       .catch((error) => {
         console.error(error)

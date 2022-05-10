@@ -38,7 +38,11 @@
     "js-file-download": "0.4.12",
     "lodash": "^4.17.19",
     "luxon": "1.26.0",
+<<<<<<< HEAD
     "moment": "^2.29.3",
+=======
+    "moment": "2.29.2",
+>>>>>>> 3fd1eeefa8532cbf05aec53ca669d84500db807e
     "moment-range": "4.0.2",
     "moment-timezone": "^0.5.34",
     "net": "^1.0.2",

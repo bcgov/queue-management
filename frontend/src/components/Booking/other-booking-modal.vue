@@ -794,6 +794,7 @@ export default class OtherBookingModal extends Vue {
               showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, false)
               this.setApiTotalCount(0) 
               setTimeout(function () {
+                // I assume this is intentionally empty.
               }, 2000)
           }
         })
