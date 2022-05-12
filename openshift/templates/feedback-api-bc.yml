@@ -20,6 +20,7 @@ parameters:
   - name: SOURCE_REPOSITORY_REF
     displayName: Git Reference
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+    value: master
   - name: BUILD_NAMESPACE
     value: ''
 objects:
@@ -53,9 +54,8 @@ objects:
         type: Source
         sourceStrategy:
           from:
-            kind: ImageStreamTag
-            namespace: openshift
-            name: python:latest
+            kind: DockerImage
+            name: 'registry.access.redhat.com/ubi8/python-38:latest'
       output:
         to:
           kind: ImageStreamTag
