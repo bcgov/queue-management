@@ -61,3 +61,23 @@ export const SELECTOR_STEP_5_DIALOG_APPOINTMENT =
   '[data-cy="step-5-dialog-appointment"]'
 export const SELECTOR_STEP_5_IMAGE_MAP =
   '[data-cy="step-5-image-map"]'
+
+// Appointment Cancel.
+export const SELECTOR_APPOINTMENT_CANCEL_USER_NAV =
+  '[data-cy="appointment-cancel-user-nav"]'
+export const SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS =
+  '[data-cy="appointment-cancel-nav-appointments"]'
+export const SELECTOR_APPOINTMENT_CANCEL_MY_APPOINTMENTS =
+  '[data-cy="appointment-cancel-nav-appointments"]'
+export const SELECTOR_APPOINTMENT_CANCEL_CANCEL_APPOINTMENT =
+  '[data-cy="appointment-cancel-cancel-appointment"]'
+export const SELECTOR_APPOINTMENT_CANCEL_CANCEL_CONFIRM =
+  '[data-cy="appointment-cancel-cancel-confirm"]'
+export const SELECTOR_APPOINTMENT_CANCEL_SUMMARY =
+  '[data-cy="  appointment-cancel-my-appointments-summary"]'
+export const SELECTOR_APPOINTMENT_NO_APPOINTMENTS =
+  '[data-cy="appointment-cancel-no-appointments"]'
+
+// Appointment Change
+export const SELECTOR_APPOINTMENT_CHANGE_APPOINTMENT =
+  '[data-cy="appointment-change-change-appointment"]'

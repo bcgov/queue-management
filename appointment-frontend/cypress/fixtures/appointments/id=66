@@ -1,0 +1,77 @@
+{
+    "appointment": {
+        "contact_information": "walter.moar@gov.bc.ca",
+        "appointment_id": 77,
+        "end_time": "2022-05-03T16:30:00+00:00",
+        "recurring_uuid": null,
+        "checked_in_time": null,
+        "citizen_name": "SBC Cypress",
+        "office": {
+            "check_in_notification": null,
+            "telephone": "999-999-9999",
+            "check_in_reminder_msg": "",
+            "appointments_enabled_ind": 1,
+            "appointments_days_limit": 30,
+            "online_status": "Status.SHOW",
+            "appointment_duration": 30,
+            "sb_id": 2,
+            "latitude": 48.458359,
+            "office_number": 999,
+            "longitude": -123.377106,
+            "max_person_appointment_per_day": 10,
+            "digital_signage_message_3": "",
+            "digital_signage_message": 1,
+            "office_id": 3,
+            "exams_enabled_ind": 1,
+            "civic_address": "4000 Seymour",
+            "deleted": null,
+            "digital_signage_message_2": "",
+            "office_name": "Victoria",
+            "show_currently_waiting_bottom": null,
+            "office_appointment_message": "Test Message",
+            "external_map_link": null,
+            "timezone": {
+                "timezone_name": "America/Vancouver",
+                "timezone_id": 1
+            },
+            "currently_waiting": null,
+            "automatic_reminder_at": null,
+            "digital_signage_message_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac convallis tellus, eu porta justo. Vestibulum posuere suscipit nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent eu porttitor velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent dapibus purus urna, in semper ligula malesuada sed. Duis fringilla augue ut elit semper sollicitudin. Integer non sapien libero. Donec dapibus blandit ante quis efficitur."
+        },
+        "citizen_id": 237,
+        "service": {
+            "display_dashboard_ind": 1,
+            "external_service_name": "Account Enquiry/Update",
+            "email_paragraph": "",
+            "service_name": "Account Enquiry/Update",
+            "parent": {
+                "service_name": "MSP"
+            },
+            "actual_service_ind": 1,
+            "online_availability": null,
+            "service_code": "MSP - 001",
+            "parent_id": 1,
+            "css_colour": null,
+            "is_dlkt": null,
+            "prefix": "A",
+            "service_desc": "MSP-Address or family changes, personal information updates, general status enquiries, billing information from Biller Direct, immigration documents to HIBC, needs PHN, etc.",
+            "deleted": null,
+            "online_link": null,
+            "timeslot_duration": null,
+            "service_id": 7
+        },
+        "start_time": "2022-05-03T16:00:00+00:00",
+        "comments": "",
+        "blackout_flag": "N",
+        "online_flag": true,
+        "is_draft": false,
+        "office_id": 1,
+        "stat_flag": false,
+        "service_id": 7
+    },
+    "errors": {
+        "_schema": [
+            "Invalid input type."
+        ]
+    }
+}
