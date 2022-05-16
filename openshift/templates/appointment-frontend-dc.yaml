@@ -43,6 +43,7 @@ objects:
             "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
             "hideBCServicesCard": ${HIDEBCSERVICESCARD},
             "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
+            "BCServicesCardUrl": "${BCSC_URL}",
             "VUE_APP_GOOGLE_STATIC_MAP_API_KEY": "${VUE_APP_GOOGLE_STATIC_MAP_API_KEY}",
             "disableSms": ${DISABLE_SMS},
             "VUE_APP_FEEDBACK_API": ${VUE_APP_FEEDBACK_API},
@@ -87,13 +88,6 @@ objects:
           timeoutSeconds: 60
           maxSurge: 2
           maxUnavailable: 0
-        resources:
-          limits:
-            cpu: 50m
-            memory: 512Mi
-          requests:
-            cpu: 20m
-            memory: 256Mi
         activeDeadlineSeconds: 3600
       template:
         metadata:
@@ -211,7 +205,7 @@ parameters:
   - name: IMAGE_TAG
     description: "The image tag to pull for the deployment."
     required: true
-    value: latest
+    value: ""
   - name: TOOLS_WORKSPACE
     description: The Location for your image streams (Tools Workspace)
     required: true
@@ -245,7 +239,7 @@ parameters:
   - name: DISABLE_SMS
     description: "Flag to decide if SMS is disabled"
     required: true
-    value: "true"
+    value: "false"
   - name: VUE_APP_FEEDBACK_API
     description: "Feedback API url"
     required: true
@@ -269,10 +263,19 @@ parameters:
   - name: VUE_APP_FOOTER_MSG
     description: "Footer message to be displayed"
     required: true
-    value: " "
+    value: ""
   - name: VUE_APP_FOOTER_LINKS
     description: "Footer links(ICBC)"
     required: true
-    value: " "
+    value: ""
+  - name: BCSC_URL
+    description: "BC Services Card URL"
+    required: true
+    value: ""
+  - name: FEEDBACK_ENABLED
+    description: "Feedback enable switch"
+    required: true
+    value: ""
+
 
 

@@ -98,26 +98,26 @@ objects:
                 - name: DATABASE_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: "patroni"
-                      key: app-db-username
+                      name: "${DATABASE_SECRET}"
+                      key: "${DATABASE_SECRET_USER_KEY}"
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: "patroni"
-                      key: app-db-password
+                      name: "${DATABASE_SECRET}"
+                      key: "${DATABASE_SECRET_PASSWORD_KEY}"
                 - name: DATABASE_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: "patroni"
-                      key: app-db-name
+                      name: "${DATABASE_SECRET}"
+                      key: "${DATABASE_SECRET_DB_KEY}"
                 - name: DATABASE_HOST
-                  value: "patroni-master"
+                  value: "${DATABASE_HOST}"
                 - name: DATABASE_PORT
                   value: "5432"
                 - name: DATABASE_LONG_RUNNING_QUERY
                   value: "${DATABASE_LONG_RUNNING_QUERY}"
                 - name: SQLALCHEMY_POOL_PRE_PING
-                  value: "true"
+                  value: "TRUE"
                 - name: SQLALCHEMY_POOL_SIZE
                   value: "${SQLALCHEMY_POOL_SIZE}"
                 - name: SQLALCHEMY_MAX_OVERFLOW
@@ -141,8 +141,8 @@ objects:
                 - name: ACTIVE_MQ_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      key: password
-                      name: redis-theq-secret
+                      key: "${ACTIVE_MQ_PASSWORD}"
+                      name: "${ACTIVE_MQ_PASSWORD_KEY}"
                 - name: SECRET_KEY
                   value: "${SECRET_KEY}"
                 - name: SERVER_NAME
@@ -164,7 +164,7 @@ objects:
                 - name: THEQ_FEEDBACK
                   value: "${THEQ_FEEDBACK}"
                 - name: RECURRING_FEATURE_FLAG
-                  value: "true"
+                  value: "On"
                 - name: APPOINTMENT_LIMIT_DAYS
                   value: "${APPOINTMENT_LIMIT_DAYS}"
                 - name: NOTIFICATIONS_EMAIL_ENDPOINT
@@ -216,9 +216,9 @@ objects:
                 - name: LOG_MYAPP_SQLTIME
                   value: INFO
                 - name: PRINT_ENABLE
-                  value: "false"
+                  value: "${PRINT_ENABLE}"
                 - name: LOG_BASIC
-                  value: WARNING
+                  value: DEFAULT
                 - name: LOG_ROOT
                   value: WARNING
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
@@ -232,7 +232,7 @@ objects:
                 - name: SHOW_ESTIMATE_TIME_WALKIN
                   value: "${SHOW_ESTIMATE_TIME_WALKIN}"
                 - name: APPOINTMENT_PORTAL_URL
-                  value: "${SHOW_ESTIMATE_TIME_WALKIN}"                               
+                  value: "${APPOINTMENT_PORTAL_URL}"                               
                 - name: BCMP_USER
                   value: "${BCMP_USER}"
                 - name: CHES_POST_EMAIL_ENDPOINT
@@ -245,6 +245,12 @@ objects:
                   value: "${CHES_SSO_TOKEN_URL}"
                 - name: TEAMS_URL
                   value: "${TEAMS_URL}"
+                - name: LOG_URLLIB3_RESPONSE
+                  value: DEBUG
+                - name: LOG_SNOWPLOW_TRACKER
+                  value: WARNING
+                - name: LOG_SNOWPLOW_TRACKER_EMITTERS
+                  value: WARNING
 
               ports:
                 - containerPort: 8080
@@ -473,11 +479,11 @@ parameters:
   - name: RECURRING_FEATURE_FLAG
     description: "Allows recurring blackout option in application"
     required: true
-    value: ""
+    value: "On"
   - name: SQLALCHEMY_POOL_PRE_PING
     description: "SQL pool settings"
     required: true
-    value: ""
+    value: "TRUE"
   - name: APPOINTMENT_LIMIT_DAYS
     description: "the number of days in advance to book appointment "
     required: true
@@ -528,5 +534,33 @@ parameters:
     value: ""
   - name: CHES_SSO_TOKEN_URL
     description: "CHES SSO token URL"
+    required: true
+    value: ""
+  - name: DATABASE_SECRET
+    description: "The secret that contains database user/password"
+    required: true
+    value: ""
+  - name: DATABASE_SECRET_USER_KEY
+    description: "the corresponding key for user in the secret"
+    required: true
+    value: ""
+  - name: DATABASE_SECRET_PASSWORD_KEY
+    description: "the corresponding key for password in the secret"
+    required: true
+    value: ""
+  - name: DATABASE_SECRET_DB_KEY
+    description: "the corresponding key for DB name in the secret"
+    required: true
+    value: ""
+  - name: DATABASE_HOST
+    description: "Databse service name"
+    required: true
+    value: ""
+  - name: ACTIVE_MQ_PASSWORD
+    description: "redis secret name"
+    required: true
+    value: ""
+  - name: ACTIVE_MQ_PASSWORD_KEY
+    description: "redis secret password key"
     required: true
     value: ""
