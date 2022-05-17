@@ -100,8 +100,9 @@ export default class App extends Vue {
     // eslint-disable-next-line no-console
 
     if (this.isAuthenticated) {
-      await this.loadUserInfo()
-      await this.getUser()
+      // Removed redundant "await" calls on next two lines
+      this.loadUserInfo()
+      this.getUser()
       try {
         await this.tokenService.init(this.$store)
         this.tokenService.scheduleRefreshTimer()

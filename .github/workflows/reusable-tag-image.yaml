@@ -1,0 +1,41 @@
+name: Tag Image
+on:
+  workflow_call:
+    inputs:
+      image-names:
+        required: true
+        type: string
+      tag-from:
+        required: true
+        type: string
+      tag-to:
+        required: true
+        type: string
+    secrets:
+      licence-plate:
+        required: true
+      openshift-api:
+        required: true
+      token:
+        required: true
+
+jobs:
+  tag:
+    name: Tag to ${{ inputs.tag-to }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Log in to OpenShift tools
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.licence-plate }}-tools
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.token }}
+
+    - name: Tag Images
+      run: |
+        for image in ${{ inputs.image-names }}; do
+          COMMAND="oc tag $image:${{ inputs.tag-from }} $image:${{ inputs.tag-to }}"
+          echo $COMMAND
+          $COMMAND
+        done

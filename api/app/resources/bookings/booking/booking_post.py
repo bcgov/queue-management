@@ -36,6 +36,8 @@ class BookingPost(Resource):
 
         json_data = request.get_json()
         i_id = json_data.get('invigilator_id')
+        if "room_id" in json_data and json_data["room_id"] == '_offsite':
+            json_data["room_id"] = None
 
         if not json_data:
             return {"message": "No input data received for creating a booking"}, 400

@@ -57,7 +57,8 @@ describe('Serve Citizens', () => {
       await changeEventID()
       await changeMethod()
       await changeExamineeName()
-      await changeNotes
+      // Not sure how this was working before without the ()
+      await changeNotes()
       await clickSubmit()
     },
     maxTestCaseTime

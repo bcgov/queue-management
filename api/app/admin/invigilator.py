@@ -22,6 +22,9 @@ from wtforms import validators
 class InvigilatorConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
 
+    # Defining String constants to appease SonarQube
+    office_name_const = 'office.office_name'
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
 
@@ -36,7 +39,7 @@ class InvigilatorConfig(Base):
     can_delete = False
 
     column_list = [
-        'office.office_name',
+        office_name_const,
         'invigilator_name',
         'contact_phone',
         'contact_email',
@@ -58,7 +61,7 @@ class InvigilatorConfig(Base):
     ]
 
     column_labels = {
-        'office.office_name': 'Office Name',
+        office_name_const: 'Office Name',
         'shadow_count': 'Shadow Session Count',
         'shadow_flag': 'Shadow Sessions Completed',
         'deleted': 'Deleted'
@@ -69,6 +72,7 @@ class InvigilatorConfig(Base):
         'shadow_count',
         'shadow_flag',
         'deleted',
+        office_name_const
     }
 
     form_create_rules = (

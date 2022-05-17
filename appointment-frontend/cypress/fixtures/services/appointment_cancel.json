@@ -1,0 +1,194 @@
+{
+    "services": [
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Batching",
+            "service_code": "Back Office - 001",
+            "email_paragraph": null,
+            "service_id": 5,
+            "service_desc": "Batching",
+            "timeslot_duration": null,
+            "parent_id": 3,
+            "parent": {
+                "service_name": "Back Office"
+            },
+            "prefix": "B",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Cash Out",
+            "service_code": "Back Office - 002",
+            "email_paragraph": null,
+            "service_id": 6,
+            "service_desc": "Cash Out",
+            "timeslot_duration": null,
+            "parent_id": 3,
+            "parent": {
+                "service_name": "Back Office"
+            },
+            "prefix": "B",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 0
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "BCSC Non Photo",
+            "service_code": "MSP - 002",
+            "email_paragraph": null,
+            "service_id": 8,
+            "service_desc": "MSP- SC2607 RAPID ordering , status enquiry, address update, also for the non photo form process when photo eligible, etc.",
+            "timeslot_duration": null,
+            "parent_id": 1,
+            "parent": {
+                "service_name": "MSP"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Payment - MSP",
+            "service_code": "MSP - 006",
+            "email_paragraph": null,
+            "service_id": 9,
+            "service_desc": "MSP- SC686, SC1089 -Pay direct payment, employer payment",
+            "timeslot_duration": null,
+            "parent_id": 1,
+            "parent": {
+                "service_name": "MSP"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Deferment Application",
+            "service_code": "PTAX - 001",
+            "email_paragraph": null,
+            "service_id": 10,
+            "service_desc": "PTax/RPT - Process application - new and renewal, post note, etc.",
+            "timeslot_duration": null,
+            "parent_id": 2,
+            "parent": {
+                "service_name": "Property Tax"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Deferment Payment",
+            "service_code": "PTAX - 002",
+            "email_paragraph": null,
+            "service_id": 11,
+            "service_desc": "PTax/RPT - Full or Partial deferment account payment",
+            "timeslot_duration": null,
+            "parent_id": 2,
+            "parent": {
+                "service_name": "Property Tax"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Other - PTAX",
+            "service_code": "PTAX - 004",
+            "email_paragraph": null,
+            "service_id": 12,
+            "service_desc": "PTax/RPT - Providing information, forms, searches, tax clearance certificate, address changes, add new owner, extensions, forfeiture status, tax search, etc.",
+            "timeslot_duration": null,
+            "parent_id": 2,
+            "parent": {
+                "service_name": "Property Tax"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Exam Management",
+            "service_code": "Exams - 001",
+            "email_paragraph": null,
+            "service_id": 13,
+            "service_desc": "ITA or PEST -Checking for expired Exams, contacting ITA or PEST program, mailing back ITA or shredding expired PEST Exams, etc.",
+            "timeslot_duration": null,
+            "parent_id": 4,
+            "parent": {
+                "service_name": "Exams"
+            },
+            "prefix": "E",
+            "actual_service_ind": 1,
+            "external_service_name": null,
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        },
+        {
+            "is_dlkt": null,
+            "online_link": null,
+            "service_name": "Account Enquiry/Update",
+            "service_code": "MSP - 001",
+            "email_paragraph": "",
+            "service_id": 7,
+            "service_desc": "MSP-Address or family changes, personal information updates, general status enquiries, billing information from Biller Direct, immigration documents to HIBC, needs PHN, etc.",
+            "timeslot_duration": null,
+            "parent_id": 1,
+            "parent": {
+                "service_name": "MSP"
+            },
+            "prefix": "A",
+            "actual_service_ind": 1,
+            "external_service_name": "Account Enquiry/Update",
+            "online_availability": null,
+            "css_colour": null,
+            "deleted": null,
+            "display_dashboard_ind": 1
+        }
+    ],
+    "errors": {}
+}
