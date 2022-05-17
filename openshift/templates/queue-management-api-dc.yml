@@ -133,7 +133,7 @@ objects:
                 - name: ACTIVE_MQ_TYPE
                   value: "redis"								  					  
                 - name: ACTIVE_MQ_HOST
-                  value: redis-theq
+                  value: "${ACTIVE_MQ_HOST}"
                 - name: ACTIVE_MQ_PORT
                   value: '6379'
                 - name: ACTIVE_MQ_USER
@@ -562,5 +562,9 @@ parameters:
     value: ""
   - name: ACTIVE_MQ_PASSWORD_KEY
     description: "redis secret password key"
+    required: true
+    value: ""
+  - name: ACTIVE_MQ_HOST
+    description: "redis hostname"
     required: true
     value: ""
