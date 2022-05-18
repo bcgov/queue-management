@@ -30,7 +30,7 @@
         <v-list-item-icon left>
           <v-icon>mdi-account-outline</v-icon>
         </v-list-item-icon>
-        <v-list-item-title>Account Settings</v-list-item-title>
+        <v-list-item-title data-cy="account-settings-nav">Account Settings</v-list-item-title>
       </v-list-item>
       <v-divider></v-divider>
       <v-list-item @click="goTo('logout')">
