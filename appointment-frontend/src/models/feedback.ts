@@ -14,20 +14,20 @@ export interface FeedbackRequestObject{
 
 export interface FeedbackRequestItem {
   engagement: FeedbackRequestKV,
-  citizen_comments:FeedbackRequestKV,
-  service_channel:FeedbackRequestKV,
+  citizenComments:FeedbackRequestKV,
+  serviceChannel:FeedbackRequestKV,
   response: FeedbackRequestKV,
-  citizen_name: FeedbackRequestKV,
-  citizen_contact: FeedbackRequestKV,
-  citizen_email: FeedbackRequestKV,
-  entity_key: FeedbackRequestKV,
-  service_date:FeedbackRequestKV,
-  submit_date_time:FeedbackRequestKV,
-  entered_by: FeedbackRequestKV
+  citizenName: FeedbackRequestKV,
+  citizenContact: FeedbackRequestKV,
+  citizenEmail: FeedbackRequestKV,
+  entityKey: FeedbackRequestKV,
+  serviceDate:FeedbackRequestKV,
+  submitDateTime:FeedbackRequestKV,
+  enteredBy: FeedbackRequestKV
 }
 
 export interface FeedbackResponseObject{
-  response_code: number
+  responseCode: number
 }
 
 export interface FeedbackRequestKV{
