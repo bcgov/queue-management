@@ -1,4 +1,21 @@
+// Do not remove the eslint-disable camelcase below as the Python data model uses
+// snake_case and Vue can't translate it to camelCase easily.
 /* eslint-disable camelcase */
+export interface TimeSlots {
+  day_of_week: string[]
+  end_time: string
+  start_time: string
+  no_of_slots: number
+  day_str?: string
+  end_time_str?: string
+  start_time_str?: string
+}
+
+export interface TimeZone {
+  timezone_id: number
+  timezone_name: string
+}
+
 export interface Office {
   appointment_duration: number
   appointments_days_limit: number
@@ -32,19 +49,4 @@ export interface Office {
 
 export interface Offices {
   offices: Office[]
-}
-
-export interface TimeSlots {
-  day_of_week: string[]
-  end_time: string
-  start_time: string
-  no_of_slots: number
-  day_str?: string
-  end_time_str?: string
-  start_time_str?: string
-}
-
-export interface TimeZone {
-  timezone_id: number
-  timezone_name: string
 }

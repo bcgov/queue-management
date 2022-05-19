@@ -1,5 +1,7 @@
 import { Office } from './office'
 import { Service } from './service'
+// Do not remove the eslint-disable camelcase below as the Python data model uses
+// snake_case and Vue can't translate it to camelCase easily.
 /* eslint-disable camelcase */
 
 export interface AppointmentSlot {
