@@ -1,0 +1,86 @@
+name: Appointment Frontend Cypress
+on:
+  workflow_call:
+    secrets:
+      bceid-endpoint:
+        required: true
+      bceid-password:
+        required: true
+      bceid-username:
+        required: true
+      cypress-project-id:
+        required: true
+      cypress-record-key:
+        required: true
+      keycloak-auth-url:
+        required: true
+      keycloak-client:
+        required: true
+      keycloak-realm:
+        required: true
+
+jobs:
+  cypress:
+    name: Cypress
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Configuration Files
+        run: |
+          mkdir -p appointment-frontend/public/config/kc
+
+          cat << EOF > appointment-frontend/public/config/configuration.json
+          {
+            "FEEDBACK_ENABLED": true,
+            "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+            "VUE_APP_FOOTER_LINKS": "https://www.icbc.com/locators",
+            "VUE_APP_FOOTER_MSG": "Looking for ICBC Services? Ensure you are at the right place by visiting {link} icbc.com/locators",
+            "VUE_APP_HEADER_LINKS": "https://www.gov.bc.ca/bcservicescardapp{link}https://www.bceid.ca",
+            "VUE_APP_HEADER_MSG": "Before you start – do you have the {link}BC Services Card app{link} or {link}Basic BCeID{link}? Login needed to confirm appointment.",
+            "VUE_APP_ROOT_API": "http://localhost:5000/api/v1"
+          }
+          EOF
+
+          cat << EOF > appointment-frontend/public/config/kc/keycloak-public.json
+          {
+            "auth-server-url": "${{ secrets.keycloak-auth-url }}",
+            "confidential-port": 0,
+            "public-client": true,
+            "realm": "${{ secrets.keycloak-realm }}",
+            "resource": "${{ secrets.keycloak-client }}",
+            "ssl-required": "external"
+          }
+          EOF
+
+          cat << EOF > appointment-frontend/cypress.env.json
+          {
+            "BCEID_ENDPOINT": "${{ secrets.bceid-endpoint }}",
+            "BCEID_PASSWORD": "${{ secrets.bceid-password }}",
+            "BCEID_USERNAME": "${{ secrets.bceid-username }}"
+          }
+          EOF
+
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.cypress-project-id }}
+          CYPRESS_RECORD_KEY: ${{ secrets.cypress-record-key }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VUE_APP_PATH: /
+        with:
+          record: true
+          start: npm run serve -- --port 8081
+          wait-on: http://localhost:8081
+          working-directory: appointment-frontend
+
+      - name: On Failure Upload Screenshot Artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: appointment-frontend-cypress
+          path: |
+            appointment-frontend/cypress/screenshots
+            appointment-frontend/cypress/snapshots/image_snapshot/*/__diff_output__

@@ -7,10 +7,26 @@ on:
 
 jobs:
 
+  ##### TESTS ##################################################################
+
+  appointment-frontend-cypress:
+    name: Appointment Frontend Cypress
+    uses: bcgov/queue-management/.github/workflows/reusable-appointment-frontend-cypress.yaml@master
+    secrets:
+      bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
+      bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
+      bceid-username: ${{ secrets.CYPRESS_BCEID_USERNAME }}
+      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
+      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
+      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
+      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+
   ##### BUILD ##################################################################
 
   appointment-frontend:
     name: appointment-frontend
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -30,6 +46,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -46,6 +63,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -62,6 +80,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -81,6 +100,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -100,6 +120,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
+    needs: appointment-frontend-cypress
     uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
