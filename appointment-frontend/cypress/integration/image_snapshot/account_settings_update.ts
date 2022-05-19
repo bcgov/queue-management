@@ -28,7 +28,7 @@ import {
 
 import { API_PREFIX } from '../../support'
 
-describe('Accpunt Settings', () => {
+describe('Account Settings', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
     cy.fixture('offices.json').then((json) => {
