@@ -29,10 +29,10 @@ class ExamType(Base):
     pesticide_exam_ind = db.Column(db.Integer, nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
 
-    # TODO changed lazy=false to lazy=raise
+    # changed lazy=false to lazy=raise
     exam = db.relationship("Exam", lazy='raise')
 
-    # TODO changed lazy4-false to no lazy option
+    # changed lazy4-false to no lazy option
     #exam = db.relationship("Exam", lazy=False)
 
     def __repr__(self):

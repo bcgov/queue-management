@@ -60,7 +60,7 @@ def run():
 def flush_drafts(app):
     app.logger.debug('<<< Starting flush_drafts job')
 
-    # todo - get appointment query, for now just select *
+    # get appointment query, for now just select *
 
     return 'todo'
     
