@@ -17,7 +17,7 @@
       </v-col>
     </v-row>
     <v-divider class="mb-4"></v-divider>
-    <v-card v-for="appointment in appointmentList" :key="appointment.appointment_id" class="my-4">
+    <v-card v-for="appointment in appointmentList" :key="appointment.appointmentId" class="my-4">
       <v-card-text>
         <v-row>
           <v-col
@@ -219,7 +219,7 @@ export default class Home extends Vue {
   }
 
   private changeAppointment (appointment) {
-    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.userId, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
@@ -229,7 +229,7 @@ export default class Home extends Vue {
   }
 
   private cancelAppointment (appointment) {
-    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.userId, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
     this.callSnowplow(mySP)
     this.confirmDialog = true
     this.selectedAppointment = appointment
@@ -237,7 +237,7 @@ export default class Home extends Vue {
 
   private async confirmDelete (isAgree: boolean) {
     if (isAgree) {
-      const resp = await this.deleteAppointment(this.selectedAppointment?.appointment_id)
+      const resp = await this.deleteAppointment(this.selectedAppointment?.appointmentId)
       if (resp?.status === 204) {
         this.confirmDialog = false
       }

@@ -53,7 +53,7 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setCurrentOffice (office: Office) {
     this.currentOffice = office
-    this.currentOfficeTimezone = office?.timezone?.timezone_name || undefined
+    this.currentOfficeTimezone = office?.timezone?.timezoneName || undefined
   }
 
   @Mutation
@@ -110,15 +110,15 @@ export default class OfficeModule extends VuexModule {
     let services = response?.data?.services || []
     if (services.length) {
       services = response.data.services.filter(service => {
-        return (service.actual_service_ind &&
-          service.display_dashboard_ind &&
-          service.online_availability !== ServiceAvailability.HIDE)
+        return (service.actualServiceInd &&
+          service.displayDashboardInd &&
+          service.onlineAvailability !== ServiceAvailability.HIDE)
       })
       // Sort alphabetically on displayed external_service_name
       services = services.sort((a, b) => {
         // If external_service_name is null, sort it to last of list.
-        const aName = a.external_service_name || 'zzz'
-        const bName = b.external_service_name || 'zzz'
+        const aName = a.externalServiceName || 'zzz'
+        const bName = b.externalServiceName || 'zzz'
         return aName.localeCompare(bName)
       })
     }
@@ -138,7 +138,7 @@ export default class OfficeModule extends VuexModule {
     if (categories.length) {
       const services = this.context.state['serviceList'] || []
       categories = response.data.categories.filter(cat => {
-        return services.some(s => s.parent_id === cat.service_id)
+        return services.some(s => s.parent_id === cat.serviceId)
       })
     }
     return categories
@@ -164,13 +164,13 @@ export default class OfficeModule extends VuexModule {
     // Don't make changes here, instead make changes to slot where end_time is set
     const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
     const appointmentBody: AppointmentRequestBody = {
-      start_time: this.context.state['currentAppointmentSlot'].start_time,
-      end_time: this.context.state['currentAppointmentSlot'].end_time,
-      service_id: this.context.state['currentService'].service_id,
+      startTime: this.context.state['currentAppointmentSlot'].start_time,
+      endTime: this.context.state['currentAppointmentSlot'].end_time,
+      serviceId: this.context.state['currentService'].service_id,
       comments: this.context.state['additionalNotes'],
-      office_id: this.context.state['currentOffice'].office_id,
-      user_id: userId,
-      appointment_draft_id: this.context.state['currentDraftAppointment'].appointment_id
+      officeId: this.context.state['currentOffice'].office_id,
+      userId: userId,
+      appointmentDraftId: this.context.state['currentDraftAppointment'].appointment_id
     }
     let response
     if (this.context.rootState.isAppointmentEditMode) {
@@ -198,8 +198,8 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public setAppointmentValues (appointment: Appointment): void {
     const apppointmentSlot: AppointmentSlot = {
-      start_time: appointment?.start_time,
-      end_time: appointment?.end_time
+      startTime: appointment?.startTime,
+      endTime: appointment?.endTime
     }
     this.context.commit('setCurrentOffice', appointment?.office)
     this.context.commit('setCurrentService', appointment?.service)
@@ -213,13 +213,13 @@ export default class OfficeModule extends VuexModule {
     // Don't make changes here, instead make changes to slot where end_time is set
     const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
     const appointmentBody: AppointmentRequestBody = {
-      start_time: this.context.state['currentAppointmentSlot'].start_time,
-      end_time: this.context.state['currentAppointmentSlot'].end_time,
-      service_id: this.context.state['currentService'].service_id,
+      startTime: this.context.state['currentAppointmentSlot'].start_time,
+      endTime: this.context.state['currentAppointmentSlot'].end_time,
+      serviceId: this.context.state['currentService'].service_id,
       comments: this.context.state['additionalNotes'],
-      office_id: this.context.state['currentOffice'].office_id,
-      user_id: userId,
-      is_draft: true
+      officeId: this.context.state['currentOffice'].office_id,
+      userId: userId,
+      isDraft: true
     }
     let response
     let deleteResponse

@@ -1,6 +1,3 @@
-// Do not remove the eslint-disable camelcase below as the Python data model uses
-// snake_case and Vue can't translate it to camelCase easily.
-/* eslint-disable camelcase */
 export interface KCUserProfile {
     lastName: string;
     firstName: string;
@@ -10,5 +7,5 @@ export interface KCUserProfile {
     email: string;
     fullName: string;
     loginSource: string;
-    display_name: string;
+    displayName: string;
 }

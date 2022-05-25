@@ -8,31 +8,29 @@ export interface FeedbackModel{
     responseRequired: boolean
   }
 
-export interface FeedbackRequestObject{
-  variables: FeedbackRequestItem
-}
-
-export interface FeedbackRequestItem {
-  engagement: FeedbackRequestKV,
-  citizenComments:FeedbackRequestKV,
-  serviceChannel:FeedbackRequestKV,
-  response: FeedbackRequestKV,
-  citizenName: FeedbackRequestKV,
-  citizenContact: FeedbackRequestKV,
-  citizenEmail: FeedbackRequestKV,
-  entityKey: FeedbackRequestKV,
-  serviceDate:FeedbackRequestKV,
-  submitDateTime:FeedbackRequestKV,
-  enteredBy: FeedbackRequestKV
-}
-
-export interface FeedbackResponseObject{
-  responseCode: number
-}
-
 export interface FeedbackRequestKV{
   value?: string,
   type?:string
 }
 
-   
+export interface FeedbackRequestItem {
+    engagement: FeedbackRequestKV,
+    citizenComments:FeedbackRequestKV,
+    serviceChannel:FeedbackRequestKV,
+    response: FeedbackRequestKV,
+    citizenName: FeedbackRequestKV,
+    citizenContact: FeedbackRequestKV,
+    citizenEmail: FeedbackRequestKV,
+    entityKey: FeedbackRequestKV,
+    serviceDate:FeedbackRequestKV,
+    submitDateTime:FeedbackRequestKV,
+    enteredBy: FeedbackRequestKV
+  }
+
+export interface FeedbackRequestObject{
+  variables: FeedbackRequestItem
+}
+
+export interface FeedbackResponseObject{
+  responseCode: number
+}

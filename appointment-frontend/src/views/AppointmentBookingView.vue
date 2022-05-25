@@ -260,28 +260,28 @@ export default class AppointmentBookingView extends Vue {
     switch (theStep) {
       case 1:
         this.setSPStatus('new')
-        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
+        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null }
         this.callSnowplow(mySP)
         break
       case 2:
-        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
+        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: null }
         this.callSnowplow(mySP)
         break
       case 3:
-        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
         this.callSnowplow(mySP)
         break
       case 4:
         if (this.isAuthenticated) {
-          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
           this.callSnowplow(mySP)
         } else {
-          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
           this.callSnowplow(mySP)
         }
         break
       case 5:
-        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
         this.callSnowplow(mySP)
         break
       default:
