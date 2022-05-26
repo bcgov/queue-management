@@ -28,7 +28,7 @@ from .feedback import api as FEEDBACK_API
 
 
 # This will add the Authorize button to the swagger docs
-# TODO oauth2 & openid may not yet be supported by restplus <- check on this
+# oauth2 & openid may not yet be supported by restplus <- check on this
 
 API = Api(
     title='Feedback API',

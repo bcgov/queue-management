@@ -40,5 +40,5 @@ class Ready(Resource):
     @cors.crossdomain(origin='*')
     def get(self):
         """Return a JSON object that identifies if the service is setupAnd ready to work."""
-        # TODO: add a poll to the DB when called
+        # add a poll to the DB when called
         return {'message': 'api is ready'}, 200
