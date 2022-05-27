@@ -234,13 +234,13 @@ class SendLineReminderWalkin(Resource):
                             .options(raiseload(Citizen.service_reqs),raiseload(Citizen.office),raiseload(Citizen.user)) \
                             .filter_by(citizen_id=nth_app['citizen_id']) \
                             .first()
-                            if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
+                            if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)) and citizen.start_position and citizen.start_position >=int(nth_line):
                                 office_obj = Office.find_by_id(citizen.office_id)
                                 if citizen.notification_phone:
                                     citizen = self.send_sms_reminder(citizen, office_obj)
                                     citizen.automatic_reminder_flag = 1
                                 if citizen.notification_email:
-                                    # citizen = self.send_email_reminder(citizen, office_obj)
+                                    citizen = self.send_email_reminder(citizen, office_obj)
                                     citizen.automatic_reminder_flag = 1
                                 if citizen.automatic_reminder_flag == 1:
                                     db.session.add(citizen)

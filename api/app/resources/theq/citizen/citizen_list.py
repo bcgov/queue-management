@@ -24,7 +24,7 @@ from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role, has_role
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
-from sqlalchemy.dialects import postgresql 
+from sqlalchemy.dialects import postgresql
 
 @api.route("/citizens/", methods=['GET'])
 class CitizenList(Resource):
@@ -54,7 +54,7 @@ class CitizenList(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
-@api.route("/citizens/<string:citizens_waiting>/add_citizen/", methods=['POST'])
+@api.route("/citizens/<int:citizens_waiting>/add_citizen/", methods=['POST'])
 class CitizenList(Resource):
     citizen_schema = CitizenSchema()
     citizens_schema = CitizenSchema(many=True)
@@ -76,7 +76,8 @@ class CitizenList(Resource):
 
         try:
 
-
+            if not json_data:
+                json_data = {}
             citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
             citizen.start_time = datetime.utcnow()
@@ -97,8 +98,6 @@ class CitizenList(Resource):
 
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 201
-
-
 
 try:
     key = get_key()
