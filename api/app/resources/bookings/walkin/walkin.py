@@ -231,7 +231,7 @@ class SendLineReminderWalkin(Resource):
                         nth_app = cit
                         if nth_app['citizen_id']:
                             citizen = Citizen.query \
-                            .options(raiseload(Citizen.service_reqs),raiseload(Citizen.office),raiseload(Citizen.user)) \
+                            .options(raiseload(Citizen.service_reqs),raiseload(Citizen.office),raiseload(Citizen.user),raiseload(Citizen.cs),raiseload(Citizen.counter)) \
                             .filter_by(citizen_id=nth_app['citizen_id']) \
                             .first()
                             if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)) and citizen.start_position and citizen.start_position >=int(nth_line):
