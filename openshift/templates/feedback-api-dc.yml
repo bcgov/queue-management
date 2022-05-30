@@ -112,6 +112,8 @@ objects:
                   value: WARNING
                 - name: LOG_ROOT
                   value: WARNING
+                - name: PORT
+                  value: "8080"
 
               ports:
                 - containerPort: 8080
