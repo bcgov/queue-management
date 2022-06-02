@@ -37,6 +37,7 @@
               ></v-text-field>
 
               <v-text-field
+                data-cy="account-settings-phone-input"
                 :maxlength="maxChars"
                 v-model="phoneNumber"
                 label="Phone"
@@ -44,6 +45,7 @@
               ></v-text-field>
 
               <v-switch
+                data-cy="account-settings-email-switch"
                 inset
                 v-model="enableEmailReminder"
                 label="Send me appointment reminders via email"
@@ -57,6 +59,7 @@
             <v-row>
               <v-col class="d-flex">
                 <v-btn
+                  data-cy="account-settings-update-button"
                   color="primary"
                   large
                   :disabled="!isFormUpdated"
@@ -71,6 +74,7 @@
       </v-col>
     </v-row>
     <v-snackbar
+      data-cy="account-settings-msg"
       multi-line
       :color="showMsg.msgType"
       v-model="showMsg.isShow"

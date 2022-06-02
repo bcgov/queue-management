@@ -29,7 +29,7 @@ from .notifications import api as NOTIFICATIONS_API
 from .email import api as EMAIL_API
 
 # This will add the Authorize button to the swagger docs
-# TODO oauth2 & openid may not yet be supported by restplus <- check on this
+# oauth2 & openid may not yet be supported by restplus <- check on this
 AUTHORIZATIONS = {
     'apikey': {
         'type': 'apiKey',

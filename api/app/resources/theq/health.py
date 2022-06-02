@@ -37,5 +37,5 @@ class Readyz(Resource):
 
     @staticmethod
     def get():
-        # TODO: add a poll to the DB when called
+        # add a poll to the DB when called
         return {"message": "api is ready"}, 200
