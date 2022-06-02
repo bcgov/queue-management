@@ -59,7 +59,7 @@ class CitizenAddToQueue(Resource):
             elif active_period.ps.ps_name == "Being Served":
                 snowplow_call = "returntoqueue"
             else:
-                #  TODO:  Put in a Feedback Slack/Service now call here.
+                # Put in a Feedback Slack/Service now call here.
                 return {"message": "Invalid citizen/period state. "}
 
         active_service_request.add_to_queue(csr, snowplow_call)
