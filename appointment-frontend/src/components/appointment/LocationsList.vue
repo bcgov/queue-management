@@ -6,7 +6,7 @@
       <v-col cols="12" sm="6" md="4">
         <v-combobox
             :items="locationListData"
-            :item-text="'office_name'"
+            :item-text="'officeName'"
             :filter="officeSearchFilter"
             data-cy="step-1-combobox-office"
             label="Select Office"
@@ -301,11 +301,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private checkDisabled (value) {
-    return (value?.appointments_enabled_ind)
+    return (value?.appointmentsEnabledInd)
   }
 
   private clickSelection (value) {
-    if (!value?.service_name) {
+    if (!value?.serviceName) {
       this.selectedOffice = null
       this.setCurrentOffice(undefined)
     } else {
@@ -325,7 +325,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private officeSearchFilter (item, queryText, itemText) {
-    return `${item?.office_name || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
+    return `${item?.officeName || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 
   private getDistance (latitude, longitude) {
@@ -347,11 +347,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async showLocationServices (location) {
-    this.serviceList = await this.getServiceByOffice(location.office_id)
+    this.serviceList = await this.getServiceByOffice(location.officeId)
     await this.getCategories()
-    this.selectedLocationName = location.office_name
+    this.selectedLocationName = location.officeName
     this.$refs.locationServiceListPopup.open()
-    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: location.office_name, serv: null, url: null }
+    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: location.officeName, serv: null, url: null }
     this.callSnowplowClick(mySP)
   }
 
@@ -363,8 +363,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    if (this.currentOffice?.officeId !== location?.office_id) {
-      this.$store.commit('setAppointmentLocation', location.office_name)
+    if (this.currentOffice?.officeId !== location?.officeId) {
+      this.$store.commit('setAppointmentLocation', location.officeName)
       this.setCurrentOffice(location)
       this.setCurrentService(undefined)
     }

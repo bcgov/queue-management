@@ -3,6 +3,7 @@
  */
 import { format, parseISO } from 'date-fns'
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import { TimeSlots } from '../models/office'
 
 export enum Days {
   Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
@@ -33,22 +34,22 @@ export default class CommonUtils {
   /***
    * Time slots formatted in a way it should need to display in the UI
    ***/
-  static getFormattedTimeslots (timeslots) {
+  static getFormattedTimeslots (timeslots: TimeSlots[]) {
     const timeslotArray = []
     // this loop will get the minimum start time and maximum end time of a timeslot
     timeslots.forEach(timeslot => {
-      timeslot.day_of_week.forEach(day => {
+      timeslot.dayOfWeek.forEach(day => {
         if (timeslotArray[Days[day]]) {
-          if (!this.compareTime(timeslotArray[Days[day]].startTime, timeslot.start_time)) {
-            timeslotArray[Days[day]].startTime = timeslot.start_time
+          if (!this.compareTime(timeslotArray[Days[day]].startTime, timeslot.startTime)) {
+            timeslotArray[Days[day]].startTime = timeslot.startTime
           }
-          if (this.compareTime(timeslotArray[Days[day]].endTime, timeslot.end_time)) {
-            timeslotArray[Days[day]].endTime = timeslot.end_time
+          if (this.compareTime(timeslotArray[Days[day]].endTime, timeslot.endTime)) {
+            timeslotArray[Days[day]].endTime = timeslot.endTime
           }
         } else {
           timeslotArray[Days[day]] = {
-            startTime: timeslot.start_time,
-            endTime: timeslot.end_time
+            startTime: timeslot.startTime,
+            endTime: timeslot.endTime
           }
         }
       })
@@ -60,9 +61,9 @@ export default class CommonUtils {
       const timeslot = timeslotArray[index]
       returnArray.push({
         ...timeslot,
-        day_str: this.getDayOfWeek(index),
-        end_time_str: (timeslot?.endTime) ? this.get12HTimeString(timeslot.endTime) : '',
-        start_time_str: (timeslot?.startTime) ? this.get12HTimeString(timeslot.startTime) : ''
+        dayStr: this.getDayOfWeek(index),
+        endTimeStr: (timeslot?.endTime) ? this.get12HTimeString(timeslot.endTime) : '',
+        startTimeStr: (timeslot?.startTime) ? this.get12HTimeString(timeslot.startTime) : ''
       })
       index++
     } while (index <= (Object.keys(Days).length / 2))
