@@ -28,6 +28,8 @@ from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.orm import raiseload, joinedload
 
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
@@ -224,20 +226,25 @@ class SendLineReminderWalkin(Resource):
                 # bool checks for both False and 0
                 nth_app = False
                 if nth_line and len(res_list) >= int(nth_line) and (int(nth_line) > 0):
-                    nth_app = res_list[int(nth_line)-1]
-                    if nth_app['citizen_id']:
-                        citizen = Citizen.query.filter_by(citizen_id=nth_app['citizen_id']).first()
-                        if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)):
-                            office_obj = Office.find_by_id(citizen.office_id)
-                            if citizen.notification_phone:
-                                citizen = self.send_sms_reminder(citizen, office_obj)
-                                citizen.automatic_reminder_flag = 1
-                            if citizen.notification_email:
-                                citizen = self.send_email_reminder(citizen, office_obj)
-                                citizen.automatic_reminder_flag = 1
-                            db.session.add(citizen)
-                            db.session.commit()
-
+                    # Check first n citizens in line
+                    for cit in res_list[:int(nth_line)]:
+                        nth_app = cit
+                        if nth_app['citizen_id']:
+                            citizen = Citizen.query \
+                            .options(raiseload(Citizen.service_reqs),raiseload(Citizen.office),raiseload(Citizen.user),raiseload(Citizen.cs),raiseload(Citizen.counter)) \
+                            .filter_by(citizen_id=nth_app['citizen_id']) \
+                            .first()
+                            if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)) and citizen.start_position and citizen.start_position >=int(nth_line):
+                                office_obj = Office.find_by_id(citizen.office_id)
+                                if citizen.notification_phone:
+                                    citizen = self.send_sms_reminder(citizen, office_obj)
+                                    citizen.automatic_reminder_flag = 1
+                                if citizen.notification_email:
+                                    citizen = self.send_email_reminder(citizen, office_obj)
+                                    citizen.automatic_reminder_flag = 1
+                                if citizen.automatic_reminder_flag == 1:
+                                    db.session.add(citizen)
+                                    db.session.commit()
                 result = self.citizen_schema.dump(previous_citizen)
             return {'citizen': result,
                     'errors': self.citizen_schema.validate(previous_citizen)}, 200
