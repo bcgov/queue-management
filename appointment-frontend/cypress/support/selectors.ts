@@ -20,6 +20,9 @@ export const SELECTOR_FEEDBACK = '[data-cy="feedback"]'
 // Header.
 export const SELECTOR_HEADER_IMAGE_BCGOV = '[data-cy="header-image-bcgov"]'
 
+// Footer.
+export const SELECTOR_FOOTER = '[data-cy="footer"]'
+
 // Step 1.
 export const SELECTOR_STEP_1_BUTTON_AVAILABLE_SERVICES =
   '[data-cy="step-1-button-available-services"]'
@@ -93,3 +96,23 @@ export const SELECTOR_ACCOUNT_SETTINGS_EMAIL_SWITCH =
   '[data-cy="account-settings-email-switch"]'
 export const SELECTOR_ACCOUNT_SETTINGS_MSG =
   '[data-cy="account-settings-msg"]'
+
+// Feedback
+export const SELECTOR_FEEDBACK_COMPLAINT_BUTTON =
+'[data-cy="feedback-complaint-button"]'
+export const SELECTOR_FEEDBACK_COMPLAINT_TEXTAREA =
+'[data-cy="feedback-textarea"]'
+export const SELECTOR_FEEDBACK_RESPONSE_YES =
+'[data-cy="feedback-response-yes"]'
+export const SELECTOR_FEEDBACK_RESPONSE_NEXT =
+'[data-cy="feedback-next-button"]'
+export const SELECTOR_FEEDBACK_NAME_TEXTFIELD =
+'[data-cy="feedback-name-textfield"]'
+export const SELECTOR_FEEDBACK_PHONE_TEXTFIELD =
+'[data-cy="feedback-phone-textfield"]'
+export const SELECTOR_FEEDBACK_EMAIL_TEXTFIELD =
+'[data-cy="feedback-email-textfield"]'
+export const SELECTOR_FEEDBACK_CONSENT_CHECK =
+'[data-cy="feedback-consent-check"]'
+export const SELECTOR_FEEDBACK_SUBMIT_BUTTON =
+'[data-cy="feedback-submit-button"]'

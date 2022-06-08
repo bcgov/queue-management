@@ -19,3 +19,4 @@
 import './commands'
 
 export const API_PREFIX = 'http://localhost:5000/api/v1/'
+export const API_FEEDBACK_PREFIX = 'http://localhost:5001/api/v1/'

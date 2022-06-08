@@ -32,6 +32,7 @@
                     <v-row class="clickable close_btn" v-on:click="toggleFeedback()"><span class="mdi mdi-close"/></v-row>
                     <v-col class="feedback_header"><h3>{{feedbackHeader}}</h3></v-col>
                     <v-textarea v-show="!showResponsePage || !responseRequired"
+                        data-cy="feedback-textarea"
                         :maxlength="3000"
                         :label="'* Feedback'"
                         :rules="messageRules"
@@ -50,7 +51,7 @@
                     <v-col class="feedback_caption response_required"><span class="mandatory">*</span> Would you like a response from us?</v-col>
                     <v-row justify="center">
                         <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
-                          <v-radio  label="Yes" v-bind:value="yes"></v-radio>
+                          <v-radio data-cy="feedback-response-yes" label="Yes" v-bind:value="yes"></v-radio>
                           <v-radio  label="No" v-bind:value="no" @click="showResponsePage = false" ></v-radio>
                         </v-radio-group>
                     </v-row>
@@ -80,6 +81,7 @@
                               :disabled="validateSubmit()"
                       >Submit</v-btn>
                       <v-btn v-show="responseRequired && !showResponsePage" @click="toggleResponsePage"
+                              data-cy="feedback-next-button"
                               color="primary"
                               width="15em"
                       >Next</v-btn>
@@ -88,6 +90,7 @@
                               width="7em"
                       >Back</v-btn>
                       <v-btn v-show="showResponsePage" @click="postFeedback"
+                              data-cy="feedback-submit-button"
                               color="primary"
                               width="7em"
                               :disabled="validateSubmit()"
@@ -154,17 +157,17 @@
                 </v-radio-group>
             </v-row>
             <v-col v-if="showResponsePage && responseRequired">
-              <v-text-field v-model="citizenName" :rules="nameRules" label="Name" outlined dense required>
+              <v-text-field v-model="citizenName" :rules="nameRules" label="Name" outlined dense required data-cy="feedback-name-textfield">
                 <template v-slot:label>
                   <div><span class="mandatory">*</span> Name</div>
                 </template>
               </v-text-field>
-              <v-text-field v-model="email" :rules="emailRules" label="Email" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
-              <v-text-field v-model="phone" :rules="phoneRules" label="Phone" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
+              <v-text-field data-cy="feedback-email-textfield" v-model="email" :rules="emailRules" label="Email" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
+              <v-text-field data-cy="feedback-phone-textfield" v-model="phone" :rules="phoneRules" label="Phone" outlined dense @blur="validateRules" @input="validateRules"></v-text-field>
               <v-row justify="center" class="consent_xs"><v-col cols="10">{{consentMessage}}</v-col></v-row>
               <v-row justify="center">
                 <v-radio-group class="no_margin" v-model="consent" row>
-                  <v-radio  label="I Consent" v-bind:value="yes">
+                  <v-radio data-cy="feedback-consent-check" label="I Consent" v-bind:value="yes">
                     <template v-slot:label>
                       <div><span class="mandatory">*</span> I Consent</div>
                     </template>
@@ -201,7 +204,7 @@
                 <v-icon v-on:click="toggleMobileFeedbackPanel()" dense>mdi-close</v-icon>
               </v-row>
               <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('compliment')" class="icon_fb_xs">mdi-emoticon-happy</v-icon></v-row>
-              <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('complaint')" class="icon_fb_xs">mdi-emoticon-sad</v-icon></v-row>
+              <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('complaint')" class="icon_fb_xs" data-cy="feedback-complaint-button">mdi-emoticon-sad</v-icon></v-row>
               <v-row class="icon_container_xs" justify="center"><v-icon v-on:click="showFeedBack('suggestion')" class="icon_fb_xs">mdi-lightbulb</v-icon></v-row>
             </v-col>
           </v-card-text>
