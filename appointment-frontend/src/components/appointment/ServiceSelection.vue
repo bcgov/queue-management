@@ -5,7 +5,7 @@
         <v-col cols="12" sm="6" class="text-center">
           <v-combobox
             :items="serviceList"
-            :item-text="'external_service_name'"
+            :item-text="'externalServiceName'"
             :filter="serviceSearchFilter"
             label="Select Service"
             outlined
@@ -21,7 +21,7 @@
             hide-details
           >
             <template v-slot:selection="data">
-              {{ data.item.external_service_name }}
+              {{ data.item.externalServiceName }}
               <span v-if="checkDisabled(data.item)" class="ml-1 caption">(Unavailable)</span>
             </template>
             <template v-slot:item="data">
@@ -29,7 +29,7 @@
                 v-bind:class="{'disabled-selection': checkDisabled(data.item)}"
                 class="service-selection-options"
               >
-                <div>{{ data.item.external_service_name }}</div>
+                <div>{{ data.item.externalServiceName }}</div>
               </div>
             </template>
           </v-combobox>
@@ -174,8 +174,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     }
   }
 
-  private clickSelection (value) {
-    if (!value?.service_name) {
+  private clickSelection (value: Service) {
+    if (!value?.serviceName) {
       this.selectedService = null
       this.setCurrentService(undefined)
     } else {
@@ -216,8 +216,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     window.open(url, '_blank')
   }
 
-  private serviceSearchFilter (item, queryText, itemText) {
-    return `${item?.external_service_name || ''} ${item?.service_desc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
+  private serviceSearchFilter (item: Service, queryText, itemText) {
+    return `${item?.externalServiceName || ''} ${item?.serviceDesc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 }
 </script>
