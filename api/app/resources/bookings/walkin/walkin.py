@@ -231,9 +231,10 @@ class SendLineReminderWalkin(Resource):
                         nth_app = cit
                         if nth_app['citizen_id']:
                             citizen = Citizen.query \
+                            .with_for_update(of=Citizen) \
                             .options(raiseload(Citizen.service_reqs),raiseload(Citizen.office),raiseload(Citizen.user),raiseload(Citizen.cs),raiseload(Citizen.counter)) \
                             .filter_by(citizen_id=nth_app['citizen_id']) \
-                            .first()
+                            .one() 
                             if (not (citizen.automatic_reminder_flag) or (citizen.automatic_reminder_flag == 0)) and citizen.start_position and citizen.start_position >=int(nth_line):
                                 office_obj = Office.find_by_id(citizen.office_id)
                                 if citizen.notification_phone:
@@ -244,7 +245,7 @@ class SendLineReminderWalkin(Resource):
                                     citizen.automatic_reminder_flag = 1
                                 if citizen.automatic_reminder_flag == 1:
                                     db.session.add(citizen)
-                                    db.session.commit()
+                    db.session.commit()
                 result = self.citizen_schema.dump(previous_citizen)
             return {'citizen': result,
                     'errors': self.citizen_schema.validate(previous_citizen)}, 200
