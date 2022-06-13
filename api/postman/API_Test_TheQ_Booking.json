@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "0b45a7be-46ca-46f3-abab-3e058b7b4d58",
-		"name": "API_Test_TheQ_Booking Copy",
+		"name": "API_Test_TheQ_Booking Copy6-9",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -813,10 +813,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -901,10 +897,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -961,10 +953,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -1126,10 +1114,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -1229,10 +1213,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}channels/",
 							"host": [
@@ -1367,10 +1347,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -1472,10 +1448,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}categories/",
 							"host": [
@@ -1589,10 +1561,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -1644,10 +1612,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}services/refresh/?office_id={{current_office_id}}",
 							"host": [
@@ -1750,10 +1714,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}smartboard/?office_number={{current_office_number}}",
 							"host": [
@@ -1816,10 +1776,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}videofiles/",
 							"host": [
@@ -1871,10 +1827,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}videofiles/?office_number={{current_office_number}}",
 							"host": [
@@ -1937,10 +1889,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csrs/",
 							"host": [
@@ -2151,10 +2099,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csr_states/",
 							"host": [
@@ -2251,10 +2195,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -2552,10 +2492,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -2635,10 +2571,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -2727,11 +2659,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -3004,10 +2938,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -3733,10 +3663,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -3827,11 +3753,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -4099,10 +4027,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -4472,10 +4396,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/service_requests/",
 							"host": [
@@ -4810,10 +4730,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -4903,11 +4819,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -5096,10 +5014,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5189,11 +5103,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -5461,10 +5377,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -5790,10 +5702,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5874,10 +5782,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -5967,11 +5871,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -6243,10 +6149,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{current_client}}/",
 							"host": [
@@ -6721,10 +6623,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -6814,11 +6712,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -7076,10 +6976,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -7298,11 +7194,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/1/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"1",
+								"add_citizen",
 								""
 							]
 						},
@@ -7571,10 +7469,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -7777,10 +7671,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -8561,10 +8451,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -8654,11 +8540,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/0/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"0",
+								"add_citizen",
 								""
 							]
 						},
@@ -8916,10 +8804,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{first_client}}/",
 							"host": [
@@ -9138,11 +9022,13 @@
 							"raw": "{}"
 						},
 						"url": {
-							"raw": "{{url}}citizens/",
+							"raw": "{{url}}citizens/1/add_citizen/",
 							"host": [
 								"{{url}}citizens"
 							],
 							"path": [
+								"1",
+								"add_citizen",
 								""
 							]
 						},
@@ -9400,10 +9286,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/{{second_client}}/",
 							"host": [
@@ -9606,10 +9488,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}citizens/",
 							"host": [
@@ -11144,10 +11022,6 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -11212,10 +11086,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}rooms/",
 							"host": [
@@ -11314,10 +11184,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}services/",
 							"host": [
@@ -11393,10 +11259,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -11480,10 +11342,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}healthz/",
 							"host": [
@@ -11539,10 +11397,6 @@
 								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}readyz/",
 							"host": [
@@ -11639,10 +11493,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exam_types/",
 							"host": [
@@ -11818,10 +11668,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exams/{{current_exam_id}}/",
 							"host": [
@@ -11869,10 +11715,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exams/",
 							"host": [
@@ -12011,10 +11853,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exams/{{current_exam_id}}/",
 							"host": [
@@ -12090,10 +11928,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exams/event_id/{{event_number}}/",
 							"host": [
@@ -12229,10 +12063,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}exams/export/?start_date={{start_date}}&end_date={{end_date}}",
 							"host": [
@@ -12394,10 +12224,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -12445,10 +12271,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/",
 							"host": [
@@ -12590,10 +12412,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -13003,10 +12821,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -13069,10 +12883,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{second_event_id}}/",
 							"host": [
@@ -13135,10 +12945,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{third_event_id}}/",
 							"host": [
@@ -13292,10 +13098,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -13358,10 +13160,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{second_event_id}}/",
 							"host": [
@@ -13424,10 +13222,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{third_event_id}}/",
 							"host": [
@@ -13600,10 +13394,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{booking_id}}/",
 							"host": [
@@ -13666,10 +13456,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{second_event_id}}/",
 							"host": [
@@ -13732,10 +13518,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}bookings/{{third_event_id}}/",
 							"host": [
@@ -13861,10 +13643,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}invigilators/",
 							"host": [
@@ -13909,10 +13687,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}invigilators/offsite/",
 							"host": [
@@ -14133,10 +13907,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}rooms/",
 							"host": [
@@ -14195,10 +13965,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}csrs/me/",
 							"host": [
@@ -14249,10 +14015,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}offices/",
 							"host": [
@@ -14296,10 +14058,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}offices/{{current_office_id}}/slots/",
 							"host": [
@@ -14453,10 +14211,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -14504,10 +14258,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/",
 							"host": [
@@ -14991,10 +14741,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -15043,10 +14789,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{second_appt_id}}/",
 							"host": [
@@ -15095,10 +14837,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{third_appt_id}}/",
 							"host": [
@@ -15242,10 +14980,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{second_appt_id}}/",
 							"host": [
@@ -15307,10 +15041,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -15359,10 +15089,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{third_appt_id}}/",
 							"host": [
@@ -15509,10 +15235,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -15561,10 +15283,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{second_appt_id}}/",
 							"host": [
@@ -15613,10 +15331,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}appointments/{{appointment_id}}/",
 							"host": [
@@ -15694,7 +15408,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b0855807-6d8f-4dac-a069-df907d69a82d",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -15908,7 +15621,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "70c672a3-0713-4b0d-97e5-c82ff70250d9",
 								"exec": [
 									"// Check Response code for request",
 									"pm.test(\"Response code for request is 200\", function(){",
@@ -16131,10 +15843,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{public_url}}users/appointments/",
 							"host": [
