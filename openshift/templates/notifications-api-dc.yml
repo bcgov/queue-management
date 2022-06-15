@@ -275,4 +275,4 @@ parameters:
   - name: JWT_OIDC_CLIENT_SECRET
     description: "OIDC Client secret"
     required: false
-    value: ""
+    value: " "

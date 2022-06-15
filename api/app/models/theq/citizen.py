@@ -47,6 +47,7 @@ class Citizen(Base):
     reminder_flag = db.Column(db.Integer, nullable=True)
     walkin_unique_id = db.Column(db.String(500), nullable=True)
     automatic_reminder_flag = db.Column(db.Integer, nullable=True)
+    start_position = db.Column(db.Integer, nullable=True)
 
     # digital signage
     created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
