@@ -10,7 +10,7 @@ if [ $? != 0 ]; then
     exit ${RETRY_LATER}
 fi
 
-TIME_SYNC_STATUS=$(timedatectl | grep NTP | awk '{print $NF}')
+TIME_SYNC_STATUS=$(timedatectl | grep clock | awk '{print $NF}')
 if [ "${TIME_SYNC_STATUS}" != "yes" ] && [ "${TIME_SYNC_STATUS}" != "active" ]; then
     exit ${RETRY_LATER}
 fi
