@@ -1,7 +1,7 @@
 # Mender + OpenShift
 
 ## About
-Mender is installed using a [Helm Chart](https://github.com/mendersoftware/mender-helm). The instructions on this repository were used as a starting point but required changes to get Mender running in OpenShift.
+Mender is installed using a [Helm Chart](https://github.com/mendersoftware/mender-helm). The instructions in this repository were used as a starting point, but they require changes to get Mender running in OpenShift.
 
 This document outlines different details of the application.
 
