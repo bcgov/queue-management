@@ -28,12 +28,12 @@ You probably want to install using the BCDevOps [GitHub Repository](https://gith
 
 Note that the documentation says to use v6.0.5 but a newer version may be preferable.
 
-Generate a random `<accesskey>` and `<secretkey>` (we used 16 and 24 random characters).
+Generate a random `<ACCESS_KEY>` and `<SECRET_KEY>` (we used 16 and 24 random characters).
 
 ```
 helm repo add minio https://helm.min.io/
 helm repo update
-helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<accesskey>,secretKey=<secretkey>,persistence.size=15Gi,securityContext.enabled=false,resources.requests.memory=50m"
+helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<ACCESS_KEY>,secretKey=<SECRET_KEY>,persistence.size=15Gi,securityContext.enabled=false,resources.requests.memory=50m"
 ```
 
 <details>
@@ -42,7 +42,7 @@ helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<
 The documentation says to run the command
 
 ```
-helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<accesskey>,secretKey=<secretkey>"
+helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<ACCESS_KEY>,secretKey=<SECRET_KEY>"
 ```
 
 but this fails because of the huge PVC request
@@ -54,7 +54,7 @@ Error: INSTALLATION FAILED: persistentvolumeclaims "minio" is forbidden: exceede
 So we can drop from 500Gi to 15Gi by running
 
 ```
-helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<accesskey>,secretKey=<secretkey>,persistence.size=15Gi"
+helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<ACCESS_KEY>,secretKey=<SECRET_KEY>,persistence.size=15Gi"
 ```
 
 which produces the ReplicaSet event
@@ -66,7 +66,7 @@ Error creating: pods "minio-58bdddb854-" is forbidden: unable to validate agains
 We can do
 
 ```
-helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<accesskey>,secretKey=<secretkey>,persistence.size=15Gi,securityContext.enabled=false"
+helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<ACCESS_KEY>,secretKey=<SECRET_KEY>,persistence.size=15Gi,securityContext.enabled=false"
 ```
 
 which produces
@@ -78,7 +78,7 @@ Error creating: Pod "minio-784dcfd57b-7jhlr" is invalid: spec.containers[0].reso
 which brings us to
 
 ```
-helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<accesskey>,secretKey=<secretkey>,persistence.size=15Gi,securityContext.enabled=false,resources.requests.memory=50m"
+helm -n <namespace> install minio minio/minio --version 6.0.5 --set "accessKey=<ACCESS_KEY>,secretKey=<SECRET_KEY>,persistence.size=15Gi,securityContext.enabled=false,resources.requests.memory=50m"
 ```
 
 </details>
@@ -106,7 +106,7 @@ helm -n <namespace> install nats nats/nats --version 0.15.1 --set "nats.image=na
 
 Clone the repo https://github.com/mendersoftware/mender-helm.
 
-### Step 4.2 - Fix Privilged Ports Problems
+### Step 4.2 - Fix Privileged Ports Problems
 
 By default, Mender is set up to use the privileged ports (under 1024) and will fail because the processes are not running as root.
 
@@ -127,12 +127,12 @@ Change the following ports:
 4. `mender/templates/gui-svc.yaml`
 - change `targetPort: 80` to `targetPort: 8888`
 
-### Step 4.3 - Fix Readonly Filesystem Problems
+### Step 4.3 - Fix GUI Runtime Problems
 
-The `gui` pod tries to write a file to a readonly filesystem. We can work around this by generating the file (log into a debug pod and edit the script to print the file) and then mounting it from the [mender-gui-config ConfigMap](templates/mender-gui-config_configmap.yaml):
+Among other things, the `gui` pod tries to write a file to a readonly filesystem. We can work around this by generating the file (log into a debug pod and edit the script to print the file) and then mounting it from the [mender-gui-config ConfigMap](templates/mender-gui-config_configmap.yaml):
 
 ```
-oc -n <namespace> apply -f mender-gui-config_configmap.yaml
+oc -n <namespace> apply -f templates/mender-gui-config_configmap.yaml
 ```
 
 In `mender/templates/gui-deploy.yaml`:
@@ -156,14 +156,19 @@ In `mender/templates/gui-deploy.yaml`:
             defaultMode: 420
 ```
 
+The image is still going to error when it starts up, so build another image that does not write the file to `/var/www/mender-gui/dist/env.js`. Also fix other problems with the image:
+1. Create the necessary temporary file directories in `/var/cache/nginx`
+1. Change the nginx configuration to listen on port 8888 instead of port 80
+1. Allow a process identifier file to be written to `/var/run`
 
-# WORK IN PROGRESS, BELOW HERE INCOMPLETE
-
+Create a new [imagestream](templates/mender-gui_imagestream.yaml) as well as the [buildconfig](templates/mender-gui_buildconfig.yaml):
 
 ```
-oc -n <tools-namespace> apply -f mender-gui_imagestream.yaml
-oc -n <tools-namespace> apply -f mender-gui_buildconfig.yaml
+oc -n <tools-namespace> apply -f templates/mender-gui_imagestream.yaml
+oc -n <tools-namespace> apply -f templates/mender-gui_buildconfig.yaml
 ```
+
+### Step 4.4 - Set Up the values.yaml File
 
 In the repo create a `values.yaml` file:
 
@@ -185,6 +190,8 @@ api_gateway:
       -----BEGIN PRIVATE KEY-----
       [...insert here...]
       -----END PRIVATE KEY-----
+  env:
+    SSL: false
 
 device_auth:
   certs:
@@ -221,13 +228,15 @@ Use the contents of the generated files to fill in the `values.yaml` file:
 * `device_auth.certs.key`: from `device_auth.key`
 * `useradm.certs.key`: from `useradm.key`
 
-Once the `values.yaml` file is set up, run the helm install.
+### Step 4.5 - Run the Helm Install
 
 ```
 make package
 
-helm -n <namespace> install mender -f values.yaml mender-3.2.2.tgz --set "global.mongodb.URL=mongodb://<ADMIN_USER>:<ADMIN_PASSWORD>@mongodb,global.s3.AWS_ACCESS_KEY_ID=<ACCESS_KEY>,global.s3.AWS_SECRET_ACCESS_KEY=<SECRET_KEY>,api_gateway.env.SSL=false,gui.image.registry=image-registry.openshift-image-registry.svc:5000/<tools-namespace>,gui.image.repository=mender-gui,gui.image.tag=3.2.0-custom"
+helm -n <namespace> install mender -f values.yaml mender-3.2.2.tgz --set "global.mongodb.URL=mongodb://<ADMIN_USER>:<ADMIN_PASSWORD>@mongodb,global.s3.AWS_ACCESS_KEY_ID=<ACCESS_KEY>,global.s3.AWS_SECRET_ACCESS_KEY=<SECRET_KEY>,gui.image.registry=image-registry.openshift-image-registry.svc:5000/<tools-namespace>,gui.image.repository=mender-gui,gui.image.tag=3.2.0-custom"
 ```
+
+### Step 4.6 - Add Users
 
 Open a terminal in the `useradm` pod and create users with
 
@@ -235,110 +244,6 @@ Open a terminal in the `useradm` pod and create users with
 useradm create-user --username=<Firstname.Lastname>@gov.bc.ca --password=<password>
 ```
 
-Known issue: the deployments pod needs the API pod, but when mender is first installed they start at the same time. There might be a restart of the deployments pod if the API pod is slower in starting. Delete the deployments pod and it will start afresh and look better.
+## Known Issue
 
-# EVERYTHING BELOW HERE TO PROBABLY BE REMOVED
-
-## Step 2 - Generate Keys for `mender-useradm` and `mender-deviceauth`
-A handy key generator script handles generation of the two keys needed for this project.
-
-```
-cd queue-management/mender/openshift
-./rsa_keygen.sh
-```
-**NOTE**: do not commit files generated from this step to git
-
-Store generated keys as `ENV` variables for later use:
-
-```
-USERADM_KEY="$(cat ./keys-generated/keys/useradm/private.key)"
-DEVICEAUTH_KEY="$(cat ./keys-generated/keys/deviceauth/private.key)"
-```
-
-## Step 3 - Add ImageBuild and ImageStreams to Tools Space
-All the ImageBuild and ImageStreams are handled by a single template. All ImageStreams are initially tagged as `latest` and are--in later steps--tagged depending on which deployment context is desired.
-
-**Note**: Make sure to set the `TOOLS_WORKSPACE` ENV before running this command.
-
-```
-oc process -f ./templates/mender-image-build-template.yaml | oc create -n $TOOLS_WORKSPACE -f -
-```
-
-## Step 4 - Deploy Minio (BCDevOps Version)
-The following command creates an instance of the `minio` DeploymentConfig from the BCDevOps git repo. Unfortunatelly, the `app` tag is automatically set to `minio` (instead of `mender`) so this component will show up as an independent application. Mender will ahve no problem communicating with it.
-
-```
-oc process \
-    -f https://raw.githubusercontent.com/BCDevOps/minio-openshift/master/openshift/minio-deployment.json \
-    -p IMAGESTREAM_NAMESPACE=bcgov \
-    -p IMAGESTREAM_TAG=v1-latest \
-    -p VOLUME_CAPACITY=${MINIO_VOLUME_CAPACITY} | oc create -n $PROJECTNAME -f -
-```
-
-## Step 5 - Deploy Mongodb
-**NOTE**: The Mongodb should be started before any other part of the Mender application begins. If ImageSteam tags have not been set, then make sure ImageStreams are tagged in sequence (outlined in [Step 7](#Step-7-Tag-ImageStreams-in-Sequence-to-Bring-Them-Up)). Othewise, after running the command below, wait for the Mongodb deployment to start before proceeding to the next step.
-
-```
-oc process -f ./templates/mender-mongodb-deployment-template.yaml \
-    -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} \
-    -p TOOLS_WORKSPACE=${TOOLS_WORKSPACE} \
-    -p MONGO_VOLUME_CAPACITY=${MONGO_VOLUME_CAPACITY} | oc create -n $PROJECTNAME -f -
-```
-
-## Step 6 - Deploy Mender
-### mender-conductor
-```
-oc process -f ./templates/mender-conductor-deployment-template.yaml \
-    -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} \
-    -p TOOLS_WORKSPACE=${TOOLS_WORKSPACE} \
-    -p REDIS_VOLUME_CAPACITY=${REDIS_VOLUME_CAPACITY} \
-    -p ELASTICSEARCH_VOLUME_CAPACITY=${ELASTICSEARCH_VOLUME_CAPACITY} | oc create -n $PROJECTNAME -f -
-```
-
-### mender-components (core services)
-```
-oc process -f ./templates/mender-component-deployment-template.yaml \
-    -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} \
-    -p TOOLS_WORKSPACE=${TOOLS_WORKSPACE} \
-    -p MINIO_ROUTE_HOSTNAME=${MINIO_ROUTE_HOSTNAME} \
-    -p USERADM_KEY="${USERADM_KEY}" \
-    -p DEVICEAUTH_KEY="${DEVICEAUTH_KEY}" \
-    -p MENDER_DEFAULT_USERNAME=${MENDER_DEFAULT_USERNAME} | oc create -n $PROJECTNAME -f -
-```
-
-### mender-frontend (gatway and gui)
-```
-oc process -f ./templates/mender-frontend-deployment-template.yaml \
-    -p API_GATEWAY_ROUTE_HOSTNAME=${API_GATEWAY_ROUTE_HOSTNAME} \
-    -p TOOLS_WORKSPACE=${TOOLS_WORKSPACE} \
-    -p IMAGESTREAM_TAG=${IMAGESTREAM_TAG} | oc create -n $PROJECTNAME -f -
-```
-
-## Step 7 - Tag ImageStreams in Sequence to Bring Them Up
-These steps likely can be done all at once but have only been tested in sequence. It is likely best to wait after each step to make sure all systems are ready before tagging the next set of ImageStreams.
-
-### mender-conductor
-```
-oc tag -n ${TOOLS_WORKSPACE} mender-redis-stream:latest mender-redis-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-elasticsearch-stream:latest mender-elasticsearch-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-conductor-stream:latest mender-conductor-stream:${IMAGESTREAM_TAG}
-```
-
-### mender-mongodb
-```
-oc tag -n ${TOOLS_WORKSPACE} mender-mongodb-stream:latest mender-mongodb-stream:${IMAGESTREAM_TAG}
-```
-
-### mender-components
-```
-oc tag -n ${TOOLS_WORKSPACE} mender-inventory-stream:latest mender-inventory-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-deployments-stream:latest mender-deployments-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-device-auth-stream:latest mender-device-auth-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-useradm-stream:latest mender-useradm-stream:${IMAGESTREAM_TAG}
-```
-
-### mender-frontend (gatway and gui)
-```
-oc tag -n ${TOOLS_WORKSPACE} mender-gui-stream:latest mender-gui-stream:${IMAGESTREAM_TAG}
-oc tag -n ${TOOLS_WORKSPACE} mender-api-gateway-stream:latest mender-api-gateway-stream:${IMAGESTREAM_TAG}
-```
+The `deployments` pod needs the `api-gateway` pod, but when Mender is first installed they start at the same time. There might be a restart of the `deployments` pod if the `api-gateway` pod is slower in starting. Deleting the `deployments` pod will start it afresh and will look cleaner.
