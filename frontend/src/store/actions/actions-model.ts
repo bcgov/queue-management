@@ -811,9 +811,8 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
     context.commit('toggleAddModal', true)
-
-    Axios(context)
-      .post('/citizens/', {})
+  
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(
         resp => {
           const value = resp.data.citizen
@@ -1770,6 +1769,22 @@ export const commonActions: any = {
             if (error.response.status === 400) {
               context.commit('setMainAlert', error.response.data.message)
             }
+            reject(error)
+          }
+        )
+    })
+  },
+
+  postAddCitizen (context, citizens_waiting) {
+    return new Promise((resolve, reject) => {
+      const url = `/citizens/${citizens_waiting}/add_citizen/`
+      Axios(context)
+        .post(url)
+        .then(
+          resp => {
+            resolve(resp)
+          },
+          error => {
             reject(error)
           }
         )
