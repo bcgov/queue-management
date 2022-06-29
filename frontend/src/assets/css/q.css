@@ -245,3 +245,16 @@ input#app_timepicker_id {
   width: 213px;
   height: 40px;
 }
+.v-calendar-category .v-calendar-category__columns .v-calendar-category__column-header {
+  min-width: unset;
+}
+.v-calendar-category__column {
+  min-width: unset;
+}
+
+.v-calendar-category .v-calendar-daily_head-weekday {
+  width: unset !important;
+}
+.v-calendar-daily_head-day-label{
+  width: unset;
+}
