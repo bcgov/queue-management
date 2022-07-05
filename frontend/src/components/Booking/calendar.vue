@@ -542,7 +542,7 @@ export default class Calendar extends Vue {
     // setting default end time
     event.end = moment(event.start).add(defaultHoursDuration, 'h')
     const resourceDetails = this.roomResources.find(cat => {
-      return cat.title === event.category.categoryName
+      return cat.title === event.category
     })
     if (resourceDetails) { event.resource = resourceDetails }
 
