@@ -2,7 +2,7 @@
   <v-menu bottom left fixed transition="slide-y-transition" content-class="account-menu">
     <template v-slot:activator="{ on }">
       <v-btn text large v-on="on" class="mb-1" :class="{'pr-0': $vuetify.breakpoint.xs}">
-        <v-avatar color="grey lighten-1" light left size="32" class="black--text mr-2">
+        <v-avatar data-cy="appointment-cancel-user-nav" color="grey lighten-1" light left size="32" class="black--text mr-2">
           {{ username.slice(0,1) }}
         </v-avatar>
         <div class="user-info" v-if="!$vuetify.breakpoint.xs">
@@ -24,13 +24,13 @@
         <v-list-item-icon left>
           <v-icon>mdi-calendar-multiple</v-icon>
         </v-list-item-icon>
-        <v-list-item-title>My Appointments</v-list-item-title>
+        <v-list-item-title data-cy="appointment-cancel-nav-appointments">My Appointments</v-list-item-title>
       </v-list-item>
       <v-list-item @click="goTo('account')">
         <v-list-item-icon left>
           <v-icon>mdi-account-outline</v-icon>
         </v-list-item-icon>
-        <v-list-item-title>Account Settings</v-list-item-title>
+        <v-list-item-title data-cy="account-settings-nav">Account Settings</v-list-item-title>
       </v-list-item>
       <v-divider></v-divider>
       <v-list-item @click="goTo('logout')">

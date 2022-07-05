@@ -26,7 +26,7 @@ from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
 
-@api.route("/citizens/", methods=['GET', 'POST'])
+@api.route("/citizens/", methods=['GET'])
 class CitizenList(Resource):
 
     citizen_schema = CitizenSchema()
@@ -54,13 +54,19 @@ class CitizenList(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
+@api.route("/citizens/<int:citizens_waiting>/add_citizen/", methods=['POST'])
+class CitizenList(Resource):
+    citizen_schema = CitizenSchema()
+    citizens_schema = CitizenSchema(many=True)
+
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
-    def post(self):
+    def post(self, citizens_waiting):
 
         user = g.jwt_oidc_token_info['username']
         has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user,
                  "CitizenList POST /citizens/")
+
 
         json_data = request.get_json()
 
@@ -69,9 +75,13 @@ class CitizenList(Resource):
             raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:
+
+            if not json_data:
+                json_data = {}
             citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
             citizen.start_time = datetime.utcnow()
+            citizen.start_position = citizens_waiting + 1
 
         except ValidationError as err:
             print(err)

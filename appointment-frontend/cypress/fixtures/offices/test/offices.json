@@ -1,0 +1,216 @@
+{
+    "offices": [
+        {
+            "digital_signage_message_1": null,
+            "show_currently_waiting_bottom": null,
+            "check_in_reminder_msg": null,
+            "check_in_notification": null,
+            "appointments_days_limit": 30,
+            "digital_signage_message": null,
+            "digital_signage_message_3": null,
+            "office_id": 2,
+            "sb_id": 3,
+            "counters": [
+                {
+                    "counter_name": "Quick Trans",
+                    "counter_id": 1
+                },
+                {
+                    "counter_name": "Counter",
+                    "counter_id": 2
+                }
+            ],
+            "office_appointment_message": null,
+            "latitude": 51.644,
+            "exams_enabled_ind": 0,
+            "automatic_reminder_at": null,
+            "external_map_link": null,
+            "office_number": 1,
+            "office_name": "100 Mile House",
+            "digital_signage_message_2": null,
+            "max_person_appointment_per_day": 1,
+            "quick_list": [],
+            "appointments_enabled_ind": 1,
+            "sb": {
+                "sb_id": 3,
+                "sb_type": "nocallonsmartboard"
+            },
+            "timezone": {
+                "timezone_id": 4,
+                "timezone_name": "America/Creston"
+            },
+            "deleted": null,
+            "online_status": "Status.SHOW",
+            "back_office_list": [],
+            "longitude": -121.295,
+            "appointment_duration": 30,
+            "civic_address": "100 Mile House, BC",
+            "currently_waiting": null,
+            "telephone": "999-999-9999",
+            "timeslots": []
+        },
+        {
+            "digital_signage_message_1": null,
+            "show_currently_waiting_bottom": null,
+            "check_in_reminder_msg": null,
+            "check_in_notification": null,
+            "appointments_days_limit": 30,
+            "digital_signage_message": null,
+            "digital_signage_message_3": null,
+            "office_id": 4,
+            "sb_id": 1,
+            "counters": [
+                {
+                    "counter_name": "Quick Trans",
+                    "counter_id": 1
+                },
+                {
+                    "counter_name": "Counter",
+                    "counter_id": 2
+                }
+            ],
+            "office_appointment_message": null,
+            "latitude": null,
+            "exams_enabled_ind": 1,
+            "automatic_reminder_at": null,
+            "external_map_link": null,
+            "office_number": 997,
+            "office_name": "Pesticide Offsite",
+            "digital_signage_message_2": null,
+            "max_person_appointment_per_day": 1,
+            "quick_list": [],
+            "appointments_enabled_ind": 0,
+            "sb": {
+                "sb_id": 1,
+                "sb_type": "callbyname"
+            },
+            "timezone": {
+                "timezone_id": 1,
+                "timezone_name": "America/Vancouver"
+            },
+            "deleted": null,
+            "online_status": "Status.HIDE",
+            "back_office_list": [],
+            "longitude": null,
+            "appointment_duration": 30,
+            "civic_address": null,
+            "currently_waiting": null,
+            "telephone": null,
+            "timeslots": []
+        },
+        {
+            "digital_signage_message_1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac convallis tellus, eu porta justo. Vestibulum posuere suscipit nunc. Interdum et malesuada fames ac ante ipsum primis in faucibus. Praesent eu porttitor velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent dapibus purus urna, in semper ligula malesuada sed. Duis fringilla augue ut elit semper sollicitudin. Integer non sapien libero. Donec dapibus blandit ante quis efficitur.",
+            "show_currently_waiting_bottom": null,
+            "check_in_reminder_msg": "",
+            "check_in_notification": null,
+            "appointments_days_limit": 30,
+            "digital_signage_message": 1,
+            "digital_signage_message_3": "",
+            "office_id": 1,
+            "sb_id": 2,
+            "counters": [
+                {
+                    "counter_name": "Quick Trans",
+                    "counter_id": 1
+                },
+                {
+                    "counter_name": "Counter",
+                    "counter_id": 2
+                }
+            ],
+            "office_appointment_message": "Test Message",
+            "latitude": 48.458359,
+            "exams_enabled_ind": 1,
+            "automatic_reminder_at": null,
+            "external_map_link": null,
+            "office_number": 999,
+            "office_name": "Test Office",
+            "digital_signage_message_2": "",
+            "max_person_appointment_per_day": 10,
+            "quick_list": [],
+            "appointments_enabled_ind": 1,
+            "sb": {
+                "sb_id": 2,
+                "sb_type": "callbyticket"
+            },
+            "timezone": {
+                "timezone_id": 1,
+                "timezone_name": "America/Vancouver"
+            },
+            "deleted": null,
+            "online_status": "Status.SHOW",
+            "back_office_list": [],
+            "longitude": -123.377106,
+            "appointment_duration": 30,
+            "civic_address": "4000 Seymour",
+            "currently_waiting": null,
+            "telephone": "999-999-9999",
+            "timeslots": [
+                {
+                    "office": 1,
+                    "day_of_week": [
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday"
+                    ],
+                    "start_time": "08:30:00",
+                    "end_time": "16:30:00",
+                    "no_of_slots": 30
+                }
+            ]
+        },
+        {
+            "digital_signage_message_1": null,
+            "show_currently_waiting_bottom": null,
+            "check_in_reminder_msg": null,
+            "check_in_notification": null,
+            "appointments_days_limit": 30,
+            "digital_signage_message": null,
+            "digital_signage_message_3": null,
+            "office_id": 3,
+            "sb_id": 1,
+            "counters": [
+                {
+                    "counter_name": "Quick Trans",
+                    "counter_id": 1
+                },
+                {
+                    "counter_name": "Counter",
+                    "counter_id": 2
+                }
+            ],
+            "office_appointment_message": null,
+            "latitude": 51.644,
+            "exams_enabled_ind": 0,
+            "automatic_reminder_at": null,
+            "external_map_link": null,
+            "office_number": 61,
+            "office_name": "Victoria",
+            "digital_signage_message_2": null,
+            "max_person_appointment_per_day": 1,
+            "quick_list": [],
+            "appointments_enabled_ind": 1,
+            "sb": {
+                "sb_id": 1,
+                "sb_type": "callbyname"
+            },
+            "timezone": {
+                "timezone_id": 1,
+                "timezone_name": "America/Vancouver"
+            },
+            "deleted": null,
+            "online_status": "Status.SHOW",
+            "back_office_list": [],
+            "longitude": -121.295,
+            "appointment_duration": 30,
+            "civic_address": "100 Mile House, BC",
+            "currently_waiting": null,
+            "telephone": "999-999-9999",
+            "timeslots": []
+        }
+    ],
+    "errors": {}
+}

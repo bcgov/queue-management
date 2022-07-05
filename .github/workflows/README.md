@@ -3,7 +3,8 @@
 The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
 
 - Take a pull request number and environment as input parameters
-- Build images using either Dockerfile or Source to Image (S2I) builds
+- Run Cypress tests against the Appointment Frontend
+- Build images using Dockerfile and Source to Image (S2I) builds
 - Push the built images to the required `-tools` namespace
 - Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
 - Wait for rollout of the new images in the deployment environment
@@ -12,7 +13,8 @@ The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
 
 The GitHub Action `master-deploy.yaml` is only run manually. It will:
 
-- Build images using either Dockerfile or Source to Image (S2I) builds
+- Run Cypress tests against the Appointment Frontend
+- Build images using Dockerfile and Source to Image (S2I) builds
 - Push the built images to two different `-tools` namespaces
 - Use GitHub `environments` to define approvers for tagging images to `-dev`, `-test`, and `-prod` namespaces
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
@@ -50,7 +52,7 @@ The Service Account named `github-actions` needs to be set up in all the `-tools
 Using [the OpenShift template](openshift/service_account.yaml) run:
 
 ```
-$ oc process -f service-account.yaml | oc -n <namespace> apply -f -
+$ oc process -f service_account.yaml | oc -n <namespace> apply -f -
 ```
 
 ### GitHub Secrets
@@ -62,6 +64,14 @@ There are many GitHub Secrets that are needed to run the Actions:
 | ARTIFACTORY_PASSWORD | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
 | ARTIFACTORY_REGISTRY | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
 | ARTIFACTORY_USERNAME | Some of the builds use Dockerfiles that pull images from Artifactory. This value comes from the `artifactory-creds` secret |
+| CYPRESS_BCEID_ENDPOINT | The endpoint to log into BCeID for Cypress testing |
+| CYPRESS_BCEID_PASSWORD | The password to log into BCeID for Cypress testing |
+| CYPRESS_BCEID_USERNAME | The username to log into BCeID for Cypress testing |
+| CYPRESS_PROJECT_ID | The project ID used for the Cypress Dashboard |
+| CYPRESS_RECORD_KEY | The record key used for the Cypress Dashboard |
+| KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT | The Keycloak client that is used for the Appointment Frontend |
+| KEYCLOAK_AUTH_URL_DEV | The Keycloak URL for the development environment |
+| KEYCLOAK_REALM | The Keycloak realm |
 | LICENCE_PLATE_QMS | The six character "licence plate" prefix for the QMS namespaces |
 | LICENCE_PLATE_THEQ | The six character "licence plate" prefix for The Q namespaces |
 | OPENSHIFT_API | The URL of the OpenShift API used to make API calls |
@@ -79,13 +89,10 @@ There are many GitHub Secrets that are needed to run the Actions:
 | POSTMAN_USERID | The Username of the Keycloak user used to run The Q tests |
 | POSTMAN_USERID_NONQTXN | The Username of the Keycloak user used to run non-Q tests |
 | SA_PASSWORD_QMS_DEV | The token for the Service Account `github-actions` in the QMS dev namespace |
-| SA_PASSWORD_QMS_TEST | The token for the Service Account `github-actions` in the QMS test namespace |
 | SA_PASSWORD_QMS_TOOLS | The token for the Service Account `github-actions` in the QMS tools namespace |
-| SA_PASSWORD_QMS_PROD | The token for the Service Account `github-actions` in the QMS prod namespace |
 | SA_PASSWORD_THEQ_DEV | The token for the Service Account `github-actions` in The Q dev namespace |
 | SA_PASSWORD_THEQ_TEST | The token for the Service Account `github-actions` in The Q test namespace |
 | SA_PASSWORD_THEQ_TOOLS | The token for the Service Account `github-actions` in The Q tools namespace |
-| SA_PASSWORD_THEQ_PROD | The token for the Service Account `github-actions` in The Q prod namespace |
 | SA_USERNAME | The name of the Service Account: `github-actions` in namespaces |
 | ZAP_APPTMNTURL_QMS_DEV | The URL of the QMS dev Appointments application used for running the OWASP ZAP tests |
 | ZAP_APPTMNTURL_THEQ_DEV | The URL of The Q dev Appointments application used for running the OWASP ZAP tests |
@@ -94,14 +101,15 @@ There are many GitHub Secrets that are needed to run the Actions:
 | ZAP_STAFFURL_THEQ_DEV | The URL of The Q dev used for running the OWASP ZAP tests |
 | ZAP_STAFFURL_THEQ_TEST | The URL of The Q test used for running the OWASP ZAP tests |
 
-(note: there is a script to set these up automatically, but it can't be committed)
+(note: in OneNote there is a script to set these up automatically, but it can't be committed)
 
 ## Third-Party Actions
 
 The following actions are being used:
 
 - [actions/checkout](https://github.com/actions/checkout): checks the code out of the GitHub repository
-- [actions/upload-artifact](https://github.com/actions/upload-artifact): uploads the OWASP ZAP scan artifacts
+- [actions/upload-artifact](https://github.com/actions/upload-artifact): uploads the Cypress test and OWASP ZAP scan artifacts
+- [cypress-io/github-action](https://github.com/cypress-io/github-action): runs Cypress tests
 - [redhat-actions/buildah-build](https://github.com/redhat-actions/buildah-build): builds using a Dockerfile
 - [redhat-actions/oc-login](https://github.com/redhat-actions/oc-login): logs into OpenShift using `oc`
 - [redhat-actions/podman-login](https://github.com/redhat-actions/podman-login): logs into Artifactory to be able to pull images for builds

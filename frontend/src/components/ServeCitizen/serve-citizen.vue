@@ -107,7 +107,7 @@
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-uncheckin-button"
-              style="margin-left: 8px;"
+              style="margin-left: 30px;"
               >Return to Calendar</b-button
             >
           </div>
