@@ -13,7 +13,8 @@
     "preinstall": "npx npm-force-resolutions",
     "preserve": "npm run update-version",
     "test": "jest",
-    "update-version": "node src/version.js"
+    "update-version": "node src/version.js",
+    "postinstall": "npm dedupe"
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
@@ -38,7 +39,7 @@
     "js-file-download": "0.4.12",
     "lodash": "^4.17.19",
     "luxon": "1.26.0",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "moment-range": "4.0.2",
     "moment-timezone": "^0.5.34",
     "net": "^1.0.2",
