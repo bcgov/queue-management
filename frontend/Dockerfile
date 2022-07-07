@@ -4,6 +4,7 @@ WORKDIR /app
 COPY ./package*.json ./
 RUN npm install
 COPY . .
+RUN npm dedupe
 RUN npm run build
 
 FROM docker-remote.artifacts.developer.gov.bc.ca/nginx:1.18.0 as production-stage
