@@ -1071,8 +1071,7 @@ export const commonActions: any = {
       context.commit('setDefaultChannel')
     }
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(
         resp => {
           const value = resp.data.citizen
@@ -1132,8 +1131,7 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(resp => {
         const value = resp.data.citizen
         context.commit('updateAddModalForm', { type: 'citizen', value })
@@ -1181,8 +1179,7 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(resp => {
         const value = resp.data.citizen
         context.commit('updateAddModalForm', { type: 'citizen', value })
