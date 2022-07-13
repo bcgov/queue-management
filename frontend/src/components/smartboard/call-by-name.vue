@@ -61,7 +61,7 @@ export default class CallByName extends Vue {
   private citizens: any = ''
   private officeType: string = ''
   private maxVideoHeight: string | number = ''
-  private office_number: string = this.smartboardData.office_number
+  private office_number: string = ''
   private networkDown: boolean = false
   private videoStyle: string = ''
 
@@ -77,6 +77,7 @@ export default class CallByName extends Vue {
   }
 
   initializeBoard () {
+    this.office_number = this.smartboardData.office_number
     Axios.get(this.url).then(resp => {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
