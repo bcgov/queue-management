@@ -42,7 +42,7 @@ API = Api(
     title='Notifications API',
     version='1.0',
     description='Notifications API for Service BC',
-    prefix='/api/v1',
+    prefix='/notifications/api/v1',
     security=['apikey'],
     authorizations=AUTHORIZATIONS)
 

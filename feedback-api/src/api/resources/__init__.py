@@ -34,7 +34,7 @@ API = Api(
     title='Feedback API',
     version='1.0',
     description='Feedback API for Service BC',
-    prefix='/api/v1')
+    prefix='/feedback/api/v1')
 
 API.add_namespace(OPS_API, path='')
 API.add_namespace(META_API, path='')
