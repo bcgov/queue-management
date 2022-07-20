@@ -794,12 +794,12 @@ export default class EditGroupExamBookingModal extends Vue {
 
   get titleText () {
     switch (this.examType) {
-      case 'group':
-        return 'Group'
-      case 'challenger':
-        return 'Monthly Session'
-      default:
-        return 'Other'
+    case 'group':
+      return 'Group'
+    case 'challenger':
+      return 'Monthly Session'
+    default:
+      return 'Other'
     }
   }
 

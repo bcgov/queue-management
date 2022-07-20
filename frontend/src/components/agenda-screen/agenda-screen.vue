@@ -53,7 +53,7 @@ limitations under the License.*/
       sort-by='start_time'
     >
       <template #cell(comments)="data">
-        <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
+        <div class="truncate"  v-b-tooltip.hover :title="data.value">
           {{ data.value }}
         </div>
       </template>
@@ -76,7 +76,7 @@ limitations under the License.*/
   </div>
 </template>
 <script lang="ts">
- /* eslint-disable */
+/* eslint-disable */
 import { Action, Getter, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'

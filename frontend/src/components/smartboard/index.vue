@@ -104,12 +104,11 @@ export default class Smartboard extends Vue {
   }
 
   private time: any = ''
-  
+
   private isMessageEnabled: boolean = false
   private isRightMenuEnabled: boolean = false
   private office: any = {}
   private cssStyle: string = ''
-
 
   get url () {
     return `/smartboard/?office_number=${this.office_number}`
@@ -134,8 +133,8 @@ export default class Smartboard extends Vue {
   getParameterByName (name, url = window.location.href) {
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-    var results = regex.exec(url)
+    const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+    const results = regex.exec(url)
     if (!results) return null
     if (!results[2]) return ''
     return decodeURIComponent(results[2].replace(/\+/g, ' '))
@@ -171,18 +170,18 @@ export default class Smartboard extends Vue {
     this.getOffice()
   }
 
-  private async calcSpeed(speed) {
+  private async calcSpeed (speed) {
   // Time = Distance/Speed
     const spanSelector = this.$el.querySelectorAll<HTMLElement>('.marquee span')
     let i
     for (i = 0; i < spanSelector.length; i++) {
       const spanLength = spanSelector[i].offsetWidth
-      const timeTaken = spanLength / speed;
-      spanSelector[i].style.animationDuration = timeTaken + "s";
+      const timeTaken = spanLength / speed
+      spanSelector[i].style.animationDuration = timeTaken + 's'
     }
   }
 
-  private async setCss() {
+  private async setCss () {
     if (this.office.currently_waiting === 1) {
       if (this.office.show_currently_waiting_bottom === 1) {
         if (this.office.digital_signage_message === 1) {
@@ -516,7 +515,5 @@ export default class Smartboard extends Vue {
     -webkit-transform: rotate(360deg);
   }
 }
-
-
 
 </style>
