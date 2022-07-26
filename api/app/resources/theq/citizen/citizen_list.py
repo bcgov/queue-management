@@ -73,7 +73,7 @@ class CitizenList(Resource):
         csr = CSR.find_by_username('invalid_user_test')
         if not csr:
             if db.session:
-                db.sesssion.close()
+                db.session.close()
             raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:
