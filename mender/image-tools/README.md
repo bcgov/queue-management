@@ -75,6 +75,12 @@ sudo cp qemu-static-conf/*.conf /lib/binfmt.d/
 sudo systemctl restart systemd-binfmt.service
 ```
 
+If the `systemctl` command above fails, it's probably because you're using WSL, which doesn't use `systemd`. Instead, start the emulator service with the init script:
+
+```
+sudo /etc/init.d/binfmt-support start
+```
+
 ### Step 1: Building Base Image (Bootstrapping)
 
 ```
