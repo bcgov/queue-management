@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mender-gui-config
+data:
+  env.js: |-
+    mender_environment = {
+      hostAddress: "",
+      hostedAnnouncement: "",
+      isDemoMode: "",
+      features: {
+        hasAddons: "",
+        hasAuditlogs: "",
+        hasDeviceConfig: "true",
+        hasDeviceConnect: "true",
+        hasMonitor: "",
+        hasMultitenancy: "",
+        hasReporting: "",
+        isEnterprise: "",
+        isHosted: ""
+      },
+      trackerCode: "",
+      recaptchaSiteKey: "",
+      stripeAPIKey: "",
+      integrationVersion: "3.2.2",
+      menderVersion: "3.2.2",
+      menderArtifactVersion: "3.7.1",
+      metaMenderVersion: "",
+      services: {
+        deploymentsVersion: "",
+        deviceauthVersion: "",
+        guiVersion: "3.2.0",
+        inventoryVersion: ""
+      },
+      demoArtifactPort: "",
+      disableOnboarding: ""
+    }
