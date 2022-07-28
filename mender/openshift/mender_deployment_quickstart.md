@@ -106,25 +106,16 @@ helm -n <namespace> install nats nats/nats --version 0.15.1 --set "nats.image=na
 
 Clone the repo https://github.com/mendersoftware/mender-helm.
 
-### Step 4.2 - Fix Privileged Ports Problems
+### Step 4.2 - Fix GUI Privileged Ports Problems
 
 By default, Mender is set up to use the privileged ports (under 1024) and will fail because the processes are not running as root.
 
 Change the following ports:
 
-1. `mender/templates/api-gateway-deploy.yaml`
-- change `--entrypoints.http.address=:80` to `--entrypoints.http.address=:8888`
-- change `--entrypoints.https.address=:443` to `--entrypoints.https.address=:8443`
-- change `containerPort: 80` to `containerPort: 8888`
-- change the liveness, readiness, and startup probe ports from `80` to `8888`
-
-2. `mender/templates/api-gateway-svc.yaml`
-- change `targetPort: 80` to `targetPort: 8888`
-
-3. `mender/templates/gui-deploy.yaml`
+1. `mender/templates/gui-deploy.yaml`
 - change the liveness and readiness probe ports from `80` to `8888`
 
-4. `mender/templates/gui-svc.yaml`
+2. `mender/templates/gui-svc.yaml`
 - change `targetPort: 80` to `targetPort: 8888`
 
 ### Step 4.3 - Fix GUI Runtime Problems
@@ -233,7 +224,7 @@ Use the contents of the generated files to fill in the `values.yaml` file:
 ```
 make package
 
-helm -n <namespace> install mender -f values.yaml mender-3.2.2.tgz --set "global.mongodb.URL=mongodb://<ADMIN_USER>:<ADMIN_PASSWORD>@mongodb,global.s3.AWS_ACCESS_KEY_ID=<ACCESS_KEY>,global.s3.AWS_SECRET_ACCESS_KEY=<SECRET_KEY>,gui.image.registry=image-registry.openshift-image-registry.svc:5000/<tools-namespace>,gui.image.repository=mender-gui,gui.image.tag=3.2.0-custom"
+helm -n <namespace> install mender -f values.yaml mender-3.2.2.tgz --set "global.mongodb.URL=mongodb://<ADMIN_USER>:<ADMIN_PASSWORD>@mongodb,global.s3.AWS_ACCESS_KEY_ID=<ACCESS_KEY>,global.s3.AWS_SECRET_ACCESS_KEY=<SECRET_KEY>,api_gateway.httpPort=8888,api_gateway.httpsPort=8443,gui.image.registry=image-registry.openshift-image-registry.svc:5000/<tools-namespace>,gui.image.repository=mender-gui,gui.image.tag=3.2.0-custom"
 ```
 
 ### Step 4.6 - Add Users
