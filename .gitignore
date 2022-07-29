@@ -116,6 +116,7 @@ queue-env/
 # Visual Studio -- generally ignore, but allow shared configuration
 .vscode/*
 !.vscode/launch.json
+!.vscode/tasks.json
 
 # Project specific include/excludes
 api/postman/package-lock.json

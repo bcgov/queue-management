@@ -1,0 +1,21 @@
+{
+  "tasks": [
+    {
+      "args": [
+        "-c",
+        "cd ${workspaceFolder}/api; source env/bin/activate; python manage.py db upgrade"
+      ],
+      "command": "bash",
+      "detail": "python manage.py db upgrade",
+      "label": "alembic: upgrade - api",
+      "group": "build",
+      "presentation": {
+        "close": true,
+        "panel": "new",
+        "reveal": "always",
+      },
+      "type": "shell"
+    }
+  ],
+  "version": "2.0.0"
+}
