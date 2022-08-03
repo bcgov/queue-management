@@ -486,24 +486,75 @@ class Bootstrap(Command):
         # -- Time Slots ------------------------------------------------
         logging.info('--> Time Slots')
         db.session.add(theq.TimeSlot(
-            start_time='08:30:00-07:00',
-            end_time='09:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Monday', 'Wednesday'],
-            office_id=office_victoria.office_id
+            start_time='09:00:00-07:00',
+            end_time='10:00:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
         ))
         db.session.add(theq.TimeSlot(
-            start_time='09:30:00-07:00',
-            end_time='10:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Tuesday'],
-            office_id=office_victoria.office_id
+            start_time='10:30:00-07:00',
+            end_time='11:00:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='13:00:00-07:00',
+            end_time='13:30:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
         ))
         db.session.add(theq.TimeSlot(
             start_time='13:30:00-07:00',
-            end_time='14:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Tuesday', 'Wednesday', 'Thursday'],
+            end_time='16:30:00-07:00',
+            no_of_slots=0,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='09:00:00-07:00',
+            end_time='09:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='10:30:00-07:00',
+            end_time='11:15:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='11:00:00-07:00',
+            end_time='11:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='15:00:00-07:00',
+            end_time='15:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
             office_id=office_victoria.office_id
         ))
         db.session.commit()
