@@ -15,6 +15,7 @@
       <v-card-text>
         <v-row>
           <v-col>
+            <!-- TODO: change snake_case in item-text and item-value, below? Aug3/22 -->
             <v-select
               :items="categoryList"
               label="Categories"
@@ -23,8 +24,8 @@
               class="text-left"
               v-model="selectedCategory"
               name="categories-select"
-              :item-text="'external_service_name'"
-              :item-value="'service_name'"
+              :item-text="'externalServiceName'"
+              :item-value="'serviceName'"
               hide-details
               dense
               clearable

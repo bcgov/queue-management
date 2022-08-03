@@ -28,7 +28,7 @@ export default class AccountModule extends VuexModule {
 
   @Action({ rawError: true })
   public async updateUserAccount (userUpdateBody: UserUpdateBody) {
-    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    const userId = this.context.rootState.auth.currentUserProfile?.userId || null
     const response = await UserService.updateUser(userId, userUpdateBody)
     const returnData = response?.data?.length ? response.data[0] : {}
     this.context.commit('auth/setUserProfile', returnData, { root: true })

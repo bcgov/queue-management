@@ -176,7 +176,7 @@ export default class AccountSettingsView extends Vue {
         sendSmsReminders: this.enableSmsReminder
       }
       const response = await this.updateUserAccount(userUpdate)
-      if (response?.user_id) {
+      if (response?.userId) {
         this.showMsg.isShow = true
         this.showMsg.msgText = 'Profile Successfully Updated!'
         this.showMsg.msgType = 'success'

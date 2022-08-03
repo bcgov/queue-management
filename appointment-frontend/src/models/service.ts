@@ -7,15 +7,16 @@ export interface Service {
   deleted: string
   displayDashboardInd: number
   externalServiceName: string
+  isDlkt: boolean
   onlineAvailability: string
   onlineLink: string
+  parentId: number
+  parent?: ServiceParent
   prefix: string
   serviceCode: string
   serviceDesc: string
   serviceId: number
   serviceName: string
-  parentId: number,
-  parent?: ServiceParent
 }
 
 export interface Services {

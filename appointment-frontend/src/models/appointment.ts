@@ -13,26 +13,26 @@ export interface AppointmentRequestBody {
   comments: string
   officeId: number
   userId: number
-  isDraft?:boolean
-  appointmentDraftId?:number
+  isDraft?: boolean
+  appointmentDraftId?: number
 }
 
 export interface Appointment {
-  appointmentId: number,
-  blackoutFlag: string,
-  checkedInTime: string,
-  citizenId: number,
-  citizenName: number,
-  comments: string,
-  contactInformation: string,
-  endTime: string,
-  office: number | Office,
-  officeId: number,
-  recurringUuid: string,
-  service: number | Service,
-  serviceId: number,
-  startTime: string,
-  appointmentDate?: string,
+  appointmentId: number
+  blackoutFlag: string
+  checkedInTime: string
+  citizenId: number
+  citizenName: number
+  comments: string
+  contactInformation: string
+  endTime: string
+  office: Office
+  officeId: number
+  recurringUuid: string
+  service: Service
+  serviceId: number
+  startTime: string
+  appointmentDate?: string
   appointmentStartTime?: string
   appointmentEndTime?: string
 }

@@ -59,14 +59,14 @@
               </div>
             </v-col>
             <v-col cols="12">
-              <template v-if='staticMapData.external_map_link'>
-                    <a class='link-w-icon mt-6' v-bind:href='staticMapData.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civic_address}`'>
-                      <img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'>
+              <template v-if='staticMapData.externalMapLink'>
+                    <a class='link-w-icon mt-6' v-bind:href='staticMapData.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civicAddress}`'>
+                      <img :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
                     </a>
                   </template>
                   <template v-else><img
-                    :src="require('@/assets/img/officemaps/' + staticMapData.office_number)"
-                    :alt="staticMapData.civic_address"
+                    :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)"
+                    :alt="staticMapData.civicAddress"
                     class='map-view'
                     data-cy="step-5-image-map"
                   ></template>
@@ -263,11 +263,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private get staticMapData () {
     return {
-      office_number: this.currentOffice?.officeNumber ? this.currentOffice?.officeNumber.toString() + '.png' : '999.png',
-      civic_address: this.currentOffice?.civicAddress || '',
+      officeNumber: this.currentOffice?.officeNumber ? this.currentOffice?.officeNumber.toString() + '.png' : '999.png',
+      civicAddress: this.currentOffice?.civicAddress || '',
       latitude: this.currentOffice?.latitude || 0,
       longitude: this.currentOffice?.longitude || 0,
-      external_map_link: this.currentOffice?.externalMapLink || null
+      externalMapLink: this.currentOffice?.externalMapLink || null
     }
   }
 
@@ -284,10 +284,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private async checkActiveDLKTService () {
     await this.fetchUserAppointments()
-    Object.keys(this.myappointmentList).forEach(app => {
-      if (this.myappointmentList[app]?.service?.is_dlkt) {
-        if (new Date(this.myappointmentList[app]?.start_time) >= new Date()) {
+    this.myappointmentList.forEach(app => {
+      if (app?.service?.isDlkt) {
+        if (new Date(app?.startTime) >= new Date()) {
           this.anyActiveDLKT = true
+          // TODO should there be a return/break here?
         } else {
           this.anyActiveDLKT = false
         }
@@ -297,7 +298,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private async confirmAppointment () {
     this.isLoading = true
-    if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
+    if (this.currentService.isDlkt && (!this.$store.state.isAppointmentEditMode)) {
       await this.checkActiveDLKTService()
     }
     // Save user profile if there is a change

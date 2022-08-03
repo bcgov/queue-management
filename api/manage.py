@@ -229,6 +229,7 @@ class Bootstrap(Command):
         # -- Services (Categories) -------------------------------------
         logging.info('--> Services (Categories)')
         category_msp = theq.Service(
+            external_service_name='Medical Services Plan',
             service_code='MSP',
             service_name='MSP',
             service_desc='Medical Services Plan',
@@ -237,6 +238,7 @@ class Bootstrap(Command):
             actual_service_ind=0
         )
         category_ptax = theq.Service(
+            external_service_name='Rural Property Tax',
             service_code='PTAX',
             service_name='Property Tax',
             service_desc='Property Tax',

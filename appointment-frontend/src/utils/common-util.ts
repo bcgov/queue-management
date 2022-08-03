@@ -142,43 +142,23 @@ export default class CommonUtils {
     if (allowedBrowerNLowestVersion.hasOwnProperty(CommonUtils.getBrowser()['name'])) {
       if (Number(CommonUtils.getBrowser()['version']) >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
         return {
-          'is_allowed': true,
-          'current_browser': CommonUtils.getBrowser()['name'],
-          'current_version': CommonUtils.getBrowser()['version'],
-          'allowed_browsers': 'Chrome, Firefox, Safari, Edge'
+          'isAllowed': true,
+          'currentBrowser': CommonUtils.getBrowser()['name'],
+          'currentVersion': CommonUtils.getBrowser()['version'],
+          'allowedBrowsers': 'Chrome, Firefox, Safari, Edge'
         }
       }
     }
     return {
-      'is_allowed': false,
-      'current_browser': CommonUtils.getBrowser()['name'],
-      'current_version': CommonUtils.getBrowser()['version'],
-      'allowed_browsers': 'Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15'
+      'isAllowed': false,
+      'currentBrowser': CommonUtils.getBrowser()['name'],
+      'currentVersion': CommonUtils.getBrowser()['version'],
+      'allowedBrowsers': 'Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15'
     }
   }
-  // static isIE () {
-  //    if (CommonUtils.getBrowser()['name'] === 'IE') {
-  //       return {
-  //         'is_allowed': false
-  //       }
-  //     } else {
-  //       return {
-  //         'is_allowed': true
-  //       }
-  //     }
-  // }
 
   static isAllowedIEVersion () {
     const ua = window.navigator.userAgent
-    // IE 9
-    // ua = 'Mozilla/5.0 (compatible; MSIE 9.0; InfoChannel RNSafeBrowser/v.1.1.0G)'
-
-    // IE 10
-    // ua = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
-
-    // IE 11
-    // ua = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
-
     let version = 0
     const msie = ua.indexOf('MSIE ')
     if (msie > 0) {

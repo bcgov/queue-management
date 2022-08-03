@@ -206,8 +206,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     this.textCharsLeft = this.textCharsPrefix + this.charsLeft + this.textCharsSuffix
   }
 
-  private checkDisabled (value) {
-    return (value?.online_availability === ServiceAvailability.DISABLE)
+  private checkDisabled (value: Service) {
+    return (value?.onlineAvailability === ServiceAvailability.DISABLE)
   }
 
   private goToServiceLink (sn, url) {

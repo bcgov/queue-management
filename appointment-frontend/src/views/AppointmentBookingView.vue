@@ -4,7 +4,7 @@
       id="nav-alert"
       icon="mdi-alert"
       elevation=8
-      v-if="!userBrowser.is_allowed"
+      v-if="!userBrowser.isAllowed"
     >
     <div class="alert-title">Browser Upgrade Recommended</div>
     You are using an unsupported browser, and may have a degraded experience. To increase performance and access all features please use a modern browser.
@@ -133,10 +133,10 @@ export default class AppointmentBookingView extends Vue {
   private readonly currentService!: Service
   private readonly currentAppointment!: Appointment
   private userBrowser = {
-    is_allowed: true,
-    current_browser: '',
-    current_version: '',
-    allowed_browsers: ''
+    isAllowed: true,
+    currentBrowser: '',
+    currentVersion: '',
+    allowedBrowsers: ''
   }
 
   private stepCounter = 1

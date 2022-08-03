@@ -346,7 +346,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
     return !!this.currentCoordinates()
   }
 
-  private async showLocationServices (location) {
+  private async showLocationServices (location: Office) {
     this.serviceList = await this.getServiceByOffice(location.officeId)
     await this.getCategories()
     this.selectedLocationName = location.officeName
