@@ -428,7 +428,7 @@ class Bootstrap(Command):
 
         office_100 = theq.Office(
             office_name='100 Mile House',
-            office_number=1,
+            office_number=61,
             sb_id=smartboard_no_call.sb_id,
             exams_enabled_ind=0,
             timezone_id=timezone_four.timezone_id,
@@ -447,7 +447,7 @@ class Bootstrap(Command):
 
         office_victoria = theq.Office(
             office_name='Victoria',
-            office_number=61,
+            office_number=94,
             sb_id=smartboard_call_name.sb_id,
             exams_enabled_ind=0,
             timezone_id=timezone_one.timezone_id,
