@@ -15,7 +15,6 @@
       <v-card-text>
         <v-row>
           <v-col>
-            <!-- TODO: change snake_case in item-text and item-value, below? Aug3/22 -->
             <v-select
               :items="categoryList"
               label="Categories"

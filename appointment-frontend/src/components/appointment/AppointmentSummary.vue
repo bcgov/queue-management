@@ -288,7 +288,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       if (app?.service?.isDlkt) {
         if (new Date(app?.startTime) >= new Date()) {
           this.anyActiveDLKT = true
-          // TODO should there be a return/break here?
+          // XXX should there be a return/break here?
         } else {
           this.anyActiveDLKT = false
         }
