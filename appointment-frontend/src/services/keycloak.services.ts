@@ -75,7 +75,7 @@ class KeyCloakService {
       userName: this.parsedToken?.username,
       fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
       loginSource: this.parsedToken?.loginSource,
-      displayName: this.parsedToken?.displayName
+      displayName: this.parsedToken?.display_name // leave this as snake_case to match token!
     }
   }
 
