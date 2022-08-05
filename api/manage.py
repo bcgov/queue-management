@@ -255,17 +255,26 @@ class Bootstrap(Command):
             actual_service_ind = 0
         )
         category_exams = theq.Service(
-            service_code='Exams',
-            service_name='Exams',
-            service_desc='Exams',
+            service_code='Exams (code)',
+            service_name='Exams (name)',
+            service_desc='Exams (desc)',
             prefix='E',
             display_dashboard_ind=0,
             actual_service_ind=0
         )
+        category_icbc = theq.Service(
+            service_code='ICBC (code)',
+            service_name='ICBC (name)',
+            service_desc='ICBC (desc)',
+            prefix='A',
+            display_dashboard_ind=0,
+            actual_service_ind=0
+       )
         db.session.add(category_msp)
         db.session.add(category_ptax)
         db.session.add(category_back_office)
         db.session.add(category_exams)
+        db.session.add(category_icbc)
         db.session.commit()
 
         # -- Services --------------------------------------------------
@@ -367,6 +376,19 @@ class Bootstrap(Command):
             display_dashboard_ind=1,
             actual_service_ind=1
         )
+        service_dlkt = theq.Service(
+            service_code='ICBC - 008',
+            service_name='Knowledge Test Set-Up/Result',
+            service_desc='ICBC - Knowledge Test Set up/Result: KT - Either put '
+            'it on hold or end it after the test set up. When client returns, '
+            'you either resume or create a new one. ',
+            parent_id=category_icbc.service_id,
+            prefix='A',
+            display_dashboard_ind=1,
+            actual_service_ind=1,
+            external_service_name='ICBC - Drivers Licence Knowledge Test',
+            is_dlkt='YES'
+        )
         db.session.add(service_bo1)
         db.session.add(service_bo2)
         db.session.add(service_msp1)
@@ -376,6 +398,7 @@ class Bootstrap(Command):
         db.session.add(service_ptax2)
         db.session.add(service_ptax4)
         db.session.add(service_exams)
+        db.session.add(service_dlkt)
         db.session.commit()
 
         # -- Counters --------------------------------------------------
@@ -649,6 +672,7 @@ class Bootstrap(Command):
         office_test.services.append(category_msp)
         office_test.services.append(category_ptax)
         office_test.services.append(category_exams)
+        office_test.services.append(category_icbc)
         office_test.services.append(service_bo1)
         office_test.services.append(service_bo2)
         office_test.services.append(service_msp1)
@@ -658,22 +682,27 @@ class Bootstrap(Command):
         office_test.services.append(service_ptax2)
         office_test.services.append(service_ptax4)
         office_test.services.append(service_exams)
+        office_test.services.append(service_dlkt)
 
         office_victoria.services.append(category_back_office)
         office_victoria.services.append(category_msp)
+        office_victoria.services.append(category_icbc)
         office_victoria.services.append(service_bo1)
         office_victoria.services.append(service_bo2)
         office_victoria.services.append(service_msp1)
         office_victoria.services.append(service_msp2)
         office_victoria.services.append(service_msp6)
+        office_victoria.services.append(service_dlkt)
 
         office_100.services.append(category_back_office)
         office_100.services.append(category_ptax)
+        office_100.services.append(category_icbc)
         office_100.services.append(service_bo1)
         office_100.services.append(service_bo2)
         office_100.services.append(service_ptax1)
         office_100.services.append(service_ptax2)
         office_100.services.append(service_ptax4)
+        office_100.services.append(service_dlkt)
         db.session.commit()
 
         # -- Booking / Rooms -------------------------------------------
