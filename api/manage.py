@@ -26,6 +26,53 @@ manager = Manager(application)
 back_office_const = "Back Office"
 chalkboard_const = "Loves using chalk boards to communicate to examinees"
 
+class AddAdminCsr(Command):
+    '''
+    Adds a new CSR who is an administrator user. This is used to add
+    developers so that they can log into the Q locally.
+    '''
+    def run(self):
+        '''
+        Adds a CSR with full administrative permissions.
+        '''
+        username = input('Your IDIR, to create an admin CSR account: ')
+        if username != '':
+            db.session.add(theq.CSR(
+                username=username,
+                office_id=AddAdminCsr.__get_office('Victoria').office_id,
+                role_id=AddAdminCsr.__get_role('SUPPORT').role_id,
+                counter_id=AddAdminCsr.__get_counter('Quick Trans').counter_id,
+                receptionist_ind=1,
+                csr_state_id=AddAdminCsr.__get_csr_state('Logout')
+                    .csr_state_id
+            ))
+            db.session.commit()
+
+    @staticmethod
+    def __get_counter(counter_name):
+        ''' Gets the named Counter. '''
+        return theq.Counter.query.filter(
+            theq.Counter.counter_name == counter_name).first()
+
+    @staticmethod
+    def __get_csr_state(csr_state_name):
+        ''' Gets the named CSR State. '''
+        return theq.CSRState.query.filter(
+            theq.CSRState.csr_state_name == csr_state_name).first()
+
+    @staticmethod
+    def __get_office(office_name):
+        ''' Gets the named Office. '''
+        return theq.Office.query.filter(
+            theq.Office.office_name == office_name).first()
+
+    @staticmethod
+    def __get_role(role_code):
+        ''' Gets the Role identified by its code. '''
+        return theq.Role.query.filter(
+            theq.Role.role_code == role_code).first()
+
+
 class Bootstrap(Command):
     '''
     Sets up the database with enough information to do development or
@@ -991,9 +1038,10 @@ class MigrateWrapper(Command):
         upgrade()
 
 
+manager.add_command('adduser', AddAdminCsr())
+manager.add_command('bootstrap', Bootstrap())
 manager.add_command('db', MigrateCommand)
 manager.add_command('migrate', MigrateWrapper())
-manager.add_command('bootstrap', Bootstrap())
 
 
 if __name__ == '__main__':
