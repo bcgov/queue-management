@@ -32,12 +32,12 @@ module.exports = function (api) {
         }
       ],
       [
-        '@vue/app',
+        '@vue/cli-plugin-babel/preset',
         {
           'useBuiltIns': 'entry'
         }
       ]
     ],
     'compact': true
-  }
+  };
 }

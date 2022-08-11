@@ -90,7 +90,7 @@ export default class Video extends Vue {
       this.playing = true
     } else if (playerCurrentState && playerCurrentState.error && this.playing) {
       // This probably means that the video has been updated, try to refresh the page
-      setTimeout(() => { window.location.reload(true) }, 5000)
+      setTimeout(() => { window.location.reload() }, 5000)
     }
   }
 

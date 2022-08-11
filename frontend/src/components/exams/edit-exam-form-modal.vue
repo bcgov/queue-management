@@ -624,7 +624,7 @@ export default class EditExamModal extends Vue {
     { text: 'online', value: 'online' }
   ]
 
-  public exam_received: any = this.actionedExam.exam_received_date !== null
+  public exam_received: any = null
   public office_number: any = null
   public officeChoices: any = []
   public showMessage: any = false
@@ -1005,6 +1005,7 @@ export default class EditExamModal extends Vue {
   }
 
   mounted () {
+    this.exam_received = this.actionedExam.exam_received_date !== null
     this.getExamTypes()
   }
 }
