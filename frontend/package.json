@@ -160,6 +160,7 @@
     "npm": ">= 3.0.0"
   },
   "resolutions": {
-    "yargs-parser": "15.0.1"
+    "yargs-parser": "15.0.1",
+    "scss-tokenizer": "0.4.3"
   }
 }
