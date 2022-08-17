@@ -208,7 +208,7 @@ export default class UploadPesticideModal extends Vue {
   @Mutation('setEditExamFailure') public setEditExamFailure: any
 
   public file: any = null
-  public examNotes: any = this.actionedExam.notes
+  public examNotes: any = null
   public status: any = 'unwritten'
   public destroyed: any = this.actionedExam.exam_destroyed_date !== null
   public submitted: any = false
@@ -319,6 +319,7 @@ export default class UploadPesticideModal extends Vue {
   }
 
   mounted () {
+    this.examNotes = this.actionedExam.notes
     this.uploadFailed = false
     if (this.actionedExam.exam_destroyed_date !== null) {
       this.status = 'noshow'
