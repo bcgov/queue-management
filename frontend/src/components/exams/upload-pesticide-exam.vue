@@ -210,9 +210,9 @@ export default class UploadPesticideModal extends Vue {
   public file: any = null
   public examNotes: any = null
   public status: any = 'unwritten'
-  public destroyed: any = this.actionedExam.exam_destroyed_date !== null
+  public destroyed: any = null
   public submitted: any = false
-  public exam_printed: any = this.actionedExam.exam_received_date !== null
+  public exam_printed: any = null
   public warningText: any = 'Are you sure you want to upload this exam?'
   public noFileText: any = 'Please provide a file to upload.'
   private confirmDialog: any = false
@@ -320,6 +320,8 @@ export default class UploadPesticideModal extends Vue {
 
   mounted () {
     this.examNotes = this.actionedExam.notes
+    this.destroyed = this.actionedExam.exam_destroyed_date !== null
+    this.exam_printed = this.actionedExam.exam_received_date !== null
     this.uploadFailed = false
     if (this.actionedExam.exam_destroyed_date !== null) {
       this.status = 'noshow'
