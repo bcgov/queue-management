@@ -208,24 +208,16 @@ export default class UploadPesticideModal extends Vue {
   @Mutation('setEditExamFailure') public setEditExamFailure: any
 
   public file: any = null
-  public examNotes: any = this.actionedExam.notes
+  public examNotes: any = null
   public status: any = 'unwritten'
-  public destroyed: any = this.actionedExam.exam_destroyed_date !== null
+  public destroyed: any = null
   public submitted: any = false
-  public exam_printed: any = this.actionedExam.exam_received_date !== null
+  public exam_printed: any = null
   public warningText: any = 'Are you sure you want to upload this exam?'
   public noFileText: any = 'Please provide a file to upload.'
   private confirmDialog: any = false
   private noFileWarning: any = false
-  public statusOptions: any = this.exam_printed ? [
-    { value: 'unwritten', text: 'Unwritten' },
-    { value: 'written', text: 'Written' },
-    { value: 'noshow', text: 'No Show' }
-  ] : [
-    { value: 'unwritten', text: 'Unwritten' },
-    { value: 'noshow', text: 'No Show' }
-  ]
-
+  public statusOptions: any = null
   public uploadFailed: any = false
   public isLoading: any = false
 
@@ -319,7 +311,18 @@ export default class UploadPesticideModal extends Vue {
   }
 
   mounted () {
+    this.examNotes = this.actionedExam.notes
+    this.destroyed = this.actionedExam.exam_destroyed_date !== null
+    this.exam_printed = this.actionedExam.exam_received_date !== null
     this.uploadFailed = false
+    this.statusOptions = this.exam_printed ? [
+      { value: 'unwritten', text: 'Unwritten' },
+      { value: 'written', text: 'Written' },
+      { value: 'noshow', text: 'No Show' }
+    ] : [
+      { value: 'unwritten', text: 'Unwritten' },
+      { value: 'noshow', text: 'No Show' }
+    ]
     if (this.actionedExam.exam_destroyed_date !== null) {
       this.status = 'noshow'
     } else if (this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
