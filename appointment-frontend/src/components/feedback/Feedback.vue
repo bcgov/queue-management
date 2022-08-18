@@ -366,7 +366,7 @@ export default class Feedback extends Vue {
     this.feedbackRequest.variables.submitDateTime.value = this.getCurrentDateinFormat()
     const resp = await this.submitFeedback(this.feedbackRequest)
     if (resp.status) {
-      if (resp.status === 200 && resp.data.response_code === 200) {
+      if (resp.status === 200 && resp.data.responseCode === 200) {
         this.submitMessage = 'Thank you!'
         this.submitInProgress = false
         this.submitComplete = true
