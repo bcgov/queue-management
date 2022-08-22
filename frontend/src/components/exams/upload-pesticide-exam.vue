@@ -12,7 +12,10 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <b-btn class="btn-primary" v-if="!submitted" @click="examStatus"
+          <b-btn class="btn-primary" v-if="!submitted && status != null" @click="examStatus"
+            >Submit</b-btn
+          >
+          <b-btn disabled class="btn-primary" v-if="submitted || status == null" @click="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -316,10 +319,12 @@ export default class UploadPesticideModal extends Vue {
     this.exam_printed = this.actionedExam.exam_received_date !== null
     this.uploadFailed = false
     this.statusOptions = this.exam_printed ? [
+      { value: null, text: '' },
       { value: 'unwritten', text: 'Unwritten' },
       { value: 'written', text: 'Written' },
       { value: 'noshow', text: 'No Show' }
     ] : [
+      { value: null, text: '' },
       { value: 'unwritten', text: 'Unwritten' },
       { value: 'noshow', text: 'No Show' }
     ]
