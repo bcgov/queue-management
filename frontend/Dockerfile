@@ -7,7 +7,7 @@ COPY . .
 RUN npm dedupe
 RUN npm run build
 
-FROM docker-remote.artifacts.developer.gov.bc.ca/nginx:1.18.0 as production-stage
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.18.0 as production-stage
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
