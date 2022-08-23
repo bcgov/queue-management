@@ -39,6 +39,7 @@ class CitizenList(Resource):
             has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
             csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             if not csr:
+                db.session.close()
                 raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
             citizens = Citizen.query \
@@ -72,6 +73,7 @@ class CitizenList(Resource):
 
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         if not csr:
+            db.session.close()
             raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:

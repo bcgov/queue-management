@@ -1,0 +1,43 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: mender-gui
+  labels:
+    app: mender
+    template: mender-image-build
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'mender-gui:3.2.0-custom'
+  resources:
+    limits:
+      cpu: '1'
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: DockerImage
+        name: mendersoftware/gui:mender-3.2.0
+  postCommit: {}
+  source:
+    type: Dockerfile
+    dockerfile: >
+      FROM mendersoftware/gui:mender-3.2.0
+
+      RUN \
+        sed -i 's|/var/www/mender-gui/dist/env.js|/dev/null|' /entrypoint.sh ;\
+        mkdir /var/cache/nginx/client_temp ;\
+        mkdir /var/cache/nginx/fastcgi_temp ;\
+        mkdir /var/cache/nginx/proxy_temp ;\
+        mkdir /var/cache/nginx/scgi_temp ;\
+        mkdir /var/cache/nginx/uwsgi_temp ;\
+        sed -i 's/listen 80;/listen 8888;/' /etc/nginx/nginx.conf ;\
+        chmod g+w /var/run
+
+  triggers:
+    - type: ConfigChange
+  runPolicy: Serial

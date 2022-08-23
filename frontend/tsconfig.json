@@ -17,7 +17,8 @@
       "jest",
       "v-dragged",
       "vue-fragment",
-      "vuetify"
+      "vuetify",
+      "node",
     ],
     "paths": {
       "@/*": [

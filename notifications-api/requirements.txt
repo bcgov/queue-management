@@ -5,7 +5,7 @@ Jinja2
 pytz
 notifications-python-client
 Flask-Caching
-Werkzeug
+Werkzeug==2.1.2
 aniso8601
 attrs
 flask-restx
