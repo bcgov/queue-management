@@ -213,7 +213,7 @@ export default class UploadPesticideModal extends Vue {
 
   public file: any = null
   public examNotes: any = null
-  public status: any = 'unwritten'
+  public status: any = null
   public destroyed: any = null
   public submitted: any = false
   public exam_printed: any = null
