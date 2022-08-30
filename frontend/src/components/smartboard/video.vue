@@ -13,13 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <videoPlayer
+  <VideoPlayer
     class="video-player-box"
-    ref="videoPlayer"
+    ref="VideoPlayer"
     :options="playerOptions"
     :playsinline="true"
     @statechanged="playerStateChanged($event)"
-  ></videoPlayer>
+  ></VideoPlayer>
 </template>
 
 <script lang="ts">
@@ -29,14 +29,14 @@ import 'video.js/dist/video-js.css'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 
-import { videoPlayer } from 'vue-video-player'
+import { VideoPlayer } from '@videojs-player/vue'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
 const localVideoFile = 'http://localhost/videos/video.mp4'
 
 @Component({
   components: {
-    videoPlayer
+    VideoPlayer
   }
 })
 export default class Video extends Vue {
