@@ -15,7 +15,7 @@ limitations under the License.*/
 <template>
   <videoPlayer
     class="video-player-box"
-    ref="VideoPlayer"
+    ref="videoPlayer"
     :options="playerOptions"
     :playsinline="true"
     @statechanged="playerStateChanged($event)"
