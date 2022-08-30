@@ -15,12 +15,8 @@ limitations under the License.*/
 <template>
   <videoPlayer
     class="video-player-box"
-    :autoplay="playerOptions.autoplay"
-    :loop="playerOptions.loop"
-    :controls="playerOptions.controls"
-    :muted="playerOptions.muted"
-    :sources="playerOptions.sources"
-    :fluid="playerOptions.fluid"
+    ref="videoPlayer"
+    :options="playerOptions"
     :playsinline="true"
     @statechanged="playerStateChanged($event)"
   ></videoPlayer>
@@ -33,14 +29,14 @@ import 'video.js/dist/video-js.css'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 
-import { VideoPlayer } from 'vue-video-player'
+import { videoPlayer } from 'vue-video-player'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
 const localVideoFile = 'http://localhost/videos/video.mp4'
 
 @Component({
   components: {
-    VideoPlayer
+    videoPlayer
   }
 })
 export default class Video extends Vue {
