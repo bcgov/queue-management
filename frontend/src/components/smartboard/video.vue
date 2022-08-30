@@ -29,14 +29,14 @@ import 'video.js/dist/video-js.css'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 
-import { videoPlayer } from 'vue-video-player'
+import { VideoPlayer } from 'vue-video-player'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
 const localVideoFile = 'http://localhost/videos/video.mp4'
 
 @Component({
   components: {
-    videoPlayer
+    VideoPlayer
   }
 })
 export default class Video extends Vue {
