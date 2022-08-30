@@ -13,13 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
-  <videoPlayer
+  <video-player
     class="video-player-box"
-    ref="videoPlayer"
-    :options="playerOptions"
+    :autoplay="playerOptions.autoplay"
+    :loop="playerOptions.loop"
+    :controls="playerOptions.controls"
+    :muted="playerOptions.muted"
+    :sources="playerOptions.sources"
+    :fluid="playerOptions.fluid"
     :playsinline="true"
     @statechanged="playerStateChanged($event)"
-  ></videoPlayer>
+  ></video-player>
 </template>
 
 <script lang="ts">
