@@ -5,7 +5,7 @@
         <v-col cols="12" sm="6" class="text-center">
           <v-combobox
             :items="serviceList"
-            :item-text="'external_service_name'"
+            :item-text="'externalServiceName'"
             :filter="serviceSearchFilter"
             label="Select Service"
             outlined
@@ -21,7 +21,7 @@
             hide-details
           >
             <template v-slot:selection="data">
-              {{ data.item.external_service_name }}
+              {{ data.item.externalServiceName }}
               <span v-if="checkDisabled(data.item)" class="ml-1 caption">(Unavailable)</span>
             </template>
             <template v-slot:item="data">
@@ -29,7 +29,7 @@
                 v-bind:class="{'disabled-selection': checkDisabled(data.item)}"
                 class="service-selection-options"
               >
-                <div>{{ data.item.external_service_name }}</div>
+                <div>{{ data.item.externalServiceName }}</div>
               </div>
             </template>
           </v-combobox>
@@ -47,8 +47,8 @@
             <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
           </v-btn>
         </div>
-        <p v-if="selectedService.online_link" class="text-center mb-6"><strong>{{selectedService.external_service_name}}</strong> can be completed online.</p>
-        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
+        <p v-if="selectedService.onlineLink" class="text-center mb-6"><strong>{{selectedService.externalServiceName}}</strong> can be completed online.</p>
+        <p v-if="selectedService.onlineLink" class="text-center mb-6"><a :href="selectedService.onlineLink" target="_blank">Would you like to try online?</a></p>
         <p class="text-center body-2">
           Information is collected under the authority of
           <a href="http://www.bclaws.ca/civix/document/id/complete/statreg/96165_03#d2e3154" rel="noopener noreferrer" target="_blank">Sections 26(c)</a>
@@ -56,8 +56,8 @@
         </p>
       </template>
       <template v-if="checkDisabled(selectedService)">
-        <p class="text-center mb-6">We're sorry, <strong>{{selectedService.external_service_name}}</strong> is not available by appointment.</p>
-        <p v-if="selectedService.online_link" class="text-center mb-6"><a :href="selectedService.online_link" target="_blank">Would you like to try online?</a></p>
+        <p class="text-center mb-6">We're sorry, <strong>{{selectedService.externalServiceName}}</strong> is not available by appointment.</p>
+        <p v-if="selectedService.onlineLink" class="text-center mb-6"><a :href="selectedService.onlineLink" target="_blank">Would you like to try online?</a></p>
       </template>
     </v-card-text>
     <!-- Other Booking Option Model Popup -->
@@ -151,8 +151,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
 
   private async mounted () {
     if (this.isOnCurrentStep) {
-      if (this.currentOffice?.office_id) {
-        await this.getServiceByOffice(this.currentOffice.office_id)
+      if (this.currentOffice?.officeId) {
+        await this.getServiceByOffice(this.currentOffice.officeId)
       }
       this.selectedService = (!this.checkDisabled(this.currentService)) ? this.currentService : null
       this.additionalOptions = this.additionalNotes || ''
@@ -174,8 +174,8 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     }
   }
 
-  private clickSelection (value) {
-    if (!value?.service_name) {
+  private clickSelection (value: Service) {
+    if (!value?.serviceName) {
       this.selectedService = null
       this.setCurrentService(undefined)
     } else {
@@ -206,18 +206,18 @@ export default class ServiceSelection extends Mixins(StepperMixin) {
     this.textCharsLeft = this.textCharsPrefix + this.charsLeft + this.textCharsSuffix
   }
 
-  private checkDisabled (value) {
-    return (value?.online_availability === ServiceAvailability.DISABLE)
+  private checkDisabled (value: Service) {
+    return (value?.onlineAvailability === ServiceAvailability.DISABLE)
   }
 
   private goToServiceLink (sn, url) {
-    const mySP = { label: 'Online Option', step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: sn, url: url }
+    const mySP = { label: 'Online Option', step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }
 
-  private serviceSearchFilter (item, queryText, itemText) {
-    return `${item?.external_service_name || ''} ${item?.service_desc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
+  private serviceSearchFilter (item: Service, queryText, itemText) {
+    return `${item?.externalServiceName || ''} ${item?.serviceDesc || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 }
 </script>

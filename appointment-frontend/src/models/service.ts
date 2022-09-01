@@ -1,26 +1,26 @@
-/* eslint-disable camelcase */
+export interface ServiceParent {
+  serviceName: string
+}
+
 export interface Service {
-  actual_service_ind: number
+  actualServiceInd: number
   deleted: string
-  display_dashboard_ind: number
-  external_service_name: string
-  online_availability: string
-  online_link: string
-  prefix: string
-  service_code: string
-  service_desc: string
-  service_id: number
-  service_name: string
-  parent_id: number,
+  displayDashboardInd: number
+  externalServiceName: string
+  isDlkt: boolean
+  onlineAvailability: string
+  onlineLink: string
+  parentId: number
   parent?: ServiceParent
+  prefix: string
+  serviceCode: string
+  serviceDesc: string
+  serviceId: number
+  serviceName: string
 }
 
 export interface Services {
   services: Service[]
-}
-
-export interface ServiceParent {
-  service_name: string
 }
 
 export interface Categories {

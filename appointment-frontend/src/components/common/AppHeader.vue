@@ -131,12 +131,12 @@ export default class AppHeader extends Vue {
         break
       case 2:
         currStep = 'Select Service'
-        theloc = this.currentOffice?.office_name
+        theloc = this.currentOffice?.officeName
         break
       case 3:
         currStep = 'Select Date'
-        theloc = this.currentOffice?.office_name
-        theserv = this.currentService?.external_service_name
+        theloc = this.currentOffice?.officeName
+        theserv = this.currentService?.externalServiceName
         break
       case 4:
         currStep = 'Login to Confirm Appointment'
@@ -147,13 +147,13 @@ export default class AppHeader extends Vue {
     let mySP = {}
     switch (page) {
       case 'register':
-        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'login':
-        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
@@ -163,7 +163,7 @@ export default class AppHeader extends Vue {
         this.callsp()
         break
       case 'help':
-        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
+        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
         this.callSnowplowClick(mySP)
         window.open('https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services', '_blank')
         break
