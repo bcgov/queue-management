@@ -6,7 +6,7 @@
       <v-col cols="12" sm="6" md="4">
         <v-combobox
             :items="locationListData"
-            :item-text="'office_name'"
+            :item-text="'officeName'"
             :filter="officeSearchFilter"
             data-cy="step-1-combobox-office"
             label="Select Office"
@@ -30,13 +30,13 @@
         cols="12"
         sm="10"
         v-for="(location) in selectedlocationListData"
-        :key="location.office_id"
+        :key="location.officeId"
       >
         <v-card
         v-show="selectedOffice"
-          :disabled="location.online_status === 'Status.DISABLE'"
-          :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
-          :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
+          :disabled="location.onlineStatus === 'Status.DISABLE'"
+          :outlined="(currentOffice && currentOffice.officeId === location.officeId)"
+          :color="(currentOffice && currentOffice.officeId === location.officeId) ? 'blue-grey lighten-5' : ''"
           class="mx-auto location-card">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
@@ -58,19 +58,19 @@
                 <v-row>
                   <v-col cols="12" md="6">
                     <h4 class="mb-3 location-name">
-                  {{location.office_name}}
+                  {{location.officeName}}
                 </h4>
                   </v-col>
                 </v-row>
                 <v-alert
                   dense
-                  :text=(!location.appointments_enabled_ind)
+                  :text=(!location.appointmentsEnabledInd)
                   border="left"
-                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
+                  :type="(!location.appointmentsEnabledInd) ? 'error' : 'info'"
                   class="subtitle-2 font-weight-bold mb-4"
-                  v-if="location.office_appointment_message"
+                  v-if="location.officeAppointmentMessage"
                 >
-                  {{location.office_appointment_message}}
+                  {{location.officeAppointmentMessage}}
                 </v-alert>
                 <v-alert
                   :type="(!$vuetify.breakpoint.xs) ? 'info' : undefined"
@@ -79,11 +79,11 @@
                   :icon="(!$vuetify.breakpoint.xs) ? 'mdi-clock' : false"
                 >
                   <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
-                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.day_str}}</v-col>
+                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.dayStr}}</v-col>
                     <v-col cols="6" md="7">
-                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
+                      <span v-if="!(timeslot.startTimeStr && timeslot.endTimeStr)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${timeslot.start_time_str}` }} - {{ `${timeslot.end_time_str}`}}
+                        {{`${timeslot.startTimeStr}` }} - {{ `${timeslot.endTimeStr}`}}
                       </span>
                     </v-col>
                   </v-row>
@@ -105,29 +105,29 @@
                 </v-row>
               </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
-                <template v-if='location.external_map_link'>
-                  <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
-                    <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
+                <template v-if='location.externalMapLink'>
+                  <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
+                    <v-img v-if="location.civicAddress" :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))" :alt="location.civicAddress || 'No address'" class='static-map'>
                     </v-img>
                   </a>
                 </template>
                 <template v-else>
                   <v-img
-                    v-if="location.civic_address"
-                    :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))"
-                    :alt="location.civic_address || 'No address'"
+                    v-if="location.civicAddress"
+                    :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))"
+                    :alt="location.civicAddress || 'No address'"
                     class='static-map'
                     data-cy="step-1-image-map"
                   ></v-img>
                 </template>
-                <div class="text-center mt-2 body-2" v-if="location.civic_address">
-                  <template v-if='location.external_map_link'>
-                    <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
+                <div class="text-center mt-2 body-2" v-if="location.civicAddress">
+                  <template v-if='location.externalMapLink'>
+                    <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
                       <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-                      {{location.civic_address}}
+                      {{location.civicAddress}}
                     </a>
                   </template>
-                  <template v-else>{{location.civic_address}}</template>
+                  <template v-else>{{location.civicAddress}}</template>
 
                 </div>
                 <div class="text-center mt-2 body-2 green--text font-weight-bold" v-if='location.latitude && location.longitude && hasCoordinates'>
@@ -249,7 +249,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.footerLinks = fl.split('{link}')
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
-      this.locationListData = this.locationListData.filter(location => location.appointments_enabled_ind).filter(location => location.online_status === 'Status.SHOW')
+      this.locationListData = this.locationListData.filter(location => location.appointmentsEnabledInd).filter(location => location.onlineStatus === 'Status.SHOW')
       this.$store.commit('setAppointmentLocation', undefined)
     }
   }
@@ -301,11 +301,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private checkDisabled (value) {
-    return (value?.appointments_enabled_ind)
+    return (value?.appointmentsEnabledInd)
   }
 
   private clickSelection (value) {
-    if (!value?.service_name) {
+    if (!value?.serviceName) {
       this.selectedOffice = null
       this.setCurrentOffice(undefined)
     } else {
@@ -321,11 +321,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private officeSelection (value) {
     this.keyPressed = false
     this.selectedOffice = value
-    this.selectedlocationListData = this.locationListData.filter(location => location.office_id === this.selectedOffice.office_id)
+    this.selectedlocationListData = this.locationListData.filter(location => location.officeId === this.selectedOffice.officeId)
   }
 
   private officeSearchFilter (item, queryText, itemText) {
-    return `${item?.office_name || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
+    return `${item?.officeName || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 
   private getDistance (latitude, longitude) {
@@ -346,12 +346,12 @@ export default class LocationsList extends Mixins(StepperMixin) {
     return !!this.currentCoordinates()
   }
 
-  private async showLocationServices (location) {
-    this.serviceList = await this.getServiceByOffice(location.office_id)
+  private async showLocationServices (location: Office) {
+    this.serviceList = await this.getServiceByOffice(location.officeId)
     await this.getCategories()
-    this.selectedLocationName = location.office_name
+    this.selectedLocationName = location.officeName
     this.$refs.locationServiceListPopup.open()
-    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: location.office_name, serv: null, url: null }
+    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: location.officeName, serv: null, url: null }
     this.callSnowplowClick(mySP)
   }
 
@@ -363,8 +363,8 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    if (this.currentOffice?.office_id !== location?.office_id) {
-      this.$store.commit('setAppointmentLocation', location.office_name)
+    if (this.currentOffice?.officeId !== location?.officeId) {
+      this.$store.commit('setAppointmentLocation', location.officeName)
       this.setCurrentOffice(location)
       this.setCurrentService(undefined)
     }

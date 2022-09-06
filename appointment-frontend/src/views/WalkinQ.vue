@@ -4,7 +4,7 @@
       id="nav-alert"
       icon="mdi-alert"
       elevation=8
-      v-if="!userBrowser.is_allowed"
+      v-if="!userBrowser.isAllowed"
     >
     <div class="alert-title">Browser Upgrade Recommended</div>
     You are using an unsupported browser, and may have a degraded experience. To increase performance and access all features please use a modern browser.
@@ -25,7 +25,7 @@
       justify="center">Est. time</v-col>
   </v-row>
   <v-row v-for="(Q, index) in theWalkinQ"
-        :key="Q.citizen_id">
+        :key="Q.citizenId">
     <!--ticket number column start -->
     <v-col>
       <v-card
@@ -64,13 +64,13 @@
         :color="myColor(Q)"
       >
         <v-card-text
-          v-if="((Q.service_begin_seconds) && !amI(Q.walkin_unique_id))"
+          v-if="((Q.serviceBeginSeconds) && !amI(Q.walkinUniqueId))"
           align="center"
           justify="center">
-          <span>{{ toHHMMSS(Q.service_begin_seconds) }}</span>
+          <span>{{ toHHMMSS(Q.serviceBeginSeconds) }}</span>
         </v-card-text>
         <v-card-text
-          v-else-if="!amI(Q.walkin_unique_id)"
+          v-else-if="!amI(Q.walkinUniqueId)"
           align="center"
           justify="center">
           <span v-if="Q.flag === 'booked_app'">Booked Appointment</span>
@@ -78,7 +78,7 @@
           <span v-if="Q.flag === 'walkin_app'">Waiting for Service</span>
         </v-card-text>
         <v-card-text
-           v-else-if="amI(Q.walkin_unique_id)"
+           v-else-if="amI(Q.walkinUniqueId)"
           align="center"
           justify="center">
           <v-btn
@@ -124,14 +124,14 @@ export default class WalkinQ extends Vue {
   private readonly getAllWalkin!: (uniqueId: string) => Promise<any>
   private WalkinModule = getModule(WalkinModule, this.$store)
 
-  private theWalkinQ: any = {}
+  private theWalkinQ: any[] = []
   private showEstimate: any = ''
   private lastRefresh: any = ''
   private userBrowser = {
-    is_allowed: true,
-    current_browser: '',
-    current_version: '',
-    allowed_browsers: ''
+    isAllowed: true,
+    currentBrowser: '',
+    currentVersion: '',
+    allowedBrowsers: ''
   }
 
   mounted () {
@@ -150,7 +150,7 @@ export default class WalkinQ extends Vue {
     const resp = await this.getAllWalkin(this.uniqueId)
     if (resp?.status === 200) {
       this.theWalkinQ = resp?.data?.citizen
-      this.showEstimate = resp?.data?.show_estimate
+      this.showEstimate = resp?.data?.showEstimate
       if ((!resp?.data) || (Object.keys(resp?.data).length <= 0)) {
         this.$router.push('/no-content/not-in-Q')
       }
@@ -160,10 +160,10 @@ export default class WalkinQ extends Vue {
   }
 
   private getAppTime (Q) {
-    if (Q.start_time) {
-      return new Date(Q.start_time).toLocaleTimeString()
+    if (Q.startTime) {
+      return new Date(Q.startTime).toLocaleTimeString()
     }
-    return Q.start_time
+    return Q.startTime
   }
 
   private amI (ID: string) {
@@ -177,8 +177,8 @@ export default class WalkinQ extends Vue {
 
   private myColor (Q: any) {
     let color = null
-    if (Q.walkin_unique_id) {
-      color = this.amI(Q.walkin_unique_id)
+    if (Q.walkinUniqueId) {
+      color = this.amI(Q.walkinUniqueId)
     }
     if (!color) {
       if (Q.flag === 'walkin_app') {

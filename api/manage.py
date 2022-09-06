@@ -26,6 +26,53 @@ manager = Manager(application)
 back_office_const = "Back Office"
 chalkboard_const = "Loves using chalk boards to communicate to examinees"
 
+class AddAdminCsr(Command):
+    '''
+    Adds a new CSR who is an administrator user. This is used to add
+    developers so that they can log into the Q locally.
+    '''
+    def run(self):
+        '''
+        Adds a CSR with full administrative permissions.
+        '''
+        username = input('Your IDIR, to create an admin CSR account: ')
+        if username != '':
+            db.session.add(theq.CSR(
+                username=username,
+                office_id=AddAdminCsr.__get_office('Victoria').office_id,
+                role_id=AddAdminCsr.__get_role('SUPPORT').role_id,
+                counter_id=AddAdminCsr.__get_counter('Quick Trans').counter_id,
+                receptionist_ind=1,
+                csr_state_id=AddAdminCsr.__get_csr_state('Logout')
+                    .csr_state_id
+            ))
+            db.session.commit()
+
+    @staticmethod
+    def __get_counter(counter_name):
+        ''' Gets the named Counter. '''
+        return theq.Counter.query.filter(
+            theq.Counter.counter_name == counter_name).first()
+
+    @staticmethod
+    def __get_csr_state(csr_state_name):
+        ''' Gets the named CSR State. '''
+        return theq.CSRState.query.filter(
+            theq.CSRState.csr_state_name == csr_state_name).first()
+
+    @staticmethod
+    def __get_office(office_name):
+        ''' Gets the named Office. '''
+        return theq.Office.query.filter(
+            theq.Office.office_name == office_name).first()
+
+    @staticmethod
+    def __get_role(role_code):
+        ''' Gets the Role identified by its code. '''
+        return theq.Role.query.filter(
+            theq.Role.role_code == role_code).first()
+
+
 class Bootstrap(Command):
     '''
     Sets up the database with enough information to do development or
@@ -229,6 +276,7 @@ class Bootstrap(Command):
         # -- Services (Categories) -------------------------------------
         logging.info('--> Services (Categories)')
         category_msp = theq.Service(
+            external_service_name='Medical Services Plan',
             service_code='MSP',
             service_name='MSP',
             service_desc='Medical Services Plan',
@@ -237,6 +285,7 @@ class Bootstrap(Command):
             actual_service_ind=0
         )
         category_ptax = theq.Service(
+            external_service_name='Rural Property Tax',
             service_code='PTAX',
             service_name='Property Tax',
             service_desc='Property Tax',
@@ -253,17 +302,26 @@ class Bootstrap(Command):
             actual_service_ind = 0
         )
         category_exams = theq.Service(
-            service_code='Exams',
-            service_name='Exams',
-            service_desc='Exams',
+            service_code='Exams (code)',
+            service_name='Exams (name)',
+            service_desc='Exams (desc)',
             prefix='E',
             display_dashboard_ind=0,
             actual_service_ind=0
         )
+        category_icbc = theq.Service(
+            service_code='ICBC (code)',
+            service_name='ICBC (name)',
+            service_desc='ICBC (desc)',
+            prefix='A',
+            display_dashboard_ind=0,
+            actual_service_ind=0
+       )
         db.session.add(category_msp)
         db.session.add(category_ptax)
         db.session.add(category_back_office)
         db.session.add(category_exams)
+        db.session.add(category_icbc)
         db.session.commit()
 
         # -- Services --------------------------------------------------
@@ -365,6 +423,19 @@ class Bootstrap(Command):
             display_dashboard_ind=1,
             actual_service_ind=1
         )
+        service_dlkt = theq.Service(
+            service_code='ICBC - 008',
+            service_name='Knowledge Test Set-Up/Result',
+            service_desc='ICBC - Knowledge Test Set up/Result: KT - Either put '
+            'it on hold or end it after the test set up. When client returns, '
+            'you either resume or create a new one. ',
+            parent_id=category_icbc.service_id,
+            prefix='A',
+            display_dashboard_ind=1,
+            actual_service_ind=1,
+            external_service_name='ICBC - Drivers Licence Knowledge Test',
+            is_dlkt='YES'
+        )
         db.session.add(service_bo1)
         db.session.add(service_bo2)
         db.session.add(service_msp1)
@@ -374,6 +445,7 @@ class Bootstrap(Command):
         db.session.add(service_ptax2)
         db.session.add(service_ptax4)
         db.session.add(service_exams)
+        db.session.add(service_dlkt)
         db.session.commit()
 
         # -- Counters --------------------------------------------------
@@ -426,7 +498,7 @@ class Bootstrap(Command):
 
         office_100 = theq.Office(
             office_name='100 Mile House',
-            office_number=1,
+            office_number=61,
             sb_id=smartboard_no_call.sb_id,
             exams_enabled_ind=0,
             timezone_id=timezone_four.timezone_id,
@@ -445,7 +517,7 @@ class Bootstrap(Command):
 
         office_victoria = theq.Office(
             office_name='Victoria',
-            office_number=61,
+            office_number=94,
             sb_id=smartboard_call_name.sb_id,
             exams_enabled_ind=0,
             timezone_id=timezone_one.timezone_id,
@@ -486,24 +558,75 @@ class Bootstrap(Command):
         # -- Time Slots ------------------------------------------------
         logging.info('--> Time Slots')
         db.session.add(theq.TimeSlot(
-            start_time='08:30:00-07:00',
-            end_time='09:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Monday', 'Wednesday'],
-            office_id=office_victoria.office_id
+            start_time='09:00:00-07:00',
+            end_time='10:00:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
         ))
         db.session.add(theq.TimeSlot(
-            start_time='09:30:00-07:00',
-            end_time='10:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Tuesday'],
-            office_id=office_victoria.office_id
+            start_time='10:30:00-07:00',
+            end_time='11:00:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='13:00:00-07:00',
+            end_time='13:30:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
         ))
         db.session.add(theq.TimeSlot(
             start_time='13:30:00-07:00',
-            end_time='14:30:00-07:00',
-            no_of_slots=2,
-            day_of_week=['Tuesday', 'Wednesday', 'Thursday'],
+            end_time='16:30:00-07:00',
+            no_of_slots=0,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_100.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='09:00:00-07:00',
+            end_time='09:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='10:30:00-07:00',
+            end_time='11:15:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='11:00:00-07:00',
+            end_time='11:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
+            office_id=office_victoria.office_id
+        ))
+        db.session.add(theq.TimeSlot(
+            start_time='15:00:00-07:00',
+            end_time='15:45:00-07:00',
+            no_of_slots=1,
+            day_of_week=[
+                'Monday','Tuesday', 'Wednesday', 'Thursday', 'Friday'
+            ],
             office_id=office_victoria.office_id
         ))
         db.session.commit()
@@ -596,6 +719,7 @@ class Bootstrap(Command):
         office_test.services.append(category_msp)
         office_test.services.append(category_ptax)
         office_test.services.append(category_exams)
+        office_test.services.append(category_icbc)
         office_test.services.append(service_bo1)
         office_test.services.append(service_bo2)
         office_test.services.append(service_msp1)
@@ -605,22 +729,27 @@ class Bootstrap(Command):
         office_test.services.append(service_ptax2)
         office_test.services.append(service_ptax4)
         office_test.services.append(service_exams)
+        office_test.services.append(service_dlkt)
 
         office_victoria.services.append(category_back_office)
         office_victoria.services.append(category_msp)
+        office_victoria.services.append(category_icbc)
         office_victoria.services.append(service_bo1)
         office_victoria.services.append(service_bo2)
         office_victoria.services.append(service_msp1)
         office_victoria.services.append(service_msp2)
         office_victoria.services.append(service_msp6)
+        office_victoria.services.append(service_dlkt)
 
         office_100.services.append(category_back_office)
         office_100.services.append(category_ptax)
+        office_100.services.append(category_icbc)
         office_100.services.append(service_bo1)
         office_100.services.append(service_bo2)
         office_100.services.append(service_ptax1)
         office_100.services.append(service_ptax2)
         office_100.services.append(service_ptax4)
+        office_100.services.append(service_dlkt)
         db.session.commit()
 
         # -- Booking / Rooms -------------------------------------------
@@ -909,9 +1038,10 @@ class MigrateWrapper(Command):
         upgrade()
 
 
+manager.add_command('adduser', AddAdminCsr())
+manager.add_command('bootstrap', Bootstrap())
 manager.add_command('db', MigrateCommand)
 manager.add_command('migrate', MigrateWrapper())
-manager.add_command('bootstrap', Bootstrap())
 
 
 if __name__ == '__main__':
