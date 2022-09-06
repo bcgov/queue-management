@@ -107,7 +107,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (input: {officeId: number, serviceId: number}) => Promise<any>
   private readonly createDraftAppointment!: () => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
-   private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
+  private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
   private readonly currentService!: Service
   private selectedDate = ''
   private selectedDateObj = ''
@@ -126,15 +126,15 @@ export default class DateSelection extends Mixins(StepperMixin) {
    }
 
    private get selectedTimeSlot () {
-     return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
-        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
+     return (this.currentAppointmentSlot?.startTime && this.currentAppointmentSlot?.endTime)
+       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.startTime, this.currentOfficeTimezone, 'hh:mm aaa')} -
+        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.endTime, this.currentOfficeTimezone, 'hh:mm aaa')}`
        : ''
    }
 
    private async mounted () {
      if (this.isOnCurrentStep) {
-       if (this.currentOffice?.office_id) {
+       if (this.currentOffice?.officeId) {
          this.getAvailableService()
        }
        this.dateClicked()
@@ -143,8 +143,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
    private async getAvailableService () {
      const availableAppoinments = await this.getAvailableAppointmentSlots({
-       officeId: this.currentOffice.office_id,
-       serviceId: this.currentService.service_id
+       officeId: this.currentOffice.officeId,
+       serviceId: this.currentService.serviceId
      })
      Object.keys(availableAppoinments).forEach(date => {
        if (availableAppoinments[date]?.length) {
@@ -170,7 +170,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
    private dateClicked (userClicked = 'false') {
      this.selectedDateTimeSlots = []
-     let slots = []
+     let slots: AppointmentSlot[] = []
      if (this.selectedDate) {
        if (userClicked === 'true') {
          this.isUserClicked = 'true'
@@ -182,24 +182,24 @@ export default class DateSelection extends Mixins(StepperMixin) {
      slots?.forEach(slot => {
        this.selectedDateTimeSlots.push({
          ...slot,
-         startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
-         endTimeStr: CommonUtils.get12HTimeString(slot.end_time)
+         startTimeStr: CommonUtils.get12HTimeString(slot.startTime),
+         endTimeStr: CommonUtils.get12HTimeString(slot.endTime)
        })
      })
    }
 
-   async selectTimeSlot (slot) {
+   async selectTimeSlot (slot: AppointmentSlot) {
      // Note - For cross browser, we must use specific date string format below
      // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
-     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
-     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.end_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.startTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.endTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = et.replace('.000Z', '+00').replace('T', ' ')
      const selectedSlot: AppointmentSlot = {
-       start_time: st,
-       end_time: et
+       startTime: st,
+       endTime: et
      }
      this.setCurrentAppointmentSlot(selectedSlot)
      try {

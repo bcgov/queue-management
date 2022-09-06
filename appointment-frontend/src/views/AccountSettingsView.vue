@@ -150,7 +150,7 @@ export default class AccountSettingsView extends Vue {
 
   private async beforeMount () {
     this.$store.commit('setNonStepperLocation', 'Account Settings')
-    if (!this.currentUserProfile.user_id) {
+    if (!this.currentUserProfile.userId) {
       // Removed redundant "await" on next line
       this.getUser()
     }
@@ -158,8 +158,8 @@ export default class AccountSettingsView extends Vue {
       this.name = this.username || ' '
       this.email = this.currentUserProfile.email
       this.phoneNumber = this.currentUserProfile.telephone
-      this.enableEmailReminder = this.currentUserProfile.send_email_reminders
-      this.enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      this.enableEmailReminder = this.currentUserProfile.sendEmailReminders
+      this.enableSmsReminder = this.currentUserProfile.sendSmsReminders
       this.emailCopy = this.email
       this.phoneNumberCopy = this.phoneNumber
       this.emailReminderCopy = this.enableEmailReminder
@@ -172,11 +172,11 @@ export default class AccountSettingsView extends Vue {
       const userUpdate: UserUpdateBody = {
         email: this.email,
         telephone: this.phoneNumber,
-        send_email_reminders: this.enableEmailReminder,
-        send_sms_reminders: this.enableSmsReminder
+        sendEmailReminders: this.enableEmailReminder,
+        sendSmsReminders: this.enableSmsReminder
       }
       const response = await this.updateUserAccount(userUpdate)
-      if (response?.user_id) {
+      if (response?.userId) {
         this.showMsg.isShow = true
         this.showMsg.msgText = 'Profile Successfully Updated!'
         this.showMsg.msgType = 'success'

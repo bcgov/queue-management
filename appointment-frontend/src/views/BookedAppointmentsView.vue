@@ -17,7 +17,7 @@
       </v-col>
     </v-row>
     <v-divider class="mb-4"></v-divider>
-    <v-card v-for="appointment in appointmentList" :key="appointment.appointment_id" class="my-4">
+    <v-card v-for="appointment in appointmentList" :key="appointment.appointmentId" class="my-4">
       <v-card-text>
         <v-row>
           <v-col
@@ -184,23 +184,23 @@ export default class Home extends Vue {
     this.appointmentList = await this.getAppointmentList()
   }
 
-  private getCoordinates (appointment) {
+  private getCoordinates (appointment: Appointment) {
     return {
       lat: appointment?.office?.latitude || 0,
       lng: appointment?.office?.longitude || 0
     }
   }
 
-  private getOfficeName (appointment) {
-    return appointment?.office?.office_name || ''
+  private getOfficeName (appointment: Appointment) {
+    return appointment?.office?.officeName || ''
   }
 
-  private getOfficeMap (appointment) {
-    return appointment?.office?.office_number ? appointment?.office?.office_number.toString() + '.png' : '999.png'
+  private getOfficeMap (appointment: Appointment) {
+    return appointment?.office?.officeNumber ? appointment?.office?.officeNumber.toString() + '.png' : '999.png'
   }
 
-  private getServiceName (appointment) {
-    return appointment?.service?.external_service_name || ''
+  private getServiceName (appointment: Appointment) {
+    return appointment?.service?.externalServiceName || ''
   }
 
   private callsp () {
@@ -218,8 +218,8 @@ export default class Home extends Vue {
     this.callsp()
   }
 
-  private changeAppointment (appointment) {
-    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+  private changeAppointment (appointment: Appointment) {
+    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointmentId, clientID: this.currentUserProfile?.userId, loc: appointment.office.officeName, serv: appointment.service.externalServiceName }
     this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
@@ -228,8 +228,8 @@ export default class Home extends Vue {
     this.callsp()
   }
 
-  private cancelAppointment (appointment) {
-    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+  private cancelAppointment (appointment: Appointment) {
+    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointmentId, clientID: this.currentUserProfile?.userId, loc: appointment.office.officeName, serv: appointment.service.externalServiceName }
     this.callSnowplow(mySP)
     this.confirmDialog = true
     this.selectedAppointment = appointment
@@ -237,7 +237,7 @@ export default class Home extends Vue {
 
   private async confirmDelete (isAgree: boolean) {
     if (isAgree) {
-      const resp = await this.deleteAppointment(this.selectedAppointment?.appointment_id)
+      const resp = await this.deleteAppointment(this.selectedAppointment?.appointmentId)
       if (resp?.status === 204) {
         this.confirmDialog = false
       }
@@ -247,13 +247,8 @@ export default class Home extends Vue {
     }
   }
 
-  /* private getMapUrl (appointment) {
-    if (!appointment.office) { return '' }
-    return GeocoderService.generateStaticMapURL(appointment.office)
-  } */
-
-  private getMapAltText (appointment) {
-    return appointment?.office?.civic_address || 'No address'
+  private getMapAltText (appointment: Appointment) {
+    return appointment?.office?.civicAddress || 'No address'
   }
 }
 </script>

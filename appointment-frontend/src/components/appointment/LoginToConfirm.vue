@@ -153,28 +153,28 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
       thelabel = 'Login: BCeID'
     }
     let myurl = 'https://appointments.servicebc.gov.bc.ca/signin/' + idpHint
-    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: myurl }
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null, url: myurl }
     this.callSnowplowClick(mySP)
     this.$router.push(`/signin/${idpHint}`)
     this.callsp()
   }
 
   private createBCEID (url) {
-    const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
+    const mySP = { label: 'Create: BCeID', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     window.location.href = url
     this.callsp()
   }
 
   private createBCServicesCard (url) {
-    const mySP = { label: 'Create: BCServicesCard', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
+    const mySP = { label: 'Create: BCServicesCard', step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     window.location.href = url
     this.callsp()
   }
 
   private clickHyperlink (url, thelabel) {
-    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null, url: url }
+    const mySP = { label: thelabel, step: this.currStep, loggedIn: false, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
     this.callsp()

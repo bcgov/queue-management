@@ -53,7 +53,7 @@ export default class OfficeModule extends VuexModule {
   @Mutation
   public setCurrentOffice (office: Office) {
     this.currentOffice = office
-    this.currentOfficeTimezone = office?.timezone?.timezone_name || undefined
+    this.currentOfficeTimezone = office?.timezone?.timezoneName || undefined
   }
 
   @Mutation
@@ -110,15 +110,15 @@ export default class OfficeModule extends VuexModule {
     let services = response?.data?.services || []
     if (services.length) {
       services = response.data.services.filter(service => {
-        return (service.actual_service_ind &&
-          service.display_dashboard_ind &&
-          service.online_availability !== ServiceAvailability.HIDE)
+        return (service.actualServiceInd &&
+          service.displayDashboardInd &&
+          service.onlineAvailability !== ServiceAvailability.HIDE)
       })
-      // Sort alphabetically on displayed external_service_name
+      // Sort alphabetically on displayed externalServiceName
       services = services.sort((a, b) => {
-        // If external_service_name is null, sort it to last of list.
-        const aName = a.external_service_name || 'zzz'
-        const bName = b.external_service_name || 'zzz'
+        // If externalServiceName is null, sort it to last of list.
+        const aName = a.externalServiceName || 'zzz'
+        const bName = b.externalServiceName || 'zzz'
         return aName.localeCompare(bName)
       })
     }
@@ -138,7 +138,7 @@ export default class OfficeModule extends VuexModule {
     if (categories.length) {
       const services = this.context.state['serviceList'] || []
       categories = response.data.categories.filter(cat => {
-        return services.some(s => s.parent_id === cat.service_id)
+        return services.some(s => s.parentId === cat.serviceId)
       })
     }
     return categories
@@ -161,21 +161,21 @@ export default class OfficeModule extends VuexModule {
 
   @Action({ rawError: true })
   public async createAppointment () {
-    // Don't make changes here, instead make changes to slot where end_time is set
-    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    // Don't make changes here, instead make changes to slot where endTime is set
+    const userId = this.context.rootState.auth.currentUserProfile?.userId || null
     const appointmentBody: AppointmentRequestBody = {
-      start_time: this.context.state['currentAppointmentSlot'].start_time,
-      end_time: this.context.state['currentAppointmentSlot'].end_time,
-      service_id: this.context.state['currentService'].service_id,
+      startTime: this.context.state['currentAppointmentSlot'].startTime,
+      endTime: this.context.state['currentAppointmentSlot'].endTime,
+      serviceId: this.context.state['currentService'].serviceId,
       comments: this.context.state['additionalNotes'],
-      office_id: this.context.state['currentOffice'].office_id,
-      user_id: userId,
-      appointment_draft_id: this.context.state['currentDraftAppointment'].appointment_id
+      officeId: this.context.state['currentOffice'].officeId,
+      userId: userId,
+      appointmentDraftId: this.context.state['currentDraftAppointment'].appointmentId
     }
     let response
     if (this.context.rootState.isAppointmentEditMode) {
-      if (this.context.state['currentAppointment']?.appointment_id) {
-        response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointment_id, appointmentBody)
+      if (this.context.state['currentAppointment']?.appointmentId) {
+        response = await AppointmentService.updateAppointment(this.context.state['currentAppointment'].appointmentId, appointmentBody)
         this.context.commit('setCurrentDraftAppointment', {})
       }
     } else {
@@ -198,8 +198,8 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public setAppointmentValues (appointment: Appointment): void {
     const apppointmentSlot: AppointmentSlot = {
-      start_time: appointment?.start_time,
-      end_time: appointment?.end_time
+      startTime: appointment?.startTime,
+      endTime: appointment?.endTime
     }
     this.context.commit('setCurrentOffice', appointment?.office)
     this.context.commit('setCurrentService', appointment?.service)
@@ -210,24 +210,24 @@ export default class OfficeModule extends VuexModule {
 
   @Action({ rawError: true })
   public async createDraftAppointment () {
-    // Don't make changes here, instead make changes to slot where end_time is set
-    const userId = this.context.rootState.auth.currentUserProfile?.user_id || null
+    // Don't make changes here, instead make changes to slot where endTime is set
+    const userId = this.context.rootState.auth.currentUserProfile?.userId || null
     const appointmentBody: AppointmentRequestBody = {
-      start_time: this.context.state['currentAppointmentSlot'].start_time,
-      end_time: this.context.state['currentAppointmentSlot'].end_time,
-      service_id: this.context.state['currentService'].service_id,
+      startTime: this.context.state['currentAppointmentSlot'].startTime,
+      endTime: this.context.state['currentAppointmentSlot'].endTime,
+      serviceId: this.context.state['currentService'].serviceId,
       comments: this.context.state['additionalNotes'],
-      office_id: this.context.state['currentOffice'].office_id,
-      user_id: userId,
-      is_draft: true
+      officeId: this.context.state['currentOffice'].officeId,
+      userId: userId,
+      isDraft: true
     }
     let response
     let deleteResponse
 
-    if (this.context.state['currentDraftAppointment']?.appointment_id) {
+    if (this.context.state['currentDraftAppointment']?.appointmentId) {
     //   // deleteResponse =
       try {
-        deleteResponse = await AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointment_id)
+        deleteResponse = await AppointmentService.deleteDraftAppointment(this.context.state['currentDraftAppointment'].appointmentId)
         if (deleteResponse.data) {
           this.context.commit('setCurrentDraftAppointment', {})
         }
@@ -254,10 +254,10 @@ export default class OfficeModule extends VuexModule {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_click/jsonschema/1-0-0',
       data: {
         label: mySP.label,
-        appointment_step: mySP.step,
-        logged_in: mySP.loggedIn,
-        appointment_id: mySP.apptID,
-        client_id: mySP.clientID,
+        appointmentStep: mySP.step,
+        loggedIn: mySP.loggedIn,
+        appointmentId: mySP.apptID,
+        clientId: mySP.clientID,
         location: mySP.loc,
         service: mySP.serv,
         url: mySP.url
@@ -274,11 +274,11 @@ export default class OfficeModule extends VuexModule {
     (window as any).snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_step/jsonschema/1-0-0',
       data: {
-        appointment_step: mySP.step,
+        appointmentStep: mySP.step,
         status: this.context.state['spStatus'],
-        logged_in: mySP.loggedIn,
-        appointment_id: mySP.apptID,
-        client_id: mySP.clientID,
+        loggedIn: mySP.loggedIn,
+        appointmentId: mySP.apptID,
+        clientId: mySP.clientID,
         location: mySP.loc,
         service: mySP.serv
       }
