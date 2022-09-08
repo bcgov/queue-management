@@ -51,8 +51,8 @@ export default class Socket extends Vue {
   connect () {
     this.socketTimeout = configMap.getSocketTimeout()
     this.socketDelayMax = configMap.getSocketDelayMax()
-    console.log('Socket Timeout value = ',this.socketTimeout)
-    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
+    console.log('Socket Timeout value = ', this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ', this.socketDelayMax)
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,
@@ -76,7 +76,6 @@ export default class Socket extends Vue {
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
 
-
     socket.on('appointment_create', (appointment) => {
       this.onUpdateAppointment(appointment, 'create')
     })
@@ -88,7 +87,6 @@ export default class Socket extends Vue {
     socket.on('appointment_delete', (appointment) => {
       this.onUpdateAppointment(appointment, 'delete')
     })
-
   }
 
   join () {
@@ -135,7 +133,6 @@ export default class Socket extends Vue {
     console.log('socket received: "update_active_citizen" ')
     this.screenIncomingCitizen({ citizen, route: this.$route })
   }
-
 
   onUpdateAppointment (appointment, action) {
     this.updateAppointments({ appointment, action })

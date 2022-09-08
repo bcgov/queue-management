@@ -41,7 +41,7 @@
     "luxon": "1.26.0",
     "moment": "^2.29.4",
     "moment-range": "4.0.2",
-    "moment-timezone": "^0.5.34",
+    "moment-timezone": "^0.5.37",
     "net": "^1.0.2",
     "popper.js": "1.16.1",
     "process": "^0.11.10",
@@ -160,6 +160,7 @@
     "npm": ">= 3.0.0"
   },
   "resolutions": {
-    "yargs-parser": "15.0.1"
+    "yargs-parser": "15.0.1",
+    "scss-tokenizer": "0.4.3"
   }
 }

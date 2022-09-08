@@ -157,4 +157,3 @@ export default class App extends Vue {
   margin-left: 4px;
 }
 </style>
-

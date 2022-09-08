@@ -30,15 +30,14 @@ export default class BoardSocket extends Vue {
   private reconnectInterval: any = null
   public socketTimeout : number = 20000
   public socketDelayMax : number = 5000
-  
 
   connect (data) {
     console.log('==> In boardsocket.vue calling connect METHOD')
     this.socketTimeout = configMap.getSocketTimeout()
     this.socketDelayMax = configMap.getSocketDelayMax()
-    console.log('Socket Timeout value = ',this.socketTimeout)
-    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
-    
+    console.log('Socket Timeout value = ', this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ', this.socketDelayMax)
+
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,

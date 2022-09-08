@@ -58,15 +58,15 @@ export default class MarqueeText extends Vue {
   created () {
     this.sboffice = this.office.office
     if (this.sboffice.office) {
-      if(this.sboffice.office.digital_signage_message_1) {
+      if (this.sboffice.office.digital_signage_message_1) {
         this.isMessageEnabled = true
         this.msg_1 = this.sboffice.office.digital_signage_message_1
       }
-      if(this.sboffice.office.digital_signage_message_2) {
+      if (this.sboffice.office.digital_signage_message_2) {
         this.isMessageEnabled = true
         this.msg_2 = this.sboffice.office.digital_signage_message_2
       }
-      if(this.sboffice.office.digital_signage_message_3) {
+      if (this.sboffice.office.digital_signage_message_3) {
         this.isMessageEnabled = true
         this.msg_3 = this.sboffice.office.digital_signage_message_3
       }

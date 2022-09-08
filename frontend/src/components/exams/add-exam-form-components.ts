@@ -918,7 +918,6 @@ export class OffsiteSelect extends Vue {
   `
 })
 export class SelectQuestion extends Vue {
-
   @Prop()
   private error!: any
 
