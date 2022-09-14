@@ -1,0 +1,80 @@
+name: Tag Cleanup for PRs
+on:
+  workflow_call:
+    inputs:
+      days-to-keep:
+        required: false
+        type: string
+        default: 7
+    secrets:
+      namespace:
+        required: true
+      openshift-api:
+        required: true
+      openshift-token:
+        required: true
+
+jobs:
+  image-stream-tag-cleanup:
+    name: Image Stream Tag Cleanup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.namespace }}
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.openshift-token }}
+
+    - name: Image Stream Tag Cleanup
+      run: |
+        NAMESPACE=${{ secrets.namespace }}
+
+        PR_NUMS=$(oc -n $NAMESPACE get imagestreamtags | awk '{ print $1 }' | \
+          egrep ':pr[0-9]+$' | cut -d: -f2 | sort -u | sed 's/^pr//')
+
+        if [ -z "$PR_NUMS" ]; then
+          echo No imagestreamtags for Pull Requests, nothing to do.
+
+          exit 0
+        fi
+
+        CUTOFF_DATE=$(date -I -d "${{ inputs.days-to-keep }} days ago")
+        echo Will delete all imagestreamtags for Pull Requests closed on or \
+          before $CUTOFF_DATE.
+
+        for PR_NUM in $PR_NUMS; do
+          echo
+          PULL_REQUEST=$(curl --no-progress-meter \
+            https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUM)
+
+          STATE=$(echo $PULL_REQUEST | jq -r '.state')
+          if [ $STATE != closed ]; then
+            echo Pull Request $PR_NUM has the state \"$STATE\" - ignoring \
+              until \"closed\".
+
+            continue
+          fi
+
+          CLOSE_DATE=$(echo $PULL_REQUEST | jq -r '.closed_at')
+          CLOSE_DATE=${CLOSE_DATE::10}
+          if [[ $CLOSE_DATE > $CUTOFF_DATE ]]; then
+            echo Pull Request $PR_NUM was closed $CLOSE_DATE, which is after \
+              the cutoff date $CUTOFF_DATE - will delete later.
+
+              continue
+          fi
+
+          echo Pull Request $PR_NUM was closed $CLOSE_DATE and can be deleted.
+          echo "::group::PR$PR_NUM"
+
+          DELETE_TAGS=$(oc -n $NAMESPACE get imagestreamtags | \
+            awk '{ print $1 }' | egrep ":pr$PR_NUM")
+          for DELETE_TAG in $DELETE_TAGS; do
+            COMMAND="oc -n $NAMESPACE delete imagestreamtag $DELETE_TAG"
+            echo $COMMAND
+            # $COMMAND
+          done
+
+          echo "::endgroup::"
+        done
