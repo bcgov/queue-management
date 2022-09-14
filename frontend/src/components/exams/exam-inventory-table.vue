@@ -1340,78 +1340,78 @@ export default class ExamInventoryTable extends Vue {
       }
 
       switch (this.inventoryFilters.expiryFilter) {
-        case 'all':
-          filtered = exams
-          break
-        case 'expired':
-          filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
-          break
-        case 'current':
-          const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-          const step2 = exams.filter(ex => !ex.expiry_date)
-          filtered = step1.concat(step2)
-          break
-        default:
-          filtered = exams
-          break
+      case 'all':
+        filtered = exams
+        break
+      case 'expired':
+        filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
+        break
+      case 'current':
+        const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+        const step2 = exams.filter(ex => !ex.expiry_date)
+        filtered = step1.concat(step2)
+        break
+      default:
+        filtered = exams
+        break
       }
       let moreFiltered = []
       switch (this.inventoryFilters.scheduledFilter) {
-        case 'both':
-          moreFiltered = filtered
-          break
-        case 'unscheduled':
-          moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
-          break
-        case 'scheduled':
-          moreFiltered = filtered.filter(x => this.filterByScheduled(x))
-          break
-        default:
-          moreFiltered = filtered
-          break
+      case 'both':
+        moreFiltered = filtered
+        break
+      case 'unscheduled':
+        moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
+        break
+      case 'scheduled':
+        moreFiltered = filtered.filter(x => this.filterByScheduled(x))
+        break
+      default:
+        moreFiltered = filtered
+        break
       }
       let evenMoreFiltered: any = []
       switch (this.inventoryFilters.groupFilter) {
-        case 'both':
-          evenMoreFiltered = moreFiltered
-          break
-        case 'individual':
-          evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
+      case 'both':
+        evenMoreFiltered = moreFiltered
+        break
+      case 'individual':
+        evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
 
-          break
-        case 'group':
-          evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
-          break
-        default:
-          evenMoreFiltered = moreFiltered
-          break
+        break
+      case 'group':
+        evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
+        break
+      default:
+        evenMoreFiltered = moreFiltered
+        break
       }
       let uploadFiltered = []
       if (this.inventoryFilters.uploadFilter == 'notuploaded') {
-          uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
+        uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
       } else {
-          uploadFiltered = evenMoreFiltered
+        uploadFiltered = evenMoreFiltered
       }
       let receptSentFiltered: any = []
       if (this.inventoryFilters.receptSentFilter == 'notsent') {
-          receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
+        receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
       } else {
-          receptSentFiltered = uploadFiltered
+        receptSentFiltered = uploadFiltered
       }
       let finalFiltered = []
       switch (this.inventoryFilters.returnedFilter) {
-        case 'both':
-          finalFiltered = receptSentFiltered
-          break
-        case 'returned':
-          finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
-          break
-        case 'unreturned':
-          finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
-          break
-        default:
-          finalFiltered = receptSentFiltered
-          break
+      case 'both':
+        finalFiltered = receptSentFiltered
+        break
+      case 'returned':
+        finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
+        break
+      case 'unreturned':
+        finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
+        break
+      default:
+        finalFiltered = receptSentFiltered
+        break
       }
       return finalFiltered
     }
@@ -1634,27 +1634,23 @@ export default class ExamInventoryTable extends Vue {
       } else {
         return 0
       }
-    }
-    else if (key === 'start_time') {
+    } else if (key === 'start_time') {
       if (a.booking == null && b.booking == null) {
         return 0
-      }
-      else if (a.booking == null) {
+      } else if (a.booking == null) {
         return 1
-      }
-      else if (b.booking == null) {
+      } else if (b.booking == null) {
         return -1
       } else {
         let val1, val2
-        if(a.booking.start_time != null) {
+        if (a.booking.start_time != null) {
           val1 = parseInt((new Date(a.booking.start_time).getTime() / 1000).toFixed(0))
         }
-        if(b.booking.start_time != null) {
+        if (b.booking.start_time != null) {
           val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
         }
         return val1 - val2
       }
-
     }
 
     if (typeof a[key] === 'number' && typeof b[key] === 'number') {

@@ -195,7 +195,7 @@ export default class Dash extends Vue {
   }
 
   private receiveSize (e: any) {
-    var newHeight = e.data
+    let newHeight = e.data
 
     if (!Number.isInteger(newHeight)) {
       return
