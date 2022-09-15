@@ -91,7 +91,7 @@ check_setting () {
 
     # If there is nothing in the CSR table, we're probably starting with a
     # clean database and need to bootstrap it with default data.
-    COUNT=`PGPASSWORD=postgres psql -h queue-management_devcontainer-db-1 \
+    COUNT=`PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
         -U postgres -c "SELECT COUNT(*) FROM csr;" -t`
     if [ "$COUNT" -eq 0 ]; then
         env/bin/python manage.py bootstrap
