@@ -177,3 +177,4 @@ keys-generated
 # new config stuff
 /frontend/public/config/configuration.json
 /appointment-frontend/public/config/configuration.json
+frontend/public/config/kc/keycloak-public.json
