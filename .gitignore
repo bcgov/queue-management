@@ -119,6 +119,7 @@ queue-env/
 
 # Project specific include/excludes
 api/postman/package-lock.json
+/frontend/public/config/kc
 /frontend/public/static/keycloak/
 !frontend/build
 api/client_secrets/secrets.json
