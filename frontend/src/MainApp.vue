@@ -6,11 +6,65 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { mapActions, mapGetters } from 'vuex'
+import AuthModule from '@/store/modules/auth'
+import { KCUserProfile } from '@/models/KCUserProfile'
+import KeyCloakService from '@/services/keycloak.services'
+import TokenService from '@/services/token.services'
+import { getModule } from 'vuex-module-decorators'
+
 
 @Component({
-  components: {}
+  components: {},
+  computed: {
+    ...mapGetters('auth', [
+      'isAuthenticated'
+    ])
+  },
+  methods: {
+    ...mapActions('account', ['loadUserInfo', 'getUser']),
+    ...mapActions('auth', ['syncWithSessionStorage'])
+  }
 })
-export default class MainApp extends Vue { }
+export default class MainApp extends Vue {
+  private authModule = getModule(AuthModule, this.$store)
+  private readonly getUser!: () => void
+  private readonly isAuthenticated!: boolean
+  private readonly loadUserInfo!: () => KCUserProfile
+  private readonly syncWithSessionStorage!: () => void
+  private tokenService = new TokenService()
+
+  private async beforeMount () {
+    debugger
+    await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
+    this.syncWithSessionStorage()
+  }
+
+  private async initSetup () {
+    // eslint-disable-next-line no-console
+
+    if (this.isAuthenticated) {
+      // Removed redundant "await" calls on next two lines
+      this.loadUserInfo()
+      this.getUser()
+      try {
+        await this.tokenService.init(this.$store)
+        this.tokenService.scheduleRefreshTimer()
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('Could not initialize token refresher: ' + e)
+        // this.$store.dispatch('user/reset')
+        this.$store.commit('loadComplete')
+        this.$router.push('/')
+      }
+    }
+    this.$store.commit('loadComplete')
+  }
+
+
+
+
+}
 </script>
 
 <style lang="scss">

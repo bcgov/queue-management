@@ -11,11 +11,11 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License. */
-
+import Vuex, { Store } from 'vuex'
+import { AuthModule } from './modules'
 import 'es6-promise/auto'
-
 import Vue from 'vue'
-import Vuex from 'vuex'
+import VuexPersistence from 'vuex-persist'
 import { addExamModule } from './modules/add-exam-module'
 import appointmentsModule from './modules/appointments-module'
 import { commonActions } from './actions'
@@ -25,8 +25,14 @@ import { stateModel } from './state'
 
 Vue.use(Vuex)
 
-export const store = new Vuex.Store({
+const vuexLocal = new VuexPersistence({
+  storage: window.sessionStorage
+})
+
+
+export const store: Store<any> = new Vuex.Store<any>({
   modules: {
+    auth: AuthModule,
     addExamModule,
     appointmentsModule
   },

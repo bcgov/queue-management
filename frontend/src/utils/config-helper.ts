@@ -18,6 +18,10 @@ export default class ConfigHelper {
     }
   }
 
+  static getAppAPIUrl () {
+    return ConfigHelper.getValue('VUE_APP_ROOT_API')
+  }
+
   static getValue (key: any) {
     // @ts-ignore
     if (this.config === '') {
@@ -40,5 +44,33 @@ export default class ConfigHelper {
 
   static getconfig () {
     return this.config
+  }
+
+  // keycloak settings
+  static keycloakConfigUrl: string = ''
+
+  static clearSession () {
+    sessionStorage.clear()
+  }
+
+  static getFromSession (key:string):any {
+    return sessionStorage.getItem(key)
+  }
+
+  static removeFromSession (key:string) {
+    sessionStorage.removeItem(key)
+  }
+
+  static getKeycloakConfigUrl (): string {
+    return this.keycloakConfigUrl
+  }
+
+  static setKeycloakConfigUrl (keycloakConfigUrl: string) {
+    this.keycloakConfigUrl = keycloakConfigUrl
+  }
+
+  // Auth model
+  static addToSession (key:string, value:any) {
+    sessionStorage.setItem(key, value)
   }
 }

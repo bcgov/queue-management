@@ -14,7 +14,8 @@
 import { searchNestedObject } from '../helpers'
 
 export const commonGetters: any = {
-
+  loading: (state) => state.loading,
+  
   admin_navigation_nonblank (state) {
     if (state.adminNavigation != '') {
       return state.adminNavigation

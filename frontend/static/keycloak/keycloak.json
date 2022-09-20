@@ -1,0 +1,8 @@
+{
+    "realm": "vtkayq4c",
+    "auth-server-url": "https://dev.oidc.gov.bc.ca/auth/",
+    "ssl-required": "external",
+    "resource": "cfms-dev-staff",
+    "public-client": true,
+    "confidential-port": 0
+  }
