@@ -173,17 +173,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -211,17 +211,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -250,17 +250,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -285,17 +285,17 @@
                       <div v-if="option.text === 'Ready'">
                         <font-awesome-icon
                           icon="clipboard-check"
-                          style="fontsize: 1rem; color: green"
+                          style="font-size: 1rem; color: green"
                         />
                       </div>
                       <div v-if="option.text === 'Requires Attention'">
                         <font-awesome-icon
                           icon="life-ring"
-                          style="fontsize: 1rem; color: red"
+                          style="font-size: 1rem; color: red"
                         />
                         <font-awesome-icon
                           icon="exclamation-triangle"
-                          style="fontsize: 1rem; color: #ffc32b"
+                          style="font-size: 1rem; color: #ffc32b"
                         />
                       </div>
                     </div>
@@ -573,9 +573,6 @@
                     >
                   </template>
                   <template v-else>
-                    <!--                    TEMPORARY FIX - AFTER ALL PESTICIDE EXAMS ARE ENTERED IN NEW WORLD-->
-                    <!--                    <b-dropdown-item size="sm"-->
-                    <!--                                     @click="openInvigilatorModal(row.item)">Email Invigilator</b-dropdown-item>-->
                     <b-dropdown-item
                       size="sm"
                       v-if="
@@ -747,10 +744,10 @@
 <script lang="ts">
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import moment from 'moment'
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import EditExamModal from './edit-exam-form-modal.vue'
 import EditGroupExamBookingModal from './edit-group-exam-modal.vue'
 import SelectInvigilatorModal from './select-invigilator-modal.vue'
@@ -808,11 +805,6 @@ export default class ExamInventoryTable extends Vue {
 
   private expiryNotificationDialog: boolean = false
   private examExpiryDateScheduling: string = ''
-
-  //   ...mapState ({
-  //   showAllPesticide: state => state.addExamModule.showAllPesticideExams,
-  //   showPesticideModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Getter('calendar_events') private calendar_events!: any;
   @Getter('exam_inventory') private exam_inventory!: any;
@@ -885,7 +877,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   get isPesticideOffice () {
-    // TODO - Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
+    // Karim has envisioned creating a pesticide office (an office in offices table like Victoria or
     // 100 mile house, etc) that isn't a real office but which would hold in-progress pesticide exams
     // and trigger a different setup of the exam_inventory_table
     // as this is not implemented yet, this computed value can simply return true or false depending on what
@@ -955,7 +947,7 @@ export default class ExamInventoryTable extends Vue {
 
   get officeName () {
     if (this.offices && this.offices.length > 0) {
-      const office = this.offices.find(office => office.office_number == this.officeNumber)
+      const office = this.offices.find(offz => offz.office_number == this.officeNumber)
       if (office) {
         return office.office_name
       }
@@ -971,7 +963,7 @@ export default class ExamInventoryTable extends Vue {
     if (this.inventoryFilters && this.inventoryFilters.office_number) {
       const { office_number } = this.inventoryFilters
       if (this.inventoryFilters.office_number === 'pesticide_offsite') {
-        const office = (this.offices.find(office => office.office_name == 'Pesticide Offsite'))
+        const office = (this.offices.find(offz => offz.office_name == 'Pesticide Offsite'))
         return office.office_number
       } else if (office_number !== 'default') {
         return office_number
@@ -1296,7 +1288,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   checkExpiryDate (date, exam_returned_date) {
-    if (exam_returned_date != null) {      
+    if (exam_returned_date != null) {
       return false
     }
     if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
@@ -1305,14 +1297,9 @@ export default class ExamInventoryTable extends Vue {
     return false
   }
 
-  checkStartDate (date, exam_returned_date) {    
-    if (exam_returned_date != null) {      
-      return false
-    }
-    if (moment(date).isValid() && moment(date).isBefore(moment(), 'day')) {
-      return true
-    }
-    return false
+  checkStartDate (date, exam_returned_date) {
+    // duplicated code
+    this.checkExpiryDate(date, exam_returned_date)
   }
 
   filteredExams () {
@@ -1327,10 +1314,10 @@ export default class ExamInventoryTable extends Vue {
     if (examInventory.length > 0) {
       if (this.showExamInventoryModal) {
         filtered = examInventory.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-        const moreFiltered: any = filtered.filter((ex: any) => !ex.booking)
-        const evenMoreFiltered = moreFiltered.filter(ex => !ex.offsite_location)
+        const moreFilteredConst: any = filtered.filter((ex: any) => !ex.booking)
+        const evenMoreFilteredConst = moreFilteredConst.filter(ex => !ex.offsite_location)
         const { office_id } = this.user
-        return evenMoreFiltered.filter(ex => ex.office_id == office_id)
+        return evenMoreFilteredConst.filter(ex => ex.office_id == office_id)
       }
 
       const exams = this.showAllPesticide ? examInventory
@@ -1353,82 +1340,78 @@ export default class ExamInventoryTable extends Vue {
       }
 
       switch (this.inventoryFilters.expiryFilter) {
-        case 'all':
-          filtered = exams
-          break
-        case 'expired':
-          filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
-          break
-        case 'current':
-          const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
-          const step2 = exams.filter(ex => !ex.expiry_date)
-          filtered = step1.concat(step2)
-          break
-        default:
-          filtered = exams
-          break
+      case 'all':
+        filtered = exams
+        break
+      case 'expired':
+        filtered = exams.filter(ex => moment(ex.expiry_date).isBefore(moment(), 'day'))
+        break
+      case 'current':
+        const step1 = exams.filter(ex => moment(ex.expiry_date).isSameOrAfter(moment(), 'day'))
+        const step2 = exams.filter(ex => !ex.expiry_date)
+        filtered = step1.concat(step2)
+        break
+      default:
+        filtered = exams
+        break
       }
       let moreFiltered = []
       switch (this.inventoryFilters.scheduledFilter) {
-        case 'both':
-          moreFiltered = filtered
-          break
-        case 'unscheduled':
-          moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
-          break
-        case 'scheduled':
-          moreFiltered = filtered.filter(x => this.filterByScheduled(x))
-          break
-        default:
-          moreFiltered = filtered
-          break
+      case 'both':
+        moreFiltered = filtered
+        break
+      case 'unscheduled':
+        moreFiltered = filtered.filter(x => !this.filterByScheduled(x))
+        break
+      case 'scheduled':
+        moreFiltered = filtered.filter(x => this.filterByScheduled(x))
+        break
+      default:
+        moreFiltered = filtered
+        break
       }
       let evenMoreFiltered: any = []
       switch (this.inventoryFilters.groupFilter) {
-        case 'both':
-          evenMoreFiltered = moreFiltered
-          break
-        case 'individual':
-          evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
+      case 'both':
+        evenMoreFiltered = moreFiltered
+        break
+      case 'individual':
+        evenMoreFiltered = moreFiltered.filter(ex => !this.filterByGroup(ex))
 
-          break
-        case 'group':
-          evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
-          break
-        default:
-          evenMoreFiltered = moreFiltered
-          break
+        break
+      case 'group':
+        evenMoreFiltered = moreFiltered.filter(ex => this.filterByGroup(ex))
+        break
+      default:
+        evenMoreFiltered = moreFiltered
+        break
       }
       let uploadFiltered = []
-      switch (this.inventoryFilters.uploadFilter) {
-        case 'notuploaded':
-          uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
-          break
-        default:
-          uploadFiltered = evenMoreFiltered
+      if (this.inventoryFilters.uploadFilter == 'notuploaded') {
+        uploadFiltered = evenMoreFiltered.filter((exam: any) => !exam.upload_received_ind)
+      } else {
+        uploadFiltered = evenMoreFiltered
       }
       let receptSentFiltered: any = []
-      switch (this.inventoryFilters.receptSentFilter) {
-        case 'notsent':
-          receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
-          break
-        default:
-          receptSentFiltered = uploadFiltered
+      if (this.inventoryFilters.receptSentFilter == 'notsent') {
+        receptSentFiltered = uploadFiltered.filter((exam: any) => !exam.receipt_sent_ind)
+      } else {
+        receptSentFiltered = uploadFiltered
       }
       let finalFiltered = []
       switch (this.inventoryFilters.returnedFilter) {
-        case 'both':
-          finalFiltered = receptSentFiltered
-          break
-        case 'returned':
-          finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
-          break
-        case 'unreturned':
-          finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
-          break
-        default:
-          finalFiltered = receptSentFiltered
-          break
+      case 'both':
+        finalFiltered = receptSentFiltered
+        break
+      case 'returned':
+        finalFiltered = receptSentFiltered.filter((ex: any) => ex.exam_returned_date)
+        break
+      case 'unreturned':
+        finalFiltered = receptSentFiltered.filter(ex => !ex.exam_returned_date)
+        break
+      default:
+        finalFiltered = receptSentFiltered
+        break
       }
       return finalFiltered
     }
@@ -1526,37 +1509,23 @@ export default class ExamInventoryTable extends Vue {
     this.setSelectedExamTypeFilter(option.text)
     this.page = 1
 
+    this.setSelectedQuickAction('')
+    this.setSelectedQuickActionFilter('')
+
     if (option.value === 'individual') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
       this.setInventoryFilters({ type: 'groupFilter', value: 'individual' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'group') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
       this.setInventoryFilters({ type: 'groupFilter', value: 'group' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'all') {
-      this.setSelectedQuickAction('')
-      this.setSelectedQuickActionFilter('')
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
     }
+
+    this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+    this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
   }
 
   setQuickActionFilter (option) {
@@ -1564,79 +1533,42 @@ export default class ExamInventoryTable extends Vue {
     this.setSelectedQuickActionFilter(option.text)
     this.page = 1
 
+    // Setting Default Values
+    this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
+    this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
+    this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
+    this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
+    this.$store.commit('toggleShowAllPesticideExams', false)
+
     if (option.value === 'returned') {
       this.setInventoryFilters({ type: 'returnedFilter', value: 'returned' })
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'require_attention') {
       if (this.selectedExamType === 'individual') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'individual' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       } else if (this.selectedExamType === 'group') {
         this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
         this.setInventoryFilters({ type: 'scheduledFilter', value: 'unscheduled' })
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'group' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      } else if (this.selectedExamType === 'all') {
+      } else {
         this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
       }
     } else if (option.value === 'ready') {
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
       this.setInventoryFilters({ type: 'scheduledFilter', value: 'scheduled' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'expired') {
       this.setInventoryFilters({ type: 'expiryFilter', value: 'expired' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
     } else if (option.value === 'oemai') {
       if (this.selectedExamType === 'individual') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'individual' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       } else if (this.selectedExamType === 'group') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'group' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      } else if (this.selectedExamType === 'all') {
-        this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
+      } else {
         this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
-        this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       }
     } else if (option.value === 'awaiting_upload') {
       this.isLoading = true
@@ -1647,8 +1579,6 @@ export default class ExamInventoryTable extends Vue {
         this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
         this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
         this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-        this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
-        this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
         this.setInventoryFilters({ type: 'uploadFilter', value: 'notuploaded' })
         this.isLoading = false
       }, err => {
@@ -1658,25 +1588,12 @@ export default class ExamInventoryTable extends Vue {
         this.isLoading = false
       })
     } else if (option.value === 'awaiting_receipt') {
-      // this.$store.commit('toggleShowAllPesticideExams', false)
       this.viewAllOfficePesticideExams()
-
       this.setInventoryFilters({ type: 'expiryFilter', value: 'current' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
       this.setInventoryFilters({ type: 'returnedFilter', value: 'unreturned' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
       this.setInventoryFilters({ type: 'receptSentFilter', value: 'notsent' })
     } else if (option.value === 'all') {
-      this.setInventoryFilters({ type: 'expiryFilter', value: 'all' })
-      this.setInventoryFilters({ type: 'scheduledFilter', value: 'both' })
       this.setInventoryFilters({ type: 'groupFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'returnedFilter', value: 'both' })
-      this.setInventoryFilters({ type: 'requireAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'requireOEMAttentionFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'uploadFilter', value: 'default' })
-      this.setInventoryFilters({ type: 'receptSentFilter', value: 'default' })
     }
   }
 
@@ -1710,33 +1627,41 @@ export default class ExamInventoryTable extends Vue {
         val1 = parseInt(a.exam_id)
         val2 = parseInt(b.exam_id)
       }
-      return val1 < val2 ? -1 : val1 > val2 ? 1 : 0
-    }
-    else if (key === 'start_time') {
-      if (a.booking == null && b.booking == null) {
+      if (val1 < val2) {
+        return -1
+      } else if (val1 > val2) {
+        return 1
+      } else {
         return 0
       }
-      else if (a.booking == null) {
+    } else if (key === 'start_time') {
+      if (a.booking == null && b.booking == null) {
+        return 0
+      } else if (a.booking == null) {
         return 1
-      }
-      else if (b.booking == null) {
+      } else if (b.booking == null) {
         return -1
       } else {
         let val1, val2
-        if(a.booking.start_time != null) {
+        if (a.booking.start_time != null) {
           val1 = parseInt((new Date(a.booking.start_time).getTime() / 1000).toFixed(0))
         }
-        if(b.booking.start_time != null) {
+        if (b.booking.start_time != null) {
           val2 = parseInt((new Date(b.booking.start_time).getTime() / 1000).toFixed(0))
         }
         return val1 - val2
       }
-
     }
 
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {      
-      return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-    } else {      
+    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+      if (a[key] < b[key]) {
+        return -1
+      } else if (a[key] > b[key]) {
+        return 1
+      } else {
+        return 0
+      }
+    } else {
       return toString(a[key]).localeCompare(toString(b[key]), undefined, {
         numeric: true
       })
@@ -1747,7 +1672,7 @@ export default class ExamInventoryTable extends Vue {
       } else if (value instanceof Object) {
         return Object.keys(value)
           .sort()
-          .map(key => toString(value[key]))
+          .map(q => toString(value[q]))
           .join(' ')
       }
       return String(value)
@@ -1755,8 +1680,6 @@ export default class ExamInventoryTable extends Vue {
   }
 
   statusIcon (item: any) {
-    const number_of_students: any = item.number_of_students
-    const number_of_invigilators: any = Math.ceil(number_of_students / 24)
     let length_of_invigilator_array: any = null
     if (!item.booking) {
       length_of_invigilator_array = 0
@@ -1766,101 +1689,73 @@ export default class ExamInventoryTable extends Vue {
     const lifeRing: any = {
       icon: 'life-ring',
       rank: 4,
-      style: { fontSize: '1rem', color: 'red' }
+      style: { font: '1rem', color: 'red' }
     }
     const exclamationTriangle: any = {
       icon: 'exclamation-triangle',
       rank: 3,
-      style: { fontSize: '.9rem', color: '#FFC32B' }
+      style: { font: '.9rem', color: '#FFC32B' }
     }
     const clipboardCheck: any = {
       icon: 'clipboard-check',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
     const envelopeOpenText: any = {
       icon: 'shipping-fast',
       rank: 1,
-      style: { fontSize: '1rem', color: '#4e9de0' }
+      style: { font: '1rem', color: '#4e9de0' }
     }
     const feePending: any = {
       icon: 'dollar-sign',
       rank: 2,
-      style: { fontSize: '1rem', color: 'green' }
+      style: { font: '1rem', color: 'green' }
     }
 
-    // console.log("============= Start of Tests =======================")
-    // console.log("==> Test 1")
-    // console.log("    --> pesticide:    ", item.is_pesticide ? "True" : "False")
-    // console.log("    --> receive date: ", item.exam_received_date)
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.is_pesticide && !item.exam_received_date && !item.exam_returned_date -> ",
-    //                 item.is_pesticide && !item.exam_received_date && !item.exam_returned_date ? "True" : "False")
-
-    //
     if (item.is_pesticide && !item.exam_received_date && !item.exam_returned_date) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 2")
-    // console.log("    --> return date:  ", item.exam_returned_date)
-    // console.log("        --> Test: item.exam_returned_date -> ", item.exam_returned_date ? "True" : "False")
     if (item.exam_returned_date) {
-      // console.log("        --> True: returning enveloopeOpenText")
       return envelopeOpenText
     }
 
-    // console.log("==> Test 3")
-    // console.log("    --> booking:      ", item.booking)
     if (item.booking) {
-      // console.log("    --> invig:        ", item.booking.invigilator)
+      // I assume this empty block is intentional
     }
     if (item.booking && item.booking.invigilator) {
-      // console.log("    --> invig.delete: ", item.booking.invigilator.deleted)
+      // I assume this empty block is intentional
     }
-    // console.log("        --> Test: item.booking && item.booking.invigilator && item.booking.invigilator.deleted -> ",
-    //   item.booking && item.booking.invigilator && item.booking.invigilator.deleted ? "True" : "False")
     if (item.booking && item.booking.invigilator && item.booking.invigilator.deleted) {
-      // console.log("        --> True: returning lifeRing")
       return lifeRing
     }
 
-    // console.log("==> Test 4")
     if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
       console.log('    --> Monthly Session Exam, name: ' + item.exam_name)
       console.log('    --> item.booking: ', item.booking)
       if (!item.booking) {
-        // console.log("!item.booking, returning lifeRing")
         return lifeRing
       }
-      // console.log("    --> this.checkInvigilator(item): ", this.checkInvigilator(item))
       console.log('    --> this.checkInvigilator(item): ', this.checkInvigilator(item))
       if (!this.checkInvigilator(item)) {
-        // console.log('checkInvigilator is false, returning lifeRing')
         return lifeRing
       }
       if (this.filterByExpiry(item)) {
-        // console.log("this.filterByExpiry(item) is true, returning lifeRing")
         return lifeRing
       }
       if (item.booking) {
         if (moment(item.booking.start_time).isValid()) {
           if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
-            // console.log("item.booking and start_time valid and start time before today, returning lifeRing")
             return lifeRing
           }
         }
       }
       if (item.number_of_students === null && length_of_invigilator_array > 0) {
-        // console.log("item.number_of_students is null and length_of_invigilator_array > 0, returning exclamationTriangle")
         return exclamationTriangle
       }
       if (!item.event_id || !item.number_of_students || !item.exam_received_date) {
-        // console.log("No event_id or no students or no received date, returning exclamationTriangle")
         return exclamationTriangle
       }
-      // console.log("No errors found, returning clipboardCheck")
       return clipboardCheck
     }
     if (item.exam_type.group_exam_ind) {
@@ -1966,10 +1861,7 @@ export default class ExamInventoryTable extends Vue {
 
     // not needed to change to moment
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.start = moment(booking.start)
-    // booking.start = moment(booking.start)
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    // booking.end = moment(booking.end)
     this.setEditedBooking(booking)
     this.setEditedBookingOriginal(booking)
     this.toggleEditBookingModal(true)

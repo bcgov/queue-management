@@ -19,7 +19,7 @@ limitations under the License.*/
       dismissible
       v-model="countdown"
       @dismissed="setEditExamSuccess"
-      style="h-align: center; font-size: 1rem; border-radius: 0px"
+      style="justify-content: center; font-size: 1rem; border-radius: 0px"
     >
       Success!
     </b-alert>
@@ -28,8 +28,8 @@ limitations under the License.*/
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
 
 @Component
 export default class SuccessExamAlert extends Vue {

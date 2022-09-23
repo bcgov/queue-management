@@ -1,4 +1,5 @@
 <template>
+<div data-app>
   <b-modal
     v-model="modal"
     :no-close-on-backdrop="true"
@@ -25,7 +26,7 @@
         <b-btn
           v-if="!okButton.disabled"
           :class="okButton.title === 'Cancel' ? 'btn-secondary' : 'btn-primary'"
-          @click.prevent="submit"
+          @click.prevent="examStatus"
           >{{ okButton.title }}</b-btn
         >
       </div>
@@ -38,6 +39,23 @@
             modalUse === 'return' ? 'Return Exam' : 'Edit Return Details'
           }}</b-col
         >
+      </b-form-row>
+      <b-form-row v-if="returned">
+        <b-col>
+          <div class="q-info-display-grid-container">
+            <div class="q-id-grid-outer">
+              <div class="q-id-grid-head"><strong>Exam Details</strong></div>
+              <div class="q-id-grid-full-col px-2">
+                <div>
+                  <u>Exam</u>: {{ this.exam.exam_name }}<br>
+                  <u>Exam Type</u>: {{ this.exam.exam_type.exam_type_name }}<br>
+                  <u>Event ID</u>: {{ this.exam.event_id }}<br>
+                  <u>Examinee</u>: {{ this.exam.examinee_name }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </b-col>
       </b-form-row>
       <b-form-row>
         <b-col :cols="returned ? 3 : 12">
@@ -116,18 +134,47 @@
           </b-col>
         </b-form-row>
       </template>
+    <v-dialog
+      v-model="confirmDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+         Confirm
+        </v-card-title>
+        <v-card-text>
+          {{ this.warningText }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmExam(false)"
+          >
+            No
+          </v-btn>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="confirmExam(true)"
+          >
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </b-form>
   </b-modal>
+</div>
 </template>
 
 <script lang="ts">
-
+/* eslint-disable camelcase */
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
 import DatePicker from 'vue2-datepicker'
 import FailureExamAlert from './failure-exam-alert.vue'
-
 import moment from 'moment'
 
 @Component({
@@ -161,6 +208,8 @@ export default class ReturnExamModal extends Vue {
   public notes: any = null
   public showFieldErrors: any = null
   public exam_returned_tracking_number: any = ''
+  public warningText: any = 'Are you sure you want to return this exam?'
+  private confirmDialog: any = false
   public returnOptions: any = [
     { value: false, text: 'Not Returned' },
     { value: true, text: 'Returned' }
@@ -178,6 +227,7 @@ export default class ReturnExamModal extends Vue {
       const fields = ['exam_returned_tracking_number', 'exam_written_ind', 'notes', 'exam_returned_date']
       let result = false
       fields.forEach(field => {
+        // eslint-disable-next-line eqeqeq
         if (this[field] != this.exam[field]) {
           result = true
         }
@@ -215,6 +265,7 @@ export default class ReturnExamModal extends Vue {
   }
 
   handleActionInput (e) {
+    // eslint-disable-next-line eqeqeq
     if (e.keyCode == 8 || e.keyCode == 46) {
       this.removeError()
       return true
@@ -240,6 +291,25 @@ export default class ReturnExamModal extends Vue {
     }
   }
 
+  examStatus () {
+    if (this.okButton.title === 'Cancel') {
+      this.resetModal()
+      return
+    }
+    if (this.modalUse === 'edit') {
+      this.submit()
+    } else if (this.returned) {
+      this.confirmDialog = true
+    }
+  }
+
+  private async confirmExam (isAgree: boolean) {
+    if (isAgree) {
+      this.submit()
+    }
+    this.confirmDialog = false
+  }
+
   show () {
     this.exam = this.actionedExam
     const tempValues = Object.assign({}, this.actionedExam)
@@ -248,7 +318,7 @@ export default class ReturnExamModal extends Vue {
     if (tempValues.exam_returned_date) {
       this.modalUse = 'edit'
       this.returned = true
-      this.exam_returned_date = moment(tempValues.exam_returned_date).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ')
+      this.exam_returned_date = new Date(tempValues.exam_returned_date)
       this.exam_written_ind = tempValues.exam_written_ind
       return
     }
@@ -300,8 +370,7 @@ export default class ReturnExamModal extends Vue {
         this.resetModal()
       })
     }).catch(() => {
-      // JSTOTS This property not existing. now just commenting out. check
-      // this.setExamEditFailureMessage(10)
+      // empty block
     })
   }
 }

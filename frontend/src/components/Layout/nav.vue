@@ -18,18 +18,16 @@
   <div style>
     <b-alert
       :show="showIEWarning"
-      style="h-align: center"
+      style="justify-content: center"
       variant="danger"
       dismissible
       fade
     >
-      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like 
+      You are using Internet Explorer, and may have a degraded experience. To increase performance and access all features please use a modern browser, like
       Chrome or Microsoft Edge
     </b-alert>
-    <!-- <v-card class="m-4" max-width="100%" elevation="5"> -->
     <div class="dash-button-flex-button-container pb-0 mb-3 mx-4">
       <!-- SLOT FOR EACH VIEW'S BUTTON CONTROLS-->
-      <!-- <div class="d-flex"> -->
       <div
         style="width: 75px"
         v-show="$route.path !== '/queue' || showTimeTrackingIcon"
@@ -50,7 +48,6 @@
         </b-button>
       </div>
       <router-view name="buttons"></router-view>
-      <!-- </div> -->
       <div
         v-if="calendarSetup && this.$route.path === '/booking'"
         style="flex-grow: 8"
@@ -132,7 +129,7 @@
               <span>Show Day Agenda</span>
               <b-dropdown-divider />
             </b-dropdown-item>
-            
+
             <b-dropdown-item v-if="showAdmin" to="/admin"
               >Administration</b-dropdown-item
             >
@@ -160,9 +157,8 @@
     <div style="position: relative; min-height: 400px">
       <router-view />
     </div>
-    <AddCitizen />
-    <ServeCitizen v-if="showServiceModal" />
-    <!-- </v-card> -->
+    <AddCitizen/>
+    <ServeCitizen v-if="showServiceModal" :finishServiceFromFormIO="finishServiceFromFormIO"/>
   </div>
 </template>
 
@@ -193,7 +189,6 @@ export default class Nav extends Vue {
   @State('showGAScreenModal') private showGAScreenModal!: any
 
   @State('showAgendaScreenModal') private showAgendaScreenModal!: any
-  // @State('showServiceModal') private showServiceModal!: any
   @State('showTimeTrackingIcon') private showTimeTrackingIcon!: any
   @State('showAddModal') private showAddModal!: any
   @State('user') private user!: any
@@ -204,14 +199,11 @@ export default class Nav extends Vue {
   @Action('clickGAScreen') public clickGAScreen: any
   @Action('clickAgendaScreen') public clickAgendaScreen: any
 
-  
   @Action('clickAddCitizen') public clickAddCitizen: any
   @Action('clickRefresh') public clickRefresh: any
 
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
-  // TODO check this value - seems like not using
-  // @Mutation('toggleTrackingIcon') public toggleTrackingIcon: any
   // to check service for enable
   public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
 
@@ -219,25 +211,33 @@ export default class Nav extends Vue {
   private showSpacer: boolean = false
   toggleTimeTrackingIcon: any
     dropdownPopperOpts = {
-    modifiers: {
-      computeStyle: {
-        gpuAcceleration: false
+      modifiers: {
+        computeStyle: {
+          gpuAcceleration: false
+        }
       }
     }
-  }
 
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
+  public finishServiceFromFormIO:boolean = false
 
-  mounted() {
+  mounted () {
     // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
     this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
+    this.$root.$on(('navBeginService'), () => {
+      this.finishServiceFromFormIO = true
+      this.clickIcon()
+    })
+    this.$root.$on(('closefinishServiceFromFormIO'), () => {
+      this.finishServiceFromFormIO = false
+    })
   }
 
-  get appointmentsEnabled() : boolean {
+  get appointmentsEnabled () : boolean {
     if (this.user && this.user.office) {
       return !!(this.user.office.appointments_enabled_ind)
     }
-    return false;
+    return false
   }
 
   @Watch('showIcon')
@@ -326,7 +326,7 @@ export default class Nav extends Vue {
     return false
   }
 
-  // TODO check this function - not sure where it is using
+  // Is this used?
   toggleTrackingIcon (bool: boolean) {
     if (!bool) {
       this.showSpacer = false
@@ -360,9 +360,6 @@ export default class Nav extends Vue {
   padding: 10px;
   margin: 10px;
 }
-/* .add-flex-grow {
-  flex-grow: 1;
-} */
 .gaScreenChecked {
   padding-left: 0em;
 }

@@ -8,14 +8,14 @@
       </div>
       <b-alert
         :show="this.alertMessage != ''"
-        style="h-align: center"
+        style="justify-content: center"
         variant="warning"
         >{{ this.alertMessage }}</b-alert
       >
       <div class="modal_header" v-dragged="onDrag">
         <div>
           <h4 style="font-weight: 900; color: #6e6e6e">
-            {{ simplifiedModal ? 'Exams Time Tracking' : 'Serve Citizen' }}
+            {{ simplifiedModal ? 'TheQ Time Tracking' : 'Serve Citizen' }}
           </h4>
         </div>
         <div>
@@ -107,7 +107,7 @@
               :disabled="performingAction || commentsTooLong"
               class="btn serve-btn"
               id="serve-citizen-uncheckin-button"
-              style="margin-left: 8px;"
+              style="margin-left: 30px;"
               >Return to Calendar</b-button
             >
           </div>
@@ -133,7 +133,7 @@
         >
           <b-row no-gutters>
             <b-col cols="7" />
-            <b-col cols="auto" style="align: right">
+            <b-col cols="auto" style="text-align: right">
               <select
                 id="counter-selection-serve"
                 v-show="reception && !simplifiedModal"
@@ -183,7 +183,7 @@
                 style="color: white; margin: 0 0 8px"
                 unchecked-value="1"
               >
-                <span style="font: 400 16px Myriad-Pro">Inaccurate Time</span>
+                <span style="font: 400 16px Myriad-Pro, sans-serif">Inaccurate Time</span>
               </b-form-checkbox>
               <b-button
                 @click="clickServiceFinish"
@@ -255,7 +255,7 @@
 <script lang="ts">
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import ServeCitizenTable from './serve-citizen-table.vue'
 
 @Component({
@@ -264,6 +264,9 @@ import ServeCitizenTable from './serve-citizen-table.vue'
   }
 })
 export default class ServeCitizen extends Vue {
+  @Prop()
+  private finishServiceFromFormIO!: boolean
+
   @State('performingAction') private performingAction!: any
   @State('showServiceModal') private showServiceModal!: any
   @State('showServeCitizenSpinner') private showServeCitizenSpinner!: any
@@ -287,7 +290,6 @@ export default class ServeCitizen extends Vue {
   @Action('clickUnCheckIn') public clickUnCheckIn: any
   @Action('screenAllCitizens') public screenAllCitizens: any
   @Action('setServeModalAlert') public setServeModalAlert: any
-
 
   @Mutation('editServiceModalForm') public editServiceModalForm: any
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
@@ -315,11 +317,11 @@ export default class ServeCitizen extends Vue {
     return false
   }
 
-  get appointmentsEnabled() {
+  get appointmentsEnabled () {
     if (this.user && this.user.office) {
       return this.user.office.appointments_enabled_ind
     }
-    return false;
+    return false
   }
 
   get alertMessage () {
@@ -378,8 +380,7 @@ export default class ServeCitizen extends Vue {
 
   get comments () {
     if (this.appointment) {
-      const newVal = this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
-      return newVal
+      return this.serviceModalForm.citizen_comments.split('|||')[1].valueOf()
     }
     return this.serviceModalForm.citizen_comments
   }
@@ -469,8 +470,11 @@ export default class ServeCitizen extends Vue {
 
   private flashButton () {
     if (this.serviceBegun === false) {
-      this.buttonStyle == 'btn-primary serve-btn'
-        ? this.buttonStyle = 'btn-highlighted' : this.buttonStyle = 'btn-primary serve-btn'
+      if (this.buttonStyle == 'btn-primary serve-btn') {
+        this.buttonStyle = 'btn-highlighted'
+      } else {
+        this.buttonStyle = 'btn-primary serve-btn'
+      }
     }
     if (this.serviceBegun === true) {
       this.buttonStyle = 'btn-primary serve-btn'
@@ -482,7 +486,7 @@ export default class ServeCitizen extends Vue {
   }
 
   private onDrag (event: any) {
-    const { el, deltaX, deltaY, offsetX, offsetY, clientX, clientY, first, last } = event
+    const { deltaX, deltaY, first, last } = event
     if (first) {
       this.dragged = true
       return
@@ -494,7 +498,7 @@ export default class ServeCitizen extends Vue {
     this.left = (this.left || 0) + deltaX
     this.top = (this.top || 0) + deltaY
 
-    var serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
+    const serve_modal: any = document.getElementsByClassName('serve-modal-content')[0]
     serve_modal.style.transform = 'translate(' + this.left + 'px,' + this.top + 'px)'
   }
 
@@ -515,6 +519,16 @@ export default class ServeCitizen extends Vue {
   mounted () {
     setInterval(() => { this.flashButton() }, 800)
     this.toggleTimeTrackingIcon(false)
+    if (this.finishServiceFromFormIO) {
+      this.$root.$emit('closefinishServiceFromFormIO')
+      if (this.simplifiedTicketStarted) {
+        this.toggleExamsTrackingIP(false)
+        this.clickServiceFinish()
+      }
+      this.toggleExamsTrackingIP(true)
+      this.toggleServiceModal(false)
+      this.clickAddCitizen()
+    }
   }
 }
 

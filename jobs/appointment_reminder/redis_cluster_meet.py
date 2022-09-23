@@ -36,6 +36,8 @@ redis_host = sys.argv[2]
 redis_port = sys.argv[3]
 redis_password = sys.argv[4]
 
+# Defining String constants to appease SonarQube
+error_get_pod_const = "ERROR: get pod "
 
 def get_pod_ip(pod_name):
     # The location of the authorization token needed to make Kubernetes API
@@ -62,13 +64,13 @@ def get_pod_ip(pod_name):
                             verify=api_certificate_file)
 
     if response.status_code != 200:
-        print("ERROR: get pod " + pod_name + " failed with status code " +
+        print(error_get_pod_const + pod_name + " failed with status code " +
               str(response.status_code))
     elif "status" not in response.json():
-        print("ERROR: get pod " + pod_name + " missing .status in API " +
+        print(error_get_pod_const + pod_name + " missing .status in API " +
               "response")
     elif "podIP" not in response.json()["status"]:
-        print("ERROR: get pod " + pod_name + " missing .status.podIP in API " +
+        print(error_get_pod_const + pod_name + " missing .status.podIP in API " +
               "response")
     else:
         return response.json()["status"]["podIP"]

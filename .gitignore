@@ -48,6 +48,12 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+# Cypress.io testing
+appointment-frontend/cypress.env.json
+appointment-frontend/cypress/screenshots/
+appointment-frontend/cypress/snapshots/All Integration Specs/
+appointment-frontend/cypress/snapshots/image_snapshot/*/__diff_output__
+
 # Translations
 *.mo
 *.pot
@@ -107,10 +113,13 @@ queue-env/
 # mypy
 .mypy_cache/
 
-# Visual Studio
-.vscode/
+# Visual Studio -- generally ignore, but allow shared configuration
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 
 # Project specific include/excludes
+api/postman/package-lock.json
 /frontend/public/static/keycloak/
 !frontend/build
 api/client_secrets/secrets.json
@@ -139,7 +148,6 @@ version.GENERATED.ts
 # Docker
 api/Dockerfile
 frontend/Dockerfile
-docker-compose.yml
 api/init.sh
 api/wait-for-it.sh
 /.env-Names
@@ -162,9 +170,10 @@ keys-generated
 /frontend/static/local-keycloak.json
 /frontend/static/dev-keycloak.json
 /frontend/static/dev-public-keycloak.json
-/frontend/public/config
+/frontend/public/config/configuration.json
 .env-Chris
 .env-Omid
 
 # new config stuff
 /frontend/public/config/configuration.json
+/appointment-frontend/public/config/configuration.json

@@ -37,6 +37,7 @@
               ></v-text-field>
 
               <v-text-field
+                data-cy="account-settings-phone-input"
                 :maxlength="maxChars"
                 v-model="phoneNumber"
                 label="Phone"
@@ -44,6 +45,7 @@
               ></v-text-field>
 
               <v-switch
+                data-cy="account-settings-email-switch"
                 inset
                 v-model="enableEmailReminder"
                 label="Send me appointment reminders via email"
@@ -57,6 +59,7 @@
             <v-row>
               <v-col class="d-flex">
                 <v-btn
+                  data-cy="account-settings-update-button"
                   color="primary"
                   large
                   :disabled="!isFormUpdated"
@@ -71,6 +74,7 @@
       </v-col>
     </v-row>
     <v-snackbar
+      data-cy="account-settings-msg"
       multi-line
       :color="showMsg.msgType"
       v-model="showMsg.isShow"
@@ -140,21 +144,22 @@ export default class AccountSettingsView extends Vue {
 
   private phoneNumberRules = [
     (v) =>
-      /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(v) ||
+      /^\(?(\d{3})\)?[-. ]?(\d{3})[-. ]?(\d{4})$/.test(v) ||
       'Phone number must be valid'
   ]
 
   private async beforeMount () {
     this.$store.commit('setNonStepperLocation', 'Account Settings')
-    if (!this.currentUserProfile.user_id) {
-      await this.getUser()
+    if (!this.currentUserProfile.userId) {
+      // Removed redundant "await" on next line
+      this.getUser()
     }
     if (this.currentUserProfile) {
       this.name = this.username || ' '
       this.email = this.currentUserProfile.email
       this.phoneNumber = this.currentUserProfile.telephone
-      this.enableEmailReminder = this.currentUserProfile.send_email_reminders
-      this.enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      this.enableEmailReminder = this.currentUserProfile.sendEmailReminders
+      this.enableSmsReminder = this.currentUserProfile.sendSmsReminders
       this.emailCopy = this.email
       this.phoneNumberCopy = this.phoneNumber
       this.emailReminderCopy = this.enableEmailReminder
@@ -167,11 +172,11 @@ export default class AccountSettingsView extends Vue {
       const userUpdate: UserUpdateBody = {
         email: this.email,
         telephone: this.phoneNumber,
-        send_email_reminders: this.enableEmailReminder,
-        send_sms_reminders: this.enableSmsReminder
+        sendEmailReminders: this.enableEmailReminder,
+        sendSmsReminders: this.enableSmsReminder
       }
       const response = await this.updateUserAccount(userUpdate)
-      if (response?.user_id) {
+      if (response?.userId) {
         this.showMsg.isShow = true
         this.showMsg.msgText = 'Profile Successfully Updated!'
         this.showMsg.msgType = 'success'

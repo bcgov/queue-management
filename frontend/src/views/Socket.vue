@@ -21,7 +21,6 @@ limitations under the License. */ -->
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions } from 'vuex'
 import config from './../../config'
 import configMap from '@/utils/config-helper'
 
@@ -52,8 +51,8 @@ export default class Socket extends Vue {
   connect () {
     this.socketTimeout = configMap.getSocketTimeout()
     this.socketDelayMax = configMap.getSocketDelayMax()
-    console.log('Socket Timeout value = ',this.socketTimeout)
-    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
+    console.log('Socket Timeout value = ', this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ', this.socketDelayMax)
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,
@@ -77,7 +76,6 @@ export default class Socket extends Vue {
     socket.on('clear_csr_cache', (data) => { this.onClearCsrCache(data) })
     socket.on('update_offices_cache', () => { this.onUpdateOfficesCache() })
 
-
     socket.on('appointment_create', (appointment) => {
       this.onUpdateAppointment(appointment, 'create')
     })
@@ -89,11 +87,9 @@ export default class Socket extends Vue {
     socket.on('appointment_delete', (appointment) => {
       this.onUpdateAppointment(appointment, 'delete')
     })
-
   }
 
   join () {
-    // console.log('==> In Socket.vue.join, socket.io.engine.id is: ' + socket.io.engine.id.toString())
     socket.emit('joinRoom', { count: 0 }, () => { console.log('socket emit: "joinRoom"') }
     )
   }
@@ -137,7 +133,6 @@ export default class Socket extends Vue {
     console.log('socket received: "update_active_citizen" ')
     this.screenIncomingCitizen({ citizen, route: this.$route })
   }
-
 
   onUpdateAppointment (appointment, action) {
     this.updateAppointments({ appointment, action })

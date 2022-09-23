@@ -4,7 +4,7 @@
       id="nav-alert"
       icon="mdi-alert"
       elevation=8
-      v-if="!userBrowser.is_allowed"
+      v-if="!userBrowser.isAllowed"
     >
     <div class="alert-title">Browser Upgrade Recommended</div>
     You are using an unsupported browser, and may have a degraded experience. To increase performance and access all features please use a modern browser.
@@ -49,7 +49,7 @@
               v-if="showBackButton(bookingStep)"
               class="stepper-back-button"
             >
-              <v-icon left class="mr-1">mdi-arrow-left</v-icon>
+              <v-icon left class="mr-1">mdi-arrow-left-circle</v-icon>
               {{(!$vuetify.breakpoint.xs) ? 'Back' : ''}}
             </v-btn>
             <v-spacer></v-spacer>
@@ -62,30 +62,7 @@
           <p v-if="bookingStep.subTitle" class="step-desc mt-2">{{bookingStep.subTitle}}
           </p>
           <p v-if="bookingStep.beforeIconText|| bookingStep.afterIconText" class="step-desc mt-2">
-            {{bookingStep.beforeIconText}}
-            <v-btn
-                v-if="bookingStep.step == 1"
-                class="ma-2"
-                text
-                icon
-                color="red lighten-2"
-                @click="fetchCurrentLocation()"
-            >
-              <v-icon v-if="bookingStep.icon"
-                    large
-                    color="blue darken-2"
-                  >
-                {{bookingStep.icon}}
-              </v-icon>
-            </v-btn>
-            <span v-else>
-              <v-icon v-if="bookingStep.icon"
-                    large
-                    color="blue darken-2"
-                  >
-                {{bookingStep.icon}}
-              </v-icon>
-            </span>
+            {{bookingStep.beforeIconText}} <br>
             {{bookingStep.afterIconText}}
           </p>
           <component
@@ -106,15 +83,13 @@
 <script lang="ts">
 import { AppointmentSummary, DateSelection, LocationsList, LoginToConfirm, ServiceSelection } from '@/components/appointment'
 import { Component, Vue } from 'vue-property-decorator'
-import { GeolocatorSuccess, LatLng } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
-import { AuthModule } from '@/store/modules'
 import CommonUtils from '@/utils/common-util'
+import { GeolocatorSuccess } from '@/models/geo'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
-import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
 
 @Component({
@@ -158,10 +133,10 @@ export default class AppointmentBookingView extends Vue {
   private readonly currentService!: Service
   private readonly currentAppointment!: Appointment
   private userBrowser = {
-    is_allowed: true,
-    current_browser: '',
-    current_version: '',
-    allowed_browsers: ''
+    isAllowed: true,
+    currentBrowser: '',
+    currentVersion: '',
+    allowedBrowsers: ''
   }
 
   private stepCounter = 1
@@ -174,11 +149,11 @@ export default class AppointmentBookingView extends Vue {
     {
       step: 1,
       label: 'Location Selection',
-      title: 'Book an Appointment',
+      title: 'Book an Appointment at Service BC',
       subTitle: '',
       icon: 'mdi-map-marker-radius',
-      beforeIconText: 'Click the',
-      afterIconText: 'to find your closest Service BC Centre',
+      beforeIconText: 'Choose from our 62 Service BC Centre locations:',
+      afterIconText: '',
       code: 'location',
       component: LocationsList,
       componentProps: {}
@@ -196,7 +171,7 @@ export default class AppointmentBookingView extends Vue {
       step: 3,
       label: 'Select Date',
       title: 'Select a Date',
-      icon: 'mdi-chevron-right',
+      icon: 'mdi-chevron-right-circle',
       beforeIconText: 'Available days are highlighted in the calendar, use the',
       afterIconText: 'arrow to go to the next month',
       code: 'date',
@@ -226,9 +201,7 @@ export default class AppointmentBookingView extends Vue {
   ]
 
   private showBackButton (bookingStep) {
-    if (bookingStep.step <= 1) {
-      return false
-    } else if (bookingStep.step === 3 && this.$store.state.isAppointmentEditMode) {
+    if ((bookingStep.step <= 1) || (bookingStep.step === 3 && this.$store.state.isAppointmentEditMode)) {
       return false
     }
     return true
@@ -260,7 +233,7 @@ export default class AppointmentBookingView extends Vue {
   private async mounted () {
     this.$store.commit('setNonStepperLocation', undefined)
     if (this.isAuthenticated) {
-      this.bookingSteppers = this.bookingSteppers.filter(step => !(step.code === 'login'))
+      this.bookingSteppers = this.bookingSteppers.filter(step => (step.code !== 'login'))
       this.bookingSteppers[this.bookingSteppers.length - 1].step = this.bookingSteppers.length
     }
     this.stepCounter = this.$store.state.stepperCurrentStep
@@ -275,7 +248,7 @@ export default class AppointmentBookingView extends Vue {
   }
 
   private isOnCurrentStep (step) {
-    return !!(step.step === this.stepCounter)
+    return (step.step === this.stepCounter)
   }
 
   private async fetchCurrentLocation () {
@@ -287,28 +260,28 @@ export default class AppointmentBookingView extends Vue {
     switch (theStep) {
       case 1:
         this.setSPStatus('new')
-        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: null, serv: null }
+        mySP = { step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: null, serv: null }
         this.callSnowplow(mySP)
         break
       case 2:
-        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: null }
+        mySP = { step: 'Select Service', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: null }
         this.callSnowplow(mySP)
         break
       case 3:
-        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Select Date', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
         this.callSnowplow(mySP)
         break
       case 4:
         if (this.isAuthenticated) {
-          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          mySP = { step: 'Appointment Summary', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
           this.callSnowplow(mySP)
         } else {
-          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+          mySP = { step: 'Login to Confirm Appointment', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
           this.callSnowplow(mySP)
         }
         break
       case 5:
-        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
         this.callSnowplow(mySP)
         break
       default:

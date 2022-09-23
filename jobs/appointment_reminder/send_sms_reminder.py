@@ -67,22 +67,20 @@ def send_reminders(app):
         appointments = reminders.json()
         notifications_endpoint = app.config.get('NOTIFICATIONS_ENDPOINT')
         token: str = get_access_token(app)
-        notifications = []
         for appointment in appointments.get('appointments'):
-            notifications.append({
+            notification = [{
                 'user_telephone': appointment.get('user_telephone'),
                 'display_name': appointment.get('display_name'),
                 'location': appointment.get('location'),
                 'formatted_date': appointment.get('formatted_date'),
                 'office_telephone': appointment.get('telephone')
-            })
+            }]
 
-        if notifications:
             try:
                 response = requests.post(notifications_endpoint,
                                          headers={'Content-Type': 'application/json',
                                                   'Authorization': f'Bearer {token}'},
-                                         data=json.dumps(notifications))
+                                         data=json.dumps(notification))
                 print(response)
             except Exception as e:
                 print(e)  # log and continue

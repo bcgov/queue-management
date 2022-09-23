@@ -3,6 +3,7 @@
  */
 import { format, parseISO } from 'date-fns'
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import { TimeSlots } from '../models/office'
 
 export enum Days {
   Monday = 1, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
@@ -33,22 +34,22 @@ export default class CommonUtils {
   /***
    * Time slots formatted in a way it should need to display in the UI
    ***/
-  static getFormattedTimeslots (timeslots) {
+  static getFormattedTimeslots (timeslots: TimeSlots[]) {
     const timeslotArray = []
     // this loop will get the minimum start time and maximum end time of a timeslot
     timeslots.forEach(timeslot => {
-      timeslot.day_of_week.forEach(day => {
+      timeslot.dayOfWeek.forEach(day => {
         if (timeslotArray[Days[day]]) {
-          if (!this.compareTime(timeslotArray[Days[day]].startTime, timeslot.start_time)) {
-            timeslotArray[Days[day]].startTime = timeslot.start_time
+          if (!this.compareTime(timeslotArray[Days[day]].startTime, timeslot.startTime)) {
+            timeslotArray[Days[day]].startTime = timeslot.startTime
           }
-          if (this.compareTime(timeslotArray[Days[day]].endTime, timeslot.end_time)) {
-            timeslotArray[Days[day]].endTime = timeslot.end_time
+          if (this.compareTime(timeslotArray[Days[day]].endTime, timeslot.endTime)) {
+            timeslotArray[Days[day]].endTime = timeslot.endTime
           }
         } else {
           timeslotArray[Days[day]] = {
-            startTime: timeslot.start_time,
-            endTime: timeslot.end_time
+            startTime: timeslot.startTime,
+            endTime: timeslot.endTime
           }
         }
       })
@@ -60,9 +61,9 @@ export default class CommonUtils {
       const timeslot = timeslotArray[index]
       returnArray.push({
         ...timeslot,
-        day_str: this.getDayOfWeek(index),
-        end_time_str: (timeslot?.endTime) ? this.get12HTimeString(timeslot.endTime) : '',
-        start_time_str: (timeslot?.startTime) ? this.get12HTimeString(timeslot.startTime) : ''
+        dayStr: this.getDayOfWeek(index),
+        endTimeStr: (timeslot?.endTime) ? this.get12HTimeString(timeslot.endTime) : '',
+        startTimeStr: (timeslot?.startTime) ? this.get12HTimeString(timeslot.startTime) : ''
       })
       index++
     } while (index <= (Object.keys(Days).length / 2))
@@ -139,45 +140,25 @@ export default class CommonUtils {
   static isAllowedBrowsers () {
     const allowedBrowerNLowestVersion = { 'Chrome': [24], 'Firefox': [29], 'Safari': [10], 'Opera': [15] }
     if (allowedBrowerNLowestVersion.hasOwnProperty(CommonUtils.getBrowser()['name'])) {
-      if (CommonUtils.getBrowser()['version'] >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
+      if (Number(CommonUtils.getBrowser()['version']) >= allowedBrowerNLowestVersion[CommonUtils.getBrowser()['name']]) {
         return {
-          'is_allowed': true,
-          'current_browser': CommonUtils.getBrowser()['name'],
-          'current_version': CommonUtils.getBrowser()['version'],
-          'allowed_browsers': 'Chrome, Firefox, Safari, Edge'
+          'isAllowed': true,
+          'currentBrowser': CommonUtils.getBrowser()['name'],
+          'currentVersion': CommonUtils.getBrowser()['version'],
+          'allowedBrowsers': 'Chrome, Firefox, Safari, Edge'
         }
       }
     }
     return {
-      'is_allowed': false,
-      'current_browser': CommonUtils.getBrowser()['name'],
-      'current_version': CommonUtils.getBrowser()['version'],
-      'allowed_browsers': 'Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15'
+      'isAllowed': false,
+      'currentBrowser': CommonUtils.getBrowser()['name'],
+      'currentVersion': CommonUtils.getBrowser()['version'],
+      'allowedBrowsers': 'Chrome >= 24, Firefox >= 29, Safari >= 10, Opera >= 15'
     }
   }
-  // static isIE () {
-  //    if (CommonUtils.getBrowser()['name'] === 'IE') {
-  //       return {
-  //         'is_allowed': false
-  //       }
-  //     } else {
-  //       return {
-  //         'is_allowed': true
-  //       }
-  //     }
-  // }
 
   static isAllowedIEVersion () {
     const ua = window.navigator.userAgent
-    // IE 9
-    // ua = 'Mozilla/5.0 (compatible; MSIE 9.0; InfoChannel RNSafeBrowser/v.1.1.0G)'
-
-    // IE 10
-    // ua = 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
-
-    // IE 11
-    // ua = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'
-
     let version = 0
     const msie = ua.indexOf('MSIE ')
     if (msie > 0) {
@@ -254,7 +235,7 @@ export function debounce (func, wait, immediate) {
     timeout = setTimeout(later, wait)
     if (callNow) func.apply(context, args)
   }
-};
+}
 
 // https://stackoverflow.com/a/50069453
 // returns e.g. "-7:00" and can be appended to end of date string
@@ -265,6 +246,5 @@ export function timezoneOffset () {
   const timezoneOffset = date.getTimezoneOffset()
   const hours = ('00' + Math.floor(Math.abs(timezoneOffset / 60))).slice(-2)
   const minutes = ('00' + Math.abs(timezoneOffset % 60)).slice(-2)
-  const string = (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
-  return string
+  return (timezoneOffset >= 0 ? '-' : '+') + hours + ':' + minutes
 }

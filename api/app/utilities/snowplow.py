@@ -19,12 +19,17 @@ from app.models.theq.office import Office
 from app.models.theq.role import Role
 from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
+from pprint import pprint
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import logging
 import os
 from qsystem import application, my_print
 from datetime import datetime, timezone
+
+# Defining String constants to appease SonarQube
+iglu_cfmspoc_const = 'iglu:ca.bc.gov.cfmspoc/'
+json_schema_100_const = '/jsonschema/1-0-0'
 
 class SnowPlow():
 
@@ -99,7 +104,7 @@ class SnowPlow():
 
             #  Most Snowplow events don't have parameters, so don't have to be built.
             else:
-                snowplow_event = SelfDescribingJson( 'iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/' + schema_version, {})
+                snowplow_event = SelfDescribingJson( iglu_cfmspoc_const + schema + '/jsonschema/' + schema_version, {})
 
             #  Make the call.
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
@@ -178,8 +183,10 @@ class SnowPlow():
     @staticmethod
     def get_csr(csr, office, csr_id = 1000001, counter_name = "Counter", role_name="WebSelfServe"):
 
+        idir_user = None
         if csr is not None:
             csr_id = csr.csr_id
+            idir_user = csr.username
             if csr.receptionist_ind == 1:
                 counter_name = "Receptionist"
             else:
@@ -202,11 +209,12 @@ class SnowPlow():
                 role_name = "Helpdesk"
 
         #  Set up the CSR context.
-        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/3-0-2',
+        agent = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/agent/jsonschema/4-0-0',
                                    {"agent_id": csr_id,
+                                    "idir": idir_user,
                                     "role": role_name,
-                                    "counter_type": counter_name})
-
+                                    "counter_type": counter_name
+                                   })
         return agent
 
     @staticmethod
@@ -267,7 +275,7 @@ class SnowPlow():
         #   Take action depending on the schema.
         if schema == "appointment_checkin":
 
-            appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema + '/jsonschema/1-0-0',
+            appointment = SelfDescribingJson(iglu_cfmspoc_const + schema + json_schema_100_const,
                                              {"appointment_id": appointment.appointment_id})
 
         else:
@@ -278,7 +286,7 @@ class SnowPlow():
 
             if schema == "appointment_create":
 
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_cfmspoc_const + schema +json_schema_100_const,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,
@@ -287,7 +295,7 @@ class SnowPlow():
                                                   "program_name": appointment.service.parent.service_name,
                                                   "transaction_name": appointment.service.service_name})
             if schema == "appointment_update":
-                appointment = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/' + schema +'/jsonschema/1-0-0',
+                appointment = SelfDescribingJson(iglu_cfmspoc_const + schema +json_schema_100_const,
                                                  {"appointment_id": appointment.appointment_id,
                                                   "appointment_start_timestamp": utcstart,
                                                   "appointment_end_timestamp": utcend,

@@ -40,7 +40,7 @@ limitations under the License.*/-->
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
       <template slot="reminder_flag" slot-scope="row" v-if="isNotificationEnabled === 1">
-        <b-button 
+        <b-button
           v-if="(row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email)"
           @click="sentReminder(row.item.citizen_id, 'first')"
           variant="secondary"
@@ -49,7 +49,7 @@ limitations under the License.*/-->
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           v-if="row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)"
           variant="primary"
           @click="sentReminder(row.item.citizen_id, 'second')"
@@ -58,7 +58,7 @@ limitations under the License.*/-->
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           disabled
           v-if="row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email)"
           variant="danger"
@@ -78,7 +78,7 @@ limitations under the License.*/-->
         </b-row>
       </template>
       <template slot="notification_sent_time" slot-scope="row" v-if="isNotificationEnabled === 1">
-         <b-button 
+         <b-button
           disabled
           v-if="row.item.notification_sent_time"
           variant="info"
@@ -168,8 +168,7 @@ export default class DashHoldTable extends Vue {
 
   private formatTime (data: any) {
     const date = new Date(data)
-    const display = date.toLocaleTimeString()
-    return display
+    return date.toLocaleTimeString()
   }
 
   private parseComments (item: any) {
@@ -204,9 +203,9 @@ export default class DashHoldTable extends Vue {
   }
 
   private showCounter (value: any) {
-    for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
-        return this.user.office.counters[i].counter_name
+    for (let counter of this.user.office.counters) {
+      if (counter.counter_id == value) {
+        return counter.counter_name
       }
     }
   }
@@ -237,8 +236,16 @@ export default class DashHoldTable extends Vue {
   }
 
   private showPriority (priority: any) {
-    // eslint-disable-next-line eqeqeq
-    return priority == 1 ? 'High' : priority == 2 ? 'Default' : priority == 3 ? 'Low' : null
+    switch (priority) {
+      case 1:
+        return 'High'
+      case 2:
+        return 'Default'
+      case 3:
+        return 'Low'
+      default:
+        return null
+    }
   }
 
   public timeFormat (value: any) {

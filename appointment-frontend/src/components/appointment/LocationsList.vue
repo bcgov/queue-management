@@ -4,71 +4,73 @@
   >
     <v-row justify="center">
       <v-col cols="12" sm="6" md="4">
-        <geocoder-input v-on:set-location-event='onGeoSelect'></geocoder-input>
+        <v-combobox
+            :items="locationListData"
+            :item-text="'officeName'"
+            :filter="officeSearchFilter"
+            data-cy="step-1-combobox-office"
+            label="Select Office"
+            outlined
+            color="primary"
+            v-model="selectedOffice"
+            name="office-select"
+            @change="officeSelection"
+            @input="clickSelection"
+            @keyup="setKeyPressed"
+            auto-select-first="true"
+            hide-details
+          >
+          </v-combobox>
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col cols="12" class="location-sorted-msg">
-        <p class="text-center mb-0">Locations sorted by closest to you
-          <!-- <br><br>
-          Coords: {{ this.currentCoordinates() }} -->
-        </p>
       </v-col>
       <v-col
         cols="12"
         sm="10"
-        v-for="(location) in locationListData"
-        :key="location.office_id"
+        v-for="(location) in selectedlocationListData"
+        :key="location.officeId"
       >
         <v-card
-          :disabled="location.online_status === 'Status.DISABLE'"
-          :outlined="(currentOffice && currentOffice.office_id === location.office_id)"
-          :color="(currentOffice && currentOffice.office_id === location.office_id) ? 'blue-grey lighten-5' : ''"
+        v-show="selectedOffice"
+          :disabled="location.onlineStatus === 'Status.DISABLE'"
+          :outlined="(currentOffice && currentOffice.officeId === location.officeId)"
+          :color="(currentOffice && currentOffice.officeId === location.officeId) ? 'blue-grey lighten-5' : ''"
           class="mx-auto location-card">
           <v-card-text>
             <v-row class="d-flex" justify="space-around">
               <v-col cols="12" md="6" align-self="stretch">
-                <h4 class="mb-3 location-name">
-                  {{location.office_name}}
-                  <span class="body-1 ml-2" v-if="location.distance">
-                    {{location.distance}}Km
-                  </span>
-                </h4>
                 <v-row>
-                  <v-col col="12" md="6">
+                  <v-col cols="12" md="12">
                     <v-btn
                       block
                       color="primary"
                       class="pl-5 mt-0 mt-md-2"
+                      data-cy="step-1-button-book-appointment"
                       large
                       @click="selectLocation(location)"
                     >
-                      Select Location
-                      <v-icon right small class="ml-1">mdi-arrow-right</v-icon>
+                      Book Appointment
                     </v-btn>
                   </v-col>
-                  <v-col col="12" md="6">
-                    <v-btn
-                        block
-                        color="primary"
-                        outlined
-                        class='mt-0 mt-md-2 float-right'
-                        large
-                        @click="showLocationServices(location)"
-                      >
-                        View Location Services
-                    </v-btn>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <h4 class="mb-3 location-name">
+                  {{location.officeName}}
+                </h4>
                   </v-col>
                 </v-row>
                 <v-alert
                   dense
-                  :text=(!location.appointments_enabled_ind)
+                  :text=(!location.appointmentsEnabledInd)
                   border="left"
-                  :type="(!location.appointments_enabled_ind) ? 'error' : 'info'"
+                  :type="(!location.appointmentsEnabledInd) ? 'error' : 'info'"
                   class="subtitle-2 font-weight-bold mb-4"
-                  v-if="location.office_appointment_message"
+                  v-if="location.officeAppointmentMessage"
                 >
-                  {{location.office_appointment_message}}
+                  {{location.officeAppointmentMessage}}
                 </v-alert>
                 <v-alert
                   :type="(!$vuetify.breakpoint.xs) ? 'info' : undefined"
@@ -77,37 +79,55 @@
                   :icon="(!$vuetify.breakpoint.xs) ? 'mdi-clock' : false"
                 >
                   <v-row no-gutters v-for="(timeslot, index) in location.timeslots" :key="index">
-                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.day_str}}</v-col>
+                    <v-col cols="6" md="5" class="px-5 nobr">{{timeslot.dayStr}}</v-col>
                     <v-col cols="6" md="7">
-                      <span v-if="!(timeslot.start_time_str && timeslot.end_time_str)" class="hours-closed">Closed</span>
+                      <span v-if="!(timeslot.startTimeStr && timeslot.endTimeStr)" class="hours-closed">Closed</span>
                       <span v-else>
-                        {{`${timeslot.start_time_str}` }} - {{ `${timeslot.end_time_str}`}}
+                        {{`${timeslot.startTimeStr}` }} - {{ `${timeslot.endTimeStr}`}}
                       </span>
                     </v-col>
                   </v-row>
                 </v-alert>
+                <v-row>
+                  <v-col col="12" md="6">
+                    <v-btn
+                        block
+                        color="primary"
+                        outlined
+                        class='mt-0 mt-md-2 float-right'
+                        large
+                        @click="showLocationServices(location)"
+                        data-cy="step-1-button-available-services"
+                      >
+                        Available Services
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
-<!--                <v-img v-if="location.civic_address" :src='getMapUrl(location)' :alt="location.civic_address || 'No address'" class='static-map'>-->
-<!--                </v-img>-->
-                <template v-if='location.external_map_link'>
-                  <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
-                    <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
+                <template v-if='location.externalMapLink'>
+                  <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
+                    <v-img v-if="location.civicAddress" :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))" :alt="location.civicAddress || 'No address'" class='static-map'>
                     </v-img>
                   </a>
                 </template>
                 <template v-else>
-                  <v-img v-if="location.civic_address" :src="require('@/assets/img/officemaps/' + (location.office_number ? location.office_number.toString() + '.png' : '999.png'))" :alt="location.civic_address || 'No address'" class='static-map'>
-                    </v-img>
+                  <v-img
+                    v-if="location.civicAddress"
+                    :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))"
+                    :alt="location.civicAddress || 'No address'"
+                    class='static-map'
+                    data-cy="step-1-image-map"
+                  ></v-img>
                 </template>
-                <div class="text-center mt-2 body-2" v-if="location.civic_address">
-                  <template v-if='location.external_map_link'>
-                    <a class='link-w-icon mt-6' v-bind:href='location.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civic_address}`'>
+                <div class="text-center mt-2 body-2" v-if="location.civicAddress">
+                  <template v-if='location.externalMapLink'>
+                    <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
                       <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-                      {{location.civic_address}}
+                      {{location.civicAddress}}
                     </a>
                   </template>
-                  <template v-else>{{location.civic_address}}</template>
+                  <template v-else>{{location.civicAddress}}</template>
 
                 </div>
                 <div class="text-center mt-2 body-2 green--text font-weight-bold" v-if='location.latitude && location.longitude && hasCoordinates'>
@@ -117,6 +137,18 @@
             </v-row>
           </v-card-text>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        class="text-center container py-2"
+        cols="12"
+      >
+         {{ footerMsg[0] }} <a :href="footerLinks[0]" target="_blank">{{ footerMsg[1] }}</a>
+         {{ footerMsg[2] }} <a :href="footerLinks[1]" target="_blank">{{ footerMsg[3] }}</a>
+         {{ footerMsg[4] }} <a :href="footerLinks[2]" target="_blank">{{ footerMsg[5] }}</a>
+         {{ footerMsg[6] }} <a :href="footerLinks[3]" target="_blank">{{ footerMsg[7] }}</a>
+         {{ footerMsg[8] }} <a :href="footerLinks[4]" target="_blank">{{ footerMsg[9] }}</a>
       </v-col>
     </v-row>
     <!-- Service Model Popup -->
@@ -130,7 +162,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { GeoModule, OfficeModule } from '@/store/modules'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import ConfigHelper from '@/utils/config-helper'
@@ -150,7 +182,8 @@ import { getModule } from 'vuex-module-decorators'
   },
   computed: {
     ...mapState('office', [
-      'currentOffice'
+      'currentOffice',
+      'officeList'
     ]),
     ...mapState('auth', [
       'currentUserProfile'
@@ -190,8 +223,11 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private readonly currentUserProfile!: User
   private readonly currentOffice!: Office
   private readonly isAuthenticated!: boolean
-  // private readonly coords!: () => any;
+  private footerMsg = []
+  private footerLinks = []
   private readonly currentCoordinates!: () => any;
+  private selectedOffice: Office = null
+  private keyPressed = true
 
   private selectedRadius = null
   private radiusList = [2, 4, 6, 10]
@@ -199,6 +235,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   private locationServicesModal = false
 
   private locationListData: Office[] = []
+  private selectedlocationListData: Office[] = []
   private serviceList: Service[] = []
 
   $refs: {
@@ -206,10 +243,13 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async mounted () {
+    let fm = ConfigHelper.getFooterText()
+    let fl = ConfigHelper.getFooterLinks()
+    this.footerMsg = fm.split('{link}')
+    this.footerLinks = fl.split('{link}')
     if (this.isOnCurrentStep) {
       this.locationListData = await this.getOffices()
-      this.locationListData = this.locationListData.filter(location => location.online_status !== 'Status.HIDE')
-      this.locationListData = this.sortOfficesByDistance(this.locationListData)
+      this.locationListData = this.locationListData.filter(location => location.appointmentsEnabledInd).filter(location => location.onlineStatus === 'Status.SHOW')
       this.$store.commit('setAppointmentLocation', undefined)
     }
   }
@@ -250,9 +290,42 @@ export default class LocationsList extends Mixins(StepperMixin) {
     }
   }
 
-  private async onGeoSelect (input) {
-    this.locationListData = this.sortOfficesByDistance(this.locationListData)
-    this.$forceUpdate()
+  private setKeyPressed (e) {
+    if (e.key !== 'Enter') {
+      this.keyPressed = true
+    }
+  }
+
+  private scrollTop () {
+    this.selectedOffice = null
+  }
+
+  private checkDisabled (value) {
+    return (value?.appointmentsEnabledInd)
+  }
+
+  private clickSelection (value) {
+    if (!value?.serviceName) {
+      this.selectedOffice = null
+      this.setCurrentOffice(undefined)
+    } else {
+      if (this.checkDisabled(value)) {
+        this.selectedOffice = null
+        this.setCurrentOffice(undefined)
+      } else {
+        this.setCurrentOffice(value)
+      }
+    }
+  }
+
+  private officeSelection (value) {
+    this.keyPressed = false
+    this.selectedOffice = value
+    this.selectedlocationListData = this.locationListData.filter(location => location.officeId === this.selectedOffice.officeId)
+  }
+
+  private officeSearchFilter (item, queryText, itemText) {
+    return `${item?.officeName || ''}`.toLowerCase().indexOf((queryText || '').toLowerCase()) > -1
   }
 
   private getDistance (latitude, longitude) {
@@ -270,16 +343,15 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private hasCoordinates (): boolean {
-    // return !!this.$store.state.geo.currentCoordinates
     return !!this.currentCoordinates()
   }
 
-  private async showLocationServices (location) {
-    this.serviceList = await this.getServiceByOffice(location.office_id)
+  private async showLocationServices (location: Office) {
+    this.serviceList = await this.getServiceByOffice(location.officeId)
     await this.getCategories()
-    this.selectedLocationName = location.office_name
+    this.selectedLocationName = location.officeName
     this.$refs.locationServiceListPopup.open()
-    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: location.office_name, serv: null, url: null }
+    const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: location.officeName, serv: null, url: null }
     this.callSnowplowClick(mySP)
   }
 
@@ -291,16 +363,12 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private async selectLocation (location) {
-    if (this.currentOffice?.office_id !== location?.office_id) {
-      this.$store.commit('setAppointmentLocation', location.office_name)
+    if (this.currentOffice?.officeId !== location?.officeId) {
+      this.$store.commit('setAppointmentLocation', location.officeName)
       this.setCurrentOffice(location)
       this.setCurrentService(undefined)
     }
     this.stepNext()
-  }
-
-  private getMapUrl (location) {
-    return GeocoderService.generateStaticMapURL(location)
   }
 }
 </script>
@@ -312,7 +380,6 @@ export default class LocationsList extends Mixins(StepperMixin) {
   margin-right: 24px;
 }
 .hours-closed {
-    // color: $BCgovInputError;
     // We can't use the $BCgovInputError on the background here, as it will break accessibility.
     // The only colour which works on the background is black, or this muddy dark red
     color: black;

@@ -75,7 +75,7 @@ class KeyCloakService {
       userName: this.parsedToken?.username,
       fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
       loginSource: this.parsedToken?.loginSource,
-      display_name: this.parsedToken?.display_name
+      displayName: this.parsedToken?.display_name // leave this as snake_case to match token!
     }
   }
 
@@ -161,7 +161,8 @@ class KeyCloakService {
   }
 
   async isRolesAvailable (roles: string[]) {
-    const user = await this.getUserInfo()
+    // Removed redundant "await" on next line
+    const user = this.getUserInfo()
     let isAvailable = false
     if (user?.roles?.length) {
       roles.forEach(role => {

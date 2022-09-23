@@ -1,95 +1,178 @@
 # Installation Guide - Work in Progress
 
-We use Openshift in our environment. We recommend you setup an openshift (or minishift) for this project. You can then use our build / deployment configs found in the openshift directory.
+We use OpenShift in our environment, and it is our recommendation for running this project. You can then use our build / deployment configs found in the openshift directory.
+
+For development, we recommend you use Visual Studio Code's *Remote - Containers* to run the application in docker containers, as described below.
 
 ## Key features of the platform:
 
 Jenkins Build process includes:
 
-- SonarQube
 - Building our Flask/Python API
 - Building our Vue FrontEnd and copying the output to CADDY Webserver
 - Postman tests
 - Zap Vulnerability tests
 
-If you want to just try out the application, here are some instructions to get it running on Ubuntu (I used Windows 10 WSL Ubuntu):
+## Running the code with VSCode *Remote - Containers*
 
-- Note we do not use RabbitMQ for local testing but this is used to manage multiple pods and syncing messages between them.
+This repo is configured to use Visual Studio Code's *Remote - Containers* (aka *devcontainers*) to run the applications in docker containers.
 
-## Setup Postgresql instance & run it:
+To run the code in devcontainers you need:
+1. VSCode
+1. WSL2 with a Linux distribution (we like LTS Ubuntu)
+1. *docker-compose* installed in your WSL2 Linux
+1. *dockerd* running in your WSL2 Linux
 
-1. `sudo apt-get install postgresql`
-1. `sudo passwd postgres`
-1. `Enter password: postgres`
-1. `sudo service postgresql start`
-1. `sudo -u postgres createuser demo`
-1. `sudo -u postgres createdb queue_management`
-1. `sudo -u postgres psql`
-1. `alter user demo with encrypted password 'demo';`
-1. `grant all privileges on database queue_management to demo ;`
+Clone the code in this repo:
 
-## Setup docker & install Keycloak:
+```
+$ git clone https://github.com/bcgov/queue-management
+```
 
-1. `git clone https://github.com/bcgov/queue-management.git`
-1. `export DOCKER_HOST=tcp://0.0.0.0:2375`
-1. `cd queue-management/keycloak-local-testserver`
-1. `chmod +x *.sh`
-1. `docker build -t keycloak .`
-1. `docker run -it --name keycloak -p 8085:8080 keycloak`
+Opening the cloned repo in VSCode will detect the *.devcontainer* directory and recommend that you re-open in *Remote - Containers*. This will build and start the docker containers that are needed:
+
+1. PostgreSQL database
+2. Application code in a Python + Node container
+
+TODO: config files
+    1. copy *documentation/demo-files/keycloak.json* to *frontend/static/* (**TODO: really? I don't have it**)
+
+## Set up Keycloak:
+
+TODO: automate this.
 
 You should be able to login in with admin/admin on http://localhost:8085/auth
-1. Go to Groups, add new.  theq_internal_user
+1. Go to Groups, add new group *theq_internal_user*
+1. Go to Roles, add new role *internal_user*
 1. Go to Users, view all users, edit 'admin', 
-    - under Groups, under Available Groups, join theq_internal_user
-    - under Role Mappings, select internal_user, add selected, should see under assigned role
-1. Go to Clients, edit account, scope, set full scope allowed to ON
-## Setup Flask Python API Container:
+    - under Groups, under Available Groups, join *theq_internal_user*
+    - under Role Mappings, select *internal_user*, add selected, should see under assigned role
+1. Go to Clients, edit *account*, Scope tab, set Full Scope Allowed to ON
 
-Ensure you have python 3. I also had to install: gcc, python3-venv, libmysqlclient-dev and python3-dev installed.
+## Frequently Asked Questions
 
-### Setup API Server:
+<details>
+<summary>How do I run the application(s)?</summary>
 
-1. `python3 -m venv env`
-1. `source env/bin/activate`
-1. `cd queue-management/api`
-1. `pip3 install -r requirements.txt`
+The *.vscode/launch.json* file in the repo contains launchers for:
 
-### Copy two required files to the correct place in your directory structure
+1. **appointment_frontend**: the Vue.js code in *appointment_frontend*
+1. **queue_management_api**: the Python code in *api*
+1. **queue_management_frontend**: the Vue.js code in *frontend*
+1. **Queue Management**: starts both *queue_management_api* and *queue_management_frontend*
 
-1. `cd queue-management`
-1. `cp documentation/demo-files/keycloak.json frontend/static/keycloak.json`
-1. `cd api`
-1. `mkdir client_secrets`
-1. `cd ..`
-1. `cp documentation/demo-files/secrets.json api/client_secrets/secrets.json`
+Select the item you want from the dropdown list and hit F5. You can run multiple items at one time. The *PORTS* tab of the *Panel* will list the ports that are being used.
 
-### Set Environment Variables required:
+Note: starting Vue.js applications takes a long time for the webpack. When run on the commmand line there is a progress indicator, but this does not appear when using the launcher. Watching the `top` command and waiting for node processes to drop their CPU usage is one way of telling when the application is ready. Ideally we'll find a way to display the progress indicator, or perhaps there is a better way to start the Vue.js processes during development.
 
-1. `cd queue-management`
-1. `cp documentation/demo-files/.env .`
+</details>
 
-### Update Database with required tables:
+<details>
+<summary>How do I do development on Python code?</summary>
 
-1. `python3 manage.py db upgrade`
+The *.vscode/launch.json* file in the repo contains launchers for the API. Select the API you want from the drop-down list and then hit F5 to run it in *gunicorn*. Once the code is running, whenever you save a file *gunicorn* will automatically reload itself with the changes. You can set breakpoints in the code and then test with a browser, newman, or postman.
 
-### Update the Database with demo data:
+</details>
 
-1. `python3 manage.py bootstrap`
+<details>
+<summary>How do I wipe/initialize the PostgreSQL database?</summary>
 
-### Run API Server:
+To run the application your database needs to have tables created and a small amount of default data set up. The *api/manage.py* script is used to manipulate the database.
 
-1. `gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config gunicorn_config.py`
+Rebuilding the container should set up the table. However, if your database contains no tables, create them with:
 
-## Setup for FrontEnd Development
+```
+workspace$ (cd api; env/bin/python manage.py db upgrade)
+```
 
-Install npm:
+If your database either:
 
-1. `sudo apt-get install npm`
-1. `/usr/bin/npm install`
+1. contains tables but no default data, or
+1. contains tables and data, but you want to re-initialize with default data:
 
-## To Start FRONTEND:
+```
+workspace$ (cd api; env/bin/python manage.py bootstrap)
+```
 
-1. `npm start localhost`
+If you really want to wipe and rebuild your database:
+
+1. Either switch out of devcontainers or shut down VSCode
+1. In docker remove both the database container and its volume
+1. Restart VSCode in devcontainer mode
+
+</details>
+
+<details>
+<summary>How do I update a Python requirements.txt?</summary>
+
+The best way to update Python requirements is to:
+
+1. Update the *requirements.txt* file
+1. Run *pip install -r requirements.txt*
+1. Run the tests and ensure success
+
+To rebuild the container with the new requirements, click the green section of the *Status Bar* and select *Rebuild Container*.
+
+</details>
+
+<details>
+<summary>How do I update a Node packages.json?</summary>
+
+The best way to update Node packages is to:
+
+1. Update the *packages.json* file
+1. Run *npm install*
+1. Run the tests and ensure success
+
+To rebuild the container with the new packages, click the green section of the *Status Bar* and select *Rebuild Container*.
+
+</details>
+
+<details>
+<summary>How do I change the Python version?</summary>
+
+The development environment should be as close as possible to production, including the patch release version of Python. The production version of Python is defined by the Red Hat UBI in our buildconfigs. We should match versions in the devcontainers, even though setting it up is tedious and not straightforward.
+
+1. In a live container get the production version to target with *python --version*
+1. Look at https://mcr.microsoft.com/v2/vscode/devcontainers/python/tags/list and take a guess as an image that will match
+1. Update the *VARIANT* in *.devcontainer/docker-compose.yml* and rebuild the container
+1. Check the Python version, and start over at step 2 until you have the most recent image matching the target version
+
+</details>
+
+<details>
+<summary>How do I change the Node version?</summary>
+
+The development environment should be as close as possible to production, including the version of Node. The production version of Node is defined by the Red Hat UBI in our buildconfigs.
+
+1. In a live container get the production version to target with *node --version* 
+1. Update the *NODE_VERSION* in *.devcontainer/docker-compose.yml* and rebuild the container
+
+</details>
+
+<details>
+<summary>How do I change the PostgreSQL version?</summary>
+
+The development environment should be as close as possible to production, including the version of PostgreSQL. The version of PostgreSQL is defined as a Docker Hub identifier in *.devcontainer/docker-compose.yml* in the *services.db.image* value.
+
+It's probably a good idea to delete your database volume when changing the version. Upgrades *may* work, downgrades will probably fail.
+
+1. Update *.devcontainer/docker-compose.yml* with the PostgreSQL version that you want
+1. Click the green section of the *Status Bar* and select *Reopen Folder in WSL*
+1. In the Docker extension remove the container and then the volume
+1. Click the green section of the *Status Bar* and select *Reopen in Container*
+
+</details>
+
+
+# TODO: REMOVE/REVISE/INCLUDE EVERYTHING BELOW
+
+**TODO: Complete these: How do I...**
+
+1. Do stuff with analytics?
+1. Run Redis?
+
+## To use FRONTEND:
 
 **IMPORTANT: To login, use the Keycloak Login link at the bottom right hand corner. The main login is used with Single Signon integration to our Enterprise Active Directory Domain.**
 

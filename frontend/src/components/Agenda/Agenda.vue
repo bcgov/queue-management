@@ -5,9 +5,7 @@
         There are no exams scheduled for the week currently in view.
         <br />Use the Arrow Buttons above to view a
         different week or click
-        <b
-          class="mx-1"
-        >"This Week"</b> to instantly view the current week.
+        <strong class="mx-1">"This Week"</strong> to instantly view the current week.
       </div>
       <template v-for="(date, i) in examDates">
         <b-container fluid style="background-color: white" v-bind:key="{i}">
@@ -110,11 +108,9 @@
 <script lang="ts">
 // /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
-// import Vue from 'vue'
 
 @Component({})
 export default class Agenda extends Vue {
@@ -257,7 +253,7 @@ export default class Agenda extends Vue {
     const self = this
     const invigilator_name_list: any = []
     exam.booking.invigilators.forEach(function (invigilator: any) {
-      const i = self.invigilator_multi_select.filter((i: any) => i.value == invigilator)
+      const i = self.invigilator_multi_select.filter((inv: any) => inv.value == invigilator)
       if (i[0] && i[0].name) {
         invigilator_name_list.push(i[0].name)
       }

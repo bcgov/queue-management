@@ -2,14 +2,12 @@
   <loading-screen :is-loading="isLoading"></loading-screen>
 </template>
 <script lang="ts">
-import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import LoadingScreen from '@/components/common/LoadingScreen.vue'
 import TokenService from '@/services/token.services'
-import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
@@ -48,7 +46,8 @@ export default class SigninView extends Vue {
         KeyCloakService.initSession()
         // tell KeycloakServices to load the user info
         this.loadUserInfo()
-        await this.postCreateUser()
+        // Removed redundant "await" on next line
+        this.postCreateUser()
         // eslint-disable-next-line no-console
         console.info('[SignIn.vue]Logged in User.Starting refreshTimer')
         const tokenService = new TokenService()
@@ -78,4 +77,5 @@ export default class SigninView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+// empty block
 </style>

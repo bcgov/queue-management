@@ -9,7 +9,7 @@
   >
     <b-alert
       :show="this.alertMessage != ''"
-      style="h-align: center"
+      style="justify-content: center"
       variant="danger"
       >{{ this.alertMessage }}</b-alert
     >
@@ -127,6 +127,3 @@ export default class SelectInvigilatorModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

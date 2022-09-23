@@ -1,5 +1,5 @@
 #FROM python:3.8.5-buster
-FROM docker-remote.artifacts.developer.gov.bc.ca/python:3.8.5-buster
+FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.8.5-buster
 
 # ========================================================================================================
 # Install go-crond (from https://github.com/BCDevOps/go-crond)
@@ -32,7 +32,7 @@ WORKDIR $HOME
 COPY ./requirements.txt .
 COPY . .
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip --user
 RUN pip install --no-cache-dir -r requirements.txt
 
 

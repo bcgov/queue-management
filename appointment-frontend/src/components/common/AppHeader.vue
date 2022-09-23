@@ -7,6 +7,7 @@
     <v-img
       v-if="!isWalkin"
       class="mx-2 bc-logo"
+      data-cy="header-image-bcgov"
       :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
       max-width="132"
       contain
@@ -20,21 +21,18 @@
       contain
       @click="goTo('home')"
     ></v-img>
-    <v-toolbar-title v-if="!isWalkin">Service BC Appointments <v-chip pill color='info'>Beta</v-chip></v-toolbar-title>
-
+    <v-toolbar-title v-if="!isWalkin">Service BC Appointments</v-toolbar-title>
     <v-spacer></v-spacer>
-
-    <v-btn
-      outlined
-      alt='Help - opens in new window'
-      class='mx-3'
-      @click="goTo('help')">
-      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
-      Help
-    </v-btn>
-
     <template v-if="((!isAuthenticated) && (!isWalkin))">
       <div class='d-flex'>
+        <v-btn
+          light
+          class="mr-3"
+          min-width="90"
+          @click="goTo('login')"
+          >
+          Login
+        </v-btn>
         <v-btn
           dark
           outlined
@@ -44,23 +42,23 @@
           >
           Register
         </v-btn>
-        <v-btn
-          light
-          min-width="90"
-          @click="goTo('login')"
-          >
-          Login
-        </v-btn>
       </div>
     </template>
     <template v-else>
       <SignedUser v-if="(!isWalkin)" :username="username"></SignedUser>
     </template>
+    <v-btn
+      outlined
+      alt='Help - opens in new window'
+      class='mr-3'
+      @click="goTo('help')">
+      <v-icon small class="mr-2">mdi-open-in-new</v-icon>
+      Help
+    </v-btn>
   </v-app-bar>
 </template>
 
 <script lang="ts">
-import { AccountModule, AuthModule, OfficeModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { Office } from '@/models/office'
@@ -133,12 +131,12 @@ export default class AppHeader extends Vue {
         break
       case 2:
         currStep = 'Select Service'
-        theloc = this.currentOffice?.office_name
+        theloc = this.currentOffice?.officeName
         break
       case 3:
         currStep = 'Select Date'
-        theloc = this.currentOffice?.office_name
-        theserv = this.currentService?.external_service_name
+        theloc = this.currentOffice?.officeName
+        theserv = this.currentService?.externalServiceName
         break
       case 4:
         currStep = 'Login to Confirm Appointment'
@@ -149,13 +147,13 @@ export default class AppHeader extends Vue {
     let mySP = {}
     switch (page) {
       case 'register':
-        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        mySP = { label: 'Register', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
         break
       case 'login':
-        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
+        mySP = { label: 'Login', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://appointments.servicebc.gov.bc.ca/login' }
         this.callSnowplowClick(mySP)
         this.$router.push('/login')
         this.callsp()
@@ -165,7 +163,7 @@ export default class AppHeader extends Vue {
         this.callsp()
         break
       case 'help':
-        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
+        mySP = { label: 'Help', step: currStep, loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: theloc, serv: theserv, url: 'https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services' }
         this.callSnowplowClick(mySP)
         window.open('https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services', '_blank')
         break

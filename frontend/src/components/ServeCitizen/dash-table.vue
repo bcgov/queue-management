@@ -24,7 +24,6 @@ limitations under the License.*/
       @row-clicked="rowClicked"
       class="p-0 m-0"
     >
-      <!--id="client-waiting-table"-->
       <template #cell(counter_id)="row">{{ showCounter(row.item.counter_id) }}</template>
       <template #cell(start_time)="row">{{ formatTime(row.item.start_time) }}</template>
       <template #cell(csr)="row">{{ showCSR(row.item.citizen_id) }}</template>
@@ -40,7 +39,7 @@ limitations under the License.*/
         <template v-else>{{ parseComments(row.item) }}</template>
       </template>
        <template #cell(reminder_flag)="row">
-        <b-button 
+        <b-button
           v-if="((row.item.reminder_flag == 0) && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           @click="sentReminder(row.item.citizen_id, 'first')"
           variant="secondary"
@@ -49,7 +48,7 @@ limitations under the License.*/
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           v-if="(row.item.reminder_flag == 1 && (row.item.notification_phone || row.item.notification_email)  && (isNotificationEnabled === 1))"
           variant="primary"
           @click="sentReminder(row.item.citizen_id, 'second')"
@@ -58,7 +57,7 @@ limitations under the License.*/
             icon="phone"
           />
         </b-button>
-        <b-button 
+        <b-button
           disabled
           v-if="(row.item.reminder_flag == 2 && (row.item.notification_phone || row.item.notification_email) && (isNotificationEnabled === 1))"
           variant="danger"
@@ -78,7 +77,7 @@ limitations under the License.*/
         </b-row>
       </template>
       <template #cell(notification_sent_time)="row">
-         <b-button 
+         <b-button
           disabled
           v-if="((row.item.notification_sent_time) && (isNotificationEnabled === 1))"
           variant="info"
@@ -180,7 +179,7 @@ export default class DashTable extends Vue {
   }
 
   private setAppointmentDisplayData (id: any) {
-
+    // I assume this is intentionally empty.
   }
 
   private parseComments (item: any) {
@@ -224,9 +223,9 @@ export default class DashTable extends Vue {
   }
 
   private showCounter (value: any) {
-    for (let i = 0; i < this.user.office.counters.length; i++) {
-      if (this.user.office.counters[i].counter_id == value) {
-        return this.user.office.counters[i].counter_name
+    for (let counter of this.user.office.counters) {
+      if (counter.counter_id == value) {
+        return counter.counter_name
       }
     }
   }
@@ -238,7 +237,7 @@ export default class DashTable extends Vue {
     }
     if (service.service.parent) {
       return service.service.parent.service_name
-    } else { // @TODO DELETE THIS
+    } else {
       return 'category'
     }
   }
@@ -257,7 +256,16 @@ export default class DashTable extends Vue {
   }
 
   private showPriority (priority: any) {
-    return priority === 1 ? 'High' : priority === 2 ? 'Default' : priority === 3 ? 'Low' : null
+    switch (priority) {
+      case 1:
+        return 'High'
+      case 2:
+        return 'Default'
+      case 3:
+        return 'Low'
+      default:
+        return null
+    }
   }
 
   public timeFormat (value: any) {

@@ -6,10 +6,6 @@
           <b-button class="btn-primary mx-2" @click="today">Today</b-button>
           <b-button class="btn-primary mx-2" v-if="toggleAppCalenderView" @click="agendaWeek">Week View</b-button>
           <b-button class="btn-primary mx-2" v-if="!toggleAppCalenderView" @click="agendaDay"> Day View</b-button>
-          <!-- <b-dropdown variant="primary" class="mr-2" :text="dropdownText">
-            <b-dropdown-item @click="agendaWeek"> Week View </b-dropdown-item>
-            <b-dropdown-item @click="agendaDay"> Day View </b-dropdown-item>
-          </b-dropdown> -->
           <b-button
             variant="primary"
             class="ml-0 mx-2"
@@ -30,7 +26,7 @@
     </b-button>
         </form>
       </div>
-      <div class="align-center">
+      <div class="align-center-text">
         <span class="q-inline-title">
           {{ calendar_setup.title }}
           {{ calendar_setup.titleRef && calendar_setup.titleRef.title }}
@@ -135,13 +131,10 @@ export default class ButtonsAppointments extends Vue {
 }
 </script>
 <style scoped>
-.align-center {
-    padding-left: 40%;
-    margin-top: -46px;
+.align-center-text {
+  padding-left: 40%;
+  margin-top: -46px;
 }​
-.butttons-appointments {
-  margin-right: auto;
-}
 .full-div {
   width: 100%;
 }

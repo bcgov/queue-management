@@ -6,20 +6,20 @@
         <label class="add_citizen_form_label">Notification:</label>
       </b-col>
       <b-col>
-        <b-form-input 
-          v-model="notificationPhone" 
-          type="tel" 
+        <b-form-input
+          v-model="notificationPhone"
+          type="tel"
           placeholder="Phone Number : (xxx) xxx-xxxx"
           :state="notificationPhoneValidation"
           @keypress="isNumber($event)"
           @input="formatPhone"
-          maxlength=14        
+          maxlength=14
         ></b-form-input>
       </b-col>
       <b-col>
-        <b-form-input 
-          v-model="notificationEmail" 
-          type="email" 
+        <b-form-input
+          v-model="notificationEmail"
+          type="email"
           placeholder="Email Address"
           :state="notificationEmailValidation"
           @change="checkEmail"
@@ -54,7 +54,7 @@ export default class NotificationFields extends Vue {
   }
 
   setwalkinUniqueId () {
-    if ((this.formData.notification_phone) || (this.formData.notification_email)) { 
+    if ((this.formData.notification_phone) || (this.formData.notification_email)) {
       const uuidv4 = require('uuid').v4
       this.$store.commit('updateAddModalForm', { type: 'walkin_unique_id', value: uuidv4() })
     }
@@ -70,14 +70,14 @@ export default class NotificationFields extends Vue {
 
   checkEmail () {
     if (this.formData.notification_email) {
-        let  serchfind: boolean = false;
-        const regexp = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-        serchfind = regexp.test(this.formData.notification_email);
-        if (serchfind) {
-          this.notificationEmailValidation = true
-        } else {
-          this.notificationEmailValidation = false
-        }
+      let serchfind: boolean = false
+      const regexp = new RegExp(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)
+      serchfind = regexp.test(this.formData.notification_email)
+      if (serchfind) {
+        this.notificationEmailValidation = true
+      } else {
+        this.notificationEmailValidation = false
+      }
     } else {
       this.notificationEmailValidation = null
     }
@@ -88,7 +88,7 @@ export default class NotificationFields extends Vue {
       const cleaned = ('' + this.formData.notification_phone).replace(/\D/g, '')
       const x = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/)
       if (x) {
-        this.formData.notification_phone = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '')
+        this.formData.notification_phone = '(' + x[1] + ') ' + x[2] + '-' + x[3]
         if (this.formData.notification_phone.length === 14) {
           this.notificationPhoneValidation = true
         } else {
@@ -103,14 +103,13 @@ export default class NotificationFields extends Vue {
   }
 
   isNumber (evt: any) {
-      // evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
+    const charCode = (evt.which) ? evt.which : evt.keyCode
+    if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
+      evt.preventDefault()
+    } else {
+      return true
     }
+  }
 }
 
 </script>

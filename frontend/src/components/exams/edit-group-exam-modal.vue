@@ -696,12 +696,10 @@
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import zone from 'moment-timezone'
 import DatePicker from 'vue2-datepicker'
-// import Vue from 'vue'
 const FileDownload = require('js-file-download')
 
 @Component({
@@ -796,12 +794,12 @@ export default class EditGroupExamBookingModal extends Vue {
 
   get titleText () {
     switch (this.examType) {
-      case 'group':
-        return 'Group'
-      case 'challenger':
-        return 'Monthly Session'
-      default:
-        return 'Other'
+    case 'group':
+      return 'Group'
+    case 'challenger':
+      return 'Monthly Session'
+    default:
+      return 'Other'
     }
   }
 
@@ -1082,13 +1080,13 @@ export default class EditGroupExamBookingModal extends Vue {
       // JSTOTS INFO removed new from moment. no need to use new with moment
       const time = moment(this.time).format('HH:mm:ssZ').toString()
       // JSTOTS INFO removed new from moment. no need to use new with moment
-      const start = moment(`${date}T${time}`)
-      const end = start.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
+      const startNoBook = moment(`${date}T${time}`)
+      const end = startNoBook.clone().add(parseInt(this.actionedExam.exam_type.number_of_hours), 'h')
       const bookingPost: any = {
         exam_id,
         invigilator_id: null,
         sbc_staff_invigilated: false,
-        start_time: start.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        start_time: startNoBook.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
         booking_name: this.actionedExam.exam_name
       }
@@ -1189,7 +1187,7 @@ export default class EditGroupExamBookingModal extends Vue {
         delete bookingChanges.invigilator_id
       }
 
-      if (this.removeFlag == true) {
+      if (this.removeFlag) {
         putRequests.push({ url: `/invigilator/${this.currentShadowInvigilator}/?add=False&subtract=True` })
         this.removeFlag = false
       } else if (this.shadowInvigilator && this.currentShadowInvigilator) {
@@ -1495,9 +1493,6 @@ export default class EditGroupExamBookingModal extends Vue {
 <style scoped>
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }

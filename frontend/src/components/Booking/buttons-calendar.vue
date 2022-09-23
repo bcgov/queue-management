@@ -40,8 +40,8 @@
 
 <script lang="ts">
 // /* eslint-disable */
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Mutation, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
 import DropdownCalendar from './dropdown-calendar.vue'
 

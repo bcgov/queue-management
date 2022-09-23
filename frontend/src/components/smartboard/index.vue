@@ -14,28 +14,31 @@ limitations under the License.*/ -->
 
 <template>
   <div class="main-container">
-    <v-row>
+    <v-row class="main-container">
       <v-col :cols="((isRightMenuEnabled) && (officetype === 'callbyname' || officetype === 'reception')) ? 10 : 12">
         <div class="top-flex-div">
           <div class="flex-title">{{ date }} {{ time }}</div>
         </div>
         <CallByTicket
-          v-if="officetype === 'callbyticket'"
+          v-if="officetype === 'callbyticket'  && cssStyle"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
+          :cssStyle="{cssStyle}"
         ></CallByTicket>
         <CallByName
-          v-else-if="officetype === 'callbyname' || officetype === 'reception'"
+          v-else-if="cssStyle && (officetype === 'callbyname' || officetype === 'reception')"
           :smartboardData="{ office_number }"
           :networkStatus="{ networkDown }"
           :office="{office}"
           :isMessageEnabled="{isMessageEnabled}"
+          :cssStyle="{cssStyle}"
         ></CallByName>
         <NonReception
-          v-else-if="officetype === 'nocallonsmartboard'"
+          v-else-if="officetype === 'nocallonsmartboard' && cssStyle"
           :smartboardData="{ office_number }"
           :office="{office}"
           :isMessageEnabled="{isMessageEnabled}"
+          :cssStyle="{cssStyle}"
         ></NonReception>
 
         <div v-else>Please stand by...</div>
@@ -49,21 +52,9 @@ limitations under the License.*/ -->
           :isRightMenuEnabled="{isRightMenuEnabled}"
         ></RightMenu>
       </v-col>
-    </v-row>
-    <div v-if="networkDown == true" id="network-status" class="loading small">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div v-if="networkDown == true" id="network-status" class="loading small">
     </div>
-    <!-- <v-row class="marquee-msg-container-full" v-if="(isMessageEnabled)">
-      <MarqueeText
-        :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
-        :office="{office}"
-      />
-    </v-row> -->
+    </v-row>
   </div>
 </template>
 
@@ -77,7 +68,6 @@ import CallByTicket from './call-by-ticket.vue'
 import NonReception from './non-reception.vue'
 import RightMenu from './right-menu.vue'
 import axios from 'axios'
-import config from '../../../config'
 
 @Component({
   components: {
@@ -96,7 +86,6 @@ export default class Smartboard extends Vue {
   networkStatus: string = ''
   date: string = ''
 
-  // return {
   private officetype: string = ''
   private networkDown: boolean = false
   private options: any = {
@@ -115,11 +104,11 @@ export default class Smartboard extends Vue {
   }
 
   private time: any = ''
-  
+
   private isMessageEnabled: boolean = false
   private isRightMenuEnabled: boolean = false
   private office: any = {}
-
+  private cssStyle: string = ''
 
   get url () {
     return `/smartboard/?office_number=${this.office_number}`
@@ -142,11 +131,10 @@ export default class Smartboard extends Vue {
   }
 
   getParameterByName (name, url = window.location.href) {
-    url = window.location.href
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-    var results = regex.exec(url)
+    const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+    const results = regex.exec(url)
     if (!results) return null
     if (!results[2]) return ''
     return decodeURIComponent(results[2].replace(/\+/g, ' '))
@@ -156,7 +144,7 @@ export default class Smartboard extends Vue {
     this.initializeBoard()
   }
 
-  mounted () {
+  async mounted () {
     this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
@@ -172,9 +160,9 @@ export default class Smartboard extends Vue {
     }
     fetchNetworkStatus()
 
-    this.getOffice()
-    window.setInterval(() => {
-      this.getOffice()
+    await this.getOffice()
+    window.setInterval(async () => {
+      await this.getOffice()
     }, 350000)
   }
 
@@ -182,22 +170,70 @@ export default class Smartboard extends Vue {
     this.getOffice()
   }
 
-  private getOffice () {
+  private async calcSpeed (speed) {
+  // Time = Distance/Speed
+    const spanSelector = this.$el.querySelectorAll<HTMLElement>('.marquee span')
+    let i
+    for (i = 0; i < spanSelector.length; i++) {
+      const spanLength = spanSelector[i].offsetWidth
+      const timeTaken = spanLength / speed
+      spanSelector[i].style.animationDuration = timeTaken + 's'
+    }
+  }
+
+  private async setCss () {
+    if (this.office.currently_waiting === 1) {
+      if (this.office.show_currently_waiting_bottom === 1) {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-CBM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-CB'
+        }
+      } else {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-CM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-C'
+        }
+      }
+    } else {
+      if (this.office.show_currently_waiting_bottom === 1) {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-BM'
+        } else {
+          this.cssStyle = 'board-nameticket-video-B'
+        }
+      } else {
+        if (this.office.digital_signage_message === 1) {
+          this.cssStyle = 'board-nameticket-video-M'
+        } else {
+          this.cssStyle = 'board-nameticket-video-full'
+        }
+      }
+    }
+    if (this.office.currently_waiting === undefined || this.office.show_currently_waiting_bottom === undefined || this.office.show_currently_waiting_bottom === undefined) {
+      this.cssStyle = 'board-nameticket-video-default'
+    }
+  }
+
+  private async getOffice () {
     this.isMessageEnabled = false
     this.isRightMenuEnabled = false
-    const url = '/smardboard/side-menu/'+this.office_number
-    Axios.get(url).then(resp => {
+    const url = '/smardboard/side-menu/' + this.office_number
+    await Axios.get(url).then(async resp => {
       if (resp.data) {
         this.office = resp.data.office
         if (this.office) {
-          if(this.office.digital_signage_message == 1) {
+          if (this.office.digital_signage_message === 1) {
             this.isMessageEnabled = true
           }
-          if(this.office.currently_waiting == 1) {
+          if (this.office.currently_waiting === 1) {
             this.isRightMenuEnabled = true
           }
         }
-        }
+        await this.setCss()
+        await this.calcSpeed(50)
+      }
     })
   }
 }
@@ -227,12 +263,6 @@ export default class Smartboard extends Vue {
   text-align: center;
   height: 12%;
   width: 100%;
-}
-.flex-title {
-  font-size: 7.2rem;
-  color: darkblue;
-  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue,
-    0 -1px steelblue;
 }
 .lg-boardtable-head {
   font-size: 2.3rem;
@@ -265,11 +295,39 @@ export default class Smartboard extends Vue {
   background-color: white;
   text-align: center;
 }
-.board-nameticket-video {
+.board-nameticket-video-CBM {
   display: inline-block;
-  width: 74%;
+  width: 85%;
 }
-.board-noticket-video {
+.board-nameticket-video-CB {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-CM {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-C {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-BM {
+  display: inline-block;
+  width: 70%;
+}
+.board-nameticket-video-B {
+  display: inline-block;
+  width: 80%;
+}
+.board-nameticket-video-M {
+  display: inline-block;
+  width: 82%;
+}
+.board-nameticket-video-full {
+  display: inline-block;
+  width: 85%;
+}
+.board-nameticket-video-default {
   display: inline-block;
   width: 85%;
 }
@@ -282,9 +340,10 @@ export default class Smartboard extends Vue {
   vertical-align: top;
 }
 .flex-title {
-    font-size: 4rem;
-    color: midnightblue;
-    margin-top: -4px;
+  font-size: 4rem;
+  color: midnightblue;
+  margin-top: -4px;
+  text-shadow: -1px 0 steelblue, 0 1px steelblue, 1px 0 steelblue, 0 -1px steelblue;
 }
 .video-js {
   background-color: white;
@@ -364,8 +423,6 @@ export default class Smartboard extends Vue {
     height: 70px;
     margin-left: 178px;
     margin-right: -183px;
-    /* margin-left: -73px;
-    margin-right: 66px; */
 }
 
 .marquee-ds {
@@ -405,6 +462,38 @@ export default class Smartboard extends Vue {
     padding-right: 394px;
 }
 
+.marquee {
+  width: 100%;
+	line-height: 50px;
+	color: white;
+  font-size: 2.8rem;
+  background-color: rgb(25, 25, 112);
+  height: 70px;
+}
+.marquee span {
+  display: inline-block;
+  padding-top: 5px;
+  padding-left: 700px;
+  width: max-content;
+  animation: marquee linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+	0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+.marqueeup {
+  width: 100%;
+  margin-left: -20% !important;
+  position: relative;
+  animation: scrollup 20s infinite linear;
+}
+@keyframes scrollup {
+    0%   {top: 900px; left:0px}
+    100% {top: 0px; left:0px}
+}
+
 .loading div:nth-child(1) {
   -webkit-animation-delay: -0.23s;
 }
@@ -426,4 +515,5 @@ export default class Smartboard extends Vue {
     -webkit-transform: rotate(360deg);
   }
 }
+
 </style>

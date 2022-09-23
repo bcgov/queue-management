@@ -3,7 +3,6 @@
     <v-app>
       <div class="v-application">
         <div style="width: 100%" class="m-3">
-          <!-- <v-card class="mx-auto" max-width="97%" elevation="5"> -->
           <div
             style="padding: 0; margin-top: auto; margin-left: 20px"
             class="mb-2"
@@ -31,7 +30,6 @@
           </div>
           <v-sheet>
             <AppointmentsFilter :events="events" v-if="listView" />
-            <!-- interval-height="24" -->
             <v-calendar
               v-else
               ref="calendar"
@@ -86,9 +84,7 @@
                 </v-tooltip>
               </template>
             </v-calendar>
-            <!-- @mouseenter:event="showData" -->
           </v-sheet>
-          <!-- </v-card> -->
         </div>
       </div>
       <ApptBookingModal v-if="!is_stat" :clickedTime="clickedTime" :clickedAppt="clickedAppt" />
@@ -172,13 +168,10 @@ export default class Appointments extends Vue {
   listView: any = false
   searchTerm: string = ''
   type: any = 'week'
-  // types: any = ['month', 'week', 'day', '4day']
   mode: any = 'stack'
-  // modes: any = ['stack', 'column']
   weekday: any = [1, 2, 3, 4, 5]
 
   value: any = ''
-  // events: any = []
   currentDay: any = moment().format('YYYY-MM-DD')// new Date()
 
   is_stat: boolean = false
@@ -248,22 +241,16 @@ export default class Appointments extends Vue {
     }
     let clickedEvent = event
     clickedEvent = { ...clickedEvent, ...{ start: moment(event.start) }, ...{ end: moment(event.end) } }
-    // this.clickedAppt = clickedEvent
     this.setAgendaClickedAppt(clickedEvent)
     this.highlightEvent(clickedEvent)
     this.toggleCheckInModal(true)
     nativeEvent.stopPropagation()
   }
 
-  // goToDate (date) {
-  //   this.$refs.appointments.fireMethod('gotoDate', date)
-  //   this.calendarSetup()
-  // }
   goToDate (date) {
     if (date) {
       this.listView = false
       this.type = 'day'
-      // this.categoryDays = 1
       this.value = new Date(date)
     }
     this.calendarSetup()
@@ -323,18 +310,11 @@ export default class Appointments extends Vue {
           daysToMove = -3
         }
       }
-      // console.log(`getDaysToMove("${direction}")`, { viewedDate, dayOfWeek, daysToMove })
       return daysToMove
       }
       return 1
     }
-    // console.error('Unable to properly calculate ')
-    // return 1
   }
-
-  // renderEvent (event) {
-  //   this.$refs.appointments.fireMethod('renderEvent', event)
-  // }
 
   checkRescheduleCancel () {
     if (this.$store.state.apptRescheduleCancel) {
@@ -357,6 +337,10 @@ export default class Appointments extends Vue {
   }
 
   selectEvent (event) {
+    const eventDate = moment(event.date + " " + event.time);
+    if (eventDate < moment(moment.now())) {
+      return
+    }
     this.is_stat = false
     this.getAppointments().then((each) => {
       const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
@@ -366,12 +350,11 @@ export default class Appointments extends Vue {
     })
     this.checkRescheduleCancel()
     this.blockEventSelect = true
-    // this.unselect()
-    const start = formatedStartTime(event.date, event.time)// event.start.clone()
+    const start = formatedStartTime(event.date, event.time)
     let end
     for (const l of [15, 30, 45, 60]) {
       const testEnd = moment(start).clone().add(l, 'minutes')
-      if (this.appointment_events.find(event => moment(event.start).isBetween(start, testEnd))) {
+      if (this.appointment_events.find(apptEvent => moment(apptEvent.start).isBetween(start, testEnd))) {
         break
       }
       end = testEnd
@@ -381,7 +364,6 @@ export default class Appointments extends Vue {
       end,
       title: event.title
     }
-    // this.clickedTime = e
     this.setAgendaClickedTime(e)
     this.setTempEvent(e)
     this.toggleApptBookingModal(true)
@@ -403,69 +385,35 @@ export default class Appointments extends Vue {
 
   removeTempEvent () {
     this.deleteDraftAppointment().then((resp) => {
-
-      // this.getAppointments().then(() => {
-      //   // finish()
-      //   // this.$store.commit('toggleServeCitizenSpinner', false)
-      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
-      // })
+      // I assume this empty block is intentional
     })
 
-    // this.$refs.appointments.fireMethod('removeEvents', ['_tempEvent'])
   }
 
   highlightEvent (event) {
     const e = event
     e.color = 'pink'
-    // this.$refs.appointments.fireMethod('updateEvent', e)
   }
 
   setTempEvent (event) {
     this.removeTempEvent()
     const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    let end = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    if (event.end) {
-      end = moment(moment.tz(event.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-    } 
-    const e: any = {
-      start,
-      end,
-      title: 'Unconfirmed Booking',
-      color: 'pink',
-      id: '_tempEvent'
-    }
 
     // for draft
     const data: any = {
       start_time: moment.utc(start).format(),
       // setting end time aftger 15 min of start to fix over appoinment time      
-      end_time: moment(start).clone().add(15, 'minutes')// moment.utc(end).format()
-      // service_id: 27,
-      // is_draft: true
+      end_time: moment(start).clone().add(15, 'minutes')
     }
 
-    // this.postDraftAppointment(data)
     this.postDraftAppointment(data).then((resp) => {
-      // this.getAppointments().then(() => {
-      //   // finish()
-      //   // this.$store.commit('toggleServeCitizenSpinner', false)
-      //   // setTimeout(() => { this.toggleSubmitClicked(false) }, 2000)
-      // })
+      // I assume this empty block is intentional
     })
   }
 
   unselect () {
     this.$refs.appointments.fireMethod('unselect')
   }
-
-  // viewRender (view, el) {
-  //   let { title, name } = view
-  //   title = `The Q Appointments: ${title}`
-  //   if (view.name === 'agendaDay') {
-  //     title = moment(view.intervalStart).format('dddd MMMM D, YYYY')
-  //   }
-  //   this.setCalendarSetup({ title, name })
-  // }
 
   calendarSetup () {
     let title = 'Appointments:'
@@ -554,9 +502,6 @@ export default class Appointments extends Vue {
 
 </script>
 <style scoped>
-.btn {
-  border: none !important;
-}
 .label-text {
   font-size: 0.9rem;
 }
@@ -573,9 +518,6 @@ export default class Appointments extends Vue {
 .exam-table-holder {
   border: 1px solid dimgrey;
 }
-/* .theme--light.v-calendar-events .v-event-timed {
-  border: none !important;
-} */
 .notes {
   white-space: pre-wrap;
 }

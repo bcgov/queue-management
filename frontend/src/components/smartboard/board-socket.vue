@@ -30,20 +30,21 @@ export default class BoardSocket extends Vue {
   private reconnectInterval: any = null
   public socketTimeout : number = 20000
   public socketDelayMax : number = 5000
-  
 
   connect (data) {
+    console.log('==> In boardsocket.vue calling connect METHOD')
     this.socketTimeout = configMap.getSocketTimeout()
     this.socketDelayMax = configMap.getSocketDelayMax()
-    console.log('Socket Timeout value = ',this.socketTimeout)
-    console.log('Socket Reconnection Delay Max value = ',this.socketDelayMax)
-    
+    console.log('Socket Timeout value = ', this.socketTimeout)
+    console.log('Socket Reconnection Delay Max value = ', this.socketDelayMax)
+
     socket = io(config.SOCKET_URL, {
       timeout: this.socketTimeout,
       reconnectionDelayMax: this.socketDelayMax,
       path: '/api/v1/socket.io',
       transports: ['websocket']
     })
+    console.log('==> In boardsocket.vue CALLING SOCKET.ONCE connect which calls this.onconnect')
     socket.on('connect', () => { this.onConnect() })
     socket.on('disconnect', () => { this.onDisconnect() })
     console.log('boardSocket attempting to connect')
@@ -51,6 +52,7 @@ export default class BoardSocket extends Vue {
   }
 
   join () {
+    console.log('==> In boardsocket.vue CALLING join which calls socket.emit joinSmartboardRoom')
     socket.emit(
       'joinSmartboardRoom',
       { office_id: this.smartboardData.office_number },
@@ -89,7 +91,7 @@ export default class BoardSocket extends Vue {
 
   // LISTENER METHODS
   onConnect () {
-    console.log('boardSocket connected')
+    console.log('==> In boardsocket.vue CALLING onConnect')
     // console.log('==> In board-socket.vue, onConnect, socket.io.engine.id is: ' + socket.io.engine.id.toString())
     console.log('==> In board-socket.vue, onConnect, socket.io.engine.id is: ' + socket.io.engine.id)
     clearInterval(this.reconnectInterval)
@@ -127,7 +129,8 @@ export default class BoardSocket extends Vue {
   }
 
   created () {
-    this.$root.$on('boardConnect', (data) => {
+    console.log('==> In boardsocket.vue calling CREATED METHOD')
+    this.$root.$once('boardConnect', (data) => {
       this.connect(data)
     })
   }

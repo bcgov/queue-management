@@ -42,10 +42,9 @@ export default class ConfigHelper {
 
   static getAppAPIUrl () {
     return ConfigHelper.getValue('VUE_APP_ROOT_API')
-    // return process.env.VUE_APP_ROOT_API
   }
 
-  static getValue (key: String) {
+  static getValue (key:string) {
     // @ts-ignore
     return JSON.parse(sessionStorage.getItem(SessionStorageKeys.ApiConfigKey))[key]
   }
@@ -96,5 +95,21 @@ export default class ConfigHelper {
 
   static isFeedbackEnabled () {
     return ConfigHelper.getValue('FEEDBACK_ENABLED')
+  }
+
+  static getHeaderText () {
+    return ConfigHelper.getValue('VUE_APP_HEADER_MSG')
+  }
+
+  static getHeaderLinks () {
+    return ConfigHelper.getValue('VUE_APP_HEADER_LINKS')
+  }
+
+  static getFooterText () {
+    return ConfigHelper.getValue('VUE_APP_FOOTER_MSG')
+  }
+
+  static getFooterLinks () {
+    return ConfigHelper.getValue('VUE_APP_FOOTER_LINKS')
   }
 }

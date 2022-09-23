@@ -1,6 +1,11 @@
 <template>
   <v-col>
-    <v-col class="feedback_view" :class="showFeedbackArea ? 'feedback_view_expanded':''" v-show="!$vuetify.breakpoint.xs">
+    <v-col
+      class="feedback_view"
+      :class="showFeedbackArea ? 'feedback_view_expanded':''"
+      v-show="!$vuetify.breakpoint.xs"
+      data-cy="feedback"
+    >
           <v-row class="feedback_container" :class="getFeedbackViewStyle()">
             <v-col>
               <v-col class="feedback_strip_parent">
@@ -44,7 +49,6 @@
                     </v-textarea>
                     <v-col class="feedback_caption response_required"><span class="mandatory">*</span> Would you like a response from us?</v-col>
                     <v-row justify="center">
-                        <!-- <v-col><input type="radio" v-model="feedbackModel.responseRequired" v-bind:value="yes"><span class="feedback_caption">Yes</span></v-col> -->
                         <v-radio-group class="no_margin" v-model="responseRequired" row :disabled="feedbackMessage.length === 0">
                           <v-radio  label="Yes" v-bind:value="yes"></v-radio>
                           <v-radio  label="No" v-bind:value="no" @click="showResponsePage = false" ></v-radio>
@@ -286,7 +290,7 @@ export default class Feedback extends Vue {
   private authModule = getModule(AuthModule, this.$store)
   private showFeedbackArea = false
   private consent: boolean = false
-  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizen_comments: {}, service_channel: {}, response: {}, citizen_name: {}, citizen_contact: {}, citizen_email: {}, entity_key: {}, service_date: {}, submit_date_time: {}, entered_by: {} } }
+  private feedbackRequest: FeedbackRequestObject = { variables: { engagement: {}, citizenComments: {}, serviceChannel: {}, response: {}, citizenName: {}, citizenContact: {}, citizenEmail: {}, entityKey: {}, serviceDate: {}, submitDateTime: {}, enteredBy: {} } }
   private feedbackResponse: FeedbackResponseObject
   private responseRequired: boolean = false
   private showMobileFeedbackPanel: boolean = false
@@ -353,16 +357,16 @@ export default class Feedback extends Vue {
     this.feedbackMessage = 'Feedback Message: ' + this.feedbackMessage + '\n'
     this.feedbackMessage = nonStepperLocation ? this.feedbackMessage + 'Step: ' + nonStepperLocation : this.feedbackMessage + 'Step: ' + this.bookingStepInfo[appointmentStep]
     this.feedbackMessage = appointmentLocation ? this.feedbackMessage + '\n' + 'Location: ' + appointmentLocation : this.feedbackMessage
-    this.feedbackRequest.variables.citizen_comments.value = this.feedbackMessage + '\n' + CommonUtils.getUserAgent()
+    this.feedbackRequest.variables.citizenComments.value = this.feedbackMessage + '\n' + CommonUtils.getUserAgent()
     this.feedbackRequest.variables.response.value = this.responseRequired ? 'true' : 'false'
-    this.feedbackRequest.variables.citizen_name.value = this.citizenName === '' ? 'None' : this.citizenName
-    this.feedbackRequest.variables.citizen_contact.value = this.phone === '' ? 'None' : this.phone
-    this.feedbackRequest.variables.citizen_email.value = this.email === '' ? 'None' : this.email
-    this.feedbackRequest.variables.service_date.value = this.getCurrentDateinFormat()
-    this.feedbackRequest.variables.submit_date_time.value = this.getCurrentDateinFormat()
+    this.feedbackRequest.variables.citizenName.value = this.citizenName === '' ? 'None' : this.citizenName
+    this.feedbackRequest.variables.citizenContact.value = this.phone === '' ? 'None' : this.phone
+    this.feedbackRequest.variables.citizenEmail.value = this.email === '' ? 'None' : this.email.trim()
+    this.feedbackRequest.variables.serviceDate.value = this.getCurrentDateinFormat()
+    this.feedbackRequest.variables.submitDateTime.value = this.getCurrentDateinFormat()
     const resp = await this.submitFeedback(this.feedbackRequest)
     if (resp.status) {
-      if (resp.status === 200 && resp.data.response_code === 200) {
+      if (resp.status === 200 && resp.data.responseCode === 200) {
         this.submitMessage = 'Thank you!'
         this.submitInProgress = false
         this.submitComplete = true
@@ -393,25 +397,23 @@ export default class Feedback extends Vue {
 
   private initModel () {
     this.feedbackRequest.variables.engagement.type = 'String'
-    this.feedbackRequest.variables.citizen_comments.type = 'String'
-    this.feedbackRequest.variables.service_channel.type = 'String'
-    this.feedbackRequest.variables.service_channel.value = this.feedbackServiceChannel
-    this.feedbackRequest.variables.entered_by.type = 'String'
-    this.feedbackRequest.variables.entered_by.value = this.feedbackServiceChannel
+    this.feedbackRequest.variables.citizenComments.type = 'String'
+    this.feedbackRequest.variables.serviceChannel.type = 'String'
+    this.feedbackRequest.variables.serviceChannel.value = this.feedbackServiceChannel
+    this.feedbackRequest.variables.enteredBy.type = 'String'
+    this.feedbackRequest.variables.enteredBy.value = this.feedbackServiceChannel
     this.feedbackRequest.variables.response.type = 'Boolean'
-    this.feedbackRequest.variables.citizen_name.type = 'String'
-    this.feedbackRequest.variables.citizen_contact.type = 'String'
-    this.feedbackRequest.variables.citizen_email.type = 'String'
-    this.feedbackRequest.variables.entity_key.type = 'String'
-    this.feedbackRequest.variables.entity_key.value = 'CCII'
-    this.feedbackRequest.variables.service_date.type = 'String'
+    this.feedbackRequest.variables.citizenName.type = 'String'
+    this.feedbackRequest.variables.citizenContact.type = 'String'
+    this.feedbackRequest.variables.citizenEmail.type = 'String'
+    this.feedbackRequest.variables.entityKey.type = 'String'
+    this.feedbackRequest.variables.entityKey.value = 'CCII'
+    this.feedbackRequest.variables.serviceDate.type = 'String'
   }
 
   private getCurrentDateinFormat () {
     const currentDate = new Date()
-    const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-    const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
-    return currentDate.getFullYear() + '-' + month + '-' + day
+    return new Intl.DateTimeFormat('en-CA').format(currentDate)
   }
 
   private phoneEmail (value) {
@@ -426,14 +428,18 @@ export default class Feedback extends Vue {
     const phoneCondition = this.phone !== undefined && this.phone !== ''
     const emailCondition = this.email !== undefined && this.email !== ''
     if (emailCondition || phoneCondition) {
+      const formatResponse = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@\w+([.-]?\w+)*(\.\w+\s*)+$/.test(this.email) ? true : 'Email must be valid'
       if (emailCondition) {
-        const formatResponse = /.+@.+\..+/.test(this.email) ? true : 'Email must be valid'
         this.emailRules = [formatResponse]
         this.phoneRules = [true]
       }
       if (phoneCondition) {
+        if (this.email) {
+          this.emailRules = [formatResponse]
+        } else {
+          this.emailRules = [true]
+        }
         this.phoneRules = [true]
-        this.emailRules = [true]
       }
     } else {
       this.emailRules = ['Email or Phone is required']

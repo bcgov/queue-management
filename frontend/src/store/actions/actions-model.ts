@@ -11,11 +11,7 @@
  *
  */
 
-// import { ActionIF } from '@/interfaces/action-interface'
-
-import { Axios, searchNestedObject } from './../helpers'
-
-import AppointmentsModule from '../modules/appointments-module';
+import { Axios } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
 
@@ -59,11 +55,11 @@ export const commonActions: any = {
     Axios(context)
       .post('/upload/', formData, contenttype)
       .then(
-        resp => {
+        _resp => {
           context.commit('setMainAlert', 'File uploaded successfully.')
           context.dispatch('requestVideoFileInfo')
         },
-        error => {
+        _error => {
           context.commit(
             'setMainAlert',
             'An error occurred uploading your file.'
@@ -86,17 +82,14 @@ export const commonActions: any = {
     Axios(context)
       .delete('/videofiles/', { data: payload })
       .then(
-        resp => {
+        _resp => {
           context.commit('setMainAlert', 'File deleted successfully.')
           context.dispatch('requestVideoFileInfo')
         },
-        error => {
+        _error => {
           context.commit('setMainAlert', 'File could not be deleted.')
         }
       )
-    // .catch(() => {
-    //   context.commit('setMainAlert', 'An exception occurred trying to delete file.')
-    // })
   },
 
   requestVideoFileInfo (context) {
@@ -308,7 +301,7 @@ export const commonActions: any = {
               booking.name = b.booking_name
             }
             booking.id = b.booking_id
-            booking.category = b.room ? b.room.room_name : 'Offsite'// 'Boardroom 1'// b.room.room_name
+            booking.category = b.room ? b.room.room_name : 'Offsite'
             booking.exam =
               context.state.exams.find(ex => ex.booking_id == b.booking_id) ||
               false
@@ -337,7 +330,7 @@ export const commonActions: any = {
 
   getAllCitizens (context) {
     const url = '/citizens/'
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, _reject) => {
       Axios(context)
         .get(url)
         .then(resp => {
@@ -442,8 +435,6 @@ export const commonActions: any = {
         .get(url)
         .then(resp => {
           context.commit('setExams', resp.data.exams)
-          // console.log('==> getExams(context), exams are:')
-          // console.log(resp.data.exams)
           resolve(resp)
         })
         .catch(error => {
@@ -820,16 +811,15 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
     context.commit('toggleAddModal', true)
-
-    Axios(context)
-      .post('/citizens/', {})
+  
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(
         resp => {
           const value = resp.data.citizen
           context.commit('updateAddModalForm', { type: 'citizen', value })
           context.commit('resetServiceModal')
         },
-        error => {
+        _error => {
           context.commit('toggleAddModal', false)
           context.commit(
             'setMainAlert',
@@ -870,7 +860,7 @@ export const commonActions: any = {
     context.commit('toggleAddNextService', true)
 
     context.dispatch('putServiceRequest').then(
-      response => {
+      _response => {
         context
           .dispatch('putCitizen')
           .then(() => {
@@ -913,7 +903,7 @@ export const commonActions: any = {
       .then(() => {
         context
           .dispatch('putCitizen')
-          .then(resp => {
+          .then(_resp => {
             context.commit('toggleAddModal', false)
             context.commit('toggleAddNextService', false)
             context.commit('toggleServiceModal', true)
@@ -940,7 +930,7 @@ export const commonActions: any = {
           .then(() => {
             context
               .dispatch('postAddToQueue', citizen_id)
-              .then(resp => {
+              .then(_resp => {
                 context.dispatch('resetAddCitizenModal')
                 context.commit('toggleBegunStatus', false)
                 context.commit('toggleInvitedStatus', false)
@@ -999,7 +989,7 @@ export const commonActions: any = {
     })
   },
 
-  clickRequestExam (context, type) {
+  clickRequestExam (context, _type) {
     return new Promise((resolve, reject) => {
       context
         .dispatch('postRequestExam')
@@ -1081,8 +1071,7 @@ export const commonActions: any = {
       context.commit('setDefaultChannel')
     }
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(
         resp => {
           const value = resp.data.citizen
@@ -1115,7 +1104,7 @@ export const commonActions: any = {
               context.commit('setPerformingAction', false)
             })
         },
-        error => {
+        _error => {
           context.commit(
             'setMainAlert',
             'An error occurred adding a citizen.'
@@ -1142,8 +1131,7 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(resp => {
         const value = resp.data.citizen
         context.commit('updateAddModalForm', { type: 'citizen', value })
@@ -1191,8 +1179,7 @@ export const commonActions: any = {
     context.commit('setPerformingAction', true)
     context.dispatch('toggleModalBack')
 
-    Axios(context)
-      .post('/citizens/', {})
+    context.dispatch('postAddCitizen', context.getters.citizens_queue.length)
       .then(resp => {
         const value = resp.data.citizen
         context.commit('updateAddModalForm', { type: 'citizen', value })
@@ -1422,7 +1409,6 @@ export const commonActions: any = {
         context.commit('toggleServiceModal', true)
       })
       .catch(() => {
-        // context.commit('setMainAlert', '(index) There are no citizens waiting.')
         context.commit('toggleInviteCitizenSpinner', false)
       })
       .finally(() => {
@@ -1550,7 +1536,7 @@ export const commonActions: any = {
 
     Axios(context)
       .post(`/citizens/${citizen_id}/remove_from_queue/`, {})
-      .then((res) => {
+      .then((_res) => {
         context.commit('toggleInvitedStatus', false)
         context.commit('setPerformingAction', false)
         context.commit('toggleServiceModal', false)
@@ -1647,7 +1633,7 @@ export const commonActions: any = {
 
     context
       .dispatch('putServiceRequest')
-      .then(resp => {
+      .then(_resp => {
         context
           .dispatch('putCitizen')
           .then(() => {
@@ -1691,7 +1677,7 @@ export const commonActions: any = {
   },
 
   initializeAgenda (context) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, _reject) => {
       context.dispatch('getExams').then(() => {
         context.dispatch('getBookings').then(() => resolve())
       })
@@ -1786,6 +1772,22 @@ export const commonActions: any = {
     })
   },
 
+  postAddCitizen (context, citizens_waiting) {
+    return new Promise((resolve, reject) => {
+      const url = `/citizens/${citizens_waiting}/add_citizen/`
+      Axios(context)
+        .post(url)
+        .then(
+          resp => {
+            resolve(resp)
+          },
+          error => {
+            reject(error)
+          }
+        )
+    })
+  },
+
   postCitizenLeft (context, citizen_id) {
     return new Promise((resolve, reject) => {
       const url = `/citizens/${citizen_id}/citizen_left/`
@@ -1873,7 +1875,7 @@ export const commonActions: any = {
   },
 
   scheduleExam (context, payload) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, _reject) => {
       context.dispatch('postBooking', payload).then(booking_id => {
         context.dispatch('putExam', booking_id).then(() => {
           resolve()
@@ -1907,7 +1909,7 @@ export const commonActions: any = {
   putExamInfo (context, payload) {
     const id = payload.exam_id.valueOf()
     delete payload.exam_id
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, _reject) => {
       const url = `/exams/${id}/`
       Axios(context)
         .put(url, payload)
@@ -2195,20 +2197,20 @@ export const commonActions: any = {
                 }
                 context
                   .dispatch('putExam', putObject)
-                  .then(examResp => {
+                  .then(examResp2 => {
                     if (responses.sbc_managed === 'non-sbc') {
                       if (
-                        examResp.data &&
-                        examResp.data.exam &&
-                        examResp.data.exam.invigilator
+                        examResp2.data &&
+                        examResp2.data.exam &&
+                        examResp2.data.exam.invigilator
                       ) {
                         context
                           .dispatch('emailInvigilator', {
-                            invigilator: examResp.data.exam.invigilator,
-                            exam: examResp.data.exam
+                            invigilator: examResp2.data.exam.invigilator,
+                            exam: examResp2.data.exam
                           })
-                          .then(emailResp => {
-                            resolve(examResp)
+                          .then(_emailResp => {
+                            resolve(examResp2)
                           })
                           .catch(() => {
                             console.log('EMAIL_FAILED')
@@ -2216,7 +2218,7 @@ export const commonActions: any = {
                           })
                       }
                     } else {
-                      resolve(examResp)
+                      resolve(examResp2)
                     }
                   })
                   .catch(() => {
@@ -2245,7 +2247,7 @@ export const commonActions: any = {
     return new Promise<void>((resolve, reject) => {
       Axios(context)
         .post('/exams/request', postData)
-        .then(examResp => {
+        .then(_examResp => {
           resolve()
         })
         .catch(err => {
@@ -2342,9 +2344,7 @@ export const commonActions: any = {
     }
 
     if (Object.keys(data).length === 0) {
-      return new Promise((resolve, reject) => {
-        resolve(' ')
-      })
+      return Promise.resolve(' ')
     }
     return new Promise((resolve, reject) => {
       const url = `/citizens/${citizen_id}/`
@@ -2413,9 +2413,7 @@ export const commonActions: any = {
       }
     }
     if (Object.keys(data).length === 0) {
-      return new Promise((resolve, reject) => {
-        resolve(' ')
-      })
+      return Promise.resolve(' ')
     }
     
     return new Promise((resolve, reject) => {

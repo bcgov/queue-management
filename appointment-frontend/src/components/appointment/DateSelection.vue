@@ -16,7 +16,8 @@
           color="success"
           header-color="primary"
           full-width
-          @click:date="dateClicked('true')"
+          @click:date="goto('available');dateClicked('true')"
+          data-cy="step-3-date-picker"
         ></v-date-picker>
       </v-col>
       <v-col
@@ -33,7 +34,7 @@
           <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
         </div>
         <template v-if="selectedDateTimeSlots.length">
-          <div class="mt-6">
+          <div ref="available" class="mt-6">
             <strong>Available Time Slots</strong>
           </div>
           <v-row>
@@ -48,7 +49,9 @@
                 outlined
                 block
                 @click="selectTimeSlot(timeslot)"
-                color="primary">
+                color="primary"
+                data-cy="step-3-button-timeslot"
+              >
                 {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
               </v-btn>
             </v-col>
@@ -65,13 +68,13 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable sort-imports */
 import { Appointment, AppointmentSlot } from '@/models/appointment'
-import CommonUtils, { timezoneOffset } from '@/utils/common-util'
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import CommonUtils from '@/utils/common-util'
+import { Component, Mixins } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import { Office } from '@/models/office'
-import { OfficeModule } from '@/store/modules'
 import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 
@@ -104,9 +107,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
   private readonly getAvailableAppointmentSlots!: (input: {officeId: number, serviceId: number}) => Promise<any>
   private readonly createDraftAppointment!: () => Promise<any>
   private readonly setCurrentAppointmentSlot!: (slot: AppointmentSlot) => void
-   private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
+  private readonly setCurrentDraftAppointment!: (appointment: Appointment) => void
   private readonly currentService!: Service
-  // TODO: take timezone from office data from state
   private selectedDate = ''
   private selectedDateObj = ''
   private selectedDateTimeSlots = []
@@ -124,15 +126,15 @@ export default class DateSelection extends Mixins(StepperMixin) {
    }
 
    private get selectedTimeSlot () {
-     return (this.currentAppointmentSlot?.start_time && this.currentAppointmentSlot?.end_time)
-       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.start_time, this.currentOfficeTimezone, 'hh:mm aaa')} -
-        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.end_time, this.currentOfficeTimezone, 'hh:mm aaa')}`
+     return (this.currentAppointmentSlot?.startTime && this.currentAppointmentSlot?.endTime)
+       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.startTime, this.currentOfficeTimezone, 'hh:mm aaa')} -
+        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.endTime, this.currentOfficeTimezone, 'hh:mm aaa')}`
        : ''
    }
 
    private async mounted () {
      if (this.isOnCurrentStep) {
-       if (this.currentOffice?.office_id) {
+       if (this.currentOffice?.officeId) {
          this.getAvailableService()
        }
        this.dateClicked()
@@ -141,8 +143,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
    private async getAvailableService () {
      const availableAppoinments = await this.getAvailableAppointmentSlots({
-       officeId: this.currentOffice.office_id,
-       serviceId: this.currentService.service_id
+       officeId: this.currentOffice.officeId,
+       serviceId: this.currentService.serviceId
      })
      Object.keys(availableAppoinments).forEach(date => {
        if (availableAppoinments[date]?.length) {
@@ -160,9 +162,15 @@ export default class DateSelection extends Mixins(StepperMixin) {
      return this.availableDates.find(date => date === val)
    }
 
+   goto (refName) {
+     let element = this.$refs[refName] as HTMLDivElement
+     let top = element.offsetTop
+     window.scrollTo(0, top)
+   }
+
    private dateClicked (userClicked = 'false') {
      this.selectedDateTimeSlots = []
-     let slots = []
+     let slots: AppointmentSlot[] = []
      if (this.selectedDate) {
        if (userClicked === 'true') {
          this.isUserClicked = 'true'
@@ -174,49 +182,38 @@ export default class DateSelection extends Mixins(StepperMixin) {
      slots?.forEach(slot => {
        this.selectedDateTimeSlots.push({
          ...slot,
-         startTimeStr: CommonUtils.get12HTimeString(slot.start_time),
-         endTimeStr: CommonUtils.get12HTimeString(slot.end_time)
+         startTimeStr: CommonUtils.get12HTimeString(slot.startTime),
+         endTimeStr: CommonUtils.get12HTimeString(slot.endTime)
        })
      })
    }
 
-   async selectTimeSlot (slot) {
+   async selectTimeSlot (slot: AppointmentSlot) {
      // Note - For cross browser, we must use specific date string format below
      // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
      // Safari needs format from spec, "2020-05-08T09:00-07:00"
      // (safari also needs timezone offset)
-     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.start_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
-     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.end_time}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.startTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
+     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.endTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
      st = st.replace('.000Z', '+00').replace('T', ' ')
      et = et.replace('.000Z', '+00').replace('T', ' ')
      const selectedSlot: AppointmentSlot = {
-       // start_time: new Date(`${this.selectedDate}T${slot.start_time}${timezoneOffset()}`).toISOString(),
-       // end_time: new Date(`${this.selectedDate}T${slot.end_time}${timezoneOffset()}`).toISOString()
-       //  start_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.start_time}`), this.currentOfficeTimezone).toISOString(),
-       //  end_time: zonedTimeToUtc(new Date(`${this.selectedDate}T${slot.end_time}`), this.currentOfficeTimezone).toISOString()
-       start_time: st,
-       end_time: et
+       startTime: st,
+       endTime: et
      }
      this.setCurrentAppointmentSlot(selectedSlot)
-     // this.createDraftAppointment()
-     // this.isLoading = true
      try {
        const resp = await this.createDraftAppointment()
-       //  if (resp.appointment_id) {
        if (resp) {
          this.setCurrentDraftAppointment(resp)
+         window.scrollTo(0, 0)
          this.stepNext()
-         // this.isLoading = false
        }
      } catch (error) {
        this.isLoading = false
 
        this.getAvailableService()
        this.dateClicked()
-       // this.dialogPopup.showDialog = true
-       // this.dialogPopup.isSuccess = false
-       // this.dialogPopup.title = 'Failed!'
-       // this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
      }
    }
 }

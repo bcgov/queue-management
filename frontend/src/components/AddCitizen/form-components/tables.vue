@@ -63,7 +63,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="share-square"
-                    style="fontsize: 1rem; color: blue"
+                    style="font-size: 1rem; color: blue"
                   />
                 </div>
               </template>
@@ -74,7 +74,7 @@
                   &nbsp;&nbsp;&nbsp;
                   <font-awesome-icon
                     icon="hands-helping"
-                    style="fontsize: 1rem; color: green"
+                    style="font-size: 1rem; color: green"
                   />
                 </div>
               </template>
@@ -108,7 +108,6 @@
 </template>
 
 <script lang="ts">
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
@@ -205,7 +204,7 @@ export default class Tables extends Vue {
   }
 
   rowClicked (item: any, index: any) {
-    if (this.performingAction == false) {
+    if (!this.performingAction) {
       const id = item.service_id
       this.setAddModalSelectedItem(item.service_name)
       this.$store.commit('updateAddModalForm', { type: 'service', value: id })
@@ -235,19 +234,12 @@ export default class Tables extends Vue {
       this.clickAddServiceApply()
     } else if (this.addModalSetup === 'edit_mode') {
       this.clickEditApply()
-    } else if (this.$route.path === '/exams') {
+    } else if (this.$route.path === '/exams' || this.$route.path === '/booking' || this.$route.path === '/service-flow') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
     } else if (this.$route.path === '/appointments') {
       this.$store.commit('appointmentsModule/setSelectedService', this.addModalForm.service)
       this.closeAddServiceModal()
-    } else if (this.$route.path === '/booking') {
-      this.toggleExamsTrackingIP(true)
-      this.clickBeginService({ simple: true })
-    } else if (this.$route.path === '/service-flow') {
-      // remove continue button in service flow
-      this.toggleExamsTrackingIP(true)
-      this.clickBeginService({ simple: true })
     } else if ((!this.simplifiedTicketStarted) && (this.addModalSetup == 'reception' || this.addModalSetup == 'non_reception')) {
       this.clickBeginService({ simple: false })
     } else {

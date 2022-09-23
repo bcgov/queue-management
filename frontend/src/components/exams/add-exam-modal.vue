@@ -161,9 +161,8 @@
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import AddExamFormController from './add-exam-form-controller.vue'
 import AddExamFormConfirm from './add-exam-form-confirm.vue'
 import moment from 'moment'
@@ -331,7 +330,6 @@ export default class AddExamModal extends Vue {
       const d = new Date()
       const today = moment(d).format('YYYY-MM-DD')
       this.captureExamDetail({ key: 'exam_received_date', value: today })
-      const recd = moment().add(90, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'group':
@@ -340,7 +338,6 @@ export default class AddExamModal extends Vue {
     case 'other':
       this.resetModal()
       this.captureExamDetail({ key: 'on_or_off', value: 'on' })
-      const exp = moment().add(60, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
     case 'pesticide':
@@ -437,7 +434,7 @@ export default class AddExamModal extends Vue {
       const list: any = []
       this.errors.forEach(error => {
         if (this.steps.some(step => step.step == error)) {
-          list.push(this.steps.find(step => step.step == error)).questions
+          list.push(this.steps.find(step => step.step == error).questions)
         }
       })
       if (list.includes(i)) {

@@ -1,13 +1,11 @@
-/*
-Copyright 2015 Province of British Columbia Licensed under the Apache License,
-Version 2.0 (the "License"); you may not use this file except in compliance with
-the License. You may obtain a copy of the License at
+/* Copyright 2015 Province of British Columbia Licensed under the Apache
+License, Version 2.0 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
 http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or
 agreed to in writing, software distributed under the License is distributed on
 an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 or implied. See the License for the specific language governing permissions and
-limitations under the License.
-*/
+limitations under the License. */
 
 <template>
   <div id="App">
@@ -28,7 +26,6 @@ limitations under the License.
 </template>
 
 <script lang="ts">
-
 import { Component, Vue } from 'vue-property-decorator'
 // eslint-disable-next-line sort-imports
 import { Getter, State } from 'vuex-class'
@@ -80,8 +77,8 @@ export default class App extends Vue {
   // private readonly user!: any
 
   @Getter('show_scheduling_indicator') private showSchedulingIndicator!: false;
-  @State('isLoggedIn') private isLoggedIn!: string | undefined
-  @State('user') private user!: string | undefined
+  @State('isLoggedIn') private isLoggedIn!: string | undefined;
+  @State('user') private user!: string | undefined;
   // updated () {
   //   console.log('user', this.user)
   //   console.log('isLoggedIn', this.isLoggedIn)
@@ -95,7 +92,8 @@ export default class App extends Vue {
   // }
 
   get style () {
-    const output: any = { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' }
+    // removing overflowX: 'hidden' from { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' } for serviceflow double scrolling fix
+    const output: any = { marginTop: 72 + 'px', width: '100%' }
     if (this.showSchedulingIndicator) {
       output.marginBottom = '100px'
     }
@@ -144,7 +142,7 @@ export default class App extends Vue {
   top: 72px;
 }
 .view-screen-title {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   color: black;
   font-weight: 500;
   font-size: 1.9rem;

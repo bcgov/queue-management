@@ -53,7 +53,7 @@ limitations under the License.*/
       sort-by='start_time'
     >
       <template #cell(comments)="data">
-        <div class="truncate"  v-b-tooltip.hover :title="data.value"> 
+        <div class="truncate"  v-b-tooltip.hover :title="data.value">
           {{ data.value }}
         </div>
       </template>
@@ -76,15 +76,11 @@ limitations under the License.*/
   </div>
 </template>
 <script lang="ts">
- /* eslint-disable */
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
+/* eslint-disable */
+import { Action, Getter, State, namespace } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import CheckInModal from '@/components/Appointments/checkin-modal.vue'
 import ApptBookingModal from '../Appointments/appt-booking-modal/appt-booking-modal.vue'
-import { formatedStartTime } from '@/utils/helpers'
-
-
-
 import moment from 'moment'
 const appointmentsModule = namespace('appointmentsModule')
 
@@ -135,19 +131,10 @@ export default class AgendaScreen extends Vue {
       label: 'Service',
       sortable: true
     },
-    // {
-    //   key: 'contact_info',
-    //   label: 'Contact Info',
-    //   sortable: true
-    // },
     {
       key: 'comments',
       label: 'Comments'
     },
-    // {
-    //   key: 'edit',
-    //   label: 'Edit'
-    // },
     {
       key: 'check_in',
       label: 'Check-In'
@@ -166,8 +153,6 @@ export default class AgendaScreen extends Vue {
   // Note ths method does not FETCH most recent appointments!
   // Call fetch() to update underlying data
   async computed_appointments() {
-    const now = new Date();
-
     // Changing between 1 week / 1 day seems to work tho.  Just can't go lower than 1 day?
     const pastCutoff = moment(new Date()).subtract('1', 'hour');
     const futureCutoff = moment(new Date()).add('4', 'hour');
@@ -197,14 +182,12 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        // start_time: `${moment(appt.start_time).format("LT")}`,
         start_time: appt.start_time,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
         comments: appt.comments,
         check_in: { appt }
-        // edit: { appt }
       }
     })
   }
@@ -298,7 +281,6 @@ export default class AgendaScreen extends Vue {
       end: moment(appt.end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
-    // this.toggleCheckInModal(true);
 
     this.loadingButtons[appt.appointment_id] = true;
     this.postCheckIn(this.clickedAppt).then(response => {

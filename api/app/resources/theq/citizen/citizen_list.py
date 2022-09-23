@@ -15,7 +15,7 @@ limitations under the License.'''
 from flask import request, g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, time_print, get_key
-from app.models.theq import Citizen, CSR, CitizenState
+from app.models.theq import Citizen, CSR, CitizenState, Period, ServiceReq, citizen
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
@@ -23,9 +23,10 @@ from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, has_any_role, has_role
 from app.auth.auth import jwt
+from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.dialects import postgresql
 
-
-@api.route("/citizens/", methods=['GET', 'POST'])
+@api.route("/citizens/", methods=['GET'])
 class CitizenList(Resource):
 
     citizen_schema = CitizenSchema()
@@ -38,10 +39,14 @@ class CitizenList(Resource):
             has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
             csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
             if not csr:
+                db.session.close()
                 raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
-            citizens = Citizen.query.filter_by(office_id=csr.office_id, cs_id=active_id) \
-                .order_by(Citizen.priority) \
-                .join(Citizen.service_reqs).all()
+
+            citizens = Citizen.query \
+                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                .filter_by(office_id=csr.office_id, cs_id=active_id) \
+                .order_by(Citizen.priority)
+
             result = self.citizens_schema.dump(citizens)
             return {'citizens': result,
                     'errors': self.citizens_schema.validate(citizens)}, 200
@@ -50,24 +55,35 @@ class CitizenList(Resource):
             print(e)
             return {'message': 'API is down'}, 500
 
+@api.route("/citizens/<int:citizens_waiting>/add_citizen/", methods=['POST'])
+class CitizenList(Resource):
+    citizen_schema = CitizenSchema()
+    citizens_schema = CitizenSchema(many=True)
+
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
-    def post(self):
+    def post(self, citizens_waiting):
 
         user = g.jwt_oidc_token_info['username']
         has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user,
                  "CitizenList POST /citizens/")
 
+
         json_data = request.get_json()
 
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
         if not csr:
+            db.session.close()
             raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
 
         try:
+
+            if not json_data:
+                json_data = {}
             citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
             citizen.start_time = datetime.utcnow()
+            citizen.start_position = citizens_waiting + 1
 
         except ValidationError as err:
             print(err)

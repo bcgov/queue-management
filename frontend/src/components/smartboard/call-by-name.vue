@@ -13,21 +13,15 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div style="">
-    <div class="board-nameticket-video">
-      <div class="board-video-div">
-        <Video :office_number="smartboardData.office_number" />
-      </div>
+  <div style="width: 100%; height: 100%">
+    <div v-bind:class="videoStyle.cssStyle">
+      <Video :office_number="smartboardData.office_number" />
       <div v-if="((!networkStatus.networkDown) && (office.office.show_currently_waiting_bottom === 1))" class="bottom-flex-div">
         <div class="flex-title">Currently waiting: {{ waiting }}</div>
       </div>
-      <span v-else>
-        <br/><br/>
-      </span>
       <MarqueeText
       v-if="isMessageEnabled.isMessageEnabled"
         :smartboardData="{ office_number }"
-        :networkStatus="{ networkDown }"
         :office="{office}"
       />
     </div>
@@ -38,11 +32,9 @@ limitations under the License.*/
 // /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-// import axios from 'axios'
 import Axios from '@/utils/axios'
-import Video from './video.vue'
-import config from '../../../config'
 import MarqueeText from './marquee-text.vue'
+import Video from './video.vue'
 
 @Component({
   components: {
@@ -63,11 +55,15 @@ export default class CallByName extends Vue {
   @Prop({ default: false })
   private isMessageEnabled!: boolean
 
+  @Prop({ default: '' })
+  private cssStyle!: string
+
   private citizens: any = ''
   private officeType: string = ''
   private maxVideoHeight: string | number = ''
-  private office_number: string = this.smartboardData.office_number
+  private office_number: string = ''
   private networkDown: boolean = false
+  private videoStyle: string = ''
 
   get url () {
     return `/smartboard/?office_number=${this.smartboardData.office_number}`
@@ -81,12 +77,10 @@ export default class CallByName extends Vue {
   }
 
   initializeBoard () {
+    this.office_number = this.smartboardData.office_number
     Axios.get(this.url).then(resp => {
       this.officeType = resp.data.office_type
       this.citizens = resp.data.citizens
-      // TODO check can't see  this.office_id Declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
-      // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
   }
@@ -97,13 +91,12 @@ export default class CallByName extends Vue {
     })
   }
 
-  // TODO check event param
-  // event
   handleResize () {
     this.maxVideoHeight = document.documentElement.clientHeight * 0.8
   }
 
   mounted () {
+    this.videoStyle = this.cssStyle
     this.$root.$on('addToBoard', (data) => { this.updateBoard(data) })
     this.initializeBoard()
     this.handleResize()

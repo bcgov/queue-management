@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <!-- removed shown -->
-    <!-- @shown="showModal" -->
+  <div data-app>
     <b-modal
       v-model="modalVisible"
       :no-close-on-backdrop="true"
@@ -14,7 +12,10 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <b-btn class="btn-primary" v-if="!submitted" @click.once="submit"
+          <b-btn class="btn-primary" v-if="!submitted && status != null" @click="examStatus"
+            >Submit</b-btn
+          >
+          <b-btn disabled class="btn-primary" v-if="submitted || status == null" @click="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -39,12 +40,16 @@
             <div class="q-info-display-grid-container">
               <div class="q-id-grid-outer">
                 <div class="q-id-grid-head">Exam Details</div>
+                <div class="q-id-grid-full-col px-2">
+                  <div>
+                    <u>Exam</u>: {{ this.exam.exam_name }}<br>
+                    <u>Exam Type</u>: {{ this.exam.exam_type.exam_type_name }}<br>
+                    <u>Event ID</u>: {{ this.exam.event_id }}<br>
+                    <u>Examinee</u>: {{ this.exam.examinee_name }}<br>
+                    <u>Scheduled Date</u>: {{ this.exam.booking === null ? 'N/A' : formatDate(this.exam.booking.start_time) }}
+                  </div>
                 <div class="q-id-grid-col px-2">
-                  <div>Exam:</div>
-                  <div>{{ this.exam.examinee_name }}</div>
-                </div>
-                <div class="q-id-grid-col px-2">
-                  <div>Upload Status:</div>
+                  <div style="margin-right: 5px;">Upload Status:</div>
                   <div
                     style="color: green"
                     v-if="actionedExam.upload_received_ind"
@@ -52,6 +57,7 @@
                     Received
                   </div>
                   <div style="color: red" v-else>Not Received</div>
+                </div>
                 </div>
               </div>
             </div>
@@ -74,6 +80,7 @@
               <b-form-group class="mb-0">
                 <label class="mb-0">Exam Status</label><br />
                 <b-select
+                  placeholder=""
                   id="exam-status-select"
                   v-model="status"
                   :options="statusOptions"
@@ -103,18 +110,6 @@
               </b-form-group>
             </b-col>
           </b-form-row>
-
-          <!--  Delete the notes field.  Can no longer edit notes when uploading. -->
-          <!--
-        <b-form-row class="mt-2">
-          <b-col>
-            <b-form-group class="mb-0">
-              <label class="mb-0">Notes</label><br>
-              <b-textarea v-model="examNotes"/>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        -->
           <b-alert class="mt-2" :show="uploadFailed" variant="danger">
             File upload failed, please try again.
           </b-alert>
@@ -122,26 +117,78 @@
         <div class="text-center" v-if="isLoading">
           <b-spinner variant="primary" label="Loading"></b-spinner>
         </div>
+        <v-dialog
+           v-model="confirmDialog"
+           max-width="400"
+           :retain-focus="false"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Confirm
+             </v-card-title>
+             <v-card-text>
+               {{ this.warningText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmDialog = false"
+               >
+                 No
+               </v-btn>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="confirmExam()"
+               >
+                 Yes
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
+        <v-dialog
+           v-model="noFileWarning"
+           max-width="400"
+           :retain-focus="false"
+         >
+           <v-card>
+             <v-card-title class="headline">
+              Warning
+             </v-card-title>
+             <v-card-text>
+               {{ this.noFileText }}
+             </v-card-text>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                 color="red darken-1"
+                 text
+                 @click="noFileWarning = false"
+               >
+                 OK
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
       </b-form>
     </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-// /* eslint-disable */
+/* eslint-disable camelcase */
+/* eslint-disable no-console */
 
-import { Action, Getter, Mutation, State, namespace } from 'vuex-class'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Action, Mutation } from 'vuex-class'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mapState } from 'vuex'
-// import { mapActions, mapMutations, mapState } from 'vuex'
-
-const addExamModule = namespace('addExamModule')
+import moment from 'moment'
 
 @Component({
 
   computed: {
-    // ...mapGetters('auth', ['isAuthenticated'])
-
     ...mapState({
       showModal: (state: any) => state.addExamModule.uploadPesticideModalVisible
     })
@@ -155,11 +202,6 @@ export default class UploadPesticideModal extends Vue {
   private resetExam!: any
 
   private readonly showModal!: any
-  // @State('addExamModule.uploadPesticideModalVisible') private showModal
-
-  //   ...mapState ({
-  //   showModal: state => state.addExamModule.uploadPesticideModalVisible
-  // }),
 
   @Action('putExamInfo') public putExamInfo: any
   @Action('getExams') public getExams: any
@@ -170,20 +212,16 @@ export default class UploadPesticideModal extends Vue {
   @Mutation('setEditExamFailure') public setEditExamFailure: any
 
   public file: any = null
-  public examNotes: any = this.actionedExam.notes
-  public status: any = 'unwritten'
-  public destroyed: any = this.actionedExam.exam_destroyed_date !== null
+  public examNotes: any = null
+  public status: any = null
+  public destroyed: any = null
   public submitted: any = false
-  public exam_printed: any = this.actionedExam.exam_received_date !== null
-  public statusOptions: any = this.exam_printed ? [
-    { value: 'unwritten', text: 'Unwritten' },
-    { value: 'written', text: 'Written' },
-    { value: 'noshow', text: 'No Show' }
-  ] : [
-    { value: 'unwritten', text: 'Unwritten' },
-    { value: 'noshow', text: 'No Show' }
-  ]
-
+  public exam_printed: any = null
+  public warningText: any = 'Are you sure you want to upload this exam?'
+  public noFileText: any = 'Please provide a file to upload.'
+  private confirmDialog: any = false
+  private noFileWarning: any = false
+  public statusOptions: any = null
   public uploadFailed: any = false
   public isLoading: any = false
 
@@ -207,6 +245,21 @@ export default class UploadPesticideModal extends Vue {
   resetModal () {
     this.resetExam()
     this.toggleUploadExamModal(false)
+  }
+
+  examStatus () {
+    if (this.status === 'written' && this.file === null) {
+      this.noFileWarning = true
+    } else if (this.status === 'written' && this.file) {
+      this.confirmDialog = true
+    } else {
+      this.submit()
+    }
+  }
+
+  private async confirmExam () {
+    this.confirmDialog = false
+    this.submit()
   }
 
   submit () {
@@ -254,9 +307,7 @@ export default class UploadPesticideModal extends Vue {
   updateExam (putData) {
     this.putExamInfo(putData)
       .then(() => {
-        // setTimeout(()=> {
-        //   this.resetModal()
-        // }, 3000)
+        // I assume this is intentionally empty.
       })
       .catch((error) => {
         console.error(error)
@@ -264,14 +315,29 @@ export default class UploadPesticideModal extends Vue {
   }
 
   mounted () {
+    this.examNotes = this.actionedExam.notes
+    this.destroyed = this.actionedExam.exam_destroyed_date !== null
+    this.exam_printed = this.actionedExam.exam_received_date !== null
     this.uploadFailed = false
+    this.statusOptions = this.exam_printed ? [
+      { value: null, text: '' },
+      { value: 'unwritten', text: 'Unwritten' },
+      { value: 'written', text: 'Written' },
+      { value: 'noshow', text: 'No Show' }
+    ] : [
+      { value: null, text: '' },
+      { value: 'unwritten', text: 'Unwritten' },
+      { value: 'noshow', text: 'No Show' }
+    ]
     if (this.actionedExam.exam_destroyed_date !== null) {
       this.status = 'noshow'
     } else if (this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
       this.status = 'written'
-    } else {
-      this.status = 'unwritten'
     }
+  }
+
+  formatDate (d) {
+    return moment(d).format('MMM D, YYYY')
   }
 }
 </script>

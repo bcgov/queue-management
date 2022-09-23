@@ -4,42 +4,12 @@
       <v-divider class="mx-4"></v-divider>
       <v-card-text>
         <v-card flat color="grey lighten-4">
-          <v-row class="pa-8 summary-grid">
-            <v-col cols="12" sm="6">
-              <v-label>Reason for Appointment</v-label>
-              <p>{{appointmentDisplayData.serviceForAppointment}}</p>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-label>Date of Appointment</v-label>
-              <p>{{appointmentDateTime}}</p>
-            </v-col>
-            <v-col cols="12">
-              <v-label>Location</v-label>
-              <p>{{appointmentDisplayData.locationName}}, <small v-if="appointmentDisplayData.locationAddress">{{appointmentDisplayData.locationAddress}}</small></p>
-            </v-col>
-            <v-col cols="3"></v-col>
-            <v-col cols="12" md="6" class="text-center">
-              <div>
-                <v-switch v-if="currentUserProfile && currentUserProfile.telephone && !currentUserProfile.send_sms_reminders"
-                  inset
-                  v-model="isSendSmsReminders"
-                  label="Send me appointment reminders via SMS text message"
-                ></v-switch>
-                <p class="sms-info">Standard messaging and data rates may apply</p>
-              </div>
-              <div>
-                <v-switch v-if="currentUserProfile && currentUserProfile.email && !currentUserProfile.send_email_reminders"
-                    inset
-                    v-model="isSendEmailReminders"
-                    label="Send me appointment reminders via email"
-                  ></v-switch>
-              </div>
-            </v-col>
-            <v-col cols="3"></v-col>
+          <v-row class="pt-0 pa-4 summary-grid">
             <v-col cols="12">
               <div class="d-flex justify-center">
                 <v-checkbox
                   v-model="termsOfServiceConsent"
+                  data-cy="step-5-checkbox-consent"
                 >
                   <template v-slot:label>
                     <div>
@@ -55,16 +25,51 @@
                   :disabled="!termsOfServiceConsent"
                   :loading="isLoading"
                   color="primary"
+                  data-cy="step-5-button-confirm"
                 >{{submitBtnText}}</v-btn>
               </div>
             </v-col>
+            <v-col cols="12" sm="6">
+              <v-label>Reason for Appointment</v-label>
+              <p>{{appointmentDisplayData.serviceForAppointment}}</p>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-label>Date of Appointment</v-label>
+              <p>{{appointmentDateTime}}</p>
+            </v-col>
             <v-col cols="12">
-              <template v-if='staticMapData.external_map_link'>
-                    <a class='link-w-icon mt-6' v-bind:href='staticMapData.external_map_link' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civic_address}`'>
-                      <img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'>
+              <v-label>Location</v-label>
+              <p>{{appointmentDisplayData.locationName}}</p>
+            </v-col>
+            <v-col cols="3"></v-col>
+            <v-col cols="12" md="6" class="text-center">
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.telephone && !currentUserProfile.sendSmsReminders"
+                  inset
+                  v-model="isSendSmsReminders"
+                  label="Send me appointment reminders via SMS text message"
+                ></v-switch>
+              </div>
+              <div>
+                <v-switch v-if="currentUserProfile && currentUserProfile.email && !currentUserProfile.sendEmailReminders"
+                    inset
+                    v-model="isSendEmailReminders"
+                    label="Send me appointment reminders via email"
+                  ></v-switch>
+              </div>
+            </v-col>
+            <v-col cols="12">
+              <template v-if='staticMapData.externalMapLink'>
+                    <a class='link-w-icon mt-6' v-bind:href='staticMapData.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civicAddress}`'>
+                      <img :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
                     </a>
                   </template>
-                  <template v-else><img :src="require('@/assets/img/officemaps/' + staticMapData.office_number)" :alt="staticMapData.civic_address" class='map-view'></template>
+                  <template v-else><img
+                    :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)"
+                    :alt="staticMapData.civicAddress"
+                    class='map-view'
+                    data-cy="step-5-image-map"
+                  ></template>
             </v-col>
           </v-row>
         </v-card>
@@ -75,7 +80,7 @@
       max-width="540"
       persistent
     >
-      <v-card>
+      <v-card data-cy="step-5-dialog-appointment">
         <v-card-title
           v-bind:class="{'green': dialogPopup.isSuccess, 'red': !dialogPopup.isSuccess}"
           class="lighten-3 d-block"
@@ -153,12 +158,11 @@
 <script lang="ts">
 import { Appointment, AppointmentSlot } from '@/models/appointment'
 import { AppointmentModule, AuthModule } from '@/store/modules'
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { User, UserUpdateBody } from '@/models/user'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
-import GeocoderService from '@/services/geocoder.services'
 import { NoEmailAlert } from '@/components/common'
 import { Office } from '@/models/office'
 import { Service } from '@/models/service'
@@ -235,9 +239,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private get appointmentDisplayData () {
     return {
-      serviceForAppointment: this.currentService?.external_service_name,
-      locationName: this.currentOffice?.office_name || '',
-      locationAddress: this.currentOffice?.civic_address || '',
+      serviceForAppointment: this.currentService?.externalServiceName,
+      locationName: this.currentOffice?.officeName || '',
+      locationAddress: this.currentOffice?.civicAddress || '',
       phoneNumber: this.currentOffice?.telephone,
       locationCoordinates: {
         lat: this.currentOffice?.latitude || 0,
@@ -247,9 +251,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   }
 
   private get appointmentDateTime () {
-    const date = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'MMM dd, yyyy')
-    const start = this.dateTimeFormatted(this.currentAppointmentSlot?.start_time, 'hh:mmaaaa')
-    const end = this.dateTimeFormatted(this.currentAppointmentSlot?.end_time, 'hh:mmaaaa')
+    const date = this.dateTimeFormatted(this.currentAppointmentSlot?.startTime, 'MMM dd, yyyy')
+    const start = this.dateTimeFormatted(this.currentAppointmentSlot?.startTime, 'hh:mmaaaa')
+    const end = this.dateTimeFormatted(this.currentAppointmentSlot?.endTime, 'hh:mmaaaa')
     return `${date} ${start} - ${end}`
   }
 
@@ -259,11 +263,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private get staticMapData () {
     return {
-      office_number: this.currentOffice?.office_number ? this.currentOffice?.office_number.toString() + '.png' : '999.png',
-      civic_address: this.currentOffice?.civic_address || '',
+      officeNumber: this.currentOffice?.officeNumber ? this.currentOffice?.officeNumber.toString() + '.png' : '999.png',
+      civicAddress: this.currentOffice?.civicAddress || '',
       latitude: this.currentOffice?.latitude || 0,
       longitude: this.currentOffice?.longitude || 0,
-      external_map_link: this.currentOffice?.external_map_link || null
+      externalMapLink: this.currentOffice?.externalMapLink || null
     }
   }
 
@@ -280,10 +284,11 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private async checkActiveDLKTService () {
     await this.fetchUserAppointments()
-    Object.keys(this.myappointmentList).forEach(app => {
-      if (this.myappointmentList[app]?.service?.is_dlkt) {
-        if (new Date(this.myappointmentList[app]?.start_time) >= new Date()) {
+    this.myappointmentList.forEach(app => {
+      if (app?.service?.isDlkt) {
+        if (new Date(app?.startTime) >= new Date()) {
           this.anyActiveDLKT = true
+          // XXX should there be a return/break here?
         } else {
           this.anyActiveDLKT = false
         }
@@ -293,13 +298,13 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private async confirmAppointment () {
     this.isLoading = true
-    if (this.currentService['is_dlkt'] && (!this.$store.state.isAppointmentEditMode)) {
+    if (this.currentService.isDlkt && (!this.$store.state.isAppointmentEditMode)) {
       await this.checkActiveDLKTService()
     }
     // Save user profile if there is a change
     if (this.isSendSmsReminders || this.isSendEmailReminders) {
-      let enableEmailReminder = this.currentUserProfile.send_email_reminders
-      let enableSmsReminder = this.currentUserProfile.send_sms_reminders
+      let enableEmailReminder = this.currentUserProfile.sendEmailReminders
+      let enableSmsReminder = this.currentUserProfile.sendSmsReminders
       if (this.isSendSmsReminders) {
         enableSmsReminder = true
       }
@@ -309,16 +314,17 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
       const userUpdate: UserUpdateBody = {
         email: this.currentUserProfile.email,
         telephone: this.currentUserProfile.telephone,
-        send_email_reminders: enableEmailReminder,
-        send_sms_reminders: enableSmsReminder
+        sendEmailReminders: enableEmailReminder,
+        sendSmsReminders: enableSmsReminder
       }
-      const response = await this.updateUserAccount(userUpdate)
+      await this.updateUserAccount(userUpdate)
     }
     if (!this.anyActiveDLKT) {
       try {
+        // Removed redundant "await"
         const resp = await this.createAppointment()
-        if (resp.appointment_id) {
-          const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointment_id, clientID: this.currentUserProfile?.user_id, loc: this.currentOffice?.office_name, serv: this.currentService?.external_service_name }
+        if (resp.appointmentId) {
+          const mySP = { step: 'Appointment Confirmed', loggedIn: this.isAuthenticated, apptID: resp.appointmentId, clientID: this.currentUserProfile?.userId, loc: this.currentOffice?.officeName, serv: this.currentService?.externalServiceName }
           this.callSnowplow(mySP)
           this.dialogPopup.showDialog = true
           this.dialogPopup.isSuccess = true
@@ -335,7 +341,8 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
         this.dialogPopup.subTitle = error?.response?.data?.message || 'Unable to book the appointment.'
       }
     } else {
-      const resp = await this.deleteDraftAppointment()
+      // Removed redundant "await" on next line
+      this.deleteDraftAppointment()
       this.isLoading = false
       this.dialogPopup.showDialog = true
       this.dialogPopup.isSuccess = false
@@ -368,9 +375,9 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     this.callsp()
   }
 
-  private getMapUrl (location) {
+  /* private getMapUrl (location) {
     return GeocoderService.generateStaticMapURL(location, { height: 200, width: 1200, scale: 2 })
-  }
+  } */
 
   private openToS () {
     (this.$refs.TermsOfServicePopup as TermsOfServicePopup).open()

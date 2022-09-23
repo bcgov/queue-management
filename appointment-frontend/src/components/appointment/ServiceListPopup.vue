@@ -4,7 +4,7 @@
     v-model="isModelOpen"
     max-width="570"
   >
-    <v-card>
+    <v-card data-cy="step-1-dialog-service-list">
       <v-toolbar dark flat color="primary">
         <v-toolbar-title>Location Services for {{selectedLocationName}}</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -23,8 +23,8 @@
               class="text-left"
               v-model="selectedCategory"
               name="categories-select"
-              :item-text="'external_service_name'"
-              :item-value="'service_name'"
+              :item-text="'externalServiceName'"
+              :item-value="'serviceName'"
               hide-details
               dense
               clearable
@@ -54,21 +54,21 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="text-left">Service</th>
-                <th></th>
+                <th id="txtservice" class="text-left">Service</th>
+                <th id="txtserviceblank"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in filteredServiceList" :key="item.service_id">
+              <tr v-for="item in filteredServiceList" :key="item.serviceId">
                 <td>
                   <div
-                    v-bind:class="{'unavailable-service': item.online_availability === ServiceAvailability.DISABLE}"
+                    v-bind:class="{'unavailable-service': item.onlineAvailability === ServiceAvailability.DISABLE}"
                   >
-                    {{ item.external_service_name }}
+                    {{ item.externalServiceName }}
                   </div>
                 </td>
                 <td>
-                  <div v-if="item.online_link" class="service-link" @click="goToServiceLink(item.external_service_name, item.online_link)">
+                  <div v-if="item.onlineLink" class="service-link" @click="goToServiceLink(item.externalServiceName, item.onlineLink)">
                     Online Option <v-icon small>mdi-open-in-new</v-icon>
                   </div>
                 </td>
@@ -148,7 +148,7 @@ export default class ServiceListPopup extends Vue {
     this.categorySearchInput = ''
     if (this.selectedCategory) {
       this.filteredServiceList = this.serviceList.filter((service) => {
-        return (service?.parent?.service_name === this.selectedCategory)
+        return (service?.parent?.serviceName === this.selectedCategory)
       })
       this.isFiltered = true
     } else {
@@ -160,7 +160,7 @@ export default class ServiceListPopup extends Vue {
     this.selectedCategory = ''
     if (value) {
       this.filteredServiceList = this.serviceList.filter((service) => {
-        return `${service?.external_service_name || ''} ${service?.service_desc || ''}`.toLowerCase().includes(value.toLowerCase())
+        return `${service?.externalServiceName || ''} ${service?.serviceDesc || ''}`.toLowerCase().includes(value.toLowerCase())
       })
       this.isFiltered = true
     } else {
@@ -169,7 +169,7 @@ export default class ServiceListPopup extends Vue {
   }
 
   private goToServiceLink (sn, url) {
-    const mySP = { label: 'Online Option', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.user_id, loc: this.selectedLocationName, serv: sn, url: url }
+    const mySP = { label: 'Online Option', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: this.selectedLocationName, serv: sn, url: url }
     this.callSnowplowClick(mySP)
     window.open(url, '_blank')
   }

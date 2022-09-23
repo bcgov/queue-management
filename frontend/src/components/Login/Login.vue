@@ -1,15 +1,10 @@
-/*Copyright 2015 Province of British Columbia
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
+/*Copyright 2015 Province of British Columbia Licensed under the Apache License,
+Version 2.0 (the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or
+agreed to in writing, software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and
 limitations under the License.*/
 
 <template>
@@ -49,7 +44,7 @@ limitations under the License.*/
         </label>
         <p class="switch-p">
           {{
-            user.csr_state_id === csr_states['Break'] ? 'On Break' : 'Active'
+            user.csr_state_id === csr_states["Break"] ? "On Break" : "Active"
           }}
         </p>
       </div>
@@ -70,18 +65,21 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-         <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
+        <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
           >User: {{ this.$store.state.user.username }}</label
         >
         <div>
           <template v-if="!showOfficeSwitcher">
-             <label class="navbar-label">
-               <span @click="setOfficeSwitcher(!showOfficeSwitcher)" 
-                class="clickable">Office: {{ this.$store.state.user.office.office_name }}</span>
-              </label>
+            <label class="navbar-label">
+              <span
+                @click="setOfficeSwitcher(!showOfficeSwitcher)"
+                class="clickable"
+                >Office: {{ this.$store.state.user.office.office_name }}</span
+              >
+            </label>
           </template>
           <template v-else>
-            <vue-bootstrap-typeahead 
+            <vue-bootstrap-typeahead
               v-model="officeQuery"
               :data="this.offices"
               :serializer="x => x.office_name"
@@ -89,7 +87,9 @@ limitations under the License.*/
               @hit="changeOffice"
             >
               <template slot="append">
-                <b-button variant="danger" @click='cancelOfficeSwitcher'>Cancel</b-button>
+                <b-button variant="danger" @click="cancelOfficeSwitcher"
+                  >Cancel</b-button
+                >
               </template>
             </vue-bootstrap-typeahead>
           </template>
@@ -115,17 +115,16 @@ import { Component, Vue } from 'vue-property-decorator'
 import config from '../../../config'
 import _ from 'lodash'
 
-
 @Component({
   components: {
     VueBootstrapTypeahead
   }
 })
 export default class Login extends Vue {
-  @State('user') private user!: any
-  @State('csr_states') private csr_states!: any
-  @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean
-  @State('offices') private offices!: any
+  @State('user') private user!: any;
+  @State('csr_states') private csr_states!: any;
+  @State('showOfficeSwitcher') private showOfficeSwitcher!: boolean;
+  @State('offices') private offices!: any;
 
   @Getter('role_code') private role_code!: any;
   @Getter('quick_trans_status') private quick_trans_status!: any;
@@ -133,19 +132,19 @@ export default class Login extends Vue {
   @Getter('receptionist_status') private receptionist_status!: any;
   @Getter('citizens_queue') private citizens_queue!: any;
 
-  @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any
-  @Action('updateCSRState') public updateCSRState: any
-  @Action('updateCSROffice') public updateCSROffice: any
-  @Action('getOffices') public getOffices: any
+  @Action('updateCSRCounterTypeState') public updateCSRCounterTypeState: any;
+  @Action('updateCSRState') public updateCSRState: any;
+  @Action('updateCSROffice') public updateCSROffice: any;
+  @Action('getOffices') public getOffices: any;
 
-  @Mutation('setQuickTransactionState') public setQuickTransactionState: any
-  @Mutation('setReceptionistState') public setReceptionistState: any
-  @Mutation('setCSRState') public setCSRState: any
-  @Mutation('setUserCSRStateName') public setUserCSRStateName: any
-  @Mutation('setCounterStatusState') public setCounterStatusState: any
-  @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any
+  @Mutation('setQuickTransactionState') public setQuickTransactionState: any;
+  @Mutation('setReceptionistState') public setReceptionistState: any;
+  @Mutation('setCSRState') public setCSRState: any;
+  @Mutation('setUserCSRStateName') public setUserCSRStateName: any;
+  @Mutation('setCounterStatusState') public setCounterStatusState: any;
+  @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any;
 
-  $keycloak: any
+  $keycloak: any;
   officeQuery = '';
 
   get counterSelection () {
@@ -155,7 +154,7 @@ export default class Login extends Vue {
       return this.user.counter_id
     }
   }
-  
+
   set counterSelection (value) {
     if (value === 'receptionist') {
       this.setReceptionistState(true)
@@ -212,13 +211,14 @@ export default class Login extends Vue {
       const tokenExp: any = sessionStorage.getItem('tokenExp')
       const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
       if (timeUntilExp > 30) {
-        this.$keycloak.init({
-          responseMode: 'fragment',
-          flow: 'standard',
-          refreshToken: sessionStorage.getItem('refreshToken'),
-          token: sessionStorage.getItem('token'),
-          tokenExp: sessionStorage.getItem('tokenExp')
-        })
+        this.$keycloak
+          .init({
+            responseMode: 'fragment',
+            flow: 'standard',
+            refreshToken: sessionStorage.getItem('refreshToken'),
+            token: sessionStorage.getItem('token'),
+            tokenExp: sessionStorage.getItem('tokenExp')
+          })
           .success(() => {
             // Set a timer to auto-refresh the token
             setInterval(() => {
@@ -239,18 +239,21 @@ export default class Login extends Vue {
   }
 
   init () {
-    this.$keycloak.init({
-      responseMode: 'fragment',
-      flow: 'standard'
-    }
-    ).success(() => {
-      setInterval(() => {
-        this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
-      }, 60 * 1000)
-    })
+    this.$keycloak
+      .init({
+        responseMode: 'fragment',
+        flow: 'standard',
+        onLoad: 'check-sso'
+      })
+      .success(() => {
+        setInterval(() => {
+          this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
+        }, 60 * 1000)
+      })
   }
 
-  setupKeycloakCallbacks () { // authenticated
+  setupKeycloakCallbacks () {
+    // authenticated
     this.$keycloak.onAuthSuccess = () => {
       this.$store.dispatch('logIn', this.$keycloak.token)
       this.setTokenToSessionStorage()
@@ -329,28 +332,53 @@ export default class Login extends Vue {
   }
 
   refreshToken (minValidity: any) {
-    const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-    console.log('==> Updating token.  Currently valid for ' + secondsLeft + ' seconds')
-    this.$keycloak.updateToken(minValidity).success((refreshed: any) => {
-      if (refreshed) {
-        console.log('Token refreshed and is below')
-        console.log(this.$keycloak.tokenParsed)
-        console.log('Refresh token is below')
-        console.log(this.$keycloak.refreshTokenParsed)
-      } else {
-        console.log('Token not refreshed')
-      }
-      const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-      console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-    }).error((error: any) => {
-      console.log('Failed to refresh token')
-      console.log(error)
-      const secondsLeft = Math.round(this.$keycloak.tokenParsed.exp + this.$keycloak.timeSkew - new Date().getTime() / 1000)
-      console.log('    --> After refresh.  Token now valid for ' + secondsLeft + ' seconds')
-      if (secondsLeft < 90) {
-        this.logoutTokenExpired()
-      }
-    })
+    const secondsLeft = Math.round(
+      this.$keycloak.tokenParsed.exp +
+        this.$keycloak.timeSkew -
+        new Date().getTime() / 1000
+    )
+    console.log(
+      '==> Updating token.  Currently valid for ' + secondsLeft + ' seconds'
+    )
+    this.$keycloak
+      .updateToken(minValidity)
+      .success((refreshed: any) => {
+        if (refreshed) {
+          console.log('Token refreshed and is below')
+          console.log(this.$keycloak.tokenParsed)
+          console.log('Refresh token is below')
+          console.log(this.$keycloak.refreshTokenParsed)
+        } else {
+          console.log('Token not refreshed')
+        }
+        const successSecondsLeft = Math.round(
+          this.$keycloak.tokenParsed.exp +
+            this.$keycloak.timeSkew -
+            new Date().getTime() / 1000
+        )
+        console.log(
+          '    --> After refresh.  Token now valid for ' +
+            successSecondsLeft +
+            ' seconds'
+        )
+      })
+      .error((error: any) => {
+        console.log('Failed to refresh token')
+        console.log(error)
+        const errorSecondsLeft = Math.round(
+          this.$keycloak.tokenParsed.exp +
+            this.$keycloak.timeSkew -
+            new Date().getTime() / 1000
+        )
+        console.log(
+          '    --> After refresh.  Token now valid for ' +
+            errorSecondsLeft +
+            ' seconds'
+        )
+        if (errorSecondsLeft < 90) {
+          this.logoutTokenExpired()
+        }
+      })
   }
 
   created () {
@@ -376,30 +404,34 @@ export default class Login extends Vue {
     }
   }
 
-  cancelOfficeSwitcher() {
-    this.setOfficeSwitcher(false);
+  cancelOfficeSwitcher () {
+    this.setOfficeSwitcher(false)
   }
 
-  changeOffice(newOffice) {
+  changeOffice (newOffice) {
     this.updateCSROffice(newOffice)
-    .then(() => {
-      console.log('Done updateCSROffice() then in Login.vue');
-      this.setOfficeSwitcher(false);
-      // Auto-refresh to reload all new data now that office has changed
-      window.location.reload();
-    })
-    .catch((err) => {
-      let message = 'Something went wrong'
-      if (err && err.response && err.response.data && err.response.data.message) {
-        message = err.response.data.message
-      }
-      alert('Unable to change offices: ' + message)
-      console.error('Unable to change offices: ' + message, { err })
-      this.setOfficeSwitcher(false);
-    })
+      .then(() => {
+        console.log('Done updateCSROffice() then in Login.vue')
+        this.setOfficeSwitcher(false)
+        // Auto-refresh to reload all new data now that office has changed
+        window.location.reload()
+      })
+      .catch(err => {
+        let message = 'Something went wrong'
+        if (
+          err &&
+          err.response &&
+          err.response.data &&
+          err.response.data.message
+        ) {
+          message = err.response.data.message
+        }
+        alert('Unable to change offices: ' + message)
+        console.error('Unable to change offices: ' + message, { err })
+        this.setOfficeSwitcher(false)
+      })
   }
 }
-
 </script>
 
 <style>
@@ -490,5 +522,4 @@ input:checked + .circle1 + .circle2 {
   color: #c7ddef;
   border-bottom: 1px dashed white;
 }
-
 </style>

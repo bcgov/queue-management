@@ -93,10 +93,9 @@
 
 <script lang="ts">
 
-import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Action, Mutation, State } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapMutations, mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
 const FileDownload = require('js-file-download')
@@ -159,6 +158,3 @@ export default class FinancialReportModal extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

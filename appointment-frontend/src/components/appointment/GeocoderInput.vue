@@ -35,10 +35,11 @@
 
 <script lang="ts">
 /* eslint-disable no-console */
-import { Component, Mixins, Prop, Vue, Watch } from 'vue-property-decorator'
-import { GeolocatorSuccess, LatLng } from '@/models/geo'
+/* eslint-disable sort-imports */
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { GeolocatorSuccess } from '@/models/geo'
 import { locationBus, locationBusEvents } from '@/events/locationBus'
-import { mapActions, mapState } from 'vuex'
+import { mapActions } from 'vuex'
 import { GeoModule } from '@/store/modules'
 import GeocoderService from '@/services/geocoder.services'
 import { debounce } from '@/utils/common-util'
@@ -107,4 +108,5 @@ export default class GeocoderInput extends Vue {
 </script>
 
 <style lang="scss" scope>
+// empty block
 </style>

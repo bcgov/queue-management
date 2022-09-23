@@ -14,11 +14,8 @@ limitations under the License.*/
 -->
 <template>
   <div style="width: 100%; height: 100%">
-    <div style="display: flex; height: 75%; width: 100%">
-      <div class="board-nameticket-video">
-        <div class="board-video-div">
-          <Video :office_number="smartboardData.office_number" />
-        </div>
+      <div v-bind:class="videoStyle.cssStyle">
+        <Video :office_number="smartboardData.office_number" />
       </div>
       <div class="board-25-table">
         <div class="board-content-div">
@@ -66,13 +63,7 @@ limitations under the License.*/
             </template>
           </b-table>
           <div v-if="networkStatus.networkDown" class="loading small">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
           </div>
-        </div>
       </div>
     </div>
     <div v-if="!networkStatus.networkDown" class="bottom-flex-div">
@@ -87,15 +78,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import Axios from '@/utils/axios'
 import Video from './video.vue'
-import config from '../../../config'
-
-// const Axios = axios.create({
-//   baseURL: process.env.API_URL,
-//   withCredentials: true,
-//   headers: {
-//     Accept: 'application/json'
-//   }
-// })
 
 @Component({
   components: {
@@ -108,6 +90,9 @@ export default class CallByTicket extends Vue {
 
   @Prop({ default: '' })
   private networkStatus!: string
+
+  @Prop({ default: '' })
+  private cssStyle!: string
 
   private tz: any = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -130,6 +115,7 @@ export default class CallByTicket extends Vue {
   private overflow: any = []
   private showOverflow: boolean = false
   private overflowStyle: string = 'd-none'
+  private videoStyle: string = ''
 
   get items () {
     if (this.showOverflow === true) {
@@ -151,8 +137,6 @@ export default class CallByTicket extends Vue {
   }
 
   get headclass () {
-    // TODO change  longList longlist
-    // check impact
     if (this.longlist) {
       return 'sm-boardtable-head'
     }
@@ -207,10 +191,6 @@ export default class CallByTicket extends Vue {
   initializeBoard () {
     Axios.get(this.url).then(resp => {
       this.citizens = resp.data.citizens
-
-      // TODO check can't see  this.office_id declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
-      // so change to below line to get office id
       this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
     })
   }
@@ -222,6 +202,7 @@ export default class CallByTicket extends Vue {
   }
 
   mounted () {
+    this.videoStyle = this.cssStyle
     this.$root.$on('addToBoard', () => { this.updateBoard() })
     this.initializeBoard()
   }

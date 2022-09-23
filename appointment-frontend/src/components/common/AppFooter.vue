@@ -11,11 +11,11 @@
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
-          <li><a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank">Disclaimer</a></li>
-          <li><a href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank">Privacy</a></li>
-          <li><a href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank">Accessibility</a></li>
-          <li><a href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank">Copyright</a></li>
-          <li><a href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services" target="_blank">Contact Us</a></li>
+          <li><a href="https://www2.gov.bc.ca/gov/content/home/disclaimer" rel="noopener noreferrer" target="_blank">Disclaimer</a></li>
+          <li><a href="https://www2.gov.bc.ca/gov/content/home/privacy" rel="noopener noreferrer" target="_blank">Privacy</a></li>
+          <li><a href="https://www2.gov.bc.ca/gov/content/home/accessibility" rel="noopener noreferrer" target="_blank">Accessibility</a></li>
+          <li><a href="https://www2.gov.bc.ca/gov/content/home/copyright" rel="noopener noreferrer" target="_blank">Copyright</a></li>
+          <li><a href="https://www2.gov.bc.ca/gov/content/home/get-help-with-government-services" rel="noopener noreferrer" target="_blank">Contact Us</a></li>
         </ul>
       </nav>
     </v-col>
@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class AppFooter extends Vue {

@@ -100,7 +100,10 @@ export const commonGetters: any = {
       invigilators.push({
         value: i.invigilator_id,
         name: i.invigilator_name,
-        shadow_count: i.shadow_count
+        shadow_count: i.shadow_count,
+        contact_phone: i.contact_phone || '',
+        contact_email: i.contact_email || '',
+        invigilator_notes: i.invigilator_notes || ''
       })
     })
     return invigilators.filter(i => i.shadow_count == 2)
@@ -314,8 +317,7 @@ export const commonGetters: any = {
       return false
     }
     const filtered = citizens.filter(c => c.service_reqs.length > 0)
-    const list = filtered.filter(isCitizenOnHold)
-    return list
+    return filtered.filter(isCitizenOnHold)
   },
 
   citizens_queue (state) {
@@ -334,8 +336,7 @@ export const commonGetters: any = {
       return false
     }
     const filtered = citizens.filter(c => c.service_reqs.length > 0)
-    const list = filtered.filter(isCitizenQueued)
-    return list
+    return filtered.filter(isCitizenQueued)
   },
 
   form_data: state => {

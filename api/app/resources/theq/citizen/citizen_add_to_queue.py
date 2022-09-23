@@ -17,7 +17,7 @@ from flask import g, request
 from pprint import pprint
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print, application
-from app.models.theq import Citizen, CSR, Office
+from app.models.theq import Citizen, CSR, Office, ServiceReq, Period
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
@@ -25,6 +25,8 @@ from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 from app.utilities.email import get_walkin_spot_confirmation_email_contents, send_email
 from app.utilities.sms import send_walkin_spot_confirmation_sms
+from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.dialects import postgresql
 
 
 @api.route("/citizens/<int:id>/add_to_queue/", methods=["POST"])
@@ -36,9 +38,13 @@ class CitizenAddToQueue(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
-        citizen = Citizen.query.filter_by(citizen_id=id).first()
-        active_service_request = citizen.get_active_service_request()
 
+        citizens = Citizen.query \
+                .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \
+                .filter_by(citizen_id=id)
+        
+        citizen = citizens.first()
+        active_service_request = citizen.get_active_service_request()
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/add_to_queue, Ticket: ' + citizen.ticket_number)
 
         if active_service_request is None:
@@ -53,7 +59,7 @@ class CitizenAddToQueue(Resource):
             elif active_period.ps.ps_name == "Being Served":
                 snowplow_call = "returntoqueue"
             else:
-                #  TODO:  Put in a Feedback Slack/Service now call here.
+                # Put in a Feedback Slack/Service now call here.
                 return {"message": "Invalid citizen/period state. "}
 
         active_service_request.add_to_queue(csr, snowplow_call)
@@ -75,15 +81,15 @@ class CitizenAddToQueue(Resource):
                     # email
                     email_sent = False
                     if citizen.notification_email:
-                        officeObj = Office.find_by_id(citizen.office_id)
+                        office_obj = Office.find_by_id(citizen.office_id)
                         print('Sending email for walk in spot confirmations to')
-                        email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, officeObj)
+                        email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, office_obj)
                     # SMS  
                     sms_sent = False
                     if citizen.notification_phone:
                         sms_sent = send_walkin_spot_confirmation_sms(citizen, url, request.headers['Authorization'].replace('Bearer ', ''))
                     if email_sent:
-                        status = send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
+                        send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                         update_table = True
                     if sms_sent:
                         update_table = True

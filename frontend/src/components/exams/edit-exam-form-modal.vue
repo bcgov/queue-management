@@ -243,13 +243,14 @@
               <!-- If not a challenger exam, display the exam type -->
               <b-form-group v-if="!['challenger'].includes(examType)">
                 <label class="my-0">Exam Type</label><br />
-                <div @click="handleExamInputClick">
+                <div>
                   <b-input
                     :style="examInputStyle"
                     :value="examInputText"
                     class="less-15-mb"
                     placeholder="click here to see options"
                     read-only
+                    :disabled="true"
                   />
                 </div>
                 <div
@@ -594,6 +595,7 @@ export default class EditExamModal extends Vue {
   @Action('getExams') public getExams: any
   @Action('getOffices') public getOffices: any
   @Action('putExamInfo') public putExamInfo: any
+  @Action('getExamTypes') public getExamTypes: any
 
   @Mutation('setEditExamFailure') public setEditExamFailure: any
   @Mutation('setEditExamSuccess') public setEditExamSuccess: any
@@ -622,7 +624,7 @@ export default class EditExamModal extends Vue {
     { text: 'online', value: 'online' }
   ]
 
-  public exam_received: any = this.actionedExam.exam_received_date !== null
+  public exam_received: any = null
   public office_number: any = null
   public officeChoices: any = []
   public showMessage: any = false
@@ -1001,6 +1003,11 @@ export default class EditExamModal extends Vue {
       this.fields.exam_received_date = moment().format('YYYY-MM-DD')
     }
   }
+
+  mounted () {
+    this.exam_received = this.actionedExam.exam_received_date !== null
+    this.getExamTypes()
+  }
 }
 </script>
 
@@ -1013,9 +1020,6 @@ export default class EditExamModal extends Vue {
 }
 .id-grid-1st-col {
   margin-left: auto;
-  margin-right: 20px;
-}
-.id-grid-1st-col {
   grid-column: 1 / span 2;
   margin-right: 20px;
 }

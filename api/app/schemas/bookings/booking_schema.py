@@ -33,7 +33,7 @@ class BookingSchema(BaseSchema):
     booking_name = fields.Str()
     end_time = fields.DateTime()
     fees = fields.Str()
-    room_id = fields.Int()
+    room_id = fields.Int(allow_none=True)
     start_time = fields.DateTime()
     shadow_invigilator_id = fields.Int(allow_none=True)
     office_id = fields.Int()
@@ -64,8 +64,8 @@ class BookingSchema(BaseSchema):
         #        PUT /bookings/recurring/uuid call
         if invigilator_data is not None:
             for invigilator in invigilator_data:
-                id = invigilator.get('invigilator_id')
-                invigilator_list.append(id)
+                identifier = invigilator.get('invigilator_id')
+                invigilator_list.append(identifier)
             data['invigilators'] = invigilator_list
         return data
 

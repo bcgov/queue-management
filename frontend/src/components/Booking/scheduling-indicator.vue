@@ -41,12 +41,12 @@
       </div>
       <div class="m-2 flex-min" v-if="examAssociated && !isAppointmentEditMode">
         <span>
-          <b>Exam:</b>
+          <strong>Exam:</strong>
           {{ selectedExam.exam_name }}
         </span>
         <br />
         <span>
-          <b>Expiry Date:</b>
+          <strong>Expiry Date:</strong>
           {{ expiryDateFormat }}
         </span>
         <br />
@@ -68,9 +68,8 @@
 <script lang="ts">
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 
 @Component

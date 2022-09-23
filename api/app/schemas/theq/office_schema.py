@@ -24,7 +24,6 @@ class OfficeSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = Office
         include_relationships = True
-        # exclude = ('citizens', 'csrs', 'deleted', 'exams', 'rooms', 'services',)
 
     office_id = fields.Int()
     office_name = fields.Str()

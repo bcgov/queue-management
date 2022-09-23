@@ -3,7 +3,7 @@
     <NoEmailAlert></NoEmailAlert>
     <v-row class="page-heading">
       <v-col cols="12" sm="6">
-        <h2>My Appointments</h2>
+        <h2 data-cy="appointment-cancel-my-appointments-summary">My Appointments</h2>
       </v-col>
       <v-col class="book-new-btn" cols="12" sm="6">
         <v-btn
@@ -17,7 +17,7 @@
       </v-col>
     </v-row>
     <v-divider class="mb-4"></v-divider>
-    <v-card v-for="appointment in appointmentList" :key="appointment.appointment_id" class="my-4">
+    <v-card v-for="appointment in appointmentList" :key="appointment.appointmentId" class="my-4">
       <v-card-text>
         <v-row>
           <v-col
@@ -57,6 +57,7 @@
               outlined
               color="primary"
               min-width="195"
+              data-cy="appointment-change-change-appointment"
               @click="changeAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
@@ -67,6 +68,7 @@
               color="error lighten-1"
               class="mt-4"
               min-width="195"
+              data-cy="appointment-cancel-cancel-appointment"
               @click="cancelAppointment(appointment)"
             >
               <v-icon class="mr-1">mdi-delete-outline</v-icon>
@@ -78,6 +80,7 @@
     </v-card>
     <v-alert
       v-if="!appointmentList.length"
+      data-cy="appointment-cancel-no-appointments"
       outlined
       color="grey darken-3"
       class="text-center mt-10"
@@ -110,6 +113,7 @@
             color="red darken-1"
             text
             @click="confirmDelete(true)"
+            data-cy="appointment-cancel-cancel-confirm"
           >
             Yes, Cancel it
           </v-btn>
@@ -125,7 +129,6 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import { Appointment } from '@/models/appointment'
 import ConfigHelper from '@/utils/config-helper'
-import GeocoderService from '@/services/geocoder.services'
 import { NoEmailAlert } from '@/components/common'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
@@ -181,23 +184,23 @@ export default class Home extends Vue {
     this.appointmentList = await this.getAppointmentList()
   }
 
-  private getCoordinates (appointment) {
+  private getCoordinates (appointment: Appointment) {
     return {
       lat: appointment?.office?.latitude || 0,
       lng: appointment?.office?.longitude || 0
     }
   }
 
-  private getOfficeName (appointment) {
-    return appointment?.office?.office_name || ''
+  private getOfficeName (appointment: Appointment) {
+    return appointment?.office?.officeName || ''
   }
 
-  private getOfficeMap (appointment) {
-    return appointment?.office?.office_number ? appointment?.office?.office_number.toString() + '.png' : '999.png'
+  private getOfficeMap (appointment: Appointment) {
+    return appointment?.office?.officeNumber ? appointment?.office?.officeNumber.toString() + '.png' : '999.png'
   }
 
-  private getServiceName (appointment) {
-    return appointment?.service?.external_service_name || ''
+  private getServiceName (appointment: Appointment) {
+    return appointment?.service?.externalServiceName || ''
   }
 
   private callsp () {
@@ -215,8 +218,8 @@ export default class Home extends Vue {
     this.callsp()
   }
 
-  private changeAppointment (appointment) {
-    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+  private changeAppointment (appointment: Appointment) {
+    const mySP = { step: 'Change Appointment', loggedIn: true, apptID: appointment.appointmentId, clientID: this.currentUserProfile?.userId, loc: appointment.office.officeName, serv: appointment.service.externalServiceName }
     this.callSnowplow(mySP)
     this.setAppointmentValues(appointment)
     this.$store.commit('setStepperCurrentStep', 3)
@@ -225,8 +228,8 @@ export default class Home extends Vue {
     this.callsp()
   }
 
-  private cancelAppointment (appointment) {
-    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointment_id, clientID: this.currentUserProfile?.user_id, loc: appointment.office.office_name, serv: appointment.service.external_service_name }
+  private cancelAppointment (appointment: Appointment) {
+    const mySP = { step: 'Cancel Appointment', loggedIn: true, apptID: appointment.appointmentId, clientID: this.currentUserProfile?.userId, loc: appointment.office.officeName, serv: appointment.service.externalServiceName }
     this.callSnowplow(mySP)
     this.confirmDialog = true
     this.selectedAppointment = appointment
@@ -234,7 +237,7 @@ export default class Home extends Vue {
 
   private async confirmDelete (isAgree: boolean) {
     if (isAgree) {
-      const resp = await this.deleteAppointment(this.selectedAppointment?.appointment_id)
+      const resp = await this.deleteAppointment(this.selectedAppointment?.appointmentId)
       if (resp?.status === 204) {
         this.confirmDialog = false
       }
@@ -244,13 +247,8 @@ export default class Home extends Vue {
     }
   }
 
-  private getMapUrl (appointment) {
-    if (!appointment.office) { return '' }
-    return GeocoderService.generateStaticMapURL(appointment.office)
-  }
-
-  private getMapAltText (appointment) {
-    return appointment?.office?.civic_address || 'No address'
+  private getMapAltText (appointment: Appointment) {
+    return appointment?.office?.civicAddress || 'No address'
   }
 }
 </script>

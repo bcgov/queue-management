@@ -29,8 +29,6 @@ import 'video.js/dist/video-js.css'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Axios from '@/utils/axios'
 
-// import axios from 'axios'
-
 import { videoPlayer } from 'vue-video-player'
 
 const defaultVideoFile = '/static/videos/sbc.mp4'
@@ -60,14 +58,11 @@ export default class Video extends Vue {
   private playing: boolean = false
 
   get videoPath () {
-    let videoPath = defaultVideoFile
     if (this.getParameterByName('localvideo') == '1') {
-      videoPath = localVideoFile
+      return localVideoFile
     } else {
-      videoPath = defaultVideoFile
+      return defaultVideoFile
     }
-
-    return videoPath
   }
 
   getOfficeVideoUrl () {
@@ -95,22 +90,19 @@ export default class Video extends Vue {
       this.playing = true
     } else if (playerCurrentState && playerCurrentState.error && this.playing) {
       // This probably means that the video has been updated, try to refresh the page
-      setTimeout(() => { window.location.reload(true) }, 5000)
+      setTimeout(() => { window.location.reload() }, 5000)
     }
   }
 
   getParameterByName (name, url = window.location.href): any {
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); var results = regex.exec(url)
+    const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'); const results = regex.exec(url)
     if (!results) return null
     if (!results[2]) return ''
     return decodeURIComponent(results[2].replace(/\+/g, ' '))
   }
 
-  // mounted() {
-  //   this.getOfficeVideoUrl()
-  // },
   beforeMount () {
     this.getOfficeVideoUrl()
   }

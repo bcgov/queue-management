@@ -67,6 +67,8 @@ objects:
               env:
                 - name: APP_CONFIG
                   value: gunicorn_config.py
+                - name: GUNICORN_TIMEOUT
+                  value: "${GUNICORN_TIMEOUT}"
                 - name: FLASK_ENV
                   value: "${FLASK_ENV}"
                 - name: APP_MODULE
@@ -194,6 +196,10 @@ parameters:
     description: "The configuration object that should be loaded for this deployment."
     required: true
     value: "production"
+  - name: GUNICORN_TIMEOUT
+    description: "The timeout in seconds for the gunicorn worker process"
+    required: true
+    value: "30"
   - name: API_IMAGE_TAG
     description: "The tag to use when deploying"
     required: true
@@ -269,4 +275,4 @@ parameters:
   - name: JWT_OIDC_CLIENT_SECRET
     description: "OIDC Client secret"
     required: false
-    value: ""
+    value: " "

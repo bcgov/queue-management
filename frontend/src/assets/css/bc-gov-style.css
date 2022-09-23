@@ -20,7 +20,7 @@ body, html {
 
 body {
     color: #494949;
-    font-family: Myriad-Pro, Calibri, Arial, "sans serif";
+    font-family: Myriad-Pro, Calibri, Arial, sans-serif;
     font-size: 13px;
 }
 
@@ -623,6 +623,7 @@ label {
   color: #fff;
   background-color: #337ab7;
   border-color: #2e6da4;
+  min-width: unset;
 }
 
 .btn-primary:focus,

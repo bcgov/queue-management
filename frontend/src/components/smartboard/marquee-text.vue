@@ -13,31 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.*/
 -->
 <template>
-  <div class="marquee-container1" v-if="isMessageEnabled">
-    <marquee width="100%" direction="left" height="100px" class="marquee-text marquee-ds">
-      <span v-if="msg_1">{{msg_1}}
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
-        |
-        &nbsp;	&nbsp;	&nbsp; &nbsp;
-        </span>
-      <span v-if="msg_2">{{msg_2}}
-      &nbsp;	&nbsp;	&nbsp;	&nbsp;
-      |
-      &nbsp;	&nbsp;	&nbsp; &nbsp;
-      </span>
-      <span v-if="msg_3">{{msg_3}}
-      &nbsp;	&nbsp; 	&nbsp;	&nbsp;
-      </span>
-    </marquee>
+  <div class="marquee" v-if="isMessageEnabled">
+    <span>
+      <span v-if="msg_1">{{msg_1}}</span>
+      <span v-if="msg_2">{{msg_2}}</span>
+      <span v-if="msg_3">{{msg_3}}</span>
+    </span>
   </div>
 </template>
 
 <script lang="ts">
 // /* eslint-disable */
 import { Component, Prop, Vue } from 'vue-property-decorator'
-
-// import axios from 'axios'
-import Axios from '@/utils/axios'
 import Video from './video.vue'
 
 @Component({
@@ -46,16 +33,11 @@ import Video from './video.vue'
   }
 })
 export default class MarqueeText extends Vue {
-  @Prop({ default: '' })
-  private smartboardData!: any
-
-  @Prop({ default: '' }) office_number!: string
-
-  @Prop({ default: '' })
-  private networkStatus!: string
-
   @Prop({ default: {} })
   private office!: any
+
+  @Prop({ default: '' })
+  private smartboardData!: any
 
   private citizens: any = ''
   private officeType: string = ''
@@ -65,63 +47,28 @@ export default class MarqueeText extends Vue {
   private msg_1: string = ''
   private msg_2: string = ''
   private msg_3: string = ''
+  private sboffice: any
   private isMessageEnabled: boolean = false
 
-  get url () {
-    return `/smartboard/?office_number=${this.smartboardData.office_number}`
-  }
-
-  get waiting () {
-    if (this.citizens && this.citizens.length > 0) {
-      return this.citizens.filter(c => c.active_period.ps.ps_name === 'Waiting').length
-    }
-    return 0
-  }
-
-  initializeBoard () {
-    Axios.get(this.url).then(resp => {
-      this.officeType = resp.data.office_type
-      this.citizens = resp.data.citizens
-      // TODO check can't see  this.office_id Declared . so commented
-      // this.$root.$emit('boardConnect', this.office_id)
-      // so change to below line to get office id
-      this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
-    })
-  }
-
-  updateBoard (ticketId) {
-    Axios.get(this.url).then(resp => {
-      this.citizens = resp.data.citizens
-    })
-  }
-
-  // TODO check event param
-  // event
-  handleResize () {
-    this.maxVideoHeight = document.documentElement.clientHeight * 0.8
-  }
-
   mounted () {
-    this.$root.$on('onDigitalSignageMsgUpdate', (data) => { this.updateBoard(data) })
-    this.initializeBoard()
-    this.handleResize()
-    window.addEventListener('resize', this.handleResize)
+    this.$root.$emit('boardConnect', { office_id: this.smartboardData && this.smartboardData.office_number })
+    /* this.$root.$on('onDigitalSignageMsgUpdate', (data) => { this.updateBoard(data) }) */
   }
 
   created () {
-    this.office = this.office.office
-    if (this.office.office) {
-      if(this.office.office.digital_signage_message == 1) {
+    this.sboffice = this.office.office
+    if (this.sboffice.office) {
+      if (this.sboffice.office.digital_signage_message_1) {
         this.isMessageEnabled = true
-        if(this.office.office.digital_signage_message_1) {
-          this.msg_1 = this.office.office.digital_signage_message_1
-        }
-        if(this.office.office.digital_signage_message_2) {
-          this.msg_2 = this.office.office.digital_signage_message_2
-        }
-        if(this.office.office.digital_signage_message_3) {
-          this.msg_3 = this.office.office.digital_signage_message_3
-        }
+        this.msg_1 = this.sboffice.office.digital_signage_message_1
+      }
+      if (this.sboffice.office.digital_signage_message_2) {
+        this.isMessageEnabled = true
+        this.msg_2 = this.sboffice.office.digital_signage_message_2
+      }
+      if (this.sboffice.office.digital_signage_message_3) {
+        this.isMessageEnabled = true
+        this.msg_3 = this.sboffice.office.digital_signage_message_3
       }
     }
   }

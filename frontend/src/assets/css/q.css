@@ -138,9 +138,6 @@
   animation: spin 1s ease-in-out infinite;
   -webkit-animation: spin 1s ease-in-out infinite;
 }
-q-link-cursor {
-  cursor: pointer;
-}
 
 @keyframes spin {
   to {
@@ -159,20 +156,13 @@ q-link-cursor {
   position: initial;
 }
 
-.modal-open {
-  /* overflow: hidden; */
-  /* height: 100vh; */
-  /* overflow-y: hidden; */
-}
-
-
 .v-calendar-daily__body {
   /* IE 11 fix */
   -ms-flex: none !important;
 }
 
-/* 
-  To reduce jank in IE11 and Windows, 
+/*
+  To reduce jank in IE11 and Windows,
   we remove scrollbars when modals are open.
   This stops all "double scrollbar" issues.
 */
@@ -188,8 +178,8 @@ q-link-cursor {
 /* Internet Explorer 10+ */
 /* Firefox */
 html.modal-open, body.modal-open {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 html.modal-open::-webkit-scrollbar, body.modal-open::-webkit-scrollbar {
   display: none; /* Safari, Chrome, Edge */
@@ -241,7 +231,7 @@ input.mx-input:focus, input.mx-input:hover {
   border: 4px solid #9cc7f4;
   background-color: white;
 }
-input#appointment_blackout_start_time, input#recurring_blackout_start_time, 
+input#appointment_blackout_start_time, input#recurring_blackout_start_time,
 input#appointment_blackout_end_time, input#recurring_blackout_end_time,
 input#app_timepicker_id {
   padding-left: 10px;
@@ -254,4 +244,23 @@ input#app_timepicker_id {
 .vue__time-picker input.display-time{
   width: 213px;
   height: 40px;
+}
+
+.v-calendar-category .v-calendar-daily__day {
+  min-width: unset;
+}
+
+.v-calendar-category .v-calendar-category__columns .v-calendar-category__column-header {
+  min-width: unset;
+}
+.v-calendar-category .v-calendar-daily_head-day-label  {
+  width: unset;
+  position: unset;
+  left: unset;
+}
+
+.v-calendar-category .v-calendar-daily_head-weekday {
+  width: unset;
+  position: unset;
+  left: unset;
 }

@@ -25,7 +25,7 @@
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
-                  style="fontsize: 1rem; color: green"
+                  style="font-size: 1rem; color: green"
                 />
                 <br />
                 <input
@@ -87,7 +87,7 @@
                   <div class="ai-modal-title">
                     Selected:
                     <strong class="mr-2">{{
-                      invigilatorDetails.invigilator_name
+                      invigilatorDetails.name
                     }}</strong>
                   </div>
                   <div class="info-display-grid-container mt-1">
@@ -207,7 +207,6 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import DataSummaryTable from './../exams/data-summary-table.vue'
 import moment from 'moment'
 
@@ -247,12 +246,14 @@ export default class BookingModal extends Vue {
   public booking_contact_information: any = ''
   public invigilator: any = null
   public formStep: any = 1
-  public fields: any = {
-    invigilator_name: {
-      label: 'Name',
-      thClass: 'd-none'
-    }
-  }
+  public fields: Array<any> = [
+    {key: 'value'},
+    {key: 'name'},
+    {key: 'shadow_count'},
+    {key: 'contact_phone', thClass: 'd-none', tdClass: 'd-none' },
+    {key: 'contact_email', thClass: 'd-none', tdClass: 'd-none' },
+    {key: 'invigilator_notes', thClass: 'd-none', tdClass: 'd-none' },
+  ]
 
   public savedRef: any = 'contact_information'
   public selectedOption: any = null
@@ -271,7 +272,6 @@ export default class BookingModal extends Vue {
   public minimized: any = false
   public pressedSubmit: any = false
   public expiry_date: any = ''
-  // TODO Defined clickedRown check Functionality
   public clickedRow: any;
 
   get buttonStatus () {
@@ -357,14 +357,12 @@ export default class BookingModal extends Vue {
       const l = parseInt(this.exam.exam_type.number_of_hours)
       const m = parseInt(this.exam.exam_type.number_of_minutes)
       // TOCHECK removed new keyword in moment. not needed
-      // return new moment(this.date.start).add(l, 'hours').add(m, 'minutes')
       return moment(this.date.start).add(l, 'hours').add(m, 'minutes')
     }
   }
 
   formatExpiry (d) {
     // TOCHECK removed new keyword in moment. not needed
-    // return new moment(d).format('MMM D, YYYY')
     return moment(d).format('MMM D, YYYY')
   }
 
@@ -465,7 +463,7 @@ export default class BookingModal extends Vue {
   }
 
   submit () {
-    if (this.pressedSubmit == false) {
+    if (!this.pressedSubmit) {
       this.pressedSubmit = true
       const { exam_id } = this.exam
       let notes = null
@@ -485,11 +483,10 @@ export default class BookingModal extends Vue {
         }
       }
       // TOCHECK removed new keyword in moment. not needed
-      // const start = new moment(this.date.start).utc()
-      const end = moment(this.endTime).utc()
+      let end = moment(this.endTime).utc()
       const start = moment.tz(this.date.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
       if (this.endTime) {
-      const end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+        end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
       }
 
       const booking: any = {
@@ -511,8 +508,9 @@ export default class BookingModal extends Vue {
         const payload: any = {
           url: `/exams/${exam_id}/`
         }
-        // eslint-disable-next-line no-unused-expressions
-        putNotes ? payload.data = { notes } : null
+        if (putNotes) {
+          payload.data = { notes }
+        }
         let redirect = false
         if (this.exam.referrer === 'inventory') {
           redirect = true

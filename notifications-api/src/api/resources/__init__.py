@@ -23,14 +23,13 @@ That are used to expose operational health information about the service, and me
 
 from flask_restx import Api
 
-# from .trace import API as TRACE_API
 from .meta import api as META_API
 from .ops import api as OPS_API
 from .notifications import api as NOTIFICATIONS_API
 from .email import api as EMAIL_API
 
 # This will add the Authorize button to the swagger docs
-# TODO oauth2 & openid may not yet be supported by restplus <- check on this
+# oauth2 & openid may not yet be supported by restplus <- check on this
 AUTHORIZATIONS = {
     'apikey': {
         'type': 'apiKey',
