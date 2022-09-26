@@ -1,0 +1,99 @@
+name: Tag Cleanup for Commits
+on:
+  workflow_call:
+    inputs:
+      number-to-keep:
+        required: false
+        type: string
+        default: 3
+    secrets:
+      namespace:
+        required: true
+      openshift-api:
+        required: true
+      openshift-token:
+        required: true
+
+jobs:
+  image-stream-tag-cleanup:
+    name: Image Stream Tag Cleanup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v1
+      with:
+        namespace: ${{ secrets.namespace }}
+        openshift_server_url: ${{ secrets.openshift-api }}
+        openshift_token: ${{ secrets.openshift-token }}
+
+    - name: Image Stream Tag Cleanup
+      run: |
+        NAMESPACE=${{ secrets.namespace }}
+        NUMBER_TO_KEEP=${{ inputs.number-to-keep }}
+
+        IMAGE_STREAM_TAGS=$(oc -n $NAMESPACE get imagestreamtags -o json | jq -r \
+          '.items[] | "\(.image.metadata.name),\(.metadata.creationTimestamp),\(.metadata.name)"' | \
+          egrep ':commit-[0-9a-f]{7}$')
+
+        cleanup_imagestream () {
+          ITEMS=$*
+
+          if [ -z "$ITEMS" ]; then
+            return
+          fi
+
+          COUNT=$(echo $ITEMS | wc -w)
+          if [ $COUNT -le $NUMBER_TO_KEEP ]; then
+            for ITEM in $ITEMS; do
+              TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
+              echo Not deleting imagestreamtag $TAG because we keep the last \
+                $NUMBER_TO_KEEP in case we want to roll back.
+            done
+
+            return
+          fi
+
+          ITEMS=$(echo $ITEMS | sed 's/ /\n/g' | sort -n | \
+            head -n -$NUMBER_TO_KEEP)
+
+          for ITEM in $ITEMS; do
+            TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
+            COMMAND="oc -n $NAMESPACE delete imagestreamtag $TAG"
+            echo $COMMAND
+            # $COMMAND
+          done
+        }
+
+        DELETES=
+        CURRENT_IMAGE_STREAM=
+        for IMAGE_STREAM_TAG in $IMAGE_STREAM_TAGS; do
+          SHA=$(echo $IMAGE_STREAM_TAG | cut -d, -f1)
+          DATE=$(echo $IMAGE_STREAM_TAG | cut -d, -f2)
+          IMAGE_STREAM=$(echo $IMAGE_STREAM_TAG | cut -d, -f3 | cut -d: -f1)
+          TAG=$(echo $IMAGE_STREAM_TAG | cut -d, -f3 | cut -d: -f2)
+
+          if [ -z "$CURRENT_IMAGE_STREAM" ]; then
+            CURRENT_IMAGE_STREAM=$IMAGE_STREAM
+          elif [ $IMAGE_STREAM != $CURRENT_IMAGE_STREAM ]; then
+            cleanup_imagestream $DELETES
+            DELETES=
+
+            CURRENT_IMAGE_STREAM=$IMAGE_STREAM
+          fi
+
+          ENVS=$(oc -n $NAMESPACE get imagestreamtags -o json | jq -r \
+            '.items[] | "\(.metadata.name) \(.image.metadata.name)"' | \
+            egrep ^$IMAGE_STREAM: | grep -v $TAG | grep $SHA | \
+            cut -d' ' -f 1 | cut -d: -f2 | sort)
+
+          if [ -n "$ENVS" ]; then
+            echo Not deleting imagestreamtag $IMAGE_STREAM:$TAG because it is \
+              still tagged to: $ENVS
+
+            continue
+          fi
+
+          DELETES="$DELETES $DATE,$IMAGE_STREAM,$TAG"
+        done
+
+        cleanup_imagestream $DELETES
