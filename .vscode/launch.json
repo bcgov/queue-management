@@ -64,6 +64,7 @@
       "cwd": "${workspaceFolder}/api",
       "gevent": true,
       "name": "queue_management_api",
+      "preLaunchTask": "alembic: upgrade - api",
       "program": "env/bin/gunicorn",
       "python": "${workspaceFolder}/api/env/bin/python",
       "request": "launch",

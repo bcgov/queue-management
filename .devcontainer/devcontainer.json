@@ -23,6 +23,7 @@
   "extensions": [
     "bierner.markdown-preview-github-styles",
     "dbaeumer.vscode-eslint",
+    "github.vscode-pull-request-github",
     "ms-python.python",
     "ms-python.vscode-pylance",
     "mtxr.sqltools",

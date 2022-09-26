@@ -12,7 +12,10 @@
           <b-btn class="btn-secondary mr-2" @click="resetModal">{{
             submitted ? 'Done' : 'Cancel'
           }}</b-btn>
-          <b-btn class="btn-primary" v-if="!submitted" @click="examStatus"
+          <b-btn class="btn-primary" v-if="!submitted && status != null" @click="examStatus"
+            >Submit</b-btn
+          >
+          <b-btn disabled class="btn-primary" v-if="submitted || status == null" @click="examStatus"
             >Submit</b-btn
           >
         </div>
@@ -77,6 +80,7 @@
               <b-form-group class="mb-0">
                 <label class="mb-0">Exam Status</label><br />
                 <b-select
+                  placeholder=""
                   id="exam-status-select"
                   v-model="status"
                   :options="statusOptions"
@@ -209,7 +213,7 @@ export default class UploadPesticideModal extends Vue {
 
   public file: any = null
   public examNotes: any = null
-  public status: any = 'unwritten'
+  public status: any = null
   public destroyed: any = null
   public submitted: any = false
   public exam_printed: any = null
@@ -316,10 +320,12 @@ export default class UploadPesticideModal extends Vue {
     this.exam_printed = this.actionedExam.exam_received_date !== null
     this.uploadFailed = false
     this.statusOptions = this.exam_printed ? [
+      { value: null, text: '' },
       { value: 'unwritten', text: 'Unwritten' },
       { value: 'written', text: 'Written' },
       { value: 'noshow', text: 'No Show' }
     ] : [
+      { value: null, text: '' },
       { value: 'unwritten', text: 'Unwritten' },
       { value: 'noshow', text: 'No Show' }
     ]
@@ -327,8 +333,6 @@ export default class UploadPesticideModal extends Vue {
       this.status = 'noshow'
     } else if (this.actionedExam.upload_received_ind && this.actionedExam.exam_written_ind) {
       this.status = 'written'
-    } else {
-      this.status = 'unwritten'
     }
   }
 
