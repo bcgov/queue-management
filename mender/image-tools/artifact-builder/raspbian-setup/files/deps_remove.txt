@@ -7,5 +7,3 @@ plymouth
 libplymouth4
 libraspberrypi-doc
 perl-modules-5.28
-iso-codes
-dhcpcd5
