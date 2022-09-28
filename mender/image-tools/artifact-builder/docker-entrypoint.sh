@@ -43,5 +43,7 @@ umount /root_system
 
 echo "Creating Mender Artifact. This may take a few minutes..."
 mender-artifact write rootfs-image -t $DEVICE_TYPE -n $ARTIFACT_NAME -f /root_images/$ROOTFS_OUTPUT_FILE_NAME -o /root_images/$ARTIFACT_NAME.mender -s /setup-scripts/state-scripts
+#mender-artifact write rootfs-image -t $DEVICE_TYPE -n $ARTIFACT_NAME -u /root_images/$ROOTFS_OUTPUT_FILE_NAME -o /root_images/$ARTIFACT_NAME.mender -s /setup-scripts/state-scripts
+
 sync
 echo "completed Creating Artificat"
