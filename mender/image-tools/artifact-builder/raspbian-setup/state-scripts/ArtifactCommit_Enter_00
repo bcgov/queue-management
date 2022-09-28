@@ -1,4 +1,41 @@
-# Wait for ntp to stabilise, so package signatures can be verified
-while [[ $(timedatectl status | grep 'System clock synchronized' | grep -Eo '(yes|no)') = no ]]; do
-    sleep 2
+#!/bin/sh
+
+TIME_SYNC_COMPLETE="no"
+for i in 1 2 3 4 5 6 7 8 9 10; do
+    if [ -x /usr/bin/timedatectl ]; then
+        # Determine sync status using timedatectl
+        if /usr/bin/timedatectl status | grep -q "synchronized: yes"; then
+            TIME_SYNC_COMPLETE="yes"
+            break
+        else
+            echo "timedatectl: System time not yet synchronized; try #${i}" >&2
+            sleep 5
+        fi
+    else
+        # Determine sync status heuristically by looking
+        # at the current date.  If it is before 2022 it
+        # is safe to assume we have not yet synchronized
+        # our clock using ntp or other mechanism.
+        if [ "$(date '+%Y')" -lt "2022" ]; then
+            # The time must not be synced yet.
+            echo "System time not yet synchronized; try #${i}" >&2
+            sleep 5
+        else
+            TIME_SYNC_COMPLETE="yes"
+            break
+        fi
+    fi
 done
+
+if [ "${TIME_SYNC_COMPLETE}" = "no" ]; then
+    echo "Timeout waiting for time synchronization to complete." >&2
+else
+    echo "System time now properly synchronized; try #${i}" >&2
+fi
+
+echo "Exiting $0 at $(date)" >&2
+
+# Always return 0. If the time is not synchronized, the update will
+# likely fail since the certificates are "not yet valid" and the TLS
+# connection to the server will be rejected.
+exit 0
