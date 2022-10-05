@@ -57,8 +57,8 @@ jobs:
             head -n -$NUMBER_TO_KEEP)
 
           for ITEM in $ITEMS; do
-            TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
-            COMMAND="oc -n $NAMESPACE delete imagestreamtag $TAG"
+            ITEM_TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
+            COMMAND="oc -n $NAMESPACE delete imagestreamtag $ITEM_TAG"
             echo $COMMAND
             # $COMMAND
           done
