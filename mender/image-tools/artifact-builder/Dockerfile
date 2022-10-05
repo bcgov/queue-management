@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ARG MENDER_ARTIFACT_VERSION=3.3.0
+ARG MENDER_ARTIFACT_VERSION='3.3.0'
 
 RUN apt-get update && apt-get install -y \
     wget \
