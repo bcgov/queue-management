@@ -1030,7 +1030,7 @@ export default class ApptBookingModal extends Vue {
       const currentDate = this.app_start_date
       const fullformat = moment(model.hh + ':' + model.mm + ' ' + model.A ,'hh:mm A').format('HH:mm:ss')
       const day = currentDate.getDate().toString().length === 1 ? '0' + currentDate.getDate().toString() : currentDate.getDate().toString()
-      const month = currentDate.getMonth().toString().length === 1 ? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
+      const month = currentDate.getMonth() < 9? '0' + (currentDate.getMonth() + 1).toString() : (currentDate.getMonth() + 1).toString()
       const year = currentDate.getFullYear()
       return new Date(year + '-' + month + '-' + day + ' ' + fullformat)
     }   
