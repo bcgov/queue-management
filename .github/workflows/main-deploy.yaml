@@ -1,4 +1,4 @@
-name: Master Deploy
+name: Main Deploy
 concurrency: 
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -11,7 +11,7 @@ jobs:
 
   appointment-frontend-cypress:
     name: Appointment Frontend Cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-appointment-frontend-cypress.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-appointment-frontend-cypress.yaml@main
     secrets:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
       bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
@@ -27,7 +27,7 @@ jobs:
   appointment-frontend:
     name: appointment-frontend
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@main
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -47,7 +47,7 @@ jobs:
   feedback-api:
     name: feedback-api
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@main
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
@@ -64,7 +64,7 @@ jobs:
   notifications-api:
     name: notifications-api
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@main
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
@@ -81,7 +81,7 @@ jobs:
   queue-management-api:
     name: queue-management-api
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@main
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -101,7 +101,7 @@ jobs:
   queue-management-frontend:
     name: queue-management-frontend
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@main
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -121,7 +121,7 @@ jobs:
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
     needs: appointment-frontend-cypress
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@main
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -153,7 +153,7 @@ jobs:
   tag-theq-dev:
     name: Tag The Q Dev
     needs: approve-theq-dev
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -166,7 +166,7 @@ jobs:
   wait-for-rollouts:
     name: Wait for Rollouts
     needs: tag-theq-dev
-    uses: bcgov/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -259,7 +259,7 @@ jobs:
   tag-theq-test:
     name: Tag The Q Test
     needs: approve-theq-test
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -282,7 +282,7 @@ jobs:
   tag-theq-stable:
     name: Tag The Q Stable
     needs: approve-theq-prod
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -295,7 +295,7 @@ jobs:
   tag-theq-prod:
     name: Tag The Q Prod
     needs: tag-theq-stable
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -320,7 +320,7 @@ jobs:
   tag-qms-dev:
     name: Tag QMS Dev
     needs: approve-qms-dev
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -343,7 +343,7 @@ jobs:
   tag-qms-test:
     name: Tag QMS Test
     needs: approve-qms-test
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -366,7 +366,7 @@ jobs:
   tag-qms-stable:
     name: Tag QMS Stable
     needs: approve-qms-prod
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -379,7 +379,7 @@ jobs:
   tag-qms-prod:
     name: Tag QMS Prod
     needs: tag-qms-stable
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@main
     secrets:
       licence-plate: ${{ secrets.LICENCE_PLATE_QMS }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}

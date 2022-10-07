@@ -11,7 +11,7 @@ The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
 - Run OWASP ZAP tests
 - Run Newman tests if the deployment environment is The Q dev
 
-The GitHub Action `master-deploy.yaml` is only run manually. It will:
+The GitHub Action `main-deploy.yaml` is only run manually. It will:
 
 - Run Cypress tests against the Appointment Frontend
 - Build images using Dockerfile and Source to Image (S2I) builds
