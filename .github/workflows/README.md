@@ -1,15 +1,9 @@
 # GitHub Actions CI/CD Pipelines
 
-The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
+The GitHub Action `cron-tag-cleanup.yaml` is run as a weekly cron job, but it can also be run on demand. It will:
 
-- Take a pull request number and environment as input parameters
-- Run Cypress tests against the Appointment Frontend
-- Build images using Dockerfile and Source to Image (S2I) builds
-- Push the built images to the required `-tools` namespace
-- Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
-- Wait for rollout of the new images in the deployment environment
-- Run OWASP ZAP tests
-- Run Newman tests if the deployment environment is The Q dev
+- Remove any OpenShift `imagestreamtag` created by the `pull-request-deploy.yaml` Action where the Pull Request was closed more than seven days ago
+- Remove any OpenShift `imagestreamtag` created by the `main-deploy.yaml` Action where the imagestreamtag is not tagged to any environment (`dev`, `test`, `prod`) and the `imagestreamtag` is not among the most recent three builds
 
 The GitHub Action `main-deploy.yaml` is only run manually. It will:
 
@@ -20,6 +14,17 @@ The GitHub Action `main-deploy.yaml` is only run manually. It will:
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
 - After deployment to The Q dev, wait for rollout of the new images
 - After deployment to The Q dev, run Newman and OWASP ZAP tests
+
+The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
+
+- Take a pull request number and environment as input parameters
+- Run Cypress tests against the Appointment Frontend
+- Build images using Dockerfile and Source to Image (S2I) builds
+- Push the built images to the required `-tools` namespace
+- Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
+- Wait for rollout of the new images in the deployment environment
+- Run OWASP ZAP tests
+- Run Newman tests if the deployment environment is The Q dev
 
 ## Setup
 
