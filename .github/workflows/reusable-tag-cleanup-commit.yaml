@@ -60,7 +60,7 @@ jobs:
             ITEM_TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
             COMMAND="oc -n $NAMESPACE delete imagestreamtag $ITEM_TAG"
             echo $COMMAND
-            # $COMMAND
+            $COMMAND
           done
         }
 
