@@ -73,7 +73,7 @@ jobs:
           for DELETE_TAG in $DELETE_TAGS; do
             COMMAND="oc -n $NAMESPACE delete imagestreamtag $DELETE_TAG"
             echo $COMMAND
-            # $COMMAND
+            $COMMAND
           done
 
           echo "::endgroup::"
