@@ -45,9 +45,9 @@ jobs:
           COUNT=$(echo $ITEMS | wc -w)
           if [ $COUNT -le $NUMBER_TO_KEEP ]; then
             for ITEM in $ITEMS; do
-              TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
-              echo Not deleting imagestreamtag $TAG because we keep the last \
-                $NUMBER_TO_KEEP in case we want to roll back.
+              ITEM_TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
+              echo Not deleting imagestreamtag $ITEM_TAG because we keep the \
+                last $NUMBER_TO_KEEP in case we want to roll back.
             done
 
             return
@@ -57,10 +57,10 @@ jobs:
             head -n -$NUMBER_TO_KEEP)
 
           for ITEM in $ITEMS; do
-            TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
-            COMMAND="oc -n $NAMESPACE delete imagestreamtag $TAG"
+            ITEM_TAG=$(echo $ITEM | cut -d, -f2,3 | sed 's/,/:/')
+            COMMAND="oc -n $NAMESPACE delete imagestreamtag $ITEM_TAG"
             echo $COMMAND
-            # $COMMAND
+            $COMMAND
           done
         }
 

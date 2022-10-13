@@ -6,6 +6,7 @@ on:
 
 jobs:
   qms-commits:
+    if: github.repository_owner == 'bcgov'
     name: QMS Commits
     uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-commit.yaml@master
     secrets:
@@ -16,6 +17,7 @@ jobs:
       number-to-keep: 3
 
   theq-commits:
+    if: github.repository_owner == 'bcgov'
     name: The Q Commits
     uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-commit.yaml@master
     secrets:
@@ -26,6 +28,7 @@ jobs:
       number-to-keep: 3
 
   qms-pull-requests:
+    if: github.repository_owner == 'bcgov'
     name: QMS Pull Requests
     uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-pr.yaml@master
     secrets:
@@ -36,6 +39,7 @@ jobs:
       days-to-keep: 7
 
   theq-pull-requests:
+    if: github.repository_owner == 'bcgov'
     name: The Q Pull Requests
     uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-pr.yaml@master
     secrets:

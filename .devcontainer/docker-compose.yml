@@ -64,6 +64,7 @@ services:
   # Run PostgreSQL as the database used by the API. Keep the version in sync
   # with what is used in the runtime deployments.
   db:
+    container_name: queue-management_devcontainer_db_1
     environment:
       POSTGRES_DB: 'postgres'
       POSTGRES_PASSWORD: 'postgres'

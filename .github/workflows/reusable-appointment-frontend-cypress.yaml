@@ -1,6 +1,11 @@
 name: Appointment Frontend Cypress
 on:
   workflow_call:
+    inputs:
+      ref:
+        required: false
+        type: string
+        default: master
     secrets:
       bceid-endpoint:
         required: true
@@ -27,6 +32,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Configuration Files
         run: |
