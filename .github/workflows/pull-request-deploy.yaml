@@ -65,6 +65,7 @@ jobs:
 
   appointment-frontend-cypress:
     name: Appointment Frontend Cypress
+    needs: parse-inputs
     uses: bcgov/queue-management/.github/workflows/reusable-appointment-frontend-cypress.yaml@master
     secrets:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
@@ -75,6 +76,8 @@ jobs:
       keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
       keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
       keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+    with:
+      ref: ${{ needs.parse-inputs.outputs.ref }}
 
   ##### BUILD ##################################################################
 
