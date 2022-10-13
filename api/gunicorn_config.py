@@ -18,6 +18,7 @@ worker_class = 'eventlet'
 worker_connections = 500
 timeout = 10
 keepalive = 20
+worker_tmp_dir = '/dev/shm' # pylint: disable=invalid-name
 
 def profiler_enable(worker, req):
     worker.profile = cProfile.Profile()
