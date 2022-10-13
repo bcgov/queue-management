@@ -23,4 +23,3 @@ threads = int(os.environ.get('GUNICORN_THREADS', '1'))  # pylint: disable=invali
 
 forwarded_allow_ips = '*'  # pylint: disable=invalid-name
 secure_scheme_headers = {'X-Forwarded-Proto': 'https'}  # pylint: disable=invalid-name
-worker_tmp_dir = '/dev/shm' # pylint: disable=invalid-name
