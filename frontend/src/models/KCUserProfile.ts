@@ -8,5 +8,5 @@ export interface KCUserProfile {
     email: string;
     fullName: string;
     loginSource: string;
-    display_name: string;
+    displayName: string;
 }

@@ -76,8 +76,8 @@ import MainApp from './MainApp.vue';
 import ConfigHelper from '@/utils/config-helper';
 
 require('es6-shim');
-require('../static/keycloak.js');
-const Keycloak = window && (window as any).Keycloak;
+//require('../static/keycloak.js');
+//const Keycloak = window && (window as any).Keycloak;
 Vue.use(Buefy);
 Vue.use(VDragged);
 Vue.use(Plugin);
@@ -120,8 +120,8 @@ library.add(
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
-var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL);
-Vue.prototype.$keycloak = keycloak;
+//var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL);
+//Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

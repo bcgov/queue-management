@@ -34,6 +34,10 @@ class KeyCloakService {
     this.store = store
     this.cleanupSession()
     const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
+    // eslint-disable-next-line no-console
+    console.log('token: ')
+    // eslint-disable-next-line no-console
+    console.log(token)
     const keycloakConfig = ConfigHelper.getKeycloakConfigUrl()
     this.kc = Keycloak(keycloakConfig)
     const kcLogin = this.kc.login
@@ -47,6 +51,8 @@ class KeyCloakService {
   }
 
   initSession () {
+    // eslint-disable-next-line no-console
+    console.log('test call')
     if (!this.store) {
       return
     }
@@ -75,7 +81,7 @@ class KeyCloakService {
       userName: this.parsedToken?.username,
       fullName: `${this.parsedToken?.firstname} ${this.parsedToken?.lastname}`,
       loginSource: this.parsedToken?.loginSource,
-      display_name: this.parsedToken?.display_name
+      displayName: this.parsedToken?.display_name
     }
   }
 
@@ -102,7 +108,7 @@ class KeyCloakService {
             if (!authenticated) {
               resolve()
             }
-            redirectUrl = redirectUrl || `${window.location.origin}${process.env.VUE_APP_PATH}`
+            redirectUrl = redirectUrl || `${window.location.origin}/`
             this.kc && this.kc.logout({ redirectUri: redirectUrl })
               .then(() => {
                 resolve()

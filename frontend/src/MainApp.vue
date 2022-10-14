@@ -5,14 +5,13 @@
 </template>
 
 <script lang="ts">
+import { AccountModule, AuthModule } from '@/store/modules'
 import { Component, Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
-import AuthModule from '@/store/modules/auth'
 import { KCUserProfile } from '@/models/KCUserProfile'
 import KeyCloakService from '@/services/keycloak.services'
 import TokenService from '@/services/token.services'
 import { getModule } from 'vuex-module-decorators'
-
 
 @Component({
   components: {},
@@ -28,6 +27,7 @@ import { getModule } from 'vuex-module-decorators'
 })
 export default class MainApp extends Vue {
   private authModule = getModule(AuthModule, this.$store)
+  private accountModule = getModule(AccountModule, this.$store)
   private readonly getUser!: () => void
   private readonly isAuthenticated!: boolean
   private readonly loadUserInfo!: () => KCUserProfile
@@ -35,18 +35,29 @@ export default class MainApp extends Vue {
   private tokenService = new TokenService()
 
   private async beforeMount () {
-    debugger
-    await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
+    await KeyCloakService.setKeycloakConfigUrl('/config/kc/keycloak-public.json')
     this.syncWithSessionStorage()
+  }
+
+  private async mounted () {
+    this.$store.commit('updateHeader')
+    await this.initSetup()
+    // Listen for event from signin component so it can initiate setup
+    this.$root.$on('signin-complete', async (callback) => {
+      await this.initSetup()
+      callback()
+    })
   }
 
   private async initSetup () {
     // eslint-disable-next-line no-console
-
+    console.log('authenticaiton check:')
+    // eslint-disable-next-line no-console
+    console.log(this.isAuthenticated)
     if (this.isAuthenticated) {
       // Removed redundant "await" calls on next two lines
-      this.loadUserInfo()
-      this.getUser()
+      // this.loadUserInfo()
+      // this.getUser()
       try {
         await this.tokenService.init(this.$store)
         this.tokenService.scheduleRefreshTimer()
@@ -60,10 +71,6 @@ export default class MainApp extends Vue {
     }
     this.$store.commit('loadComplete')
   }
-
-
-
-
 }
 </script>
 

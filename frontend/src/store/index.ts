@@ -11,8 +11,8 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License. */
+import { AccountModule, AuthModule } from './modules'
 import Vuex, { Store } from 'vuex'
-import { AuthModule } from './modules'
 import 'es6-promise/auto'
 import Vue from 'vue'
 import VuexPersistence from 'vuex-persist'
@@ -33,6 +33,7 @@ const vuexLocal = new VuexPersistence({
 export const store: Store<any> = new Vuex.Store<any>({
   modules: {
     auth: AuthModule,
+    account: AccountModule,
     addExamModule,
     appointmentsModule
   },
@@ -49,6 +50,12 @@ export const store: Store<any> = new Vuex.Store<any>({
   },
 
   mutations: {
+    loadComplete (state) {
+      state.loading = false
+    },
+    updateHeader (state) {
+      state.refreshKey++
+    },
     ...commonMutation
   }
 })

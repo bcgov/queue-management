@@ -109,15 +109,30 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
+
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
-import config from '../../../config'
+import { mapActions, mapGetters } from 'vuex'
+import { KCUserProfile } from '@/models/KCUserProfile'
+import KeyCloakService from '@/services/keycloak.services'
+import TokenService from '@/services/token.services'
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import _ from 'lodash'
+import config from '../../../config'
+
 
 @Component({
   components: {
     VueBootstrapTypeahead
+  },
+  computed: {
+    ...mapGetters('auth', [
+      'isAuthenticated'
+    ])
+  },
+  methods: {
+    ...mapActions('account', ['loadUserInfo']),
+    ...mapActions('auth', ['postCreateUser'])
   }
 })
 export default class Login extends Vue {
@@ -143,9 +158,52 @@ export default class Login extends Vue {
   @Mutation('setUserCSRStateName') public setUserCSRStateName: any;
   @Mutation('setCounterStatusState') public setCounterStatusState: any;
   @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any;
-
+  
+  private readonly loadUserInfo!: () => KCUserProfile
+  private readonly postCreateUser!: () => void
+  private readonly isAuthenticated!: boolean
   $keycloak: any;
   officeQuery = '';
+
+
+  private async initToken () {
+    // Initialize keycloak session
+    const kcInit = this.initKeycloak('idir')
+    kcInit.then(async (authenticated: boolean) => {
+      if (authenticated) {
+        // Set values to session storage
+        KeyCloakService.initSession()
+        // tell KeycloakServices to load the user info
+        // this.loadUserInfo()
+        // Removed redundant "await" on next line
+        // this.postCreateUser()
+        // eslint-disable-next-line no-console
+        console.info('[SignIn.vue]Logged in User.Starting refreshTimer')
+        const tokenService = new TokenService()
+        await tokenService.init()
+        tokenService.scheduleRefreshTimer()
+        // eslint-disable-next-line no-console
+        console.log('authcheck2')
+        console.log(this.isAuthenticated)
+        if (this.isAuthenticated) {
+          this.$root.$emit('signin-complete', () => {
+            // perform redirection here
+            this.$router.push('/queue')
+          })
+        }
+      }
+    })
+      // .catch(() => {
+      //   if (this.redirectUrlLoginFail) {
+      //     window.location.assign(decodeURIComponent(this.redirectUrlLoginFail))
+      //   }
+      // })
+  }
+
+  async initKeycloak (idpHint: string) {
+    return KeyCloakService.init(idpHint, this.$store)
+  }
+
 
   get counterSelection () {
     if (this.receptionist_status === true) {
@@ -206,91 +264,92 @@ export default class Login extends Vue {
     }
   }
 
-  initSessionStorage () {
-    if (sessionStorage.getItem('token')) {
-      const tokenExp: any = sessionStorage.getItem('tokenExp')
-      const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
-      if (timeUntilExp > 30) {
-        this.$keycloak
-          .init({
-            responseMode: 'fragment',
-            flow: 'standard',
-            refreshToken: sessionStorage.getItem('refreshToken'),
-            token: sessionStorage.getItem('token'),
-            tokenExp: sessionStorage.getItem('tokenExp')
-          })
-          .success(() => {
-            // Set a timer to auto-refresh the token
-            setInterval(() => {
-              this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
-            }, 60 * 1000)
-            this.setTokenToSessionStorage()
-            this.$store.commit('setBearer', sessionStorage.getItem('token'))
-          })
-          .error(() => {
-            this.init()
-          })
-      } else {
-        this.init()
-      }
-    } else if (!sessionStorage.getItem('token')) {
-      this.init()
-    }
-  }
+  // initSessionStorage () {
+  //   if (sessionStorage.getItem('token')) {
+  //     const tokenExp: any = sessionStorage.getItem('tokenExp')
+  //     const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
+  //     if (timeUntilExp > 30) {
+  //       this.$keycloak
+  //         .init({
+  //           responseMode: 'fragment',
+  //           flow: 'standard',
+  //           refreshToken: sessionStorage.getItem('refreshToken'),
+  //           token: sessionStorage.getItem('token'),
+  //           tokenExp: sessionStorage.getItem('tokenExp')
+  //         })
+  //         .success(() => {
+  //           // Set a timer to auto-refresh the token
+  //           setInterval(() => {
+  //             this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
+  //           }, 60 * 1000)
+  //           this.setTokenToSessionStorage()
+  //           this.$store.commit('setBearer', sessionStorage.getItem('token'))
+  //         })
+  //         .error(() => {
+  //           this.init()
+  //         })
+  //     } else {
+  //       this.init()
+  //     }
+  //   } else if (!sessionStorage.getItem('token')) {
+  //     this.init()
+  //   }
+  // }
 
-  init () {
-    this.$keycloak
-      .init({
-        responseMode: 'fragment',
-        flow: 'standard',
-        onLoad: 'check-sso'
-      })
-      .success(() => {
-        setInterval(() => {
-          this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
-        }, 60 * 1000)
-      })
-  }
+  // init () {
+  //   this.$keycloak
+  //     .init({
+  //       responseMode: 'fragment',
+  //       flow: 'standard',
+  //       onLoad: 'check-sso'
+  //     })
+  //     .success(() => {
+  //       setInterval(() => {
+  //         this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
+  //       }, 60 * 1000)
+  //     })
+  // }
 
-  setupKeycloakCallbacks () {
-    // authenticated
-    this.$keycloak.onAuthSuccess = () => {
-      this.$store.dispatch('logIn', this.$keycloak.token)
-      this.setTokenToSessionStorage()
-      this.$root.$emit('socketConnect')
-    }
+  // setupKeycloakCallbacks () {
+  //   // authenticated
+  //   this.$keycloak.onAuthSuccess = () => {
+  //     this.$store.dispatch('logIn', this.$keycloak.token)
+  //     this.setTokenToSessionStorage()
+  //     this.$root.$emit('socketConnect')
+  //   }
 
-    this.$keycloak.onAuthLogout = () => {
-      this.$root.$emit('socketDisconnect')
-      this.$store.commit('setBearer', null)
-      this.$store.commit('logOut')
-    }
+  //   this.$keycloak.onAuthLogout = () => {
+  //     this.$root.$emit('socketDisconnect')
+  //     this.$store.commit('setBearer', null)
+  //     this.$store.commit('logOut')
+  //   }
 
-    this.$keycloak.onAuthRefreshSuccess = () => {
-      this.setTokenToSessionStorage()
-      this.$store.commit('setBearer', this.$keycloak.token)
-    }
-  }
+  //   this.$keycloak.onAuthRefreshSuccess = () => {
+  //     this.setTokenToSessionStorage()
+  //     this.$store.commit('setBearer', this.$keycloak.token)
+  //   }
+  // }
 
-  setTokenToSessionStorage () {
-    const tokenParsed = this.$keycloak.tokenParsed
-    const token = this.$keycloak.token
-    const refreshToken = this.$keycloak.refreshToken
-    const tokenExpiry = tokenParsed.exp
+  // setTokenToSessionStorage () {
+  //   const tokenParsed = this.$keycloak.tokenParsed
+  //   const token = this.$keycloak.token
+  //   const refreshToken = this.$keycloak.refreshToken
+  //   const tokenExpiry = tokenParsed.exp
 
-    if (sessionStorage.getItem('token')) {
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('tokenExp')
-      sessionStorage.removeItem('refreshToken')
-    }
-    sessionStorage.setItem('token', token)
-    document.cookie = 'oidc-jwt=' + this.$keycloak.token
-    sessionStorage.setItem('tokenExp', tokenExpiry)
-    sessionStorage.setItem('refreshToken', refreshToken)
-  }
+  //   if (sessionStorage.getItem('token')) {
+  //     sessionStorage.removeItem('token')
+  //     sessionStorage.removeItem('tokenExp')
+  //     sessionStorage.removeItem('refreshToken')
+  //   }
+  //   sessionStorage.setItem('token', token)
+  //   document.cookie = 'oidc-jwt=' + this.$keycloak.token
+  //   sessionStorage.setItem('tokenExp', tokenExpiry)
+  //   sessionStorage.setItem('refreshToken', refreshToken)
+  // }
 
-  login () {
-    this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
+  async login () {
+    console.log('log in clicked')
+    await this.initToken()
   }
 
   logoutTokenExpired () {
@@ -305,11 +364,11 @@ export default class Login extends Vue {
     this.clearStorage()
   }
 
-  clearStorage () {
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('tokenExp')
-    sessionStorage.removeItem('refreshToken')
-  }
+  // clearStorage () {
+  //   sessionStorage.removeItem('token')
+  //   sessionStorage.removeItem('tokenExp')
+  //   sessionStorage.removeItem('refreshToken')
+  // }
 
   setBreakClickEvent () {
     // Click anywhere on screen to end "Break"
@@ -331,59 +390,59 @@ export default class Login extends Vue {
     this.updateCSRState()
   }
 
-  refreshToken (minValidity: any) {
-    const secondsLeft = Math.round(
-      this.$keycloak.tokenParsed.exp +
-        this.$keycloak.timeSkew -
-        new Date().getTime() / 1000
-    )
-    console.log(
-      '==> Updating token.  Currently valid for ' + secondsLeft + ' seconds'
-    )
-    this.$keycloak
-      .updateToken(minValidity)
-      .success((refreshed: any) => {
-        if (refreshed) {
-          console.log('Token refreshed and is below')
-          console.log(this.$keycloak.tokenParsed)
-          console.log('Refresh token is below')
-          console.log(this.$keycloak.refreshTokenParsed)
-        } else {
-          console.log('Token not refreshed')
-        }
-        const successSecondsLeft = Math.round(
-          this.$keycloak.tokenParsed.exp +
-            this.$keycloak.timeSkew -
-            new Date().getTime() / 1000
-        )
-        console.log(
-          '    --> After refresh.  Token now valid for ' +
-            successSecondsLeft +
-            ' seconds'
-        )
-      })
-      .error((error: any) => {
-        console.log('Failed to refresh token')
-        console.log(error)
-        const errorSecondsLeft = Math.round(
-          this.$keycloak.tokenParsed.exp +
-            this.$keycloak.timeSkew -
-            new Date().getTime() / 1000
-        )
-        console.log(
-          '    --> After refresh.  Token now valid for ' +
-            errorSecondsLeft +
-            ' seconds'
-        )
-        if (errorSecondsLeft < 90) {
-          this.logoutTokenExpired()
-        }
-      })
-  }
+  // refreshToken (minValidity: any) {
+  //   const secondsLeft = Math.round(
+  //     this.$keycloak.tokenParsed.exp +
+  //       this.$keycloak.timeSkew -
+  //       new Date().getTime() / 1000
+  //   )
+  //   console.log(
+  //     '==> Updating token.  Currently valid for ' + secondsLeft + ' seconds'
+  //   )
+  //   this.$keycloak
+  //     .updateToken(minValidity)
+  //     .success((refreshed: any) => {
+  //       if (refreshed) {
+  //         console.log('Token refreshed and is below')
+  //         console.log(this.$keycloak.tokenParsed)
+  //         console.log('Refresh token is below')
+  //         console.log(this.$keycloak.refreshTokenParsed)
+  //       } else {
+  //         console.log('Token not refreshed')
+  //       }
+  //       const successSecondsLeft = Math.round(
+  //         this.$keycloak.tokenParsed.exp +
+  //           this.$keycloak.timeSkew -
+  //           new Date().getTime() / 1000
+  //       )
+  //       console.log(
+  //         '    --> After refresh.  Token now valid for ' +
+  //           successSecondsLeft +
+  //           ' seconds'
+  //       )
+  //     })
+  //     .error((error: any) => {
+  //       console.log('Failed to refresh token')
+  //       console.log(error)
+  //       const errorSecondsLeft = Math.round(
+  //         this.$keycloak.tokenParsed.exp +
+  //           this.$keycloak.timeSkew -
+  //           new Date().getTime() / 1000
+  //       )
+  //       console.log(
+  //         '    --> After refresh.  Token now valid for ' +
+  //           errorSecondsLeft +
+  //           ' seconds'
+  //       )
+  //       if (errorSecondsLeft < 90) {
+  //         this.logoutTokenExpired()
+  //       }
+  //     })
+  // }
 
   created () {
-    this.setupKeycloakCallbacks()
-    _.defer(this.initSessionStorage)
+    // this.setupKeycloakCallbacks()
+    // _.defer(this.initSessionStorage)
     // use 'force' to avoid race condition, as user may not be set yet
     this.getOffices('force')
   }
