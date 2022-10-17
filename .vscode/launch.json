@@ -28,10 +28,9 @@
   ],
   "configurations": [
     {
-      // Run the Vue.js front end for the Appointment application.
       "cwd": "${workspaceFolder}/appointment-frontend",
       "env": {
-        "VUE_APP_PATH": "/",
+        "VUE_APP_PATH": "/"
       },
       "name": "appointment_front_end",
       "request": "launch",
@@ -52,14 +51,13 @@
       "type": "node"
     },
     {
-      // Run the Queue Management API Python gunicorn process.
       "args": [
         "wsgi",
         "--bind=0.0.0.0:5000",
         "--access-logfile=-",
         "--config=gunicorn_config.py",
         "--reload",
-        "--timeout=0" // Disable timeout; don't die at breakpoints
+        "--timeout=0"
       ],
       "cwd": "${workspaceFolder}/api",
       "gevent": true,
@@ -71,7 +69,6 @@
       "type": "python"
     },
     {
-      // Run the Vue.js front end for the Queue Management application.
       "cwd": "${workspaceFolder}/frontend",
       "env": {
         "VUE_APP_API_URL": "http://localhost:5000/api/v1",
@@ -91,6 +88,12 @@
         "<node_internals>/**"
       ],
       "type": "node"
+    },
+    {
+      "type": "chrome",
+      "name": "http://localhost:8080/queue",
+      "request": "launch",
+      "url": "http://localhost:8080/queue"
     }
   ],
   "version": "0.2.0"

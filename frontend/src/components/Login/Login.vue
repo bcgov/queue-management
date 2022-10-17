@@ -348,7 +348,8 @@ export default class Login extends Vue {
   // }
 
   async login () {
-    console.log('log in clicked')
+    debugger
+    console.log('login clicked')
     await this.initToken()
   }
 

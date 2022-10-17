@@ -31,6 +31,7 @@ class KeyCloakService {
   }
 
   init (idpHint: string, store: Store<any>) {
+    debugger
     this.store = store
     this.cleanupSession()
     const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
@@ -45,14 +46,14 @@ class KeyCloakService {
       if (options) {
         options.idpHint = idpHint
       }
-      return kcLogin(options)
+      const res = kcLogin(options)
+      return res
     }
     return this.kc.init({ token: token, onLoad: 'login-required' })
   }
 
   initSession () {
-    // eslint-disable-next-line no-console
-    console.log('test call')
+    debugger
     if (!this.store) {
       return
     }

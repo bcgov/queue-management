@@ -5,6 +5,8 @@ module.exports = defineConfig({
   transpileDependencies: ['vuetify'],
 
   configureWebpack: {
+
+    devtool: 'source-map',
     // process: {env: {}},
     plugins: [
       // fix "process is not defined" error:
