@@ -1445,7 +1445,7 @@ export default class ExamInventoryTable extends Vue {
     const output: any = {}
     if (item.exam_returned_date) {
       return {
-        Returned: moment(item.exam_returned_date).format('YYYY-MMM-DD'),
+        Returned: moment(item.exam_returned_date).utc().format('YYYY-MMM-DD'),
         Disposition: item.exam_returned_tracking_number,
         Written: item.exam_written_ind ? 'Yes' : 'No'
       }
