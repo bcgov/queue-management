@@ -254,10 +254,10 @@ export default class OfficeModule extends VuexModule {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_click/jsonschema/1-0-0',
       data: {
         label: mySP.label,
-        appointmentStep: mySP.step,
-        loggedIn: mySP.loggedIn,
-        appointmentId: mySP.apptID,
-        clientId: mySP.clientID,
+        appointment_step: mySP.step,
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
         location: mySP.loc,
         service: mySP.serv,
         url: mySP.url
@@ -274,11 +274,11 @@ export default class OfficeModule extends VuexModule {
     (window as any).snowplow('trackSelfDescribingEvent', {
       schema: 'iglu:ca.bc.gov.cfmspoc/appointment_step/jsonschema/1-0-0',
       data: {
-        appointmentStep: mySP.step,
+        appointment_step: mySP.step,
         status: this.context.state['spStatus'],
-        loggedIn: mySP.loggedIn,
-        appointmentId: mySP.apptID,
-        clientId: mySP.clientID,
+        logged_in: mySP.loggedIn,
+        appointment_id: mySP.apptID,
+        client_id: mySP.clientID,
         location: mySP.loc,
         service: mySP.serv
       }
