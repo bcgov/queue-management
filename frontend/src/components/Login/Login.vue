@@ -216,7 +216,9 @@ export default class Login extends Vue {
           .init({
             responseMode: 'fragment',
             flow: 'standard',
-            token: sessionStorage.getItem('token')
+            refreshToken: sessionStorage.getItem('refreshToken'),
+            token: sessionStorage.getItem('token'),
+            tokenExp: sessionStorage.getItem('tokenExp')
           })
           .success(() => {
             // Set a timer to auto-refresh the token
