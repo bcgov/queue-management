@@ -109,6 +109,7 @@ limitations under the License.*/
 </template>
 
 <script lang="ts">
+import Keycloak from 'keycloak-js'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
@@ -144,7 +145,7 @@ export default class Login extends Vue {
   @Mutation('setCounterStatusState') public setCounterStatusState: any;
   @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any;
 
-  $keycloak: any;
+  keycloak: any;
   officeQuery = '';
 
   get counterSelection () {
@@ -211,13 +212,11 @@ export default class Login extends Vue {
       const tokenExp: any = sessionStorage.getItem('tokenExp')
       const timeUntilExp = Math.round(tokenExp - new Date().getTime() / 1000)
       if (timeUntilExp > 30) {
-        this.$keycloak
+        this.keycloak
           .init({
             responseMode: 'fragment',
             flow: 'standard',
-            refreshToken: sessionStorage.getItem('refreshToken'),
-            token: sessionStorage.getItem('token'),
-            tokenExp: sessionStorage.getItem('tokenExp')
+            token: sessionStorage.getItem('token')
           })
           .success(() => {
             // Set a timer to auto-refresh the token
@@ -239,7 +238,7 @@ export default class Login extends Vue {
   }
 
   init () {
-    this.$keycloak
+    this.keycloak
       .init({
         responseMode: 'fragment',
         flow: 'standard',
@@ -254,28 +253,28 @@ export default class Login extends Vue {
 
   setupKeycloakCallbacks () {
     // authenticated
-    this.$keycloak.onAuthSuccess = () => {
-      this.$store.dispatch('logIn', this.$keycloak.token)
+    this.keycloak.onAuthSuccess = () => {
+      this.$store.dispatch('logIn', this.keycloak.token)
       this.setTokenToSessionStorage()
       this.$root.$emit('socketConnect')
     }
 
-    this.$keycloak.onAuthLogout = () => {
+    this.keycloak.onAuthLogout = () => {
       this.$root.$emit('socketDisconnect')
       this.$store.commit('setBearer', null)
       this.$store.commit('logOut')
     }
 
-    this.$keycloak.onAuthRefreshSuccess = () => {
+    this.keycloak.onAuthRefreshSuccess = () => {
       this.setTokenToSessionStorage()
-      this.$store.commit('setBearer', this.$keycloak.token)
+      this.$store.commit('setBearer', this.keycloak.token)
     }
   }
 
   setTokenToSessionStorage () {
-    const tokenParsed = this.$keycloak.tokenParsed
-    const token = this.$keycloak.token
-    const refreshToken = this.$keycloak.refreshToken
+    const tokenParsed = this.keycloak.tokenParsed
+    const token = this.keycloak.token
+    const refreshToken = this.keycloak.refreshToken
     const tokenExpiry = tokenParsed.exp
 
     if (sessionStorage.getItem('token')) {
@@ -284,13 +283,13 @@ export default class Login extends Vue {
       sessionStorage.removeItem('refreshToken')
     }
     sessionStorage.setItem('token', token)
-    document.cookie = 'oidc-jwt=' + this.$keycloak.token
+    document.cookie = 'oidc-jwt=' + this.keycloak.token
     sessionStorage.setItem('tokenExp', tokenExpiry)
     sessionStorage.setItem('refreshToken', refreshToken)
   }
 
   login () {
-    this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
+    this.keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
   }
 
   logoutTokenExpired () {
@@ -301,7 +300,7 @@ export default class Login extends Vue {
   }
 
   logout () {
-    this.$keycloak.logout()
+    this.keycloak.logout()
     this.clearStorage()
   }
 
@@ -333,27 +332,27 @@ export default class Login extends Vue {
 
   refreshToken (minValidity: any) {
     const secondsLeft = Math.round(
-      this.$keycloak.tokenParsed.exp +
-        this.$keycloak.timeSkew -
+      this.keycloak.tokenParsed.exp +
+        this.keycloak.timeSkew -
         new Date().getTime() / 1000
     )
     console.log(
       '==> Updating token.  Currently valid for ' + secondsLeft + ' seconds'
     )
-    this.$keycloak
+    this.keycloak
       .updateToken(minValidity)
       .success((refreshed: any) => {
         if (refreshed) {
           console.log('Token refreshed and is below')
-          console.log(this.$keycloak.tokenParsed)
+          console.log(this.keycloak.tokenParsed)
           console.log('Refresh token is below')
-          console.log(this.$keycloak.refreshTokenParsed)
+          console.log(this.keycloak.refreshTokenParsed)
         } else {
           console.log('Token not refreshed')
         }
         const successSecondsLeft = Math.round(
-          this.$keycloak.tokenParsed.exp +
-            this.$keycloak.timeSkew -
+          this.keycloak.tokenParsed.exp +
+            this.keycloak.timeSkew -
             new Date().getTime() / 1000
         )
         console.log(
@@ -366,8 +365,8 @@ export default class Login extends Vue {
         console.log('Failed to refresh token')
         console.log(error)
         const errorSecondsLeft = Math.round(
-          this.$keycloak.tokenParsed.exp +
-            this.$keycloak.timeSkew -
+          this.keycloak.tokenParsed.exp +
+            this.keycloak.timeSkew -
             new Date().getTime() / 1000
         )
         console.log(
@@ -382,6 +381,7 @@ export default class Login extends Vue {
   }
 
   created () {
+    this.keycloak = Keycloak('/static/keycloak/keycloak.json')
     this.setupKeycloakCallbacks()
     _.defer(this.initSessionStorage)
     // use 'force' to avoid race condition, as user may not be set yet

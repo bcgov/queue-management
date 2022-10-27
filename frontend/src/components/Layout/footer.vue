@@ -60,6 +60,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import Keycloak from 'keycloak-js'
 import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
 
 @Component({
@@ -68,9 +69,12 @@ import SchedulingIndicator from '../Booking/scheduling-indicator.vue'
   }
 })
 export default class Footer extends Vue {
-  $keycloak: any
+  keycloak: any
+
+  // TO-DO: FIX DEFAULT KEYCLOAK LOGIN
   keycloakLogin () {
-    this.$keycloak.login()
+    this.keycloak = Keycloak('/static/keycloak/keycloak.json')
+    this.keycloak.login()
   }
 }
 </script>
