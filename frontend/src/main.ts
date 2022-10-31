@@ -65,6 +65,7 @@ import {
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import Keycloak from 'keycloak-js'
 import VDragged from 'v-dragged';
 import 'buefy/dist/buefy.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -76,8 +77,6 @@ import MainApp from './MainApp.vue';
 import ConfigHelper from '@/utils/config-helper';
 
 require('es6-shim');
-require('../static/keycloak.js');
-const Keycloak = window && (window as any).Keycloak;
 Vue.use(Buefy);
 Vue.use(VDragged);
 Vue.use(Plugin);
@@ -120,7 +119,8 @@ library.add(
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
-var keycloak = Keycloak(process.env.KEYCLOAK_JSON_URL);
+let kcPath = process.env.KEYCLOAK_JSON_URL?  process.env.KEYCLOAK_JSON_URL: '/static/keycloak/keycloak.json'
+let keycloak = Keycloak(kcPath);
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
