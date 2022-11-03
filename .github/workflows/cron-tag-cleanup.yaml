@@ -8,7 +8,7 @@ jobs:
   qms-commits:
     if: github.repository_owner == 'bcgov'
     name: QMS Commits
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-commit.yaml@master
+    uses: ./.github/workflows/reusable-tag-cleanup-commit.yaml
     secrets:
       namespace: ${{ secrets.LICENCE_PLATE_QMS }}-tools
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -19,7 +19,7 @@ jobs:
   theq-commits:
     if: github.repository_owner == 'bcgov'
     name: The Q Commits
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-commit.yaml@master
+    uses: ./.github/workflows/reusable-tag-cleanup-commit.yaml
     secrets:
       namespace: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -30,7 +30,7 @@ jobs:
   qms-pull-requests:
     if: github.repository_owner == 'bcgov'
     name: QMS Pull Requests
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-pr.yaml@master
+    uses: ./.github/workflows/reusable-tag-cleanup-pr.yaml
     secrets:
       namespace: ${{ secrets.LICENCE_PLATE_QMS }}-tools
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -41,7 +41,7 @@ jobs:
   theq-pull-requests:
     if: github.repository_owner == 'bcgov'
     name: The Q Pull Requests
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-cleanup-pr.yaml@master
+    uses: ./.github/workflows/reusable-tag-cleanup-pr.yaml
     secrets:
       namespace: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       openshift-api: ${{ secrets.OPENSHIFT_API }}
