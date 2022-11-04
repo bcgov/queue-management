@@ -16,6 +16,7 @@ threads = int(os.environ.get('GUNICORN_THREADS', '1'))
 
 worker_class = 'eventlet'
 worker_connections = 500
+worker_tmp_dir = '/dev/shm' # pylint: disable=invalid-name
 timeout = 10
 keepalive = 20
 
