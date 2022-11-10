@@ -26,7 +26,7 @@ export enum Pages {
 }
 
 export enum IdpHint {
-    BCEID = 'bceid',
+    BCEID = 'bceidboth',
     IDIR = 'idir',
     BCSC = 'bcsc'
 }

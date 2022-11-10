@@ -22,7 +22,7 @@ from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
-from app.utilities.auth_util import Role, has_any_role, has_role
+from app.utilities.auth_util import Role, get_username, has_role
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
@@ -36,12 +36,12 @@ class CitizenList(Resource):
     @jwt.requires_auth
     def get(self):
         try:
-            user = g.jwt_oidc_token_info['username']
-            has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user, "CitizenList GET /citizens/")
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            username = get_username()
+            has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], username, "CitizenList GET /citizens/")
+            csr = CSR.find_by_username(username)
             if not csr:
                 db.session.close()
-                raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
+                raise Exception('no user found with username: `{}`'.format(username))
 
             citizens = Citizen.query \
                 .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
@@ -65,17 +65,16 @@ class CitizenList(Resource):
     @api_call_with_retry
     def post(self, citizens_waiting):
 
-        user = g.jwt_oidc_token_info['username']
-        has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user,
+        username = get_username()
+        has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], username,
                  "CitizenList POST /citizens/")
-
 
         json_data = request.get_json()
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(username)
         if not csr:
             db.session.close()
-            raise Exception('no user found with username: `{}`'.format(g.jwt_oidc_token_info['username']))
+            raise Exception('no user found with username: `{}`'.format(username))
 
         try:
 

@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, request
+from flask import request
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, ServiceReq, Period, Service, Office
@@ -21,7 +21,7 @@ from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
 from datetime import datetime
 import os
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
@@ -36,7 +36,7 @@ class CitizenFinishService(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
         citizen = Citizen.query\
         .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), raiseload(Citizen.counter),raiseload(Citizen.user), joinedload(Citizen.counter), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*'))) \
         .filter_by(citizen_id=id)
