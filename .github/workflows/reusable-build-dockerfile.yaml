@@ -5,7 +5,7 @@ on:
       ref:
         required: false
         type: string
-        default: master
+        default: main
       directory:
         required: true
         type: string
