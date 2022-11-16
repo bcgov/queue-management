@@ -7,4 +7,4 @@ pytz
 notifications-python-client
 
 # TODO: Can this be an env variable? Or can it be relative?
--e git+https://github.com/bcgov/queue-management.git@master#egg=queue_api&subdirectory=api
+-e git+https://github.com/bcgov/queue-management.git@main#egg=queue_api&subdirectory=api
