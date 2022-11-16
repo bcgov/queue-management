@@ -66,7 +66,7 @@ jobs:
   appointment-frontend-cypress:
     name: Appointment Frontend Cypress
     needs: parse-inputs
-    uses: bcgov/queue-management/.github/workflows/reusable-appointment-frontend-cypress.yaml@master
+    uses: ./.github/workflows/reusable-appointment-frontend-cypress.yaml
     secrets:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
       bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
@@ -84,7 +84,7 @@ jobs:
   appointment-frontend:
     name: appointment-frontend
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -107,7 +107,7 @@ jobs:
   feedback-api:
     name: feedback-api
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
@@ -127,7 +127,7 @@ jobs:
   notifications-api:
     name: notifications-api
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
       namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
@@ -147,7 +147,7 @@ jobs:
   queue-management-api:
     name: queue-management-api
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-s2i.yaml@master
+    uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -170,7 +170,7 @@ jobs:
   queue-management-frontend:
     name: queue-management-frontend
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -193,7 +193,7 @@ jobs:
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: bcgov/queue-management/.github/workflows/reusable-build-dockerfile.yaml@master
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -218,7 +218,7 @@ jobs:
   tag:
     name: Tag
     needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
-    uses: bcgov/queue-management/.github/workflows/reusable-tag-image.yaml@master
+    uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
@@ -231,7 +231,7 @@ jobs:
   wait-for-rollouts:
     name: Wait for Rollouts
     needs: [parse-inputs, tag]
-    uses: bcgov/queue-management/.github/workflows/reusable-wait-for-rollouts.yaml@master
+    uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}

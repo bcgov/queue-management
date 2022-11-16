@@ -7,3 +7,4 @@ DHCP=ipv4
 [DHCP]
 UseDNS=true
 RouteMetric=10
+ClientIdentifier=mac
