@@ -65,7 +65,7 @@ import {
   faWindowRestore
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import Keycloak from 'keycloak-js'
+import Keycloak from 'keycloak-js';
 import VDragged from 'v-dragged';
 import 'buefy/dist/buefy.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
