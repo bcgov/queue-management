@@ -5,7 +5,7 @@ on:
       ref:
         required: false
         type: string
-        default: master
+        default: main
     secrets:
       bceid-endpoint:
         required: true

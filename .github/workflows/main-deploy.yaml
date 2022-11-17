@@ -1,4 +1,4 @@
-name: Master Deploy
+name: Main Deploy
 concurrency: 
   group: ${{ github.workflow }}
   cancel-in-progress: true
