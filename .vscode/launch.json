@@ -22,7 +22,9 @@
       "configurations": [
         "appointment_front_end",
         "queue_management_api",
-        "queue_management_front_end"
+        "queue_management_front_end",
+        "feedback_api",
+        "notification_api"
       ]
     }
   ],
@@ -91,6 +93,40 @@
         "<node_internals>/**"
       ],
       "type": "node"
+    },
+    {
+      // Run the Queue Management API Python gunicorn process.
+      "name": "feedback_api",
+      "args": [
+        "wsgi:application",
+        "--bind=0.0.0.0:5001",
+        "--timeout=120",
+        "--workers=3",
+        "--access-logfile=-",
+        "--reload"
+      ],
+      "cwd": "${workspaceFolder}/feedback-api",
+      "program": "env/bin/gunicorn",
+      "python": "${workspaceFolder}/feedback-api/env/bin/python",
+      "request": "launch",
+      "type": "python"
+    },
+    {
+      // Run the Queue Management API Python gunicorn process.
+      "name": "notification_api",
+      "args": [
+        "wsgi:application",
+        "--bind=0.0.0.0:5002",
+        "--timeout=120",
+        "--workers=3",
+        "--access-logfile=-",
+        "--reload"
+      ],
+      "cwd": "${workspaceFolder}/notifications-api",
+      "program": "env/bin/gunicorn",
+      "python": "${workspaceFolder}/notifications-api/env/bin/python",
+      "request": "launch",
+      "type": "python"
     }
   ],
   "version": "0.2.0"

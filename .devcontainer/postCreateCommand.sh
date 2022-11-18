@@ -21,6 +21,11 @@
 COLOR_DEFAULT='\033[0m'
 COLOR_FAILURE='\033[0;31m'
 
+# Fix Git workspace for MAC
+git config --global --add safe.directory /workspace
+git config --global --add safe.directory /workspace/jobs/appointment_reminder/env/src/queue-api
+git status
+
 # Echo a string in red.
 #
 # Parameter: string
@@ -86,6 +91,7 @@ check_setting () {
     python -m venv env
     source env/bin/activate
     python -m pip install --upgrade pip -q
+    pip install wheel
     pip install -r requirements_dev.txt --progress-bar off
     python manage.py db upgrade
 
@@ -104,30 +110,48 @@ check_setting () {
 
 (
     cd appointment-frontend
+    # rm -rf node_modules
     npm install
     $(npm bin)/cypress install
 ) &
 
-#(
-#    cd feedback-api
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) &
+(
+    cd feedback-api
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+    python3 setup.py install
+) &
 
 (
     cd frontend
+    # rm -rf node_modules
     npm install
 ) &
 
-#(
-#    cd notifications-api
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) &
+(
+    cd notifications-api
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+    python3 setup.py install
+) &
+
+(
+    cd jobs/appointment_reminder
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+) &
 
 # Wait for the above to complete, and then do the filesystem setup. If anything
 # fails we won't have to hunt for error messages.
@@ -144,3 +168,7 @@ copy_config .devcontainer/config/api/client_secrets/secrets.json \
 
 copy_config .devcontainer/config/frontend/public/config/configuration.json \
     frontend/public/config/configuration.json
+
+# Need to copy configuration.json for appointments & keycloak-public.json
+# Need to add keycloak.json to frontend/static/keycloak folder
+# Need to add .env to notifications-api and feedback-api
