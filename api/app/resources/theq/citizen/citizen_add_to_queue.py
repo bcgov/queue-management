@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from datetime import datetime
 from flask import g, request
 from pprint import pprint
@@ -101,7 +102,7 @@ class CitizenAddToQueue(Resource):
                     citizen.notification_sent_time = datetime.utcnow()
         except Exception as err:
             logging.error('{}'.format(str(err)))
-            pprint(err)
+            logging.exception(err)
 
         db.session.add(citizen)
         db.session.commit()

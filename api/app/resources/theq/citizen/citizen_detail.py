@@ -11,6 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
+import logging
 from pprint import pprint
 from datetime import datetime
 from flask import request, g
@@ -43,8 +44,8 @@ class CitizenDetail(Resource):
             return {'citizen': result,
                     'errors': self.citizen_schema.validate(citizen)}
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
     @jwt.has_one_of_roles([Role.internal_user.value])

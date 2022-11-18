@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import g, request
 from flask_socketio import emit, join_room
 
@@ -56,12 +57,12 @@ def on_join_smartboard(message):
         print("==> In websocket.py, Smartboard joinroom, Office id: " + str(office_id) + "; request sid: " + str(
             request.sid))
         emit('joinSmartboardRoomSuccess')
-    except KeyError as e:
-        print(e)
+    except KeyError as exception:
+        logging.exception(exception)
         emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be passed to this method"})
 
-    except ValueError as e:
-        print(e)
+    except ValueError as exception:
+        logging.exception(exception)
         emit('joinSmartboardRoomFail', {"sucess": False, "message": "office_id must be an integer"})
 
 

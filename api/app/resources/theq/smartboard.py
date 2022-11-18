@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import request
 from flask_restx import Resource
 from qsystem import api
@@ -71,14 +72,14 @@ class Smartboard(Resource):
                 "citizens": citizens_waiting
             }
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
-        except TypeError as e:
-            print(e)
+        except TypeError as exception:
+            logging.exception(exception)
             return {'message': 'office_number must be an integer.'}, 400
-        except ValueError as e:
-            print(e)
+        except ValueError as exception:
+            logging.exception(exception)
             return {'message': 'office_number must be an integer.'}, 400
 
 
@@ -94,8 +95,8 @@ class SmartBoradQMenu(Resource):
                 return {'message': 'office_number could not be found.'}, 400
             else:
                 return {'office': self.office_schema.dump(office)}, 200
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
 try:

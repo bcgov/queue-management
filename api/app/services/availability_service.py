@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import datetime
+import logging, datetime
 from typing import Dict
 
 import pytz
@@ -141,8 +141,8 @@ class AvailabilityService():
 
             return AvailabilityService.prune_appointments(available_slots_per_day)
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
     @staticmethod

@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-
+import logging
 from flask_restx import Resource
 from qsystem import api
 from app.models.theq import Service
@@ -32,6 +32,6 @@ class Categories(Resource):
             return {'categories': result,
                     'errors': self.categories_schema.validate(services)}, 200
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {"message": "API is down"}, 500

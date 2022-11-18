@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import request, g
 from flask_restx import Resource
 from datetime import datetime, timedelta
@@ -41,15 +42,15 @@ def get_service_request(self, json_data, csr):
         service_request = self.service_request_schema.load(json_data['service_request'])
 
     except ValidationError as err:
-        print("==> ValidationError in POST /service_requests/")
-        print(csr_const + csr.username)
-        print(err)
+        logging.exception("==> ValidationError in POST /service_requests/")
+        logging.exception(csr_const + csr.username)
+        logging.exception(err)
         return (None, err.messages, 422)
     except KeyError as err:
-        print("==> No service_request parameter in POST /service_requests/")
-        print(csr_const + csr.username)
-        print(json_data_const + json.dumps(json_data))
-        print(err)
+        logging.exception("==> No service_request parameter in POST /service_requests/")
+        logging.exception(csr_const + csr.username)
+        logging.exception(json_data_const + json.dumps(json_data))
+        logging.exception(err)
         return (None, str(err), 422)
 
     #  If service request is null, an error.

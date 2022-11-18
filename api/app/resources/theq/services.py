@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from functools import cmp_to_key
 from flask import request
 from flask import g
@@ -149,11 +150,11 @@ class Services(Resource):
                 return {'services': result,
                         'errors': {}}
 
-            except exc.SQLAlchemyError as e:
-                print(e)
+            except exc.SQLAlchemyError as exception:
+                logging.exception(exception)
                 return {'message': 'API is down'}, 500
 
-            except ValueError as e:
+            except ValueError as exception:
                 return {'message': 'office_id must be an integer.'}, 400
         else:
             try:
@@ -162,6 +163,6 @@ class Services(Resource):
                 return {'services': result,
                         'errors': {}}
 
-            except exc.SQLAlchemyError as e:
-                print(e)
+            except exc.SQLAlchemyError as exception:
+                logging.exception(exception)
                 return {'message': 'api is down'}, 500
