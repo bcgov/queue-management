@@ -43,13 +43,13 @@ class Slack(Resource):
         except KeyError:
             return {"message": "Must provide message to send to slack"}, 422
 
-        print(slack_message)
+        logging.info(slack_message)
 
         slack_json_data = {
             "text": slack_message
         }
 
-        print(slack_json_data)
+        logging.info(slack_json_data)
         params = json.dumps(slack_json_data).encode('utf8')
 
         req = urllib.request.Request(
@@ -60,5 +60,5 @@ class Slack(Resource):
 
         resp = urllib.request.urlopen(req)
 
-        print(req)
-        print(resp)
+        logging.info(req)
+        logging.info(resp)

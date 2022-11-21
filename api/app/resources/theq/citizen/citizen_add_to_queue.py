@@ -83,7 +83,7 @@ class CitizenAddToQueue(Resource):
                     email_sent = False
                     if citizen.notification_email:
                         office_obj = Office.find_by_id(citizen.office_id)
-                        print('Sending email for walk in spot confirmations to')
+                        logging.info('Sending email for walk in spot confirmations to')
                         email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, office_obj)
                     # SMS  
                     sms_sent = False

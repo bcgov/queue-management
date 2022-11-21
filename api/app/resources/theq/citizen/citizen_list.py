@@ -15,7 +15,7 @@ limitations under the License.'''
 import logging
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, socketio, time_print, get_key
+from qsystem import api, api_call_with_retry, db, socketio, get_key
 from app.models.theq import Citizen, CSR, CitizenState, Period, ServiceReq, citizen
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -108,5 +108,5 @@ try:
     active_id = citizen_state.cs_id
 except:
     active_id = 1
-    print("==> In citizen_list.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In citizen_list.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

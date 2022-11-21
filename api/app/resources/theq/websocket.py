@@ -33,15 +33,15 @@ def on_join(message):
         csr = CSR.find_by_username(claims["preferred_username"])
         if csr:
             join_room(csr.office.office_name)
-            print("==> In websocket.py, CSR joinroom, CSR: " + csr.username + "; request sid: " + str(request.sid))
+            logging.info("==> In websocket.py, CSR joinroom, CSR:  %s ; request sid: %s", csr.username, str(request.sid))
             emit('joinRoomSuccess', {"sucess": True})
             emit('get_Csr_State_IDs', {"success": True})
             emit('update_customer_list', {"success": True})
         else:
-            print("Fail")
+            logging.info("Fail")
             emit('joinRoomFail', {"success": False})
     else:
-        print("No preferred_username on request")
+        logging.info("No preferred_username on request")
         emit('joinRoomFail', {"success": False})
 
 
@@ -54,8 +54,7 @@ def on_join_smartboard(message):
         my_print("Joining room: %s" % room)
 
         join_room(room)
-        print("==> In websocket.py, Smartboard joinroom, Office id: " + str(office_id) + "; request sid: " + str(
-            request.sid))
+        logging.info("==> In websocket.py, Smartboard joinroom, Office id: %s ; request sid: %s" , str(office_id), str(request.sid))
         emit('joinSmartboardRoomSuccess')
     except KeyError as exception:
         logging.exception(exception)
@@ -79,4 +78,4 @@ def sync_offices_cache():
 @socketio.on_error()
 def error_handler(e):
     # Passing the execution as it would be an auth error with invalid token.
-    print('Socket error ', e)
+    logging.error('Socket error %s', e)

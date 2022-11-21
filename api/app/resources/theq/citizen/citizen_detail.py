@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 import logging
-from pprint import pprint
 from datetime import datetime
 from flask import request, g
 from flask_restx import Resource
@@ -117,5 +116,5 @@ try:
 #          from a python3 manage.py db upgrade command.
 except:
     counter_id = 1
-    print("==> In citizen_detail.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In citizen_detail.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 
-
+import logging
 from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
@@ -22,13 +22,12 @@ from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
 from qsystem import db, cache, socketio
-from pprint import pprint
 from wtforms import TextAreaField
 from app.models.theq import CSR
 
 
 def on_form_prefill(counters):
-    print('==>on_form_prefill ===> office.py Flask Admin ===> counters',counters)
+    logging.info('==>on_form_prefill ===> office.py Flask Admin ===> counters',counters)
 
 
 class OfficeConfig(Base):

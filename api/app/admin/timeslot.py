@@ -17,7 +17,6 @@ from .base import Base
 from flask_login import current_user
 from flask_admin.form.fields import Select2Field
 from qsystem import db, socketio
-from pprint import pprint
 
 
 class MultipleSelect2Field(Select2Field):

@@ -16,7 +16,7 @@ from qsystem import db
 from app.models.theq import Base
 from app.models.bookings import Exam, Room
 from qsystem import cache, db
-import enum
+import enum, logging
 from sqlalchemy import Enum, desc
 
 
@@ -146,7 +146,7 @@ class Office(Base):
                 office.timezone
                 cache.set(key, office)
         except Exception:
-            print('Error on building cache')
+            logging.exception('Error on building cache')
 
     @classmethod
     def get_all_active_offices(cls):

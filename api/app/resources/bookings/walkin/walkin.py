@@ -12,11 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 import logging, pytz
-from pprint import pprint
 from datetime import datetime, timedelta
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, socketio, my_print, application
+from qsystem import api, api_call_with_retry, db, socketio, application
 from app.models.theq import Citizen, CSR, Counter, Office, CitizenState, ServiceReq
 from app.models.bookings import Appointment
 from marshmallow import ValidationError

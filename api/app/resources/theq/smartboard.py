@@ -64,7 +64,7 @@ class Smartboard(Resource):
                         })
                     else:
                         #  Display error to console, no other action taken.
-                        print("==> Error in Smartboard: Citizen has no active service request. " \
+                        logging.info("==> Error in Smartboard: Citizen has no active service request. " \
                                 + "Possible cause, category, not service, selected.")
     
             return {
@@ -104,5 +104,5 @@ try:
     active_citizen_state = citizen_state.cs_id
 except Exception as ex:
     active_citizen_state = 1
-    print("==> In smartboard.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In smartboard.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

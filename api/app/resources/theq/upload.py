@@ -16,7 +16,7 @@ limitations under the License.'''
 from flask_restx import Resource
 from qsystem import api, application
 from flask import request
-import os
+import logging, os
 from os.path import isfile, join
 from shutil import copy2
 from app.utilities.auth_util import Role, has_any_role
@@ -42,8 +42,8 @@ class Categories(Resource):
             if not os.path.isdir(uploadpath):
                 os.mkdir(uploadpath)
         except Exception as error:
-            print("==> Error trying to create directory: " + uploadpath)
-            print(msg_const + str(error))
+            logging.exception("==> Error trying to create directory: " + uploadpath)
+            logging.exception(msg_const + str(error))
 
         #   Save uploaded video file
         for file in request.files.getlist("file"):
@@ -60,8 +60,8 @@ class Categories(Resource):
             try:
                 file.save(destination)
             except Exception as error:
-                print("==> Error trying to save file: " + filename)
-                print(msg_const + str(error))
+                logging.exception("==> Error trying to save file: %s", filename)
+                logging.exception("%s %s", msg_const, str(error))
 
         #  Get and save the updated manifest.
         data = form.get("manifest")
@@ -71,5 +71,5 @@ class Categories(Resource):
             with open(output_file, "w") as myfile:
                 myfile.write(data)
         except Exception as error:
-            print("==> Error trying to update file: " + output_file)
-            print(msg_const + str(error))
+            logging.exception("==> Error trying to update file: %s", output_file)
+            logging.exception("%s %s ", msg_const ,str(error))
