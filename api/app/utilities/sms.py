@@ -14,7 +14,6 @@ limitations under the License.'''
 
 import logging, re
 from datetime import datetime
-from pprint import pprint
 
 import json
 import pytz
@@ -44,7 +43,7 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
                               'office_telephone': office.telephone
                           }]))
         except Exception as exc:
-            logging.exception('Error on sms sending - %s', exc)
+            logging.exception("Error on sms sending - %s", exc)
 
 
 def is_valid_phone(phone_number: str):

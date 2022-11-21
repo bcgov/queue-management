@@ -27,7 +27,7 @@ from app.models.theq import CSR
 
 
 def on_form_prefill(counters):
-    logging.info('==>on_form_prefill ===> office.py Flask Admin ===> counters',counters)
+    logging.info('==>on_form_prefill ===> office.py Flask Admin ===> counters: %s', counters)
 
 
 class OfficeConfig(Base):
