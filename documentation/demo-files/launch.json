@@ -17,7 +17,7 @@
             "cwd": "/Users/adamcoard/dev/queue-management/api/",
             // High timeout, so gunicorn won't kill process if we hit a debugging breakpoint
             "args": ["wsgi",
-                "--bind=0.0.0.0:5000",
+                "--bind=0.0.0.0:5005",
                 "--access-logfile=-",
                 "--config=/Users/adamcoard/dev/queue-management/api/gunicorn_config.py",
                 "--timeout=9999",

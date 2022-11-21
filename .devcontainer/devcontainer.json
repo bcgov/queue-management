@@ -39,7 +39,7 @@
   ],
   "name": "Queue Management",
   "portsAttributes": {
-    "5000": {
+    "5005": {
       "label": "Queue Management API",
       "onAutoForward": "silent"
     },
