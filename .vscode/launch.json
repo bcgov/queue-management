@@ -57,7 +57,7 @@
       // Run the Queue Management API Python gunicorn process.
       "args": [
         "wsgi",
-        "--bind=0.0.0.0:5005",
+        "--bind=0.0.0.0:5010",
         "--access-logfile=-",
         "--config=gunicorn_config.py",
         "--reload",
@@ -76,8 +76,8 @@
       // Run the Vue.js front end for the Queue Management application.
       "cwd": "${workspaceFolder}/frontend",
       "env": {
-        "VUE_APP_API_URL": "http://localhost:5005/api/v1",
-        "VUE_APP_SOCKET_URL": "http://localhost:5005"
+        "VUE_APP_API_URL": "http://localhost:5010/api/v1",
+        "VUE_APP_SOCKET_URL": "http://localhost:5010"
       },
       "name": "queue_management_front_end",
       "request": "launch",
@@ -99,7 +99,7 @@
       "name": "feedback_api",
       "args": [
         "wsgi:application",
-        "--bind=0.0.0.0:5001",
+        "--bind=0.0.0.0:5020",
         "--timeout=120",
         "--workers=3",
         "--access-logfile=-",
@@ -116,7 +116,7 @@
       "name": "notification_api",
       "args": [
         "wsgi:application",
-        "--bind=0.0.0.0:5002",
+        "--bind=0.0.0.0:5030",
         "--timeout=120",
         "--workers=3",
         "--access-logfile=-",

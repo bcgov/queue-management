@@ -39,15 +39,15 @@
   ],
   "name": "Queue Management",
   "portsAttributes": {
-    "5005": {
+    "5010": {
       "label": "Queue Management API",
       "onAutoForward": "silent"
     },
-    "5001": {
+    "5020": {
       "label": "Feedback API",
       "onAutoForward": "silent"
     },
-    "5002": {
+    "5030": {
       "label": "Notifications API",
       "onAutoForward": "silent"
     },
