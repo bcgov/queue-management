@@ -38,11 +38,11 @@ jobs:
         ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | \
             awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
         echo ENVIRONMENT:$ENVIRONMENT
-        echo "::set-output name=environment::$ENVIRONMENT"
+        echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
         IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
         echo IMAGE_TAG:$IMAGE_TAG
-        echo "::set-output name=image-tag::$IMAGE_TAG"
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
         if [ $GITHUB_REPOSITORY_OWNER != "bcgov" ]; then
           # Never push in forks - useful and safer for development.
@@ -57,14 +57,14 @@ jobs:
         fi
 
         echo PUSH_QMS:$PUSH_QMS
-        echo "::set-output name=push-qms::$PUSH_QMS"
+        echo "push-qms=$PUSH_QMS" >> $GITHUB_OUTPUT
 
         echo PUSH_THEQ:$PUSH_THEQ
-        echo "::set-output name=push-theq::$PUSH_THEQ"
+        echo "push-theq=$PUSH_THEQ" >> $GITHUB_OUTPUT
 
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
-        echo "::set-output name=ref::$REF"
+        echo "ref=$REF" >> $GITHUB_OUTPUT
 
   ##### TEST ###################################################################
 
