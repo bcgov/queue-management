@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
-from pprint import pprint
+import logging
 from datetime import datetime
 from flask import request, g
 from flask_restx import Resource
@@ -43,8 +43,8 @@ class CitizenDetail(Resource):
             return {'citizen': result,
                     'errors': self.citizen_schema.validate(citizen)}
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
     @jwt.has_one_of_roles([Role.internal_user.value])
@@ -116,5 +116,5 @@ try:
 #          from a python3 manage.py db upgrade command.
 except:
     counter_id = 1
-    print("==> In citizen_detail.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In citizen_detail.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

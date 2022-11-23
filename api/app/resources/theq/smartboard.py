@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import request
 from flask_restx import Resource
 from qsystem import api
@@ -63,7 +64,7 @@ class Smartboard(Resource):
                         })
                     else:
                         #  Display error to console, no other action taken.
-                        print("==> Error in Smartboard: Citizen has no active service request. " \
+                        logging.info("==> Error in Smartboard: Citizen has no active service request. " \
                                 + "Possible cause, category, not service, selected.")
     
             return {
@@ -71,14 +72,14 @@ class Smartboard(Resource):
                 "citizens": citizens_waiting
             }
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
-        except TypeError as e:
-            print(e)
+        except TypeError as exception:
+            logging.exception(exception)
             return {'message': 'office_number must be an integer.'}, 400
-        except ValueError as e:
-            print(e)
+        except ValueError as exception:
+            logging.exception(exception)
             return {'message': 'office_number must be an integer.'}, 400
 
 
@@ -94,8 +95,8 @@ class SmartBoradQMenu(Resource):
                 return {'message': 'office_number could not be found.'}, 400
             else:
                 return {'office': self.office_schema.dump(office)}, 200
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
 try:
@@ -103,5 +104,5 @@ try:
     active_citizen_state = citizen_state.cs_id
 except Exception as ex:
     active_citizen_state = 1
-    print("==> In smartboard.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In smartboard.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

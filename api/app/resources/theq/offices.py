@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import g
 from flask_restx import Resource
 from qsystem import api, db
@@ -30,6 +31,6 @@ class OfficeList(Resource):
             return {'offices': result,
                     'errors': {}}
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500

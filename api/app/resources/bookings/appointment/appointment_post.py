@@ -14,7 +14,6 @@ limitations under the License.'''
 
 import logging
 from datetime import datetime
-from pprint import pprint
 
 from dateutil.parser import parse
 from flask import request, g
@@ -151,7 +150,7 @@ class AppointmentPost(Resource):
                     send_sms(appointment, office, office.timezone, user,
                              request.headers['Authorization'].replace('Bearer ', ''))
                 except Exception as exc:
-                    pprint(f'Error on sms or email sending - {exc}')
+                    logging.exception('Error on sms or email sending - %s', exc)
 
             SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
