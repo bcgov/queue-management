@@ -35,15 +35,20 @@ jobs:
       id: parse
       run: |
         # Gets "dev" or "test".
-        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | \
+            awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
         echo ENVIRONMENT:$ENVIRONMENT
-        echo "::set-output name=environment::$ENVIRONMENT"
+        echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
         IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
         echo IMAGE_TAG:$IMAGE_TAG
-        echo "::set-output name=image-tag::$IMAGE_TAG"
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-        if [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+        if [ $GITHUB_REPOSITORY_OWNER != "bcgov" ]; then
+          # Never push in forks - useful and safer for development.
+          PUSH_QMS=false
+          PUSH_THEQ=false
+        elif [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
           PUSH_QMS=true
           PUSH_THEQ=false
         else
@@ -52,14 +57,14 @@ jobs:
         fi
 
         echo PUSH_QMS:$PUSH_QMS
-        echo "::set-output name=push-qms::$PUSH_QMS"
+        echo "push-qms=$PUSH_QMS" >> $GITHUB_OUTPUT
 
         echo PUSH_THEQ:$PUSH_THEQ
-        echo "::set-output name=push-theq::$PUSH_THEQ"
+        echo "push-theq=$PUSH_THEQ" >> $GITHUB_OUTPUT
 
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
-        echo "::set-output name=ref::$REF"
+        echo "ref=$REF" >> $GITHUB_OUTPUT
 
   ##### TEST ###################################################################
 
@@ -217,6 +222,7 @@ jobs:
 
   tag:
     name: Tag
+    if: github.repository_owner == 'bcgov'
     needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -230,6 +236,7 @@ jobs:
 
   wait-for-rollouts:
     name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
     needs: [parse-inputs, tag]
     uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
     secrets:

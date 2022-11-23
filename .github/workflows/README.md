@@ -1,15 +1,9 @@
 # GitHub Actions CI/CD Pipelines
 
-The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
+The GitHub Action `cron-tag-cleanup.yaml` is run as a weekly cron job, but it can also be run on demand. It will:
 
-- Take a pull request number and environment as input parameters
-- Run Cypress tests against the Appointment Frontend
-- Build images using Dockerfile and Source to Image (S2I) builds
-- Push the built images to the required `-tools` namespace
-- Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
-- Wait for rollout of the new images in the deployment environment
-- Run OWASP ZAP tests
-- Run Newman tests if the deployment environment is The Q dev
+- Remove any OpenShift `imagestreamtag` created by the `pull-request-deploy.yaml` Action where the Pull Request was closed more than seven days ago
+- Remove any OpenShift `imagestreamtag` created by the `main-deploy.yaml` Action where the imagestreamtag is not tagged to any environment (`dev`, `test`, `prod`) and the `imagestreamtag` is not among the most recent three builds
 
 The GitHub Action `main-deploy.yaml` is only run manually. It will:
 
@@ -20,6 +14,17 @@ The GitHub Action `main-deploy.yaml` is only run manually. It will:
 - Run `oc tag` to tag the images in the two `-tools` namespaces for `dev`, then `test`, and then `prod` tags
 - After deployment to The Q dev, wait for rollout of the new images
 - After deployment to The Q dev, run Newman and OWASP ZAP tests
+
+The GitHub Action `pull-request-deploy.yaml` is only run manually. It will:
+
+- Take a pull request number and environment as input parameters
+- Run Cypress tests against the Appointment Frontend
+- Build images using Dockerfile and Source to Image (S2I) builds
+- Push the built images to the required `-tools` namespace
+- Run `oc tag` to tag the images in the `-tools` namespace to `dev` (The Q or QMS) or `test` (The Q)
+- Wait for rollout of the new images in the deployment environment
+- Run OWASP ZAP tests
+- Run Newman tests if the deployment environment is The Q dev
 
 ## Setup
 
@@ -107,15 +112,15 @@ There are many GitHub Secrets that are needed to run the Actions:
 
 The following actions are being used:
 
-- [actions/checkout](https://github.com/actions/checkout): checks the code out of the GitHub repository
-- [actions/upload-artifact](https://github.com/actions/upload-artifact): uploads the Cypress test and OWASP ZAP scan artifacts
-- [cypress-io/github-action](https://github.com/cypress-io/github-action): runs Cypress tests
-- [redhat-actions/buildah-build](https://github.com/redhat-actions/buildah-build): builds using a Dockerfile
-- [redhat-actions/oc-login](https://github.com/redhat-actions/oc-login): logs into OpenShift using `oc`
-- [redhat-actions/podman-login](https://github.com/redhat-actions/podman-login): logs into Artifactory to be able to pull images for builds
-- [redhat-actions/push-to-registry](https://github.com/redhat-actions/push-to-registry): pushes built images into the tools namespaces
-- [redhat-actions/s2i-build](https://github.com/redhat-actions/s2i-build): builds using Source to Image (S2I)
-- [zaproxy/action-full-scan](https://github.com/zaproxy/action-full-scan): runs an OWASP ZAP scan against the Staff Frontend and the Appointment Frontend
+- [actions/checkout@v2](https://github.com/actions/checkout): checks the code out of the GitHub repository
+- [actions/upload-artifact@v3](https://github.com/actions/upload-artifact): uploads the Cypress test and OWASP ZAP scan artifacts
+- [cypress-io/github-action@v4](https://github.com/cypress-io/github-action): runs Cypress tests
+- [redhat-actions/buildah-build@v2](https://github.com/redhat-actions/buildah-build): builds using a Dockerfile
+- [redhat-actions/oc-login@v1](https://github.com/redhat-actions/oc-login): logs into OpenShift using `oc`
+- [redhat-actions/podman-login@v1](https://github.com/redhat-actions/podman-login): logs into Artifactory to be able to pull images for builds
+- [redhat-actions/push-to-registry@v1](https://github.com/redhat-actions/push-to-registry): pushes built images into the tools namespaces
+- [redhat-actions/s2i-build@v2](https://github.com/redhat-actions/s2i-build): builds using Source to Image (S2I)
+- [zaproxy/action-full-scan@v0.3.0](https://github.com/zaproxy/action-full-scan): runs an OWASP ZAP scan against the Staff Frontend and the Appointment Frontend
 
 ## Notes
 - The Artifacts aren't visible until after the workflow has completed running. It would be ideal if they were available as soon as the tests finish running. On the other hand, on test failure they should be immediately available and perhaps this is good enough? Details here: https://github.com/actions/upload-artifact/issues/53
