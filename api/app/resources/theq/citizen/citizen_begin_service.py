@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from filelock import FileLock
 from flask import g
 from flask_restx import Resource
@@ -44,7 +45,7 @@ class CitizenBeginService(Resource):
             pending_service_state = SRState.get_state_by_name("Active")
 
             if citizen is None:
-                print("==> POST /citizen/<id>/begin_service/ error. No citizen with id " + str(id))
+                logging.info("==> POST /citizen/<id>/begin_service/ error. No citizen with id %s", str(id))
                 return {"message": "No citizen found with id " + str(id)}
             else:
                 my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/begin_service/, Ticket: '

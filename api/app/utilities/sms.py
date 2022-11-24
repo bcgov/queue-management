@@ -12,9 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import re
+import logging, re
 from datetime import datetime
-from pprint import pprint
 
 import json
 import pytz
@@ -44,7 +43,7 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
                               'office_telephone': office.telephone
                           }]))
         except Exception as exc:
-            pprint(f'Error on sms sending - {exc}')
+            logging.exception("Error on sms sending - %s", exc)
 
 
 def is_valid_phone(phone_number: str):
@@ -86,7 +85,7 @@ def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
                         }]))
             return True
         except Exception as exc:
-            pprint(f'Error on sms sending - {exc}')
+            logging.exception('Error on sms sending - %s', exc)
             return False
     return False
 
@@ -107,6 +106,6 @@ def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
                           }]))
             return True
         except Exception as exc:
-            pprint(f'Error on sms sending - {exc}')
+            logging.exception('Error on sms sending - %s', exc)
             return False
     return False

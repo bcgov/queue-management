@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from datetime import datetime
 from flask import g, request
 from pprint import pprint
@@ -82,7 +83,7 @@ class CitizenAddToQueue(Resource):
                     email_sent = False
                     if citizen.notification_email:
                         office_obj = Office.find_by_id(citizen.office_id)
-                        print('Sending email for walk in spot confirmations to')
+                        logging.info('Sending email for walk in spot confirmations to')
                         email_sent = get_walkin_spot_confirmation_email_contents(citizen, url, office_obj)
                     # SMS  
                     sms_sent = False
@@ -101,7 +102,7 @@ class CitizenAddToQueue(Resource):
                     citizen.notification_sent_time = datetime.utcnow()
         except Exception as err:
             logging.error('{}'.format(str(err)))
-            pprint(err)
+            logging.exception(err)
 
         db.session.add(citizen)
         db.session.commit()

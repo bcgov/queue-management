@@ -19,7 +19,7 @@ from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
 from qsystem import api, db
 from datetime import datetime, timedelta, date
-import pytz
+import logging, pytz
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
@@ -35,7 +35,7 @@ class BookingRecurringDelete(Resource):
 
         today = datetime.today()
 
-        print("==> In the python DELETE /bookings/recurring/<id> endpoint")
+        logging.info("==> In the python DELETE /bookings/recurring/<id> endpoint")
 
         csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
 
@@ -66,7 +66,7 @@ class BookingRecurringDelete(Resource):
 
         today = datetime.today()
 
-        print("==> In the python DELETE /bookings/recurring/<id> endpoint")
+        logging.info("==> In the python DELETE /bookings/recurring/<id> endpoint")
 
         bookings = Booking.query.filter_by(recurring_uuid=id)\
                                 .all()

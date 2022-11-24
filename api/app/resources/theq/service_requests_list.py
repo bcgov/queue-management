@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import request, g
 from flask_restx import Resource
 from datetime import datetime, timedelta
@@ -33,30 +34,30 @@ json_data_const = "    --> json_data: "
 def get_service_request(self, json_data, csr):
 
     if not json_data:
-        print("==> No json_data in POST /service_requests/")
-        print(csr_const + csr.username)
+        logging.info("==> No json_data in POST /service_requests/")
+        logging.info(csr_const + csr.username)
         return (None, "No input data received for creating service request", 400)
 
     try:
         service_request = self.service_request_schema.load(json_data['service_request'])
 
     except ValidationError as err:
-        print("==> ValidationError in POST /service_requests/")
-        print(csr_const + csr.username)
-        print(err)
+        logging.exception("==> ValidationError in POST /service_requests/")
+        logging.exception(csr_const + csr.username)
+        logging.exception(err)
         return (None, err.messages, 422)
     except KeyError as err:
-        print("==> No service_request parameter in POST /service_requests/")
-        print(csr_const + csr.username)
-        print(json_data_const + json.dumps(json_data))
-        print(err)
+        logging.exception("==> No service_request parameter in POST /service_requests/")
+        logging.exception(csr_const + csr.username)
+        logging.exception(json_data_const + json.dumps(json_data))
+        logging.exception(err)
         return (None, str(err), 422)
 
     #  If service request is null, an error.
     if service_request is None:
-        print("==> service_request is None in POST /service_requests/, error in schema.load")
-        print(csr_const + csr.username)
-        print(json_data_const + json.dumps(json_data['service_request']))
+        logging.info("==> service_request is None in POST /service_requests/, error in schema.load")
+        logging.info(csr_const + csr.username)
+        logging.info(json_data_const + json.dumps(json_data['service_request']))
         return (None, "Service request is none trying to create service request", 400)
 
     #  All OK.  Return the service request.
@@ -68,15 +69,15 @@ def get_service(service_request, json_data, csr):
     try:
         service = Service.query.get(service_request.service_id)
     except:
-        print("==> An exception getting service info")
-        print(csr_const + csr.username)
-        print(json_data_const + json.dumps(json_data['service_request']))
+        logging.exception("==> An exception getting service info")
+        logging.exception(csr_const + csr.username)
+        logging.exception(json_data_const + json.dumps(json_data['service_request']))
         return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
 
     if service.parent_id is None:
-        print("==> CSR has selected a category, rather than a service.  This should not be possible")
-        print(csr_const + csr.username)
-        print("    --> Service:   " + service.service_name)
+        logging.info("==> CSR has selected a category, rather than a service.  This should not be possible")
+        logging.info(csr_const + csr.username)
+        logging.info("    --> Service:   " + service.service_name)
         return (None, "CSR has selected a category, rather than a service. Should not be possible", 400)
 
     return (service, "", 200)
@@ -112,9 +113,9 @@ class ServiceRequestsList(Resource):
             citizen = citizen.first()
 
         except:
-            print("==> An exception getting citizen info")
-            print(csr_const + csr.username)
-            print(json_data_const + json.dumps(json_data['service_request']))
+            logging.exception("==> An exception getting citizen info")
+            logging.exception(csr_const + csr.username)
+            logging.exception(json_data_const + json.dumps(json_data['service_request']))
 
         if citizen is None:
             return {"message": "No matching citizen found for citizen_id"}, 400
@@ -207,5 +208,5 @@ try:
     active_id = citizen_state.cs_id
 except:
     active_id = 1
-    print("==> In service_requests_list.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In service_requests_list.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

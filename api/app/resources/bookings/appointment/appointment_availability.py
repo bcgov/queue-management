@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-import datetime
+import datetime, logging
 
 import pytz
 from flask_restx import Resource
@@ -51,6 +51,6 @@ class OfficeSlots(Resource):
 
             return AvailabilityService.get_available_slots(office=office, days=days, service=service)
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
