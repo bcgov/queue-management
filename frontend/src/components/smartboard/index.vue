@@ -148,7 +148,7 @@ export default class Smartboard extends Vue {
     this.$root.$on('onDigitalSignageMsgUpdate', () => { this.onDigitalSignageMsgUpdate() })
     setInterval(() => { this.now() }, 1000)
 
-    var fetchNetworkStatus = () => {
+    const fetchNetworkStatus = () => {
       axios
         .get('http://localhost/health')
         .then(response => {

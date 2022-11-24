@@ -840,7 +840,7 @@ export default class ApptBookingModal extends Vue {
       this.curr_date = new Date(this.clickedTime.start.format())
       }
     }
-    var now = new Date();
+    const now = new Date();
     if (this.start > now || this.app_start_time == null || this.app_start_date == null ) {
         this.allow_reschedule = true
       }else {
@@ -860,7 +860,7 @@ export default class ApptBookingModal extends Vue {
         validate_flag = true
       }
       if (start_time) {
-        var now = new Date();
+        const now = new Date();
         if ((new Date(start_time).getHours() <= 8) || (new Date(start_time).getHours() >= 17)){
           if ((new Date(start_time).getHours() === 8)) {
             if ((new Date(start_time).getMinutes() < 30)) {
@@ -1017,7 +1017,7 @@ export default class ApptBookingModal extends Vue {
       this.getServices()
     }
     this.timeOptions()
-    var now = new Date();
+    const now = new Date();
     if (this.start > now) {
         this.allow_reschedule = true
     } else {
@@ -1063,7 +1063,7 @@ export default class ApptBookingModal extends Vue {
     if (this.appt_time && this.appt_date) {
         this.start = new Date(this.appt_date+' '+this.appt_time)
     }
-    var now = new Date();
+    const now = new Date();
     if (this.start > now || this.app_start_time == null || this.app_start_date == null ) {
         this.allow_reschedule = true
     }else {
