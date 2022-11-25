@@ -82,6 +82,7 @@
     "workbox-webpack-plugin": "^6.5.2"
   },
   "resolutions": {
-    "yargs-parser": "15.0.1"
+    "yargs-parser": "15.0.1",
+    "loader-utils": "2.0.4"
   }
 }
