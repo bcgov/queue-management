@@ -43,20 +43,20 @@ copy_config () {
     DESTINATION=$2
 
     if [ ! -f $SOURCE ]; then
-        echo_failure configuration source file `pwd`/$SOURCE is missing
+        echo_failure configuration source file $(pwd)/$SOURCE is missing
     else
         if [ -f $DESTINATION ]; then
-            echo Using pre-existing file `realpath $DESTINATION`
+            echo Using pre-existing file $(realpath $DESTINATION)
         else
-            SOURCE=`realpath $SOURCE`
+            SOURCE=$(realpath $SOURCE)
 
-            DIRECTORY=`dirname $DESTINATION`
+            DIRECTORY=$(dirname $DESTINATION)
             if [ ! -d $DIRECTORY ]; then
-                echo Creating directory `pwd`/$DIRECTORY
+                echo Creating directory $(pwd)/$DIRECTORY
                 mkdir -p $DIRECTORY
             fi
 
-            echo Copying $SOURCE to `pwd`/$DESTINATION
+            echo Copying $SOURCE to $(pwd)/$DESTINATION
             cp $SOURCE $DESTINATION
         fi
     fi
@@ -75,13 +75,20 @@ check_setting () {
     grep "$KEY_NAME" $FILENAME > /dev/null
 
     if [ $? -ne 0 ]; then
-        echo_failure Missing configuration key $KEY_NAME in `realpath $FILENAME`
+        echo_failure Missing configuration key $KEY_NAME in \
+            $(realpath $FILENAME)
     fi
 }
 
 ###############################################################################
-# Setup
+# Dependency Installations
 ###############################################################################
+
+# Log the output to make it easier to find when things go wrong.
+LOGDIR=.devcontainer/logs
+if [ ! -d $LOGDIR ]; then
+    mkdir $LOGDIR
+fi
 
 # To save time do the installations in parallel.
 
@@ -93,27 +100,22 @@ check_setting () {
     python -m pip install --upgrade pip -q
     pip install wheel
     pip install -r requirements_dev.txt --progress-bar off
-    python manage.py db upgrade
-
-    # If there is nothing in the CSR table, we're probably starting with a
-    # clean database and need to bootstrap it with default data.
-    COUNT=`PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
-        -U postgres -c "SELECT COUNT(*) FROM csr;" -t`
-    if [ "$COUNT" -eq 0 ]; then
-        env/bin/python manage.py bootstrap
-    fi
 
     # Install newman so that the postman tests can be run on the command line.
+    echo Installing newman
     cd postman
+    rm -rf node_modules
     npm install newman
-) &
+) |& tee $LOGDIR/api.log &
 
-(
+# If NPM output is piped into a commmand, it does not display any indication of
+# progress. Use "script" to make NPM think it is running on a TTY.
+script -fq -c "(
     cd appointment-frontend
     # rm -rf node_modules
     npm install
     $(npm bin)/cypress install
-) &
+)" |& tee $LOGDIR/appointment-frontend.log &
 
 (
     cd feedback-api
@@ -124,13 +126,13 @@ check_setting () {
     pip install wheel
     pip install -r requirements.txt --progress-bar off
     python3 setup.py install
-) &
+) |& tee $LOGDIR/feedback-api.log &
 
-(
+script -fq -c "(
     cd frontend
-    # rm -rf node_modules
+    rm -rf node_modules
     npm install
-) &
+)" |& tee $LOGDIR/frontend.log &
 
 (
     cd notifications-api
@@ -141,7 +143,7 @@ check_setting () {
     pip install wheel
     pip install -r requirements.txt --progress-bar off
     python3 setup.py install
-) &
+) |& tee $LOGDIR/notifications-api.log &
 
 (
     cd jobs/appointment_reminder
@@ -151,11 +153,33 @@ check_setting () {
     python -m pip install --upgrade pip -q
     pip install wheel
     pip install -r requirements.txt --progress-bar off
-) &
+) |& tee $LOGDIR/appointmetn_reminder.log 
 
-# Wait for the above to complete, and then do the filesystem setup. If anything
-# fails we won't have to hunt for error messages.
+# Wait for all the above to complete.
 wait
+
+###############################################################################
+# Database Bootstrapping and Setup
+###############################################################################
+
+(
+    cd api
+    source env/bin/activate
+    python manage.py db upgrade
+
+    # If there is nothing in the CSR table, we're probably starting with a
+    # clean database and need to bootstrap it with default data.
+    COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
+        -U postgres -c "SELECT COUNT(*) FROM csr;" -t)
+    if [ "$COUNT" -eq 0 ]; then
+        python manage.py bootstrap
+        python manage.py adduser
+    fi
+)
+
+###############################################################################
+# Configuration Files Setup and Checking
+###############################################################################
 
 echo
 

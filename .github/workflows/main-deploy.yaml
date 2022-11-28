@@ -43,6 +43,8 @@ jobs:
       directory: appointment-frontend
       image-name: appointment-nginx-frontend
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   feedback-api:
     name: feedback-api
@@ -60,6 +62,8 @@ jobs:
       directory: feedback-api
       image-name: feedback-api
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   notifications-api:
     name: notifications-api
@@ -77,6 +81,8 @@ jobs:
       directory: notifications-api
       image-name: notifications-api
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   queue-management-api:
     name: queue-management-api
@@ -97,6 +103,8 @@ jobs:
       directory: api
       image-name: queue-management-api
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   queue-management-frontend:
     name: queue-management-frontend
@@ -117,6 +125,8 @@ jobs:
       directory: frontend
       image-name: queue-management-nginx-frontend
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
@@ -137,11 +147,14 @@ jobs:
       directory: jobs/appointment_reminder
       image-name: send-appointment-reminder-crond
       image-tags: commit-${GITHUB_SHA::7} latest
+      push-qms: ${{ github.repository_owner == 'bcgov' }}
+      push-theq: ${{ github.repository_owner == 'bcgov' }}
 
   ##### DEPLOY THE Q ###########################################################
 
   approve-theq-dev:
     name: Approve Deploy to The Q Dev
+    if: github.repository_owner == 'bcgov'
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: The Q Dev
     runs-on: ubuntu-latest
@@ -152,6 +165,7 @@ jobs:
 
   tag-theq-dev:
     name: Tag The Q Dev
+    if: github.repository_owner == 'bcgov'
     needs: approve-theq-dev
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -165,6 +179,7 @@ jobs:
 
   wait-for-rollouts:
     name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
     needs: tag-theq-dev
     uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
     secrets:
@@ -248,6 +263,7 @@ jobs:
 
   approve-theq-test:
     name: Approve Deploy to The Q Test
+    if: github.repository_owner == 'bcgov'
     needs: [newman-theq, owasp-staff, owasp-appointment]
     environment: The Q Test
     runs-on: ubuntu-latest
@@ -258,6 +274,7 @@ jobs:
 
   tag-theq-test:
     name: Tag The Q Test
+    if: github.repository_owner == 'bcgov'
     needs: approve-theq-test
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -271,6 +288,7 @@ jobs:
 
   approve-theq-prod:
     name: Approve Deploy to The Q Prod
+    if: github.repository_owner == 'bcgov'
     needs: tag-theq-test
     environment: The Q Prod
     runs-on: ubuntu-latest
@@ -281,6 +299,7 @@ jobs:
 
   tag-theq-stable:
     name: Tag The Q Stable
+    if: github.repository_owner == 'bcgov'
     needs: approve-theq-prod
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -294,6 +313,7 @@ jobs:
 
   tag-theq-prod:
     name: Tag The Q Prod
+    if: github.repository_owner == 'bcgov'
     needs: tag-theq-stable
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -309,6 +329,7 @@ jobs:
 
   approve-qms-dev:
     name: Approve Deploy to QMS Dev
+    if: github.repository_owner == 'bcgov'
     needs: [appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
     environment: QMS Dev
     runs-on: ubuntu-latest
@@ -319,6 +340,7 @@ jobs:
 
   tag-qms-dev:
     name: Tag QMS Dev
+    if: github.repository_owner == 'bcgov'
     needs: approve-qms-dev
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -332,6 +354,7 @@ jobs:
 
   approve-qms-test:
     name: Approve Deploy to QMS Test
+    if: github.repository_owner == 'bcgov'
     needs: tag-qms-dev
     environment: QMS Test
     runs-on: ubuntu-latest
@@ -342,6 +365,7 @@ jobs:
 
   tag-qms-test:
     name: Tag QMS Test
+    if: github.repository_owner == 'bcgov'
     needs: approve-qms-test
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -355,6 +379,7 @@ jobs:
 
   approve-qms-prod:
     name: Approve Deploy to QMS Prod
+    if: github.repository_owner == 'bcgov'
     needs: tag-qms-test
     environment: QMS Prod
     runs-on: ubuntu-latest
@@ -365,6 +390,7 @@ jobs:
 
   tag-qms-stable:
     name: Tag QMS Stable
+    if: github.repository_owner == 'bcgov'
     needs: approve-qms-prod
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
@@ -378,6 +404,7 @@ jobs:
 
   tag-qms-prod:
     name: Tag QMS Prod
+    if: github.repository_owner == 'bcgov'
     needs: tag-qms-stable
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:

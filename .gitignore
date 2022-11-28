@@ -118,6 +118,9 @@ queue-env/
 !.vscode/launch.json
 !.vscode/tasks.json
 
+# Visual Studio Code devcontainers -- ignore dependency installation logs.
+.devcontainer/logs
+
 # Project specific include/excludes
 api/postman/package-lock.json
 /frontend/public/static/keycloak/

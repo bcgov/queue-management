@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from pprint import pprint
+import logging
 
 from flask import request, abort, g
 from flask_restx import Resource
@@ -63,7 +63,7 @@ class AppointmentDelete(Resource):
             try:
                 send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
             except Exception as exc:
-                pprint(f'Error on token generation - {exc}')
+                logging.exception(f'Error on token generation - {exc}')
 
         db.session.delete(appointment)
         db.session.commit()

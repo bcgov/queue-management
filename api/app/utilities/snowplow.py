@@ -19,7 +19,6 @@ from app.models.theq.office import Office
 from app.models.theq.role import Role
 from app.models.theq.service import Service
 from app.models.theq.smartboard import SmartBoard
-from pprint import pprint
 from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import logging
@@ -144,9 +143,9 @@ class SnowPlow():
 
     @staticmethod
     def failure(count, failed):
-        print("###################  " + str(count) + " events sent successfuly.  Events below failed:")
+        logging.error("################### %s events sent successfuly.  Events below failed:", str(count))
         for event_dict in failed:
-            print(event_dict)
+            logging.error(event_dict)
 
     @staticmethod
     def get_citizen(citizen_obj, counter_name, svc_number = 1):

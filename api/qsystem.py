@@ -29,17 +29,17 @@ from sqlalchemy_continuum import make_versioned
 def my_print(my_data):
     if print_flag:
         if type(my_data) is str:
-            print(time_string() + my_data)
+            logging.debug(time_string() + my_data)
         else:
-            print(time_string() + "==> " + str(type(my_data)) + " data is:")
-            print(my_data)
+            logging.debug(time_string() + "==> " + str(type(my_data)) + " data is:")
+            logging.debug(my_data)
 
 def time_print(my_data):
     if type(my_data) is str:
-        print(time_string() + my_data)
+        logging.info(time_string() + my_data)
     else:
-        print(time_string() + "==> " + str(type(my_data)) + " data is:")
-        print(my_data)
+        logging.info(time_string() + "==> " + str(type(my_data)) + " data is:")
+        logging.info(my_data)
 
 def time_string():
     now = datetime.datetime.now()
@@ -66,9 +66,9 @@ db.init_app(application)
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
 ping_timeout_seconds = application.config['SOCKETIO_PING_TIMEOUT']
 ping_interval_seconds = application.config['SOCKETIO_PING_INTERVAL']
-print("==> socketIO Engine options")
-print("    --> ping_timeout_seconds:    " + str(ping_timeout_seconds))
-print("    --> ping_interval_seconds:   " + str(ping_interval_seconds))
+logging.info("==> socketIO Engine options")
+logging.info("    --> ping_timeout_seconds:    " + str(ping_timeout_seconds))
+logging.info("    --> ping_interval_seconds:   " + str(ping_interval_seconds))
 
 cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
 cache.init_app(application)
@@ -140,40 +140,40 @@ configure_logging(application)
 
 #  Code to determine all db.engine properties and sub-properties, as necessary.
 if print_flag:
-    print("==> All DB Engine options")
+    logging.info("==> All DB Engine options")
     for attr in dir(db._engine_options.keys):
-        print("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
+        logging.info("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
         # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
 
 #  See whether options took.
 if print_flag:
-     print("==> DB Engine options")
-     print("    --> db options:    " + str(db.engine))
-     print("    --> pool size:    " + str(db.engine.pool.size()))
-     print("    --> max overflow: " + str(db.engine.pool._max_overflow))
-     print("    --> echo:         " + str(db.engine.echo))
-     print("    --> pre ping:     " + str(db.engine.pool._pre_ping))
-     print("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
-     print("")
+     logging.info("==> DB Engine options")
+     logging.info("    --> db options:    " + str(db.engine))
+     logging.info("    --> pool size:    " + str(db.engine.pool.size()))
+     logging.info("    --> max overflow: " + str(db.engine.pool._max_overflow))
+     logging.info("    --> echo:         " + str(db.engine.echo))
+     logging.info("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+     logging.info("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
+     logging.info("")
 
-     print("==> Socket/Engine options")
-     print("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
-     print("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
-     print("")
+     logging.info("==> Socket/Engine options")
+     logging.info("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
+     logging.info("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
+     logging.info("")
 
 #  Get list of available loggers.
 if print_flag:
-    print("==> List of available loggers and associated information:")
+    logging.info("==> List of available loggers and associated information:")
     for name in logging.root.manager.loggerDict:
         temp_logger = logging.getLogger(name)
         temp_handlers = temp_logger.handlers
-        print("    --> Logger name: " + name + '; Handler count: ' \
+        logging.info("    --> Logger name: " + name + '; Handler count: ' \
               + str(len(temp_handlers)) + '; Level: ' \
               + debug_level_to_debug_string(temp_logger.getEffectiveLevel()) \
               + "; Propagate: " + str(temp_logger.propagate))
         for h in temp_handlers:
             if h.__class__.__name__ != "NullHandler":
-                print("        --> name: " + name + "; handler type: " + h.__class__.__name__)
+                logging.info("        --> name: " + name + "; handler type: " + h.__class__.__name__)
 
 # def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=100, delay_start=200, delay_mult=1.5):
 def api_call_with_retry(f, max_time=15000, max_tries=12, delay_first=175, delay_start=175, delay_mult=1.0):
@@ -231,19 +231,19 @@ def print_retry_info(print_debug, parameters, f, kwargs):
     if print_debug:
         msg = "==> RT K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; F:" + str(f) + "; KW:" + str(kwargs) if kwargs is not None else "None"
-        print(time_string() + msg)
+        logging.info(time_string() + msg)
 
 def print_error_info(print_debug, parameters, err):
     if print_debug:
         msg = "==> AE K:" + parameters['key'] + "; T:" + str(parameters['current_try']) \
             + "; E:" + str(err).replace("\n", ">").replace("\r", ">")
-        print(time_string() + msg)
+        logging.error(time_string() + msg)
 
         #  Print more info, if the builtins.dict error.
         # if "builtins.dict" in str(err):
         # if "could not connect" in str(err):
         if parameters['current_try'] == 2:
-            print("==> TB K:" + parameters['key'] + "; T:" + str(parameters['current_try']))
+            logging.error("==> TB K:" + parameters['key'] + "; T:" + str(parameters['current_try']))
             traceback.print_tb(err.__traceback__)
 
 def update_delay(current_delay, current_try, delay_first, delay_start, delay_mult):
@@ -345,14 +345,14 @@ hostname = socket.gethostname()
 @api.errorhandler(SQLAlchemyError)
 def error_handler(e):
     '''Default error handler'''
-    print(e)
+    logging.error(e)
     return {"message": str(e), "trace": traceback.format_exc()}, 500
 
 
 @application.errorhandler(SQLAlchemyError)
 def error_handler(e):
     '''Default error handler'''
-    print(e)
+    logging.error(e)
     return "error"
 
 
@@ -406,7 +406,7 @@ def after_cursor_execute(conn, cursor, statement,
                 else:
                     logger.info("--> Line " + str(count) + ": " + output_string)
         except Exception as err:
-            print("==> Error:" + str(err))
+            logging.exception("==> Error:" + str(err))
 
 
 @application.after_request

@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from filelock import FileLock
 from flask import g, request
 from flask_restx import Resource
@@ -19,7 +20,6 @@ from qsystem import api, api_call_with_retry, db, socketio, my_print, get_key
 from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState
 from app.schemas.theq import CitizenSchema
 from datetime import datetime
-from pprint import pprint
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 from sqlalchemy.orm import contains_eager, raiseload, joinedload
@@ -176,5 +176,5 @@ try:
     active_id = citizen_state.cs_id
 except:
     active_id = 1
-    print("==> In citizen_generic_invite.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In citizen_generic_invite.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

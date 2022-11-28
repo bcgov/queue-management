@@ -54,8 +54,8 @@ class ExamList(Resource):
                 start_date = datetime.strptime(request.args['start_date'], "%Y-%m-%d")
                 end_date = datetime.strptime(request.args['end_date'], "%Y-%m-%d")
 
-            except ValueError as err:
-                print(err)
+            except ValueError as exception:
+                logging.exception(exception)
                 return {"message", "Unable to return date time string"}, 422
 
             #   Code for UTC time.

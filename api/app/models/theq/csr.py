@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from qsystem import cache, db, my_print
 from app.models.theq import Base
 from sqlalchemy import func
@@ -88,8 +89,8 @@ class CSR(Base):
             key = (CSR.format_string % csr_db.username).lower()
             cache.set(key, csr_db)
         except Exception as ex:
-            print("==> csr.py, update_user_cache, userid: " + str(userid) + "; type: " + str(type(userid)))
-            print("    --> Exception: " + str(ex))
+            logging.exception("==> csr.py, update_user_cache, userid: " + str(userid) + "; type: " + str(type(userid)))
+            logging.exception("    --> Exception: " + str(ex))
 
     def get_id(self):
         return str(self.csr_id)

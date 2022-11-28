@@ -12,9 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+import logging
 from flask import request, g
 from flask_restx import Resource
-from qsystem import api, api_call_with_retry, db, socketio, time_print, get_key
+from qsystem import api, api_call_with_retry, db, socketio, get_key
 from app.models.theq import Citizen, CSR, CitizenState, Period, ServiceReq, citizen
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
@@ -51,8 +52,8 @@ class CitizenList(Resource):
             return {'citizens': result,
                     'errors': self.citizens_schema.validate(citizens)}, 200
 
-        except exc.SQLAlchemyError as e:
-            print(e)
+        except exc.SQLAlchemyError as exception:
+            logging.exception(exception)
             return {'message': 'API is down'}, 500
 
 @api.route("/citizens/<int:citizens_waiting>/add_citizen/", methods=['POST'])
@@ -86,7 +87,7 @@ class CitizenList(Resource):
             citizen.start_position = citizens_waiting + 1
 
         except ValidationError as err:
-            print(err)
+            logging.exception(err)
             return {"message": err.messages}, 422
 
         citizen.cs_id = active_id
@@ -107,5 +108,5 @@ try:
     active_id = citizen_state.cs_id
 except:
     active_id = 1
-    print("==> In citizen_list.py")
-    print("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+    logging.exception("==> In citizen_list.py")
+    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
