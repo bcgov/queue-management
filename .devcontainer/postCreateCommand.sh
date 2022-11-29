@@ -112,7 +112,7 @@ fi
 # progress. Use "script" to make NPM think it is running on a TTY.
 script -fq -c "(
     cd appointment-frontend
-    # rm -rf node_modules
+    rm -rf node_modules
     npm install
     $(npm bin)/cypress install
 )" |& tee $LOGDIR/appointment-frontend.log &
@@ -153,10 +153,12 @@ script -fq -c "(
     python -m pip install --upgrade pip -q
     pip install wheel
     pip install -r requirements.txt --progress-bar off
-) |& tee $LOGDIR/appointmetn_reminder.log 
+) |& tee $LOGDIR/appointment_reminder.log 
 
 # Wait for all the above to complete.
 wait
+
+rm typescript
 
 ###############################################################################
 # Database Bootstrapping and Setup
