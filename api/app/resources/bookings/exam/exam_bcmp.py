@@ -72,7 +72,7 @@ class ExamBcmpPost(Resource):
         else:
 
             logging.info("Creating Group Environment exam")
-            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], invigilator, formatted_data["pesticide_office"], g.jwt_oidc_token_info)
+            bcmp_response = self.bcmp_service.create_group_exam_bcmp(exam, booking, formatted_data["candidates_list_bcmp"], formatted_data["pesticide_office"], g.jwt_oidc_token_info)
             
             
         if bcmp_response:

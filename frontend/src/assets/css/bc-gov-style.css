@@ -430,8 +430,6 @@ h3.panel-title {
     margin-bottom: 20px;
 }
 
-.gov-login-options .row {}
-
 .gov-login-option {
     text-align: center;
     padding-bottom: 30px;
@@ -645,6 +643,7 @@ label {
   color: #fff;
   background-color: #286090;
   border-color: #204d74;
+  background-image: none;
 }
 
 .btn-primary:active:hover,
@@ -659,12 +658,6 @@ label {
   color: #fff;
   background-color: #204d74;
   border-color: #122b40;
-}
-
-.btn-primary:active,
-.btn-primary.active,
-.open > .dropdown-toggle.btn-primary {
-  background-image: none;
 }
 
 .btn-primary.disabled:hover,
@@ -710,6 +703,7 @@ fieldset[disabled] .btn-primary.focus {
   color: #fff;
   background-color: #449d44;
   border-color: #398439;
+  background-image: none;
 }
 
 .btn-success:active:hover,
@@ -724,12 +718,6 @@ fieldset[disabled] .btn-primary.focus {
   color: #fff;
   background-color: #398439;
   border-color: #255625;
-}
-
-.btn-success:active,
-.btn-success.active,
-.open > .dropdown-toggle.btn-success {
-  background-image: none;
 }
 
 .btn-success.disabled:hover,
@@ -775,6 +763,7 @@ fieldset[disabled] .btn-success.focus {
   color: #fff;
   background-color: #31b0d5;
   border-color: #269abc;
+  background-image: none;
 }
 
 .btn-info:active:hover,
@@ -789,12 +778,6 @@ fieldset[disabled] .btn-success.focus {
   color: #fff;
   background-color: #269abc;
   border-color: #1b6d85;
-}
-
-.btn-info:active,
-.btn-info.active,
-.open > .dropdown-toggle.btn-info {
-  background-image: none;
 }
 
 .btn-info.disabled:hover,
@@ -840,6 +823,7 @@ fieldset[disabled] .btn-info.focus {
   color: #fff;
   background-color: #ec971f;
   border-color: #d58512;
+  background-image: none;
 }
 
 .btn-warning:active:hover,
@@ -854,12 +838,6 @@ fieldset[disabled] .btn-info.focus {
   color: #fff;
   background-color: #d58512;
   border-color: #985f0d;
-}
-
-.btn-warning:active,
-.btn-warning.active,
-.open > .dropdown-toggle.btn-warning {
-  background-image: none;
 }
 
 .btn-warning.disabled:hover,
@@ -905,6 +883,7 @@ fieldset[disabled] .btn-warning.focus {
   color: #fff;
   background-color: #c9302c;
   border-color: #ac2925;
+  background-image: none
 }
 
 .btn-danger:active:hover,
@@ -919,12 +898,6 @@ fieldset[disabled] .btn-warning.focus {
   color: #fff;
   background-color: #ac2925;
   border-color: #761c19;
-}
-
-.btn-danger:active,
-.btn-danger.active,
-.open > .dropdown-toggle.btn-danger {
-  background-image: none;
 }
 
 .btn-danger.disabled:hover,

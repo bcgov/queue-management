@@ -123,7 +123,7 @@ class BCMPService:
         response = self.send_request(url, 'POST', bcmp_exam)
         return response
 
-    def create_group_exam_bcmp(self, exam, booking, candiate_list, invigilator, pesticide_office, oidc_token_info):
+    def create_group_exam_bcmp(self, exam, booking, candiate_list, pesticide_office, oidc_token_info):
         url = "%s/auth=%s;%s/JSON/create:BCMD-EXAM-GROUP" % (self.base_url, self.bcmp_user, self.auth_token)
         my_print("  ==> create_group_exam_bcmp    url: %s" % url)
 
