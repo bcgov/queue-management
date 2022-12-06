@@ -38,10 +38,8 @@ export function searchNestedObject (searchObj, search) {
   for (let i = 0; i < l; i++) {
     const key = keys[i]
     const val = searchObj[key]
-    if (typeof val === 'string') {
-      if (val.toLowerCase().includes(searchTerm)) {
-        return true
-      }
+    if (checkStringValMatch(val, searchTerm)) {
+      return true
     }
     if (typeof val === 'object' && val !== null) {
       const keys2 = Object.keys(val)
@@ -49,12 +47,19 @@ export function searchNestedObject (searchObj, search) {
       for (let i2 = 0; i2 < l2; i2++) {
         const key2 = keys2[i2]
         const val2 = val[key2]
-        if (typeof val2 === 'string') {
-          if (val2.toLowerCase().includes(searchTerm)) {
-            return true
-          }
+        if (checkStringValMatch(val2, searchTerm)) {
+          return true
         }
       }
+    }
+  }
+  return false
+}
+
+function checkStringValMatch (val: any, searchTerm: any): boolean {
+  if (typeof val === 'string') {
+    if (val.toLowerCase().includes(searchTerm)) {
+      return true
     }
   }
   return false
