@@ -295,25 +295,32 @@ export default class Appointments extends Vue {
       return direction === 'next' ? 1 : -1
     } else {
       if (this.$refs.calendar) {
-      // For days, we have to handle jumping of weekends.
-      const viewedDate = this.$refs.calendar.value
-      const dayOfWeek = moment(viewedDate).day()
-      let daysToMove = 1
-      if (direction === 'next') {    
-        if ((dayOfWeek + 1) === SATURDAY ) {
-          daysToMove = 3
-        }
-      } else if (direction === 'prev') {
-        daysToMove = -1
-        if ((dayOfWeek) === SUNDAY ) {
-          // Value must be negative for prev
-          daysToMove = -3
-        }
-      }
-      return daysToMove
+        // For days, we have to handle jumping of weekends.
+        const viewedDate = this.$refs.calendar.value
+        const dayOfWeek = moment(viewedDate).day()
+        return this.getDaysToMoveByDay(direction, viewedDate, dayOfWeek)
       }
       return 1
     }
+  }
+  /**
+   * This function helps skipping weekends on day views
+   * Returns the # of days to move to skip the weekend
+   */
+  getDaysToMoveByDay(direction: 'next' | 'prev', viewedDate:any, dayOfWeek: number): number{
+    let daysToMove = 1
+    if (direction === 'next') {    
+      if ((dayOfWeek + 1) === SATURDAY ) {
+        daysToMove = 3
+      }
+    } else if (direction === 'prev') {
+      daysToMove = -1
+      if ((dayOfWeek) === SUNDAY ) {
+        // Value must be negative for prev
+        daysToMove = -3
+      }
+    }
+    return daysToMove
   }
 
   checkRescheduleCancel () {
