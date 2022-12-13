@@ -83,6 +83,7 @@
   },
   "resolutions": {
     "yargs-parser": "15.0.1",
-    "loader-utils": "2.0.4"
+    "loader-utils": "2.0.4",
+    "decode-uri-component": "0.2.2"
   }
 }

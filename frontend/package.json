@@ -110,7 +110,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^7.20.0",
     "eventsource-polyfill": "0.9.6",
-    "express": "4.17.1",
+    "express": "^4.18.2",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "6.2.0",
     "friendly-errors-webpack-plugin": "1.7.0",
@@ -163,6 +163,7 @@
   "resolutions": {
     "yargs-parser": "15.0.1",
     "scss-tokenizer": "0.4.3",
-    "loader-utils": "2.0.4"
+    "loader-utils": "2.0.4",
+    "decode-uri-component": "0.2.2"
   }
 }
