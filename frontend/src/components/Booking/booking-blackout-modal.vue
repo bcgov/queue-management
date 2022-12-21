@@ -1034,7 +1034,6 @@ export default class BookingBlackoutModal extends Vue {
         })
       }
     } else if (this.booking_rrule_array.length > 0) {
-      const booking_array: any = []
       const self = this
       if (this.room_id_list.length === 1) {
         if (this.selected[0].id === '_offsite') {
@@ -1052,7 +1051,6 @@ export default class BookingBlackoutModal extends Vue {
             booking.blackout_flag = 'Y'
             booking.blackout_notes = self.notes
             booking.recurring_uuid = recurring_uuid
-            booking_array.push(booking)
             axiosArray.push(self.postBooking(booking))
           })
         } else {
@@ -1071,7 +1069,6 @@ export default class BookingBlackoutModal extends Vue {
             booking.blackout_notes = self.notes
             booking.room_id = self.selected[0].id
             booking.recurring_uuid = recurring_uuid
-            booking_array.push(booking)
             axiosArray.push(self.postBooking(booking))
           })
         }
@@ -1095,7 +1092,6 @@ export default class BookingBlackoutModal extends Vue {
             if (booking.room_id === '_offsite') {
               delete booking.room_id
             }
-            booking_array.push(booking)
             axiosArray.push(self.postBooking(booking))
           })
         })
@@ -1365,7 +1361,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.start_time_msg = ''
-            validate_flag = false
           }
         } else if (new Date(start_time).getHours() === 17) {
           if ((new Date(start_time).getMinutes() > 0)) {
@@ -1374,7 +1369,6 @@ export default class BookingBlackoutModal extends Vue {
               validate_flag = true
           } else {
             this.start_time_msg = ''
-            validate_flag = false
           }
         } else {
           this.start_time_msg = "Time not allowed"
