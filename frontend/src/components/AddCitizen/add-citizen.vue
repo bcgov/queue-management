@@ -181,7 +181,7 @@ export default class AddCitizen extends Vue {
 
   get sortedCounters () {
     // eslint-disable-next-line
-    var sorted = this.user.office.counters.sort((a: { counter_name: number }, b: { counter_name: number }) => {
+    let sorted = this.user.office.counters.sort((a: { counter_name: number }, b: { counter_name: number }) => {
       return a.counter_name > b.counter_name
     })
     return sorted

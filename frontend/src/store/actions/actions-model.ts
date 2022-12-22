@@ -45,7 +45,7 @@ export const commonActions: any = {
       }
     }
     formData.append('manifest', payload.data)
-    var contenttype = {
+    const contenttype = {
       headers: {
         'content-type': 'multipart/form-data'
       }
@@ -395,7 +395,7 @@ export const commonActions: any = {
     Axios(context)
       .get('/csr_states/')
       .then(resp => {
-        var states = resp.data.csr_states
+        let states = resp.data.csr_states
         states.forEach(x => {
           context.state.csr_states[x.csr_state_name] = x.csr_state_id
         })

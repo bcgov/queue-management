@@ -134,7 +134,7 @@ export default class ButtonsAppointments extends Vue {
 .align-center-text {
   padding-left: 40%;
   margin-top: -46px;
-}​
+}
 .full-div {
   width: 100%;
 }
