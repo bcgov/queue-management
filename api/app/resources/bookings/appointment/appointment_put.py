@@ -27,7 +27,7 @@ from app.utilities.email import send_email, get_confirmation_email_contents
 from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
-
+from app.utilities.sms import send_sms
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
@@ -105,6 +105,8 @@ class AppointmentPut(Resource):
         # Send confirmation email
         try:
             send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+            send_sms(appointment, office, office.timezone, user,
+                             request.headers['Authorization'].replace('Bearer ', ''))
         except Exception as exc:
             logging.exception('Error on token generation - %s', exc)
 
