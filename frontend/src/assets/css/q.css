@@ -264,3 +264,11 @@ input#app_timepicker_id {
   position: unset;
   left: unset;
 }
+
+.dropdown .dropdown-menu .dropdown-item {
+  padding: 0.25rem 1.5rem !important;
+}
+
+#app_timepicker_id {
+  float: unset !important
+}
