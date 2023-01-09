@@ -38,7 +38,7 @@
     "es6-shim": "0.35.6",
     "js-file-download": "0.4.12",
     "lodash": "^4.17.19",
-    "luxon": "1.26.0",
+    "luxon": "2.5.2",
     "moment": "^2.29.4",
     "moment-range": "4.0.2",
     "moment-timezone": "^0.5.37",
