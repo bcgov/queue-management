@@ -116,7 +116,7 @@
     "friendly-errors-webpack-plugin": "1.7.0",
     "http-proxy-middleware": "1.1.0",
     "jest": "^27.1.0",
-    "jest-cli": "^26.6.0",
+    "jest-cli": "^29.3.1",
     "node-sass": "^7.0.3",
     "opn": "6.0.0",
     "ora": "5.4.0",
@@ -164,6 +164,7 @@
     "yargs-parser": "15.0.1",
     "scss-tokenizer": "0.4.3",
     "loader-utils": "2.0.4",
-    "decode-uri-component": "0.2.2"
+    "decode-uri-component": "0.2.2",
+    "json5": "1.0.2"
   }
 }
