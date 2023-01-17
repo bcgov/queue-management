@@ -29,7 +29,7 @@ import {
 
 import { API_PREFIX } from '../../support/e2e'
 
-describe('Cancel Appointment', () => {
+describe('Change Appointment', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
     cy.fixture('offices.json').then((json) => {
