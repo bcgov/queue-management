@@ -110,8 +110,7 @@ class WalkinDetail(Resource):
             office_id = office.office_id
         if office_id:  
             all_citizen_in_q = Citizen.query.filter_by(office_id=office_id) \
-                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), raiseload(Period.csr)),raiseload(Citizen.cs),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
-                                            .join(CitizenState)\
+                .options(joinedload(Citizen.cs, innerjoin=True),joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
                                             .filter(CitizenState.cs_state_name == 'Active')\
                                             .order_by(Citizen.priority).all()
             result = self.citizens_schema.dump(all_citizen_in_q)
