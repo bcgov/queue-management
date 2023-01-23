@@ -80,6 +80,6 @@ describe('step 3', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step3.spec.ts/step 3 -- page loaded')
   })
 })

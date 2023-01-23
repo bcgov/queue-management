@@ -61,7 +61,7 @@ describe('step 1', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step1.spec.ts/step 1 -- page loaded')
   })
 
   // TODO: Fix rare "AssertionError: Timed out retrying after 4000ms: Expected
@@ -77,7 +77,7 @@ describe('step 1', () => {
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_STEP_1_IMAGE_MAP)
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step1.spec.ts/step 1 -- office selected')
   })
 
   it('services popup', () => {
@@ -96,6 +96,6 @@ describe('step 1', () => {
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_STEP_1_DIALOG_SERVICE_LIST)
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step1.spec.ts/step 1 -- services popup')
   })
 })

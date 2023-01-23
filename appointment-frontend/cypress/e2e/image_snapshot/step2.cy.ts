@@ -61,7 +61,7 @@ describe('step 2', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step2.spec.ts/step 2 -- page loaded')
   })
 
   it('service selected', () => {
@@ -70,6 +70,6 @@ describe('step 2', () => {
       .type('Legal Change of Name{downarrow}{enter}')
       .blur()
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step2.spec.ts/step 2 -- service selected')
   })
 })

@@ -93,7 +93,7 @@ describe('Change Appointment', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/appointment_change.spec.ts/Change Appointment -- page loaded')
   })
 
   it('Change Appointment', () => {
@@ -123,6 +123,6 @@ describe('Change Appointment', () => {
 
     cy.workaroundPositionFixed(SELECTOR_STEP_5_DIALOG_APPOINTMENT)
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/appointment_change.spec.ts/Change Appointment -- Change Appointment')
   })
 })

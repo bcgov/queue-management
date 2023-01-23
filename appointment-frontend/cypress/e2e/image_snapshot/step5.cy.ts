@@ -118,7 +118,7 @@ describe('step 5', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step5.spec.ts/step 5 -- page loaded')
   })
 
   it('consent checked', () => {
@@ -129,7 +129,7 @@ describe('step 5', () => {
     cy.get(SELECTOR_STEP_5_BUTTON_CONFIRM)
       .should('be.visible')
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step5.spec.ts/step 5 -- consent checked')
   })
 
   it('confirm clicked', () => {
@@ -146,6 +146,6 @@ describe('step 5', () => {
     cy.get(SELECTOR_STEP_5_DIALOG_APPOINTMENT)
       .should('be.visible')
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/step5.spec.ts/step 5 -- confirm clicked')
   })
 })

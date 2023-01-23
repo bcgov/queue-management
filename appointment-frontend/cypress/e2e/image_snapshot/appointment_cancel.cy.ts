@@ -84,7 +84,7 @@ describe('Cancel Appointment', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/appointment_cancel.spec.ts/Cancel Appointment -- page loaded')
   })
 
   it('Cancel Appointment', () => {
@@ -105,6 +105,6 @@ describe('Cancel Appointment', () => {
     cy.wait('@getAppointmentsAfterDeletion')
     cy.get(SELECTOR_APPOINTMENT_NO_APPOINTMENTS)
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/appointment_cancel.spec.ts/Cancel Appointment -- Cancel Appointment')
   })
 })

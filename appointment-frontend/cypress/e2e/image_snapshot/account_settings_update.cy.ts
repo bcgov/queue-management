@@ -80,7 +80,7 @@ describe('Account Settings', () => {
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/account_settings_update.spec.ts/Account Settings -- page loaded')
   })
   it('Update User', () => {
     cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT)
@@ -102,6 +102,6 @@ describe('Account Settings', () => {
 
     cy.wait(1000)
 
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot('image_snapshot/account_settings_update.spec.ts/Account Settings -- Update User')
   })
 })
