@@ -1,7 +1,7 @@
 <template>
   <v-card-text>
       <v-row>
-        <v-col class="pb-0" v-if="!($vuetify.breakpoint.xs)">
+        <v-col class="pb-0" v-if="!hideBCServicesCard &&!($vuetify.breakpoint.xs)">
           <v-img
             v-if="!($vuetify.breakpoint.xs)"
             class="ml-auto mr-16"
@@ -23,7 +23,7 @@
         </v-col>
       </v-row>
       <v-row class="align-row-1 bcsc-btn bcsc-btn">
-        <v-col class="fill-width">
+        <v-col class="fill-width" v-if="!hideBCServicesCard">
           <v-btn
             width="220"
             large
@@ -45,51 +45,6 @@
         </v-btn>
         </v-col>
       </v-row>
-      <!-- <v-row class="align-row-1 bcsc-btn" v-if="!hideBCServicesCard">
-        <v-col class="fill-width">
-          <v-btn
-            width="220"
-            large
-            color="primary"
-            @click="login(idpHint.BCSC)"
-          >
-            Login with BC Services Card
-          </v-btn>
-        </v-col>
-        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
-          <v-img
-            v-if="!($vuetify.breakpoint.xs)"
-            class="login-logo"
-            :src="require('@/assets/img/BCServicesCard.png')"
-            max-width="50"
-            contain
-            data-cy="step-4-image-bcsc"
-          ></v-img>
-        </v-col>
-      </v-row>
-      <v-row class="align-row-1 bcsc-btn">
-        <v-col class="fill-width">
-          <v-btn
-          width="220"
-          large
-          color="primary"
-          @click="login(idpHint.BCEID)"
-          data-cy="step-4-button-bceid"
-        >
-        Login with Basic BCeID
-        </v-btn>
-        </v-col>
-        <v-col class="align-row-2 fill-width" v-if="!($vuetify.breakpoint.xs)">
-        <v-img
-            v-if="!($vuetify.breakpoint.xs)"
-            class="login-logo"
-            :src="require('@/assets/img/bceid_logo.jpg')"
-            max-width="132"
-            contain
-            data-cy="step-4-image-bceid-login"
-          ></v-img>
-        </v-col>
-      </v-row> -->
       <v-row class="text-center bcsc-btn">
         <v-col class="create-bceid pb-0"> <h3>Don't have the BC Services card app or a Basic BCeID?</h3></v-col>
       </v-row>
