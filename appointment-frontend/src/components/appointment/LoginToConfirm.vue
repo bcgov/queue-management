@@ -4,17 +4,17 @@
         <v-col class="pb-0" v-if="!hideBCServicesCard &&!($vuetify.breakpoint.xs)">
           <v-img
             v-if="!($vuetify.breakpoint.xs)"
-            class="ml-auto mr-16"
+            class="ml-auto mr-11"
             :src="require('@/assets/img/BCServicesCard.png')"
             max-width="50"
             contain
             data-cy="step-4-image-bcsc"
           ></v-img>
         </v-col>
-        <v-col class="pb-0" v-if="!($vuetify.breakpoint.xs)">
+        <v-col class="pb-0 offset-md-1" v-if="!($vuetify.breakpoint.xs)">
         <v-img
             v-if="!($vuetify.breakpoint.xs)"
-            class="mr-auto ml-8"
+            class="mr-auto"
             :src="require('@/assets/img/bceid_logo.jpg')"
             max-width="132"
             contain
@@ -54,7 +54,7 @@
       <v-row class="text-center">
           <v-col>
             <a class="link-w-icon"
-            target="_blank" rel="noopener noreferrer" @click="clickHyperlink('https://www.bceid.ca/directories/bluepages/details.aspx?serviceID=6971','Info: About the BCeID')">
+            target="_blank" rel="noopener noreferrer" @click="createBCEID(BCEIDRegistrationURL)">
             <v-icon small class="mr-2">mdi-open-in-new</v-icon>
             <span>Sign up for a Basic BCeID account</span>
             </a>
