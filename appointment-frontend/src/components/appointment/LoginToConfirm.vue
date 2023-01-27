@@ -46,7 +46,7 @@
         </v-col>
       </v-row>
       <v-row class="text-center bcsc-btn">
-        <v-col class="create-bceid pb-0"> <h3>Don't have the BC Services card app or a Basic BCeID?</h3></v-col>
+        <v-col class="create-bceid pb-0"> <h3>Don't have the BC Services Card app or a Basic BCeID?</h3></v-col>
       </v-row>
       <v-row class="text-center bcsc-btn">
           <v-col class="create-bceid pb-0">It only takes a minute to sign up for a Basic BCeID account.</v-col>
