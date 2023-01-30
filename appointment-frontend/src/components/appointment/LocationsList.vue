@@ -88,21 +88,6 @@
                     </v-col>
                   </v-row>
                 </v-alert>
-                <v-row>
-                  <v-col col="12" md="6">
-                    <v-btn
-                        block
-                        color="primary"
-                        outlined
-                        class='mt-0 mt-md-2 float-right'
-                        large
-                        @click="showLocationServices(location)"
-                        data-cy="step-1-button-available-services"
-                      >
-                        Available Services
-                    </v-btn>
-                  </v-col>
-                </v-row>
               </v-col>
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
                 <template v-if='location.externalMapLink'>

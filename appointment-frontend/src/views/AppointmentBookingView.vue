@@ -172,8 +172,8 @@ export default class AppointmentBookingView extends Vue {
       label: 'Select Date',
       title: 'Select a Date',
       icon: 'mdi-chevron-right-circle',
-      beforeIconText: 'Available days are highlighted in the calendar, use the',
-      afterIconText: 'arrow to go to the next month',
+      beforeIconText: 'Available days are highlighted in the calendar, use the arrow to go to the next month',
+      afterIconText: '',
       code: 'date',
       component: DateSelection,
       componentProps: {}
@@ -191,8 +191,8 @@ export default class AppointmentBookingView extends Vue {
     },
     {
       step: 5,
-      label: 'Appointment Summary',
-      title: 'Appointment Summary',
+      label: 'Appointment Confirmation',
+      title: 'Appointment Confirmation',
       subTitle: '',
       code: 'summary',
       component: AppointmentSummary,

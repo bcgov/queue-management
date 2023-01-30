@@ -296,7 +296,7 @@ export default class Feedback extends Vue {
   private showMobileFeedbackPanel: boolean = false
   private readonly submitFeedback!: (feedbackRequest: FeedbackRequestObject) => any
   private consentMessage: string = 'The information on this form is collected under the authority of Sections 26(c) and 27(1)(c) of the Freedom of Information and Protection of Privacy Act to help us assess and respond to your enquiry. Questions about the collection of information can be directed to government’s Privacy Office.'
-  private bookingStepInfo = ['None', 'Location Selection', 'Select Service', 'Select Date', 'Login', 'Appointment Summary']
+  private bookingStepInfo = ['None', 'Location Selection', 'Select Service', 'Select Date', 'Login', 'Appointment Confirmation']
   private toggleFeedback () {
     this.showFeedbackArea = !this.showFeedbackArea
     this.submitComplete = false

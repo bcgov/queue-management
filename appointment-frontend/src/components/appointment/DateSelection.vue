@@ -25,43 +25,35 @@
         md="6"
         class="text-center"
       >
-        <div v-if="selectedTimeSlot">
-          <strong class="mr-1">Appointment Date: </strong>
-          <br class='d-sm-none' />
-          {{selectedDateFormatted}}, {{selectedTimeSlot}}
+      <template v-if="selectedDateTimeSlots.length">
+        <div ref="available" class="mt-6">
+          <strong>Available Time Slots</strong>
         </div>
-        <div v-else>
-          <strong class="mr-1">Date Selected: </strong> {{selectedDateFormatted}}
-        </div>
-        <template v-if="selectedDateTimeSlots.length">
-          <div ref="available" class="mt-6">
-            <strong>Available Time Slots</strong>
-          </div>
-          <v-row>
-            <v-col
-              cols="12"
-              sm="6"
-              v-for="(timeslot, index) in selectedDateTimeSlots"
-              :key="index"
+        <v-row>
+          <v-col
+            cols="12"
+            sm="6"
+            v-for="(timeslot, index) in selectedDateTimeSlots"
+            :key="index"
+          >
+            <v-btn
+              large
+              outlined
+              block
+              @click="selectTimeSlot(timeslot)"
+              color="primary"
+              data-cy="step-3-button-timeslot"
             >
-              <v-btn
-                large
-                outlined
-                block
-                @click="selectTimeSlot(timeslot)"
-                color="primary"
-                data-cy="step-3-button-timeslot"
-              >
-                {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
-              </v-btn>
-            </v-col>
-          </v-row>
-        </template>
-        <template v-else>
-          <div class="mt-6 error-text">
-            <strong>No time slots available on the selected date</strong>
-          </div>
-        </template>
+              {{`${timeslot.startTimeStr} - ${timeslot.endTimeStr}`}}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+      <template v-else>
+        <div class="mt-6 error-text">
+          <strong>No time slots available on the selected date</strong>
+        </div>
+      </template>
       </v-col>
     </v-row>
   </v-card-text>
