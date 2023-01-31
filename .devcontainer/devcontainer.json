@@ -39,8 +39,16 @@
   ],
   "name": "Queue Management",
   "portsAttributes": {
-    "5000": {
+    "5010": {
       "label": "Queue Management API",
+      "onAutoForward": "silent"
+    },
+    "5020": {
+      "label": "Feedback API",
+      "onAutoForward": "silent"
+    },
+    "5030": {
+      "label": "Notifications API",
       "onAutoForward": "silent"
     },
     "5432": {
@@ -89,4 +97,6 @@
     ]
   },
   "workspaceFolder": "/workspace"
+  // Required for Mac mount and  git status updates index to speed up terminal speed.
+  //"postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && git update-index"
 }

@@ -45,12 +45,12 @@ npm run build
 ```
 {
   "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
-  "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
+  "VUE_APP_ROOT_API": "http://localhost:5010/api/v1",
   "hideBCServicesCard": false,
   "BCEIDRegistrationUrl": "",
   "BCServicesCardUrl": "",
   "disableSms": false,
-  "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1",
+  "VUE_APP_FEEDBACK_API": "http://localhost:5020/api/v1",
   "FEEDBACK_SERVICE_CHANNEL": "online",
   "FEEDBACK_ENABLED": true,
   "VUE_APP_HEADER_MSG": Place text before link separate by {link} then link text separated by {link} and then more text and more link text, all seperated by {link}

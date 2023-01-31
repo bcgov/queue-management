@@ -21,6 +21,11 @@
 COLOR_DEFAULT='\033[0m'
 COLOR_FAILURE='\033[0;31m'
 
+# Fix Git workspace for MAC
+git config --global --add safe.directory /workspace
+git config --global --add safe.directory /workspace/jobs/appointment_reminder/env/src/queue-api
+git status
+
 # Echo a string in red.
 #
 # Parameter: string
@@ -93,6 +98,7 @@ fi
     python -m venv env
     source env/bin/activate
     python -m pip install --upgrade pip -q
+    pip install wheel
     pip install -r requirements_dev.txt --progress-bar off
 
     # Install newman so that the postman tests can be run on the command line.
@@ -111,14 +117,16 @@ script -fq -c "(
     $(npm bin)/cypress install
 )" |& tee $LOGDIR/appointment-frontend.log &
 
-#(
-#    cd feedback-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/feedback-api.log &
+(
+    cd feedback-api
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+    python3 setup.py install
+) |& tee $LOGDIR/feedback-api.log &
 
 script -fq -c "(
     cd frontend
@@ -126,17 +134,31 @@ script -fq -c "(
     npm install
 )" |& tee $LOGDIR/frontend.log &
 
-#(
-#    cd notifications-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/notifications-api.log &
+(
+    cd notifications-api
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+    python3 setup.py install
+) |& tee $LOGDIR/notifications-api.log &
+
+(
+    cd jobs/appointment_reminder
+    rm -rf env
+    python -m venv env
+    source env/bin/activate
+    python -m pip install --upgrade pip -q
+    pip install wheel
+    pip install -r requirements.txt --progress-bar off
+) |& tee $LOGDIR/appointment_reminder.log 
 
 # Wait for all the above to complete.
 wait
+
+rm typescript
 
 ###############################################################################
 # Database Bootstrapping and Setup
@@ -172,3 +194,7 @@ copy_config .devcontainer/config/api/client_secrets/secrets.json \
 
 copy_config .devcontainer/config/frontend/public/config/configuration.json \
     frontend/public/config/configuration.json
+
+# Need to copy configuration.json for appointments & keycloak-public.json
+# Need to add keycloak.json to frontend/static/keycloak folder
+# Need to add .env to notifications-api and feedback-api
