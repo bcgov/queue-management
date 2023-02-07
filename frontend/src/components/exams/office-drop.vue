@@ -161,6 +161,10 @@ export default class OfficeDrop extends Vue {
         this.officeChoices = this.officeChoices.length >= 4 ? this.officeChoices.slice(0, 4) : this.officeChoices
       }
     }
+    this.checkMinSearchLength()
+  }
+
+  checkMinSearchLength () {
     if (this.search.length <= 1) {
       this.showSearch = false
     }

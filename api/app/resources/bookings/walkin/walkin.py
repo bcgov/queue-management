@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from flask import request, g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, application
-from app.models.theq import Citizen, Office, CitizenState, ServiceReq, Period
+from app.models.theq import Citizen, CSR, Counter, Office, CitizenState, ServiceReq
 from app.models.bookings import Appointment
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema, OfficeSchema
@@ -110,9 +110,10 @@ class WalkinDetail(Resource):
             office_id = office.office_id
         if office_id:  
             all_citizen_in_q = Citizen.query.filter_by(office_id=office_id) \
-                .options(joinedload(Citizen.cs, innerjoin=True),joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                                            .join(CitizenState)\
                                             .filter(CitizenState.cs_state_name == 'Active')\
-                                            .order_by(Citizen.priority).all()
+                                            .order_by(Citizen.priority) \
+                                            .join(Citizen.service_reqs).all()
             result = self.citizens_schema.dump(all_citizen_in_q)
         return result
 

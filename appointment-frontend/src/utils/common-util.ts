@@ -32,11 +32,10 @@ export default class CommonUtils {
   }
 
   /***
-   * Time slots formatted in a way it should need to display in the UI
+   * Return the minimum start time and maximum end time of the timeslots
    ***/
-  static getFormattedTimeslots (timeslots: TimeSlots[]) {
+  static getStartEndTimeslots (timeslots: TimeSlots[]) {
     const timeslotArray = []
-    // this loop will get the minimum start time and maximum end time of a timeslot
     timeslots.forEach(timeslot => {
       timeslot.dayOfWeek.forEach(day => {
         if (timeslotArray[Days[day]]) {
@@ -54,6 +53,14 @@ export default class CommonUtils {
         }
       })
     })
+    return timeslotArray
+  }
+
+  /***
+   * Time slots formatted in a way it should need to display in the UI
+   ***/
+  static getFormattedTimeslots (timeslots: TimeSlots[]) {
+    const timeslotArray = this.getStartEndTimeslots(timeslots)
     let index = 1
     const returnArray = []
     // this loop will map the time with the Days enum

@@ -487,21 +487,13 @@ export default class ApptBookingModal extends Vue {
   timeOptions () {
     if (this.clickedTime) {
       const time = 60
-      for (let l = 15; l <= time; l += 15) {
-        if (!this.lengthOptions.includes(l)) {
-          this.lengthOptions.push(l)
-        }
-      }
+      this.checkTimeLength(time)
       this.lengthOptions.push(75)
       return this.lengthOptions
     }
     if (this.clickedAppt) {
       const time = 60
-      for (let l = 15; l <= time; l += 15) {
-        if (!this.lengthOptions.includes(l)) {
-          this.lengthOptions.push(l)
-        }
-      }
+      this.checkTimeLength(time)
       this.lengthOptions.push(75)
       return this.lengthOptions
     }
@@ -521,13 +513,17 @@ export default class ApptBookingModal extends Vue {
         this.selectLength = 15
       }
     }
-    for (let l = 15; l <= timeDefault; l += 15) {
-      if (!this.lengthOptions.includes(l)) {
-          this.lengthOptions.push(l)
-        }
-    }
+    this.checkTimeLength(timeDefault)
     this.lengthOptions.push(75)
     return this.lengthOptions
+  }
+
+  checkTimeLength(timeMax: number){
+  for (let l = 15; l <= timeMax; l += 15) {
+        if (!this.lengthOptions.includes(l)) {
+            this.lengthOptions.push(l)
+          }
+      }
   }
 
   get service_name () {
