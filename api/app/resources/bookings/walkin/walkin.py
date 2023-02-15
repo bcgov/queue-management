@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
-import logging, pytz
+import time, logging, pytz
 from datetime import datetime, timedelta
 from flask import request, g
 from flask_restx import Resource
@@ -28,7 +28,7 @@ from app.auth.auth import jwt
 from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.orm import raiseload, joinedload, contains_eager
 
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
@@ -108,11 +108,23 @@ class WalkinDetail(Resource):
             office_id = citizen.office_id
         if office:
             office_id = office.office_id
-        if office_id:  
+        if office_id:
+            tic1 = time.perf_counter()
             all_citizen_in_q = Citizen.query.filter_by(office_id=office_id) \
-                .options(joinedload(Citizen.cs, innerjoin=True),joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                                            .join(CitizenState).options(contains_eager(Citizen.cs)) \
                                             .filter(CitizenState.cs_state_name == 'Active')\
                                             .order_by(Citizen.priority).all()
+            toc1 = time.perf_counter()
+            tic2 = time.perf_counter()
+            all_citizen_in_q2 = Citizen.query.filter_by(office_id=office_id) \
+                                            .join(CitizenState)\
+                                            .filter(CitizenState.cs_state_name == 'Active')\
+                                            .order_by(Citizen.priority) \
+                                            .join(Citizen.service_reqs).all()
+            toc2 = time.perf_counter()
+            print(f"time opt: {toc1 - tic1:0.4f} seconds")
+            print(f"time old: {toc2 - tic2:0.4f} seconds")
             result = self.citizens_schema.dump(all_citizen_in_q)
         return result
 
