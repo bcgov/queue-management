@@ -31,7 +31,7 @@
     "bootstrap-vue": "^2.22.0",
     "buefy": "^0.9.21",
     "buffer": "^6.0.3",
-    "camunda-formio-tasklist-vue": "1.0.19",
+    "camunda-formio-tasklist-vue": "1.1.4",
     "core-js": "3.9.1",
     "crypto-browserify": "^3.12.0",
     "es6-promise": "4.2.8",
