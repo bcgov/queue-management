@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from flask import request, g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, application
-from app.models.theq import Citizen, CSR, Counter, Office, CitizenState, ServiceReq
+from app.models.theq import Citizen, Office, CitizenState, ServiceReq, Period
 from app.models.bookings import Appointment
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema, OfficeSchema
@@ -28,7 +28,7 @@ from app.auth.auth import jwt
 from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.orm import raiseload, joinedload
+from sqlalchemy.orm import raiseload, joinedload, contains_eager
 
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
@@ -108,12 +108,12 @@ class WalkinDetail(Resource):
             office_id = citizen.office_id
         if office:
             office_id = office.office_id
-        if office_id:  
+        if office_id:
             all_citizen_in_q = Citizen.query.filter_by(office_id=office_id) \
-                                            .join(CitizenState)\
+                .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr), joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+                                            .join(CitizenState).options(contains_eager(Citizen.cs)) \
                                             .filter(CitizenState.cs_state_name == 'Active')\
-                                            .order_by(Citizen.priority) \
-                                            .join(Citizen.service_reqs).all()
+                                            .order_by(Citizen.priority).all()
             result = self.citizens_schema.dump(all_citizen_in_q)
         return result
 
