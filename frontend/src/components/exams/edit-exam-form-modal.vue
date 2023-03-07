@@ -673,12 +673,7 @@ export default class EditExamModal extends Vue {
     if (this.actionedExam) {
       const fieldsEdited: any = []
       const data = Object.assign({}, this.fields)
-      if (data.exam_received_date) {
-        data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-      }
-      if (data.expiry_date) {
-        data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-      }
+      this.formatExamDates(data)
       for (const key in data) {
         if (data[key] != this.actionedExam[key]) {
           fieldsEdited.push(key)
@@ -692,6 +687,15 @@ export default class EditExamModal extends Vue {
       return (fieldsEdited.length > 0)
     }
     return false
+  }
+
+  formatExamDates (data: any) {
+    if (data.exam_received_date) {
+      data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+    }
+    if (data.expiry_date) {
+      data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+    }
   }
 
   get otherOfficeExam () {

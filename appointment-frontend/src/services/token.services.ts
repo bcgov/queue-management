@@ -111,7 +111,7 @@ class TokenServices {
     this.timerId = setTimeout(() => {
       // eslint-disable-next-line no-console
       console.log('[TokenServices] Refreshing Token Attempt: %s ', ++this.counter)
-      this.kc!.updateToken(-1)
+      this.kc.updateToken(-1)
         .then(refreshed => {
           if (refreshed) {
             // eslint-disable-next-line no-console

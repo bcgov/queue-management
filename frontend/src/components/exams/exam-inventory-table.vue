@@ -1099,26 +1099,40 @@ export default class ExamInventoryTable extends Vue {
   }
 
   filterByScheduled (ex) {
-    if (this.inventoryFilters.expiryFilter === 'current') {
-      if (ex.booking) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
-          return false
-        }
-      }
+    if (this.checkExamIsPast(ex)) {
+      return false
     }
     if (ex.exam_received_date) {
       if (ex.booking && ((ex.booking.invigilators.length > 0) || ex.booking.sbc_staff_invigilated)) {
         if (ex.booking.invigilator && ex.booking.invigilator.deleted) {
           return false
         }
-        if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
+        if (this.checkExamSelection(ex)) {
           return true
         }
-        if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
-          if (ex.number_of_students && ex.event_id) {
-            return true
-          }
+      }
+    }
+    return false
+  }
+
+  checkExamIsPast (ex: any): boolean {
+    if (this.inventoryFilters.expiryFilter === 'current') {
+      if (ex.booking) {
+        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+          return true
         }
+      }
+    }
+    return false
+  }
+
+  checkExamSelection (ex: any): boolean {
+    if (ex.exam_type.exam_type_name !== 'Monthly Session Exam') {
+      return true
+    }
+    if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
+      if (ex.number_of_students && ex.event_id) {
+        return true
       }
     }
     return false
@@ -1144,13 +1158,16 @@ export default class ExamInventoryTable extends Vue {
         return true
       }
     }
-    if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
-          return true
-        }
-      }
+    if (this.checkExamStart(ex)) {
+      return true
     }
+    if (this.checkExamMonthly(ex)) {
+      return true
+    }
+    return false
+  }
+
+  checkExamMonthly (ex: any) {
     if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
       if (!ex.number_of_students || !ex.event_id) {
         return true
@@ -1199,17 +1216,11 @@ export default class ExamInventoryTable extends Vue {
         return true
       }
     }
-    if (this.filterByGroup(ex) && ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
-          return true
-        }
-      }
+    if (this.filterByGroup(ex) && this.checkExamStart(ex)) {
+      return true
     }
-    if (ex.exam_type.exam_type_name === 'Monthly Session Exam') {
-      if (!ex.number_of_students || !ex.event_id) {
-        return true
-      }
+    if (this.checkExamMonthly(ex)) {
+      return true
     }
     return false
   }
@@ -1274,14 +1285,23 @@ export default class ExamInventoryTable extends Vue {
     }
     if (this.filterByGroup(ex)) {
       if (ex.booking) {
-        if (moment(ex.booking.start_time).isValid()) {
-          if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
-            return true
-          }
-        }
-        if (!this.checkInvigilator(ex)) {
+        if (this.checkExamStart(ex, true)) {
           return true
         }
+      }
+    }
+    return false
+  }
+
+  checkExamStart (ex:any, checkInvig:boolean = false): boolean {
+    if (ex.booking) {
+      if (moment(ex.booking.start_time).isValid()) {
+        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+          return true
+        }
+      }
+      if (checkInvig && !this.checkInvigilator(ex)) {
+        return true
       }
     }
     return false

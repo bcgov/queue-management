@@ -7,7 +7,7 @@ import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import moment from 'moment'
 
-// checkmark
+// Checkmark
 @Component({
   template: `
   <b-col align-self="center"
@@ -21,7 +21,7 @@ import moment from 'moment'
   </b-col>
 `
 })
-export class checkmark extends Vue {
+export class Checkmark extends Vue {
   @Prop()
   private validated!: any
 }
@@ -29,7 +29,7 @@ export class checkmark extends Vue {
 // AddExamCounter
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -112,7 +112,7 @@ export class AddExamCounter extends Vue {
 // DateQuestion
 @Component({
   components: {
-    checkmark,
+    Checkmark,
     DatePicker
   },
   template: `
@@ -130,7 +130,7 @@ export class AddExamCounter extends Vue {
                       ></DatePicker>
         </b-form-group>
       </b-col>
-      <checkmark :validated="validationObj[q.key].valid" />
+      <Checkmark :validated="validationObj[q.key].valid" />
     </b-row>
   `
 })
@@ -182,7 +182,7 @@ export class DateQuestion extends Vue {
 // DropdownQuestion
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -350,7 +350,7 @@ export class DropdownQuestion extends Vue {
 // ExamReceivedQuestion
 @Component({
   components: {
-    checkmark,
+    Checkmark,
     DatePicker
     // moment
   },
@@ -375,7 +375,7 @@ export class DropdownQuestion extends Vue {
       </b-form-group>
     </b-col>
     <b-col cols="5" />
-    <checkmark :validated="validationObj[q.key].valid" />
+    <Checkmark :validated="validationObj[q.key].valid" />
   </b-row>
 `
 })
@@ -464,7 +464,7 @@ export class ExamReceivedQuestion extends Vue {
 
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -491,7 +491,7 @@ export class ExamReceivedQuestion extends Vue {
                         @input.native="preHandleInput" />
         </b-form-group>
       </b-col>
-    <checkmark :validated="validationObj[q.key].valid"  />
+    <Checkmark :validated="validationObj[q.key].valid"  />
   </b-row>
   </div>
   <div v-else>
@@ -509,7 +509,7 @@ export class ExamReceivedQuestion extends Vue {
                         @input.native="preHandleInput" />
         </b-form-group>
       </b-col>
-      <checkmark v-if="setup !=='challenger' " :validated="validationObj[q.key].valid"  />
+      <Checkmark v-if="setup !=='challenger' " :validated="validationObj[q.key].valid"  />
     </b-row>
   </div>
 `
@@ -539,7 +539,7 @@ export class InputQuestion extends Vue {
 
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -567,7 +567,7 @@ export class InputQuestion extends Vue {
                           @input.native="preHandleInput" />
         </b-col>
 
-        <checkmark :validated="validationObj[q.key].valid" />
+        <Checkmark :validated="validationObj[q.key].valid" />
       </b-row>
     </div>
   `
@@ -611,7 +611,7 @@ export class InputQuestion2 extends Vue {
 
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -777,7 +777,7 @@ export class LocationInput extends Vue {
 // NotesQuestion
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   template: `
   <b-row no-gutters >
@@ -834,7 +834,7 @@ export class NotesQuestion extends Vue {
 // OffsiteSelect
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   computed: {
     ...mapState({
@@ -860,7 +860,7 @@ export class NotesQuestion extends Vue {
                          :name="q.key" />
         </b-form-group>
       </b-col>
-      <checkmark :validated="validationObj[q.key].valid" />
+      <Checkmark :validated="validationObj[q.key].valid" />
     </b-row>
   `
 })
@@ -896,7 +896,7 @@ export class OffsiteSelect extends Vue {
 
 @Component({
   components: {
-    checkmark
+    Checkmark
   },
   template: `
     <b-row no-gutters>
@@ -913,7 +913,7 @@ export class OffsiteSelect extends Vue {
                          :name="q.key" />
         </b-form-group>
       </b-col>
-      <checkmark :validated="validationObj[q.key].valid"  />
+      <Checkmark :validated="validationObj[q.key].valid"  />
     </b-row>
   `
 })
@@ -955,14 +955,14 @@ export class SelectQuestion extends Vue {
 
 @Component({
   components: {
-    checkmark,
+    Checkmark,
     OfficeDrop
   },
 
   template: `
       <b-row no-gutters class="mb-2">
         <OfficeDrop columnW="9" :office_number="office_number" :setOffice="setOffice" :msg="message" :error="Error" />
-        <checkmark :validated="validationObj[q.key].valid"  />
+        <Checkmark :validated="validationObj[q.key].valid"  />
       </b-row>
   `
 })
@@ -1036,7 +1036,7 @@ export class SelectOffice extends Vue {
 // TimeQuestion
 @Component({
   components: {
-    checkmark,
+    Checkmark,
     DatePicker
   },
   template: `
@@ -1064,7 +1064,7 @@ export class SelectOffice extends Vue {
           </DatePicker>
         </b-form-group>
       </b-col>
-      <checkmark :validated="validationObj[q.key].valid" />
+      <Checkmark :validated="validationObj[q.key].valid" />
     </b-row>
   `
 })

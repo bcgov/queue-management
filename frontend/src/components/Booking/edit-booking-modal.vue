@@ -1018,12 +1018,15 @@ export default class EditBooking extends Vue {
         }
       }
     }
+    this.setSBCInvigilator(e)
+    this.invigilator = e
+  }
+  setSBCInvigilator(e: any){
     if (this.invigilator === 'sbc' && !e) {
       if (!this.editedFields.includes('invigilator')) {
         this.editedFields.push('invigilator')
       }
     }
-    this.invigilator = e
   }
 
   show () {
