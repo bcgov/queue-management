@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g
+from flask import request
 from flask_restx import Resource
 from datetime import datetime, timedelta
 from qsystem import api, api_call_with_retry, db, socketio
@@ -22,7 +22,7 @@ from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from marshmallow import ValidationError
 from app.utilities.snowplow import SnowPlow
 import json
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
@@ -96,7 +96,7 @@ class ServiceRequestsList(Resource):
         except Exception as error:
             return {"message": str(error)}, 401
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
         service_request, message, code = get_service_request(self, json_data, csr)
         if (service_request is None):
             return {"message": message}, code

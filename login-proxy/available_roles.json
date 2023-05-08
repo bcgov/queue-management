@@ -1,0 +1,26 @@
+[
+  {
+    "id": "c82a2d5e-de30-40c4-bc14-88466ebd32e6",
+    "name": "user",
+    "description": "user",
+    "composite": false,
+    "clientRole": false,
+    "containerId": "vtkayq4c"
+  },
+  {
+    "id": "aad09709-0a34-4d2c-bde8-bd165120de02",
+    "name": "online_appointment_user",
+    "description": "Role to define an online appointment user",
+    "composite": false,
+    "clientRole": false,
+    "containerId": "vtkayq4c"
+  },
+  {
+    "id": "ce9afa31-cc65-4427-89fb-e79a2ff2d3ef",
+    "name": "reminder_job",
+    "description": "Role for the reminder job to use",
+    "composite": false,
+    "clientRole": false,
+    "containerId": "vtkayq4c"
+  }
+]

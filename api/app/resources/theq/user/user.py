@@ -23,7 +23,7 @@ from app.auth.auth import jwt
 from app.models.bookings.appointments import Appointment as AppointmentModel
 from app.models.theq import PublicUser as PublicUserModel
 from app.schemas.theq import UserSchema
-from app.utilities.auth_util import Role
+from app.utilities.auth_util import Role, get_username
 from app.utilities.sms import send_sms
 from qsystem import api, db
 
@@ -38,16 +38,16 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.jwt_oidc_token_info
-            user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
             if not user:
                 user = PublicUserModel()
-                user.username = user_info.get('username')
+                user.username = get_username()
                 user.email = user_info.get('email')
             else:  # update email only if the email is None for existing user
                 if not user.email:
                     user.email = user_info.get('email')
             user.display_name = user_info.get('display_name')
-            user.last_name = user_info.get('last_name')
+            user.last_name = user_info.get('family_name')
             db.session.add(user)
             db.session.commit()
 
@@ -67,8 +67,7 @@ class PublicUser(Resource):
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
-            user_info = g.jwt_oidc_token_info
-            user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
             current_sms_reminder: bool = user.send_sms_reminders
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
@@ -80,7 +79,7 @@ class PublicUser(Resource):
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
             if not current_sms_reminder and user.send_sms_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
-                    g.jwt_oidc_token_info['username'])
+                    get_username())
                 for appointment in appointments:
                     office = appointment.office
                     send_sms(appointment, office, office.timezone, user,
@@ -101,8 +100,7 @@ class CurrentUser(Resource):
     @jwt.has_one_of_roles([Role.online_appointment_user.value])
     def get(self):
         try:
-            user_info = g.jwt_oidc_token_info
-            user: PublicUserModel = PublicUserModel.find_by_username(user_info.get('username'))
+            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
 
             result = [self.user_schema.dump(user)]
             return result, 200

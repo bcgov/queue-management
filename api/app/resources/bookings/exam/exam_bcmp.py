@@ -21,6 +21,7 @@ from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from app.resources.bookings.exam.exam_post import ExamPost
 from app.schemas.bookings import ExamSchema
+from app.utilities.auth_util import get_username
 from app.utilities.bcmp_service import BCMPService
 from qsystem import api, api_call_with_retry
 
@@ -35,7 +36,7 @@ class ExamBcmpPost(Resource):
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
 
