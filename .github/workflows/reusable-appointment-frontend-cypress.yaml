@@ -28,7 +28,8 @@ jobs:
   cypress:
     name: Cypress
     runs-on: ubuntu-latest
-
+    environment:
+      name: The Q Dev
     steps:
       - name: Check out
         uses: actions/checkout@v2
@@ -37,6 +38,8 @@ jobs:
 
       - name: Configuration Files
         run: |
+          echo "old BCEID_ENDPOINT: ${{ secrets.bceid-endpoint }}"
+          echo "BCEID_ENDPOINT_DEV: ${{ vars.BCEID_ENDPOINT_DEV}}"
           mkdir -p appointment-frontend/public/config/kc
 
           cat << EOF > appointment-frontend/public/config/configuration.json
@@ -64,7 +67,7 @@ jobs:
 
           cat << EOF > appointment-frontend/cypress.env.json
           {
-            "BCEID_ENDPOINT": "${{ secrets.bceid-endpoint }}",
+            "BCEID_ENDPOINT": "${{ vars.BCEID_ENDPOINT_DEV}}",
             "BCEID_PASSWORD": "${{ secrets.bceid-password }}",
             "BCEID_USERNAME": "${{ secrets.bceid-username }}"
           }
