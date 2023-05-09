@@ -1,4 +1,4 @@
-name: Appointment Frontend Cypress
+name: tyu Appointment Frontend Cypress
 on:
   workflow_call:
     inputs:
