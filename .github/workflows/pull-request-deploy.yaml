@@ -71,7 +71,7 @@ jobs:
   appointment-frontend-cypress:
     name: Appointment Frontend Cypress
     needs: parse-inputs
-    uses: ./.github/workflows/reusable-appointment-frontend-cypress.yaml
+    uses: ./.github/workflows/tyu-reusable-appointment-frontend-cypress.yaml
     secrets:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
       bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
@@ -89,7 +89,7 @@ jobs:
   appointment-frontend:
     name: appointment-frontend
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: ./.github/workflows/tyu-reusable-build-dockerfile.yaml
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
