@@ -89,7 +89,7 @@ jobs:
   appointment-frontend:
     name: appointment-frontend
     needs: [parse-inputs, appointment-frontend-cypress]
-    uses: ./.github/workflows/reusable-build-dockerfile.yaml
+    uses: ./.github/workflows/tyu-reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
