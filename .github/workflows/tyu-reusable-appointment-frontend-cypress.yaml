@@ -69,7 +69,7 @@ jobs:
           {
             "BCEID_ENDPOINT": "${{ vars.BCEID_ENDPOINT_DEV}}",
             "BCEID_PASSWORD": "${{ secrets.bceid-password }}",
-            "BCEID_USERNAME": "${{ secrets.bceid-username }}"
+            "BCEID_USERNAME": "${{ vars.bceid-username }}"
           }
           EOF
 
