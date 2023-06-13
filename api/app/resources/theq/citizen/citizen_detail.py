@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 import logging
 from datetime import datetime
-from flask import request, g
+from flask import request
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
 from app.models.theq import Citizen, CSR, Counter, Office
@@ -21,7 +21,7 @@ from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
 from app.utilities.snowplow import SnowPlow
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
@@ -58,7 +58,7 @@ class CitizenDetail(Resource):
         if not json_data:
             return {'message': 'No input data received for updating citizen'}, 400
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
         citizen = Citizen.query.filter_by(citizen_id=id).first()
         my_print("==> PUT /citizens/" + str(citizen.citizen_id) + '/, Ticket: ' + str(citizen.ticket_number))
         if not (json_data.get('is_first_reminder', False) or json_data.get('is_second_reminder', False)):

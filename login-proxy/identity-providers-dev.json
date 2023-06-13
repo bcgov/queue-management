@@ -1,0 +1,55 @@
+{
+  "identityProviders": [
+    {
+      "alias": "bcsc",
+      "config": {
+        "authorizationUrl": "https://idtest.gov.bc.ca/login/oidc/authorize/",
+        "clientAuthMethod": "client_secret_post",
+        "defaultScope": "openid profile email",
+        "issuer": "https://idtest.gov.bc.ca/oauth2/",
+        "jwksUrl": "https://idtest.gov.bc.ca/oauth2/jwk",
+        "syncMode": "FORCE",
+        "tokenUrl": "https://idtest.gov.bc.ca/oauth2/token",
+        "useJwksUrl": "true",
+        "userInfoUrl": "https://idtest.gov.bc.ca/oauth2/userinfo",
+        "validateSignature": "true"
+      },
+      "displayName": "BC Services Card",
+      "providerId": "oidc"
+    },
+    {
+      "alias": "bceidboth",
+      "config": {
+        "authorizationUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/auth?kc_idp_hint=bceidboth",
+        "clientAuthMethod": "client_secret_post",
+        "legacyLogoutRedirectUriSupported": "true",
+        "logoutUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/logout",
+        "jwksUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/certs",
+        "syncMode": "FORCE",
+        "tokenUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/token",
+        "useJwksUrl": "true",
+        "userInfoUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/userinfo",
+        "validateSignature": "true"
+      },
+      "displayName": "BCeID",
+      "providerId": "oidc"
+    },
+    {
+      "alias": "idir",
+      "config": {
+        "authorizationUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/auth?kc_idp_hint=idir",
+        "clientAuthMethod": "client_secret_post",
+        "legacyLogoutRedirectUriSupported": "true",
+        "logoutUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/logout",
+        "jwksUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/certs",
+        "syncMode": "FORCE",
+        "tokenUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/token",
+        "useJwksUrl": "true",
+        "userInfoUrl": "https://dev.loginproxy.gov.bc.ca/auth/realms/standard/protocol/openid-connect/userinfo",
+        "validateSignature": "true"
+      },
+      "displayName": "IDIR",
+      "providerId": "oidc"
+    }
+  ]
+}

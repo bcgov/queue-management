@@ -1,0 +1,420 @@
+{
+  "groups": [
+    {
+      "name": "AD - Central Peace",
+      "path": "/AD - Central Peace"
+    },
+    {
+      "name": "AD - Kootenay",
+      "path": "/AD - Kootenay"
+    },
+    {
+      "name": "AD - Lower Mainland Capital",
+      "path": "/AD - Lower Mainland Capital"
+    },
+    {
+      "name": "AD - Mobile Outreach",
+      "path": "/AD - Mobile Outreach"
+    },
+    {
+      "name": "AD - North Coast",
+      "path": "/AD - North Coast"
+    },
+    {
+      "name": "AD - Interior",
+      "path": "/AD - Interior"
+    },
+    {
+      "name": "AD - Vancouver Island",
+      "path": "/AD - Vancouver Island"
+    },
+    {
+      "name": "ADMO",
+      "path": "/ADMO"
+    },
+    {
+      "name": "Contact Centre Manager",
+      "path": "/Contact Centre Manager"
+    },
+    {
+      "name": "Director of Contact Centre",
+      "path": "/Director of Contact Centre"
+    },
+    {
+      "name": "Director of Service Practice and Policy",
+      "path": "/Director of Service Practice and Policy"
+    },
+    {
+      "name": "ED Service Delivery",
+      "path": "/ED Service Delivery"
+    },
+    {
+      "name": "Manager of Operations",
+      "path": "/Manager of Operations"
+    },
+    {
+      "name": "Manager of Service Practice and Policy",
+      "path": "/Manager of Service Practice and Policy"
+    },
+    {
+      "name": "Partner Managers",
+      "path": "/Partner Managers"
+    },
+    {
+      "name": "Provincial Director of Operations",
+      "path": "/Provincial Director of Operations"
+    },
+    {
+      "name": "SBC Staff",
+      "path": "/SBC Staff"
+    },
+    {
+      "name": "SD - 100 Mile House",
+      "path": "/SD - 100 Mile House"
+    },
+    {
+      "name": "SD - Ashcroft",
+      "path": "/SD - Ashcroft"
+    },
+    {
+      "name": "SD - Atlin",
+      "path": "/SD - Atlin"
+    },
+    {
+      "name": "SD - Bella Coola",
+      "path": "/SD - Bella Coola"
+    },
+    {
+      "name": "SD - Burnaby",
+      "path": "/SD - Burnaby"
+    },
+    {
+      "name": "SD - Burns Lake",
+      "path": "/SD - Burns Lake"
+    },
+    {
+      "name": "SD - Campbell River",
+      "path": "/SD - Campbell River"
+    },
+    {
+      "name": "SD - Chetwynd",
+      "path": "/SD - Chetwynd"
+    },
+    {
+      "name": "SD - Chilliwack",
+      "path": "/SD - Chilliwack"
+    },
+    {
+      "name": "SD - Clinton",
+      "path": "/SD - Clinton"
+    },
+    {
+      "name": "SD - Courtenay",
+      "path": "/SD - Courtenay"
+    },
+    {
+      "name": "SD - Cranbrook",
+      "path": "/SD - Cranbrook"
+    },
+    {
+      "name": "SD - Creston",
+      "path": "/SD - Creston"
+    },
+    {
+      "name": "SD - Daajing Giids",
+      "path": "/SD - Daajing Giids"
+    },
+    {
+      "name": "SD - Dawson Creek",
+      "path": "/SD - Dawson Creek"
+    },
+    {
+      "name": "SD - Dease Lake",
+      "path": "/SD - Dease Lake"
+    },
+    {
+      "name": "SD - Duncan",
+      "path": "/SD - Duncan"
+    },
+    {
+      "name": "SD - Fernie",
+      "path": "/SD - Fernie"
+    },
+    {
+      "name": "SD - Fort Nelson",
+      "path": "/SD - Fort Nelson"
+    },
+    {
+      "name": "SD - Fort St. James",
+      "path": "/SD - Fort St. James"
+    },
+    {
+      "name": "SD - Fort St. John",
+      "path": "/SD - Fort St. John"
+    },
+    {
+      "name": "SD - Ganges",
+      "path": "/SD - Ganges"
+    },
+    {
+      "name": "SD - Golden",
+      "path": "/SD - Golden"
+    },
+    {
+      "name": "SD - Grand Forks",
+      "path": "/SD - Grand Forks"
+    },
+    {
+      "name": "SD - Hazelton",
+      "path": "/SD - Hazelton"
+    },
+    {
+      "name": "SD - Houston",
+      "path": "/SD - Houston"
+    },
+    {
+      "name": "SD - Invermere",
+      "path": "/SD - Invermere"
+    },
+    {
+      "name": "SD - Kamloops",
+      "path": "/SD - Kamloops"
+    },
+    {
+      "name": "SD - Kaslo",
+      "path": "/SD - Kaslo"
+    },
+    {
+      "name": "SD - Kelowna",
+      "path": "/SD - Kelowna"
+    },
+    {
+      "name": "SD - Kitimat",
+      "path": "/SD - Kitimat"
+    },
+    {
+      "name": "SD - Lillooet",
+      "path": "/SD - Lillooet"
+    },
+    {
+      "name": "SD - Mackenzie",
+      "path": "/SD - Mackenzie"
+    },
+    {
+      "name": "SD - Maple Ridge",
+      "path": "/SD - Maple Ridge"
+    },
+    {
+      "name": "SD - Masset",
+      "path": "/SD - Masset"
+    },
+    {
+      "name": "SD - Merritt",
+      "path": "/SD - Merritt"
+    },
+    {
+      "name": "SD - Nakusp",
+      "path": "/SD - Nakusp"
+    },
+    {
+      "name": "SD - Nanaimo",
+      "path": "/SD - Nanaimo"
+    },
+    {
+      "name": "SD - Nelson",
+      "path": "/SD - Nelson"
+    },
+    {
+      "name": "SD - Oliver",
+      "path": "/SD - Oliver"
+    },
+    {
+      "name": "SD - Penticton",
+      "path": "/SD - Penticton"
+    },
+    {
+      "name": "SD - Port Alberni",
+      "path": "/SD - Port Alberni"
+    },
+    {
+      "name": "SD - Port Hardy",
+      "path": "/SD - Port Hardy"
+    },
+    {
+      "name": "SD - Powell River",
+      "path": "/SD - Powell River"
+    },
+    {
+      "name": "SD - Prince George",
+      "path": "/SD - Prince George"
+    },
+    {
+      "name": "SD - Prince Rupert",
+      "path": "/SD - Prince Rupert"
+    },
+    {
+      "name": "SD - Princeton",
+      "path": "/SD - Princeton"
+    },
+    {
+      "name": "SD - Quesnel",
+      "path": "/SD - Quesnel"
+    },
+    {
+      "name": "SD - Rapid Response",
+      "path": "/SD - Rapid Response"
+    },
+    {
+      "name": "SD - Revelstoke",
+      "path": "/SD - Revelstoke"
+    },
+    {
+      "name": "SD - Salmon Arm",
+      "path": "/SD - Salmon Arm"
+    },
+    {
+      "name": "SD - Sechelt",
+      "path": "/SD - Sechelt"
+    },
+    {
+      "name": "SD - Smithers",
+      "path": "/SD - Smithers"
+    },
+    {
+      "name": "SD - Sparwood",
+      "path": "/SD - Sparwood"
+    },
+    {
+      "name": "SD - Squamish",
+      "path": "/SD - Squamish"
+    },
+    {
+      "name": "SD - Stewart",
+      "path": "/SD - Stewart"
+    },
+    {
+      "name": "SD - Surrey",
+      "path": "/SD - Surrey"
+    },
+    {
+      "name": "SD - Terrace",
+      "path": "/SD - Terrace"
+    },
+    {
+      "name": "SD - Trail",
+      "path": "/SD - Trail"
+    },
+    {
+      "name": "SD - Ucluelet",
+      "path": "/SD - Ucluelet"
+    },
+    {
+      "name": "SD - Valemount",
+      "path": "/SD - Valemount"
+    },
+    {
+      "name": "SD - Vancouver",
+      "path": "/SD - Vancouver"
+    },
+    {
+      "name": "SD - Vanderhoof",
+      "path": "/SD - Vanderhoof"
+    },
+    {
+      "name": "SD - Vernon",
+      "path": "/SD - Vernon"
+    },
+    {
+      "name": "SD - Victoria",
+      "path": "/SD - Victoria"
+    },
+    {
+      "name": "SD - Williams Lake",
+      "path": "/SD - Williams Lake"
+    },
+    {
+      "name": "SDI Director",
+      "path": "/SDI Director"
+    },
+    {
+      "name": "ServiceFlow_Access_Staff",
+      "path": "/ServiceFlow_Access_Staff"
+    },
+    {
+      "name": "camunda-admin",
+      "path": "/camunda-admin"
+    },
+    {
+      "name": "formsflow",
+      "path": "/formsflow",
+      "subGroups": [
+        {
+          "clientRoles": {
+            "forms-flow-web": [
+              "formsflow-analyst",
+              "formsflow-client"
+            ]
+          },
+          "name": "formsflow-analyst",
+          "path": "/formsflow/formsflow-analyst"
+        },
+        {
+          "clientRoles": {
+            "forms-flow-web": [
+              "formsflow-client"
+            ]
+          },
+          "name": "formsflow-client",
+          "path": "/formsflow/formsflow-client"
+        },
+        {
+          "clientRoles": {
+            "forms-flow-web": [
+              "formsflow-designer",
+              "formsflow-reviewer",
+              "formsflow-client"
+            ]
+          },
+          "name": "formsflow-designer",
+          "path": "/formsflow/formsflow-designer"
+        },
+        {
+          "clientRoles": {
+            "forms-flow-web": [
+              "formsflow-reviewer"
+            ]
+          },
+          "name": "formsflow-reviewer",
+          "path": "/formsflow/formsflow-reviewer",
+          "subGroups": [
+            {
+              "name": "access-allow-applications",
+              "path": "/formsflow/formsflow-reviewer/access-allow-applications"
+            },
+            {
+              "name": "access-allow-submissions",
+              "path": "/formsflow/formsflow-reviewer/access-allow-submissions"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "formsflow-analytics",
+      "path": "/formsflow-analytics",
+      "subGroups": [
+        {
+          "name": "admin",
+          "path": "/formsflow-analytics/admin"
+        }
+      ]
+    },
+    {
+      "name": "theq_internal_user",
+      "path": "/theq_internal_user",
+      "realmRoles": [
+        "internal_user"
+      ]
+    }
+  ]
+}

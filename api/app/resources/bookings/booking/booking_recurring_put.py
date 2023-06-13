@@ -13,13 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g
+from flask import request
 from flask_restx import Resource
 from qsystem import api, db
 from app.models.bookings import Booking, Room, Invigilator
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -31,7 +31,7 @@ class BookingRecurringPut(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def put(self, id):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
 

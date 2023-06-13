@@ -23,6 +23,7 @@ from app.models.theq import CSR, PublicUser, Office, Service
 from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.services import AvailabilityService
+from app.utilities.auth_util import get_username
 from app.utilities.date_util import add_delta_to_time
 from qsystem import api, db, my_print, application
 from qsystem import socketio
@@ -51,7 +52,7 @@ class AppointmentDraftPost(Resource):
 
         # Unauthenticated requests from citizens won't have name, so we set a fallback
         if (hasattr(g, 'jwt_oidc_token_info') and hasattr(g.jwt_oidc_token_info, 'username')):
-            user = PublicUser.find_by_username(g.jwt_oidc_token_info['username'])
+            user = PublicUser.find_by_username(get_username())
             citizen_name = user.display_name
         else:
             citizen_name = 'Draft'
@@ -61,7 +62,7 @@ class AppointmentDraftPost(Resource):
 
         csr = None
         if (hasattr(g, 'jwt_oidc_token_info')):
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
 
         # CSRs are not limited by drafts,  can always see other CSRs drafts
         # This mitigates two CSRs in office creating at same time for same meeting

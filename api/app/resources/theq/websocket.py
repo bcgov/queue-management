@@ -13,11 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g, request
+from flask import request
 from flask_socketio import emit, join_room
 
 from app.auth.auth import jwt
 from app.models.theq import CSR, Office
+from app.utilities.auth_util import get_username
 from qsystem import socketio, my_print
 from flask_jwt_oidc.exceptions import AuthError
 
@@ -25,12 +26,11 @@ from flask_jwt_oidc.exceptions import AuthError
 @socketio.on('joinRoom')
 @jwt.requires_auth_cookie
 def on_join(message):
-    claims = g.jwt_oidc_token_info
-
-    if claims["preferred_username"]:
-        my_print("==> In Python, @socketio.on('joinRoom'): claims['preferred_username'] is: " + str(
-            claims["preferred_username"]))
-        csr = CSR.find_by_username(claims["preferred_username"])
+    username = get_username()
+    if username != '':
+        my_print("==> In Python, @socketio.on('joinRoom'): username is: " +
+            username)
+        csr = CSR.find_by_username(username)
         if csr:
             join_room(csr.office.office_name)
             logging.info("==> In websocket.py, CSR joinroom, CSR:  %s ; request sid: %s", csr.username, str(request.sid))
@@ -41,7 +41,7 @@ def on_join(message):
             logging.info("Fail")
             emit('joinRoomFail', {"success": False})
     else:
-        logging.info("No preferred_username on request")
+        logging.info("No username on request")
         emit('joinRoomFail', {"success": False})
 
 

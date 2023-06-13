@@ -12,13 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, request
+from flask import request
 from flask_restx import Resource
 from marshmallow import ValidationError
 from qsystem import api, api_call_with_retry, db, cache, socketio
 from app.models.theq import CSR, Citizen, Period, PeriodState, ServiceReq
 from app.schemas.theq import CSRSchema
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from sqlalchemy import or_
 from app.auth.auth import jwt
 
@@ -41,7 +41,7 @@ class Services(Resource):
         if not json_data:
             return {'message': 'No input data received for updating CSR'}, 400
 
-        auth_csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        auth_csr = CSR.find_by_username(get_username())
         edit_csr = CSR.query.filter_by(csr_id=id).first_or_404()
 
         if auth_csr.csr_id != edit_csr.csr_id:
@@ -84,7 +84,7 @@ class Services(Resource):
                       room=auth_csr.office.office_name)
 
         # Purge cache of old CSR record so the new one can be fetched by the next request for it.
-        CSR.delete_user_cache(g.jwt_oidc_token_info['username'])
+        CSR.delete_user_cache(get_username())
 
         return {'csr': result,
                 'errors': self.csr_schema.validate(edit_csr)}, 200

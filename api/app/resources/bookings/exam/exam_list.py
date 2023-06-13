@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g, request
+from flask import request
 from flask_restx import Resource
 from sqlalchemy import exc, or_, desc
 from app.models.bookings import Exam
@@ -21,7 +21,7 @@ from app.models.theq import CSR
 from app.schemas.bookings import ExamSchema
 from qsystem import api
 from datetime import datetime, timedelta
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -33,7 +33,7 @@ class ExamList(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
 
             ninety_day_filter = datetime.now() - timedelta(days=90)
 

@@ -14,7 +14,6 @@ limitations under the License.'''
 
 import logging
 from datetime import datetime
-from flask import g
 from flask_restx import Resource
 from qsystem import api, db, application, api_call_with_retry
 from sqlalchemy import exc, or_
@@ -23,7 +22,7 @@ from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
 import pytz
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -35,7 +34,7 @@ class CsrList(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
 
             if csr.role.role_code not in ["GA", "SUPPORT"]:
                 return {'message': 'You do not have permission to view this end-point'}, 403
@@ -68,7 +67,7 @@ class CsrSelf(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
 
             if not csr:
                 return {'Message': 'User Not Found'}, 404

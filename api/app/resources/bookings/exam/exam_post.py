@@ -15,14 +15,14 @@ limitations under the License.'''
 import copy
 
 import logging
-from flask import request, g
+from flask import request
 from flask_restx import Resource
 
 from app.auth.auth import jwt
 from app.models.bookings import ExamType
 from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
-from app.utilities.auth_util import Role
+from app.utilities.auth_util import Role, get_username
 from app.utilities.bcmp_service import BCMPService
 from qsystem import api, api_call_with_retry, db, my_print
 
@@ -42,7 +42,7 @@ class ExamPost(Resource):
         my_print("is_bcmp_req: ")
         my_print(is_bcmp_req)
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
 

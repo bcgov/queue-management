@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import request, g
 from flask_restx import Resource
 from app.models.theq.office import Office
 from qsystem import api, api_call_with_retry, db, socketio, my_print
@@ -22,7 +21,7 @@ from app.models.theq import SRState
 from datetime import datetime
 from app.utilities.snowplow import SnowPlow
 import os
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
@@ -40,7 +39,7 @@ class CitizenLeft(Resource):
     def post(self, id):
 
         my_print("++> POST API call time before csr = statement: " + str(datetime.now()))
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
         my_print("    ++> Time before citizen = statement: " + str(datetime.now()))
 
         citizen = Citizen.query\

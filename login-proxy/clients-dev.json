@@ -1,0 +1,408 @@
+{
+  "clients": [
+    {
+      "clientId": "forms-flow-bpm",
+      "description": "Camunda Client for Service Flow",
+      "defaultClientScopes": [
+        "acr",
+        "camunda-rest-api",
+        "email",
+        "profile",
+        "roles",
+        "web-origins"
+      ],
+      "directAccessGrantsEnabled": true,
+      "name": "forms-flow-bpm",
+      "optionalClientScopes": [
+        "address",
+        "microprofile-jwt",
+        "offline_access",
+        "phone"
+      ],
+      "protocolMappers": [
+        {
+          "config": {
+            "included.client.audience": "camunda-rest-api",
+            "access.token.claim": "true"
+          },
+          "name": "camunda-rest-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "config": {
+            "user.session.note": "clientId",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientId",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "Client IP Address",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "config": {
+            "user.session.note": "clientAddress",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "Client Host",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "config": {
+            "user.session.note": "clientHost",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientHost",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "config": {
+            "included.client.audience": "forms-flow-web",
+            "access.token.claim": "true"
+          },
+          "name": "forms-flow-web",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        }
+      ],
+      "redirectUris": [
+        "https://dev-sbc-ffa-bpm.apps.silver.devops.gov.bc.ca/*",
+        "https://formsflow-bpm.apps.silver.devops.gov.bc.ca/*"
+      ],
+      "rootUrl": "https://dev-sbc-ffa-bpm.apps.silver.devops.gov.bc.ca",
+      "serviceAccountsEnabled": true,
+      "webOrigins": [
+        "https://dev-sbc-ffa-api.apps.silver.devops.gov.bc.ca",
+        "https://dev-sbc-ffa-bpm.apps.silver.devops.gov.bc.ca",
+        "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca"
+      ]
+    },
+    {
+      "baseUrl": "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca",
+      "clientId": "forms-flow-web",
+      "description": "React based FormIO web components for Service Flow",
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "groups",
+            "full.path": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true"
+          },
+          "name": "groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper"
+        },
+        {
+          "config": {
+            "included.custom.audience": "forms-flow-web",
+            "access.token.claim": "true"
+          },
+          "name": "forms-flow-web",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "included.custom.audience": "camunda-rest-api",
+            "access.token.claim": "true"
+          },
+          "name": "camunda-rest-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "name": "role",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "role",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "usermodel.clientRoleMapping.clientId": "forms-flow-web"
+          }
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "user.attribute": "userid"
+          },
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        }
+      ],
+      "publicClient": true,
+      "redirectUris": [
+        "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca/*"
+      ],
+      "rootUrl": "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca",
+      "webOrigins": [
+        "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca"
+      ]
+    },
+    {
+      "clientId": "theq-appointment-frontend",
+      "description": "Appointment Frontend Client for The Q (SBC)",
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [
+        {
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-queue-management-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "user.attribute": "userid"
+          },
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "user.attribute": "display_name"
+          },
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "identity_provider",
+            "jsonType.label": "String",
+            "user.attribute": "identity_provider"
+          },
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        }
+      ],
+      "publicClient": true,
+      "redirectUris": [
+        "*"
+      ],
+      "rootUrl": "https://dev-theq.pathfinder.gov.bc.ca/*",
+      "webOrigins": [
+        "*"
+      ]
+    },
+    {
+      "clientId": "theq-appointment-reminder",
+      "description": "Appointment Reminder Client for The Q (SBC)",
+      "protocolMappers": [
+        {
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-queue-management-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        }
+      ],
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false
+    },
+    {
+      "clientId": "theq-frontend",
+      "description": "Queue Management Frontend Client for The Q (SBC)",
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "user.attribute": "display_name"
+          },
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "identity_provider",
+            "jsonType.label": "String",
+            "user.attribute": "identity_provider"
+          },
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        },
+        {
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-queue-management-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "user.attribute": "userid"
+          },
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        }
+      ],
+      "publicClient": true,
+      "redirectUris": [
+        "*"
+      ],
+      "rootUrl": "https://dev-theq.pathfinder.gov.bc.ca/*",
+      "webOrigins": [
+        "*"
+      ]
+    },
+    {
+      "bearerOnly": true,
+      "clientId": "theq-notifications-api",
+      "description": "Notifications API Client for The Q (SBC)"
+    },
+    {
+      "clientId": "theq-postman",
+      "description": "Postman Tests Client for The Q (SBC)",
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "email",
+            "jsonType.label": "String",
+            "user.attribute": "email"
+          },
+          "name": "email",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "user.attribute": "display_name"
+          },
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "identity_provider",
+            "claim.value": "idir",
+            "jsonType.label": "String"
+          },
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper"
+        },
+        {
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "access.token.claim": "true"
+          },
+          "name": "theq-queue-management-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        },
+        {
+          "config": {
+            "access.token.claim": "true",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "user.attribute": "username"
+          },
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper"
+        }
+      ],
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false
+    },
+    {
+      "bearerOnly": true,
+      "clientId": "theq-queue-management-api",
+      "description": "Queue Management API Client for The Q (SBC)"
+    }
+  ],
+  "roles": {
+    "client": {
+      "forms-flow-web": [
+        {
+          "name": "formsflow-analyst"
+        },
+        {
+          "name": "formsflow-client"
+        },
+        {
+          "name": "formsflow-designer"
+        },
+        {
+          "name": "formsflow-reviewer"
+        }
+      ]
+    }
+  }
+}

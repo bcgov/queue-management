@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g, request, make_response
+from flask import request, make_response
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Exam, Booking, Invigilator, Room, ExamType
@@ -25,7 +25,7 @@ from datetime import datetime, timedelta, timezone
 import pytz
 import csv
 import io
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -41,7 +41,7 @@ class ExamList(Resource):
 
         try:
 
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
             is_designate = csr.finance_designate
 
             start_param = request.args.get("start_date")
