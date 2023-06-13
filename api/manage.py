@@ -636,7 +636,7 @@ class Bootstrap(Command):
         db.session.add(theq.CSR(
             username='cfms-postman-operator',
             office_id=office_test.office_id,
-            role_id=role_csr.role_id,
+            role_id=role_ga.role_id,
             counter_id=qt_counter.counter_id,
             receptionist_ind=1,
             deleted=None,

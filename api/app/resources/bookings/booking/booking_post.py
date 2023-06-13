@@ -14,13 +14,13 @@ limitations under the License.'''
 
 import logging
 from flask_restx import Resource
-from flask import request, g
+from flask import request
 from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
 from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from qsystem import api, api_call_with_retry, db
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -32,7 +32,7 @@ class BookingPost(Resource):
     @api_call_with_retry
     def post(self):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
         i_id = json_data.get('invigilator_id')

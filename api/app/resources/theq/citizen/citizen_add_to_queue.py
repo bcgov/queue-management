@@ -14,7 +14,7 @@ limitations under the License.'''
 
 import logging
 from datetime import datetime
-from flask import g, request
+from flask import request
 from pprint import pprint
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print, application
@@ -22,7 +22,7 @@ from app.models.theq import Citizen, CSR, Office, ServiceReq, Period
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
 from app.utilities.snowplow import SnowPlow
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from app.utilities.email import get_walkin_spot_confirmation_email_contents, send_email
 from app.utilities.sms import send_walkin_spot_confirmation_sms
@@ -38,7 +38,7 @@ class CitizenAddToQueue(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         citizens = Citizen.query \
                 .options(joinedload(Citizen.service_reqs).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),joinedload(Citizen.office),raiseload(Citizen.user)) \

@@ -12,10 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, redirect, request, url_for, g
+from flask import abort, redirect, url_for
 from flask_login import login_user, logout_user
 from flask_restx import Resource
 from app.models.theq import CSR
+from app.utilities.auth_util import get_username
 from qsystem import api, application
 from app.auth.auth import jwt
 
@@ -28,10 +29,9 @@ class Login(Resource):
 
     @jwt.requires_auth_cookie
     def get(self):
-        claims = g.jwt_oidc_token_info
-
-        if claims["preferred_username"]:
-            csr = CSR.find_by_username(claims["preferred_username"])
+        username = get_username()
+        if username != '':
+            csr = CSR.find_by_username(username)
             if csr:
                 if csr.deleted is None:
                     csr.is_active = True

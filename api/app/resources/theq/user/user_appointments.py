@@ -13,14 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
 from flask_restx import Resource
 from sqlalchemy import exc
 
 from app.models.theq import PublicUser
 from app.schemas.bookings import AppointmentSchema
 from qsystem import api
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -33,7 +32,7 @@ class UserAppointments(Resource):
 
         # Get all appointments for the citizen
         try:
-            appointments = PublicUser.find_appointments_by_username(g.jwt_oidc_token_info['username'])
+            appointments = PublicUser.find_appointments_by_username(get_username())
 
             result = self.appointments_schema.dump(appointments)
             return {'appointments': result}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "00903876-c331-48ea-b574-52158e295143",
+    "name": "uma_authorization",
+    "description": "${role_uma_authorization}",
+    "composite": False,
+    "clientRole": False,
+    "containerId": "vtkayq4c"
+  },
+  {
+    "id": "a657b90f-ccea-4508-bfdc-d3465db6d8fc",
+    "name": "internal_user",
+    "description": "Role to distinguish the user from public user if using same IDP to login",
+    "composite": False,
+    "clientRole": False,
+    "containerId": "vtkayq4c"
+  },
+  {
+    "id": "87a89770-2901-4840-b39a-8cea9c81dfba",
+    "name": "offline_access",
+    "description": "${role_offline-access}",
+    "composite": False,
+    "clientRole": False,
+    "containerId": "vtkayq4c"
+  }
+]

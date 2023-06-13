@@ -12,12 +12,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, request
+from flask import request
 from flask_restx import Resource
 import logging
 from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
+from app.utilities.auth_util import get_username
 from app.utilities.bcmp_service import BCMPService
 from qsystem import api, db
 from app.auth.auth import jwt
@@ -30,7 +31,7 @@ class ExamEmailInvigilator(Resource):
     @jwt.requires_auth
     def post(self, exam_id):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()

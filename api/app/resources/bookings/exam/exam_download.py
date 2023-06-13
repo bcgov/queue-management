@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import g, Response
+from flask import Response
 from flask_restx import Resource
 import io
 import logging
@@ -21,6 +21,7 @@ from werkzeug.wsgi import FileWrapper
 from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
+from app.utilities.auth_util import get_username
 from app.utilities.bcmp_service import BCMPService
 from qsystem import api, my_print
 from app.auth.auth import jwt
@@ -33,7 +34,7 @@ class ExamStatus(Resource):
     @jwt.requires_auth
     def get(self, exam_id):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         try:
             exam = Exam.query.filter_by(exam_id=exam_id).first()

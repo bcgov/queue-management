@@ -13,13 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import g
 from flask_restx import Resource
 from qsystem import api, my_print
 from app.models.theq import Citizen, CSR
 from app.schemas.theq import ServiceReqSchema
 from sqlalchemy import exc
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -31,7 +30,7 @@ class CitizenServiceRequests(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self, id):
         try:
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
 
             citizen = Citizen.query.filter_by(citizen_id=id, office_id=csr.office_id).first()
             my_print("==> GET /citizens/" + str(citizen.citizen_id) + '/service_requests/, Ticket: ' + citizen.ticket_number)

@@ -19,7 +19,7 @@ from qsystem import api, db, time_print, get_key
 from sqlalchemy import exc
 from app.models.theq import CSRState
 from app.schemas.theq import CSRStateSchema
-from app.utilities.auth_util import Role, has_any_role, has_role
+from app.utilities.auth_util import Role, get_username, has_role
 from app.auth.auth import jwt
 
 
@@ -31,8 +31,8 @@ class CsrStateList(Resource):
     @jwt.requires_auth
     def get(self):
         try:
-            user = g.jwt_oidc_token_info['username']
-            has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], user, "CsrStateList GET /csr_states/")
+            username = get_username()
+            has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], username, "CsrStateList GET /csr_states/")
             states = CSRState.query.all()
             result = self.csr_state_schema.dump(states)
 

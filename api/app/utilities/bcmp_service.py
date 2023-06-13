@@ -103,7 +103,7 @@ class BCMPService:
 
         bcmp_exam = {
             "EXAM_SESSION_LOCATION" : office_name,
-            "REGISTRAR_name" : oidc_token_info['preferred_username'],
+            "REGISTRAR_name" : oidc_token_info['username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber" : "",
             "students": [
@@ -142,7 +142,7 @@ class BCMPService:
 
         bcmp_exam = {
             "EXAM_SESSION_LOCATION": office_name,
-            "REGISTRAR_name" : oidc_token_info['preferred_username'],
+            "REGISTRAR_name" : oidc_token_info['username'],
             "RECIPIENT_EMAIL_ADDRESS" : oidc_token_info['email'],
             "REGISTRAR_phoneNumber": "",
             "students": []
