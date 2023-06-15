@@ -14,13 +14,12 @@ limitations under the License.'''
 
 import logging
 from filelock import FileLock
-from flask import g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
 from app.models.theq import Citizen, CSR, ServiceReq, Period, Service, Office
 from app.models.theq import SRState
 from app.schemas.theq import CitizenSchema
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
@@ -34,7 +33,7 @@ class CitizenBeginService(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self, id):
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
         lock = FileLock("lock/begin_citizen_{}.lock".format(csr.office_id))
 
         with lock:

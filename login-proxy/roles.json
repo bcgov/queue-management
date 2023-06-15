@@ -1,0 +1,18 @@
+{
+  "roles": {
+    "realm": [
+      {
+        "name": "internal_user",
+        "description": "Distinguishes the user from online_appointment_user for IdPs used by both applications"
+      },
+      {
+        "name": "online_appointment_user",
+        "description": "Defines an online appointment user"
+      },
+      {
+        "name": "reminder_job",
+        "description": "Role for the reminder job to use"
+      }
+    ]
+  }
+}

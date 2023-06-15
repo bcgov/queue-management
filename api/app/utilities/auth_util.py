@@ -25,6 +25,21 @@ class Role(Enum):
     reminder_job = 'reminder_job'
 
 
+def get_username() -> str:
+    """
+    Gets the username in the form user@idp, where username is lowercase
+    and the idp is typically one of "bceid", "bcsc", or "idir". Will
+    return an empty string if there is no authenticated user identity.
+    """
+    if 'username' not in g.jwt_oidc_token_info or \
+            'identity_provider' not in g.jwt_oidc_token_info:
+        return ''
+
+    username = g.jwt_oidc_token_info['username'].lower() + '@' + \
+        g.jwt_oidc_token_info['identity_provider']
+
+    return username
+
 def is_public_user() -> bool:
     """Return if the user is a public user or not."""
     return Role.internal_user.value not in g.jwt_oidc_token_info['realm_access'][

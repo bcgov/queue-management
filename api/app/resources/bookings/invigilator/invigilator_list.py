@@ -13,14 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from flask import request, g
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Invigilator
 from app.models.theq import CSR
 from app.schemas.bookings import InvigilatorSchema
 from qsystem import api
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -32,7 +31,7 @@ class InvigilatorList(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         try:
             invigilators = Invigilator.query.filter_by(office_id=csr.office_id)\

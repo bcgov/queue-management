@@ -14,13 +14,13 @@ limitations under the License.'''
 
 import logging
 from sqlalchemy import exc
-from flask import abort, g, request
+from flask import abort
 from flask_restx import Resource
 from app.models.bookings import Booking
 from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from qsystem import api
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -32,7 +32,7 @@ class BookingDetail(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self, id):
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         try:
             booking = Booking.query.filter_by(booking_id=id).first_or_404()

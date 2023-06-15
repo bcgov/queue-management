@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import abort, g, request
 from flask_restx import Resource
 from app.models.bookings import Booking
 from app.schemas.bookings import BookingSchema
@@ -20,7 +19,7 @@ from app.models.theq import CSR
 from qsystem import api, db
 from datetime import datetime, timedelta, date
 import logging, pytz
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -37,7 +36,7 @@ class BookingRecurringDelete(Resource):
 
         logging.info("==> In the python DELETE /bookings/recurring/<id> endpoint")
 
-        csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = CSR.find_by_username(get_username())
 
         bookings = Booking.query.filter_by(recurring_uuid=id)\
                                 .filter_by(office_id=csr.office_id)\

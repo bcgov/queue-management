@@ -15,7 +15,6 @@ limitations under the License.'''
 import logging
 from functools import cmp_to_key
 from flask import request
-from flask import g
 from flask_restx import Resource
 from qsystem import api
 from qsystem import db
@@ -25,7 +24,7 @@ from app.models.theq import ServiceReq, Citizen, CSR
 from sqlalchemy import exc
 from app.schemas.theq import ServiceSchema, OfficeSchema
 from sqlalchemy.orm import noload, joinedload
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
 
@@ -39,7 +38,7 @@ class Refresh(Resource):
     def get(self):
         if request.args.get('office_id'):
             office_id = int(request.args.get('office_id'))
-            csr = CSR.find_by_username(g.jwt_oidc_token_info['username'])
+            csr = CSR.find_by_username(get_username())
             
             if csr.role.role_code == "GA":
             

@@ -14,13 +14,13 @@ limitations under the License.'''
 
 import logging
 
-from flask import request, abort, g
+from flask import request, abort
 from flask_restx import Resource
 
 from app.models.bookings import Appointment
 from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
-from app.utilities.auth_util import Role, has_any_role
+from app.utilities.auth_util import Role, get_username
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_cancel_email_contents, send_email
 from app.utilities.snowplow import SnowPlow
@@ -39,9 +39,9 @@ class AppointmentDelete(Resource):
         appointment = Appointment.query.filter_by(appointment_id=id) \
             .first_or_404()
 
-        csr = None if is_public_user() else CSR.find_by_username(g.jwt_oidc_token_info['username'])
+        csr = None if is_public_user() else CSR.find_by_username(get_username())
 
-        user: PublicUser = PublicUser.find_by_username(g.jwt_oidc_token_info['username']) if is_public_user() else None
+        user: PublicUser = PublicUser.find_by_username(get_username()) if is_public_user() else None
         if is_public_user():
             # Check if it's a public user
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
