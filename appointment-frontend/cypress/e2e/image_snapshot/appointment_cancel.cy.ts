@@ -25,7 +25,7 @@ import {
   SELECTOR_HEADER_IMAGE_BCGOV
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
 describe('Cancel Appointment', () => {
   beforeEach(() => {

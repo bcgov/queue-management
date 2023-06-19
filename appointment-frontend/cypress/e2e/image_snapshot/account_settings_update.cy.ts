@@ -16,20 +16,19 @@
 /// <reference types='cypress-image-snapshot' />
 
 import {
-  SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS,
+  SELECTOR_ACCOUNT_SETTINGS_EMAIL_SWITCH,
+  SELECTOR_ACCOUNT_SETTINGS_MSG,
+  SELECTOR_ACCOUNT_SETTINGS_NAV,
+  SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT,
+  SELECTOR_ACCOUNT_SETTINGS_UPDATE_BUTTON,
   SELECTOR_APPOINTMENT_CANCEL_USER_NAV,
-  SELECTOR_APPOINTMENT_CHANGE_APPOINTMENT,
   SELECTOR_FEEDBACK,
-  SELECTOR_HEADER_IMAGE_BCGOV,
-  SELECTOR_STEP_3_BUTTON_TIMESLOT,
-  SELECTOR_STEP_5_BUTTON_CONFIRM,
-  SELECTOR_STEP_5_CHECKBOX_CONSENT,
-  SELECTOR_STEP_5_DIALOG_APPOINTMENT
+  SELECTOR_HEADER_IMAGE_BCGOV
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
-describe('Cancel Appointment', () => {
+describe('Account Settings', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
     cy.fixture('offices.json').then((json) => {
@@ -37,34 +36,20 @@ describe('Cancel Appointment', () => {
     })
 
     cy.fixture('services/appointment_cancel.json').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'services', json)
-    })
-
-    cy.fixture('users/appointments/appointment_cancel.json').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'users/appointments', json)
+      cy.intercept('GET', API_PREFIX + 'services', json).as('getServices')
     })
 
     cy.fixture('users/me').then((json) => {
       cy.intercept('GET', API_PREFIX + 'users/me', json)
     })
-
-    cy.intercept('DELETE', API_PREFIX + 'appointments/66/', (req) => {
-      req.reply({
-        statusCode: 204
-      })
-    })
-    cy.fixture('offices/3/slots/service_id=7.json').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'offices/3/slots/?service_id=7', json)
+    cy.fixture('users/id=12706').then((json) => {
+      cy.intercept('PUT', API_PREFIX + 'users/12706', json).as('getUserUpdate')
     })
 
-    cy.intercept('POST', API_PREFIX + 'appointments/draft', (req) => {
-      req.reply({
-        statusCode: 201
-      })
+    cy.fixture('users/appointments').then((json) => {
+      cy.intercept('GET', API_PREFIX + 'users/appointments', json)
     })
-    cy.fixture('appointments/id=66').then((json) => {
-      cy.intercept('PUT', API_PREFIX + 'appointments/66', json)
-    })
+
     // Clear the session storage, otherwise Vuex remembers which page we're on.
     cy.window().then((window) => {
       window.sessionStorage.clear()
@@ -81,11 +66,13 @@ describe('Cancel Appointment', () => {
     cy.get(SELECTOR_APPOINTMENT_CANCEL_USER_NAV)
       .click()
 
-    cy.get(SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS)
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV)
+
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV)
       .click()
 
     // Need to wait for nav bar to fade
-    cy.get(SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS).should('not.be.visible')
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV).should('not.be.visible')
 
     // TODO: Find alternative to the cy.wait below.
     // The above should result in the below line not being required, but the nav bar results in the test failing.
@@ -95,33 +82,25 @@ describe('Cancel Appointment', () => {
   it('page loaded', () => {
     cy.matchImageSnapshot()
   })
+  it('Update User', () => {
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT)
 
-  it('Change Appointment', () => {
-    cy.clock(new Date('2022-05-3').getTime())
-    cy.get(SELECTOR_APPOINTMENT_CHANGE_APPOINTMENT)
-      .click()
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT).clear()
 
-    cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
-      .first()
-      .click()
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT).type('604-123-1234')
 
-    cy.get(SELECTOR_STEP_5_CHECKBOX_CONSENT)
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_EMAIL_SWITCH).click({ force: true })
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_HEADER_IMAGE_BCGOV)
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
+    cy.workaroundPositionFixed(SELECTOR_ACCOUNT_SETTINGS_MSG)
 
-    // TODO: these tests fail without the wait below. Looks to be an issue with the transition of the page.
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_UPDATE_BUTTON).click()
+
+    cy.get(SELECTOR_ACCOUNT_SETTINGS_MSG)
+
     cy.wait(1000)
-
-    cy.get(SELECTOR_STEP_5_CHECKBOX_CONSENT)
-      .parent() // Workaround for v-checkbox: click the parent.
-      .click()
-
-    cy.get(SELECTOR_STEP_5_BUTTON_CONFIRM)
-      .click()
-
-    cy.workaroundPositionFixed(SELECTOR_STEP_5_DIALOG_APPOINTMENT)
 
     cy.matchImageSnapshot()
   })

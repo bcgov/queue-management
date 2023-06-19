@@ -23,21 +23,15 @@ import {
   SELECTOR_STEP_2_BUTTON_NEXT,
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
   SELECTOR_STEP_3_BUTTON_TIMESLOT,
-  SELECTOR_STEP_5_BUTTON_CONFIRM,
-  SELECTOR_STEP_5_CHECKBOX_CONSENT,
-  SELECTOR_STEP_5_DIALOG_APPOINTMENT,
-  SELECTOR_STEP_5_IMAGE_MAP
+  SELECTOR_STEP_4_IMAGE_BCEID_LOGIN,
+  SELECTOR_STEP_4_IMAGE_BCSC
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
-describe('step 5', () => {
+describe('step 4', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
-
-    cy.fixture('appointments').then((json) => {
-      cy.intercept('POST', API_PREFIX + 'appointments', json)
-    })
 
     cy.fixture('appointments/draft').then((json) => {
       cy.intercept('POST', API_PREFIX + 'appointments/draft', json)
@@ -51,20 +45,8 @@ describe('step 5', () => {
       cy.intercept('GET', API_PREFIX + 'offices/3/slots/?service_id=85', json)
     })
 
-    cy.fixture('services').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'services', json)
-    })
-
     cy.fixture('services/office_id=3').then((json) => {
       cy.intercept('GET', API_PREFIX + 'services/?office_id=3', json)
-    })
-
-    cy.fixture('users/appointments').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'users/appointments', json)
-    })
-
-    cy.fixture('users/me').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'users/me', json)
     })
 
     // Clear the session storage, otherwise Vuex remembers which page we're on.
@@ -72,13 +54,7 @@ describe('step 5', () => {
       window.sessionStorage.clear()
     })
 
-    cy.bceidLogin(
-      Cypress.env('BCEID_ENDPOINT'),
-      Cypress.env('BCEID_USERNAME'),
-      Cypress.env('BCEID_PASSWORD')
-    )
-
-    cy.visit('/')
+    cy.workaroundVisit('/')
 
     cy.get(SELECTOR_STEP_1_COMBOBOX_OFFICE)
       .type('Victoria{downarrow}{enter}')
@@ -99,53 +75,18 @@ describe('step 5', () => {
       .click()
 
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_5_CHECKBOX_CONSENT)
+    cy.get(SELECTOR_STEP_4_IMAGE_BCSC)
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
-    cy.workaroundPositionFixed(SELECTOR_HEADER_IMAGE_BCGOV)
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
-    cy.workaroundImageFade(SELECTOR_STEP_5_IMAGE_MAP)
-
-    // TODO: Flake: these tests are failing with portions of the dialog box
-    // visible in the image snapshot to the left of the page itself. It is as if
-    // Vuetify is not hiding the dialog box until after the page is rendered,
-    // and the image snapshot is fairly frequently catching it when visible. It
-    // needs some research but this workaround will have to do for now.
-    cy.wait(1000)
+    cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_LOGIN)
+    cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCSC)
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
-  })
-
-  it('consent checked', () => {
-    cy.get(SELECTOR_STEP_5_CHECKBOX_CONSENT)
-      .parent() // Workaround for v-checkbox: click the parent.
-      .click()
-
-    cy.get(SELECTOR_STEP_5_BUTTON_CONFIRM)
-      .should('be.visible')
-
-    cy.matchImageSnapshot()
-  })
-
-  it('confirm clicked', () => {
-    cy.get(SELECTOR_STEP_5_CHECKBOX_CONSENT)
-      .parent() // Workaround for v-checkbox: click the parent.
-      .click()
-
-    cy.get(SELECTOR_STEP_5_BUTTON_CONFIRM)
-      .click()
-
-    // Flake: https://github.com/cypress-io/cypress/issues/2681
-    cy.workaroundPositionFixed(SELECTOR_STEP_5_DIALOG_APPOINTMENT)
-
-    cy.get(SELECTOR_STEP_5_DIALOG_APPOINTMENT)
-      .should('be.visible')
-
     cy.matchImageSnapshot()
   })
 })
