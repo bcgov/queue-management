@@ -23,19 +23,14 @@ import {
   SELECTOR_STEP_2_BUTTON_NEXT,
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
   SELECTOR_STEP_3_BUTTON_TIMESLOT,
-  SELECTOR_STEP_4_IMAGE_BCEID_LOGIN,
-  SELECTOR_STEP_4_IMAGE_BCSC
+  SELECTOR_STEP_3_DATE_PICKER
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
-describe('step 4', () => {
+describe('step 3', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
-
-    cy.fixture('appointments/draft').then((json) => {
-      cy.intercept('POST', API_PREFIX + 'appointments/draft', json)
-    })
 
     cy.fixture('offices').then((json) => {
       cy.intercept('GET', API_PREFIX + 'offices/', json)
@@ -54,7 +49,7 @@ describe('step 4', () => {
       window.sessionStorage.clear()
     })
 
-    cy.workaroundVisit('/')
+    cy.visit('/')
 
     cy.get(SELECTOR_STEP_1_COMBOBOX_OFFICE)
       .type('Victoria{downarrow}{enter}')
@@ -71,19 +66,17 @@ describe('step 4', () => {
     cy.get(SELECTOR_STEP_2_BUTTON_NEXT)
       .click()
 
-    cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
-      .click()
-
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_4_IMAGE_BCSC)
+    cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
-    cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_LOGIN)
-    cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCSC)
+
+    // Flake: v-date-picker has a transition. Wait for it to complete.
+    cy.workaroundDatePickerTransition(SELECTOR_STEP_3_DATE_PICKER)
   })
 
   it('page loaded', () => {
