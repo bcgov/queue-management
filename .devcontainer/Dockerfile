@@ -43,6 +43,8 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then \
 # RUN pip3 --disable-pip-version-check --no-cache-dir install -r \
 #    /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp
 
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
 RUN sudo apt-get update && \
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
         # psql is useful and needed in the container post-create commands.
