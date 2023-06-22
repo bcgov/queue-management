@@ -602,7 +602,7 @@ export const commonActions: any = {
 
   getOffices (context, payload = null) {
     if (
-      context.state.user.SkilledTradesBC2_designate === 1 ||
+      context.state.user.ita2_designate === 1 ||
       payload === 'force' ||
       context.state.user.pesticide_designate === 1
     ) {
@@ -953,7 +953,7 @@ export const commonActions: any = {
     return new Promise((resolve, reject) => {
       if (type === 'challenger') {
         context
-          .dispatch('postSkilledTradesBCChallengerExam')
+          .dispatch('postITAChallengerExam')
           .then(() => {
             resolve('success')
           })
@@ -963,7 +963,7 @@ export const commonActions: any = {
       }
       if (type === 'group') {
         context
-          .dispatch('postSkilledTradesBCGroupExam')
+          .dispatch('postITAGroupExam')
           .then(() => {
             resolve('success')
           })
@@ -973,7 +973,7 @@ export const commonActions: any = {
       }
       if (type === 'individual') {
         context
-          .dispatch('postSkilledTradesBCIndividualExam')
+          .dispatch('postITAIndividualExam')
           .then(
             () => {
               resolve('success')
@@ -1005,7 +1005,7 @@ export const commonActions: any = {
   clickPesticideRequestExam (context) {
     return new Promise((resolve, reject) => {
       context
-        .dispatch('postSkilledTradesBCIndividualExam', true)
+        .dispatch('postITAIndividualExam', true)
         .then(resp => {
           if (resp && resp.data && resp.data.bcmp_job_id) {
             resolve(resp.data.bcmp_job_id)
