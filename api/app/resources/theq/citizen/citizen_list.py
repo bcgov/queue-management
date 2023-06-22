@@ -77,7 +77,7 @@ class CitizenList(Resource):
             raise Exception('no user found with username: `{}`'.format(username))
 
         try:
-
+            # test
             if not json_data:
                 json_data = {}
             citizen = self.citizen_schema.load(json_data)
