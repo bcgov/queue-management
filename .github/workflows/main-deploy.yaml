@@ -11,7 +11,7 @@ jobs:
 
   appointment-frontend-cypress:
     name: Appointment Frontend Cypress
-    uses: ./.github/workflows/reusable-appointment-frontend-cypress.yaml
+    uses: ./.github/workflows/tyu-reusable-appointment-frontend-cypress.yaml
     secrets:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
       bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
