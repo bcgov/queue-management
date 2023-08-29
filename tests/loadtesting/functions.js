@@ -1,7 +1,8 @@
 
 const fetch = require('node-fetch');
 
-KEYCLOAK_URI = 'https://dev.oidc.gov.bc.ca/auth'
+//KEYCLOAK_URI = 'https://dev.oidc.gov.bc.ca/auth'
+KEYCLOAK_URI = 'https://dev.loginproxy.gov.bc.ca/auth'
 KEYCLOAK_CLIENT = 'cfms-dev-staff'
 
 // This implementation assumes it never has to refresh a token and they never expire
