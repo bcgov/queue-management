@@ -210,7 +210,7 @@ jobs:
         node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
           -e postman_env.json \
           --delay-request 250 \
-          --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL_DEV_PRO }}' \
+          --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL_DEV }}' \
           --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
           --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID_DEV }}' \
           --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
