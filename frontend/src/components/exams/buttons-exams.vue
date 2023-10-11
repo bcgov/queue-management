@@ -7,7 +7,7 @@
         split
         class="mr-1"
         variant="primary"
-        text="Add ITA Exam"
+        text="Add SkilledTradesBC Exam"
         @click="handleClick('individual')"
       >
         <b-dd-item id="add_session" @click="handleClick('challenger')"
