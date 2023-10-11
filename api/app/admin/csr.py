@@ -53,7 +53,7 @@ class CSRConfig(Base):
         'office_manager': 'Office Exam Manager',
         'pesticide_designate': 'Environment Client Liaison/Program Specialist',
         'finance_designate': 'Financial Reporting Designate',
-        'ita2_designate': 'ITA Liaison/Program Specialist',
+        'ita2_designate': 'SkilledTradesBC /Program Specialist',
         role_desc_const: 'Role',
         'deleted': 'Deleted'
     }
