@@ -1,5 +1,5 @@
 # Mender
-## About
+## About mender
 [Mender](https://mender.io/) is an over-the-air (OTA) update system for Linux. Updates in the Mender context--called deployments--are complete operating system overwrites backed by a dual-partition system which allow OS rollbacks in the event of a failed deployment. While the base unit of an update is a full OS overwrite, deployments can--additionally--run pre- and postinstall [scripts](https://docs.mender.io/1.7/artifacts/state-scripts) before and after it writes the root file system. This allows Mender to modify components of the OS outside of baked in deployment. 
 
 ## Implementation
