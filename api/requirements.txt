@@ -40,3 +40,4 @@ WTForms==3.0.0
 MarkupSafe==2.0.1
 numpy==1.21
 pyparsing==3.0.7
+future==0.18.2
