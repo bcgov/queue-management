@@ -271,18 +271,18 @@ jobs:
         node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
           -e postman_env.json \
           --delay-request 250 \
-          --global-var 'auth_url=${{ secrets.POSTMAN_AUTH_URL_DEV_PRO }}' \
+          --global-var 'auth_url=${{ vars.POSTMAN_AUTH_URL_DEV }}' \
           --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
-          --global-var 'clientid=${{ secrets.POSTMAN_CLIENTID_DEV }}' \
+          --global-var 'clientid=${{ vars.POSTMAN_CLIENTID_DEV }}' \
           --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
           --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-          --global-var 'public_url=${{ secrets.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
-          --global-var 'public_user_id=${{ secrets.POSTMAN_PUBLIC_USERID }}' \
+          --global-var 'public_url=${{ vars.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
+          --global-var 'public_user_id=${{ vars.POSTMAN_PUBLIC_USERID }}' \
           --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-          --global-var 'realm=${{ secrets.POSTMAN_REALM }}' \
-          --global-var 'url=${{ secrets.POSTMAN_API_URL_THEQ_DEV }}' \
-          --global-var 'userid=${{ secrets.POSTMAN_USERID }}' \
-          --global-var 'userid_nonqtxn=${{ secrets.POSTMAN_USERID_NONQTXN }}'
+          --global-var 'realm=${{ vars.POSTMAN_REALM }}' \
+          --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
+          --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
+          --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
 
   owasp-staff:
     name: OWASP ZAP Scan of Staff Frontend
