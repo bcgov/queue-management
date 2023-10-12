@@ -49,7 +49,7 @@ class ExamTypeConfig(Base):
         'number_of_hours': 'Number of Hours',
         'number_of_minutes': 'Number of Minutes',
         'method_type': 'Method Type',
-        'ita_ind': 'SkilledTradesBC',
+        'ita_ind': 'SkilledTradesBC Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Environment Exam Flag',
         'deleted': 'Deleted',
