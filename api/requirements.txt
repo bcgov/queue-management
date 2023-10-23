@@ -47,6 +47,4 @@ decorator==5.0.9
 setuptools==68.2.2
 wheel==0.41.2
 urllib3==1.26.6
-Flask==2.0.1
-flask_jwt_oidc==2.1.1
 python-jose==3.3.0
