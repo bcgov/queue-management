@@ -49,4 +49,3 @@ wheel==0.41.2
 urllib3==1.26.6
 python-jose==3.3.0
 #Added on 24-10-2023
-requests==2.28.2
