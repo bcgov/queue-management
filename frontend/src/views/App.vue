@@ -156,4 +156,13 @@ export default class App extends Vue {
   padding-right: 0;
   margin-left: 4px;
 }
+/*Added this style on 06-11-2023*/
+.mx-datepicker svg {
+    vertical-align: -2.7em !important;
+}
+
+#nav-dropdown-buttons li a.dropdown-item {
+  padding: 0.25rem 1.5rem !important;
+}
+
 </style>
