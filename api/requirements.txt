@@ -38,3 +38,10 @@ alembic==1.5.2
 WTForms==3.0.0
 # Using MarkupSafe 2.1.0 throws error importing soft_unicode 
 MarkupSafe==2.0.1
+# Added on 18-10-2023 
+numpy==1.21
+pyparsing==3.0.7
+future==0.18.2
+decorator==5.0.9
+#Added on 06-11-2023
+urllib3==1.26.9
