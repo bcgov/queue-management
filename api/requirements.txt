@@ -45,3 +45,6 @@ future==0.18.2
 decorator==5.0.9
 #Added on 06-11-2023
 urllib3==1.25.9
+python-jose==3.3.0
+setuptools==68.2.2
+wheel==0.41.2
