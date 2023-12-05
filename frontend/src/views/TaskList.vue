@@ -58,6 +58,7 @@ export default class TaskList extends Vue {
 
   loadProps () {
     this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+    console.log("CONFIGS:", this.configs);
   }
 
   mounted () {
