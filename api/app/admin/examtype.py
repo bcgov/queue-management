@@ -49,7 +49,7 @@ class ExamTypeConfig(Base):
         'number_of_hours': 'Number of Hours',
         'number_of_minutes': 'Number of Minutes',
         'method_type': 'Method Type',
-        'ita_ind': 'SkilledTradesBC Exam Flag',
+        'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Environment Exam Flag',
         'deleted': 'Deleted',
@@ -79,14 +79,14 @@ class ExamTypeConfig(Base):
         'number_of_hours': 'Number of Hours',
         'number_of_minutes': 'Number of Minutes',
         'method_type': 'Method Type',
-        'ita_ind': 'SkilledTradesBC Exam Flag',
+        'ita_ind': 'ITA Exam Flag',
         'group_exam_ind': 'Group Exam Flag',
         'pesticide_exam_ind': 'Environment Exam Flag',
         'deleted': 'Deleted',
     }
     form_choices = {
         'ita_ind': [
-            ("0", 'No - this is not an SkilledTradesBC exam'), ("1", 'Yes - this is an SkilledTradesBC exam')
+            ("0", 'No - this is not an ITA exam'), ("1", 'Yes - this is an ITA exam')
         ],
         'group_exam_ind': [
             ("0", 'No - this is not a Group exam'), ("1", 'Yes - this is a Group exam')

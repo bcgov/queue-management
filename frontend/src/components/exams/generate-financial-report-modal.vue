@@ -119,8 +119,8 @@ export default class FinancialReportModal extends Vue {
   options: any = [
     { text: 'All Exams', value: 'all_exams' },
     { text: 'All Booking Events', value: 'all_bookings' },
-    { text: 'SkilledTradesBC Individual and Group Exams', value: 'ita' },
-    { text: 'All Non-SkilledTradesBC Exams', value: 'all_non_ita' }
+    { text: 'ITA Individual and Group Exams', value: 'ita' },
+    { text: 'All Non-ITA Exams', value: 'all_non_ita' }
   ]
 
   public selectedExamType: any = ''

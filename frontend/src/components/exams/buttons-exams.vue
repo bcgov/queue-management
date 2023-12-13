@@ -7,7 +7,7 @@
         split
         class="mr-1"
         variant="primary"
-        text="Add SkilledTradesBC Exam"
+        text="Add ITA Exam"
         @click="handleClick('individual')"
       >
         <b-dd-item id="add_session" @click="handleClick('challenger')"
@@ -19,7 +19,7 @@
         id="add_ita"
         class="mr-1 btn-primary"
         @click="handleClick('individual')"
-        >Add SkilledTradesBC Exam</b-button
+        >Add ITA Exam</b-button
       >
       <b-button
         v-if="is_ita2_designate"
