@@ -20,6 +20,7 @@
       containerHeight ="280"
       taskSortBy="dueDate"
       taskSortOrder="asc"
+      v-bind:style="{ height: '400px' }"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
