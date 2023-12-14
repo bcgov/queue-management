@@ -18,7 +18,7 @@
       :userRoles="userKeyclockGroups"
       :formioServerUrl="configs.FORM_IO_API_URL"
       containerHeight ="280"
-      taskSortBy="dueDate"
+      taskSortBy="applicationId"
       taskSortOrder="desc"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
