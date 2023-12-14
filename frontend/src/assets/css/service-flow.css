@@ -69,3 +69,13 @@ html {
   margin-top: -6% !important;
 }
 
+.ctf-task-details-container .task-details {  
+  overflow-y: auto;
+  height: 55vh !important;
+}
+
+.cft-list-group {
+  overflow-y: auto;
+  border-radius: 0;
+  height: 50vh !important;
+}

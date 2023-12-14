@@ -14,9 +14,12 @@
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
       :getTaskId="getTaskId"
       :formIOUserRoles="userKeyclockGroups"
+      :reviewer="configs.FORM_IO_REVIEWER"
+      :userRoles="userKeyclockGroups"
+      :formioServerUrl="configs.FORM_IO_API_URL"
       containerHeight ="280"
       taskSortBy="dueDate"
-      taskSortOrder="asc"
+      taskSortOrder="desc"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
@@ -58,6 +61,7 @@ export default class TaskList extends Vue {
 
   loadProps () {
     this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+    console.log("CONFIGS:", this.configs);
   }
 
   mounted () {
