@@ -19,7 +19,7 @@
       :formioServerUrl="configs.FORM_IO_API_URL"
       containerHeight ="280"
       taskSortBy="dueDate"
-      taskSortOrder="asc"
+      taskSortOrder="desc"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
