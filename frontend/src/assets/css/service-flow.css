@@ -73,3 +73,9 @@ html {
   overflow-y: auto;
   height: 55vh !important;
 }
+
+.cft-list-group {
+  overflow-y: auto;
+  border-radius: 0;
+  height: 55vh !important;
+}
