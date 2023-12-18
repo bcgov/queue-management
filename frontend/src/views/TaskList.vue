@@ -71,10 +71,6 @@ export default class TaskList extends Vue {
       console.log('finishBeginServiceTheQ', customEvent);
       this.$root.$emit('navBeginService')
     })
-    this.$root.$on('customEvent', (customEvent: any) => {
-      console.log('customEvent', customEvent);
-      this.$root.$emit('navBeginService')
-    })
   }
 
   @Watch('bearer')
