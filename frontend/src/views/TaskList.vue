@@ -5,7 +5,7 @@
       :bpmApiUrl="configs.BPM_URL"
       :token="token"
       :formIOApiUrl="configs.FORM_IO_API_URL"
-      :formioUrl="configs.FORM_IO_API_URL"
+      :formioUrl="configs.FORM_FLOW_URL"
       :formIOResourceId="configs.FORM_IO_RESOURCE_ID"
       :formIOReviewerId="configs.FORM_IO_REVIEWER_ID"
       :formIOReviewer="configs.FORM_IO_REVIEWER"
