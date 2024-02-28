@@ -290,7 +290,8 @@ export default class Login extends Vue {
   }
 
   login () {
-    this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
+    // this.$keycloak.login({ idpHint: 'idir', scope: 'offline_access' })
+    this.$keycloak.login({ idpHint: 'idir' })
   }
 
   logoutTokenExpired () {
