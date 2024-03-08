@@ -55,6 +55,7 @@ export default {
     submitClicked: false,
     draftAppointment: {},
     toggleAppCalenderView: false,
+    selected_office_id: null, // selected in the appointment page and reset based on the office_id each time we load appointment page
 
   },
   getters: {
@@ -143,6 +144,9 @@ export default {
     },
     getApiTotalCount (state) {
       return state.apiCallTotal
+    },
+    getSelectedOfficeId (state) {
+      return state.selected_office_id
     }
   },
   actions: {
@@ -185,10 +189,11 @@ export default {
     },
 
     getAppointments ({ commit, rootState }) {
-      const state = rootState
       let output = []
+      const state = rootState
+      console.log("ROOT STATE ", state.appointmentsModule.selected_office_id);
       return new Promise((resolve, reject) => {
-        Axios({ state }).get('/appointments/').then(resp => {
+        Axios({ state }).get(`/appointments?office_id=${state.appointmentsModule.selected_office_id}`).then(resp => {
           const appts = resp.data.appointments
           if (appts.length > 0) {
             output = appts.filter(ap => !ap.checked_in_time)
@@ -234,7 +239,7 @@ export default {
 
     postAppointment ({ rootState }, payload) {
       const state = rootState
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       payload.appointment_draft_id = 1
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/', payload).then(resp => {
@@ -446,11 +451,14 @@ export default {
       }
       commit('setAppointments', output)
     }
-
   },
   mutations: {
     setEditedStatus: (state, payload) => state.editing = payload,
     setAppointments: (state, payload) => state.appointments = payload,
+    setAppointmentsOfficeId: (state, payload) => {
+      console.log("PAYLOAD", payload);
+      state.selected_office_id = payload;
+    },
     setCalendarSetup: (state, payload) => {
       const { title, name, titleRef } = payload
       state.calendarSetup = { title, name, titleRef }
