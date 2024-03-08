@@ -13,7 +13,7 @@
         <label class="mb-0">Choose Branch</label>
       </div>
       <div class="col-3">
-        <b-form-select  :value="selected_office_id" :options="officeList"  @change="onChangeOffice">
+        <b-form-select  :value="selected_office_id" :options="officeList" @change="onChangeOffice">
         </b-form-select>
       </div>
       <div class="col-3">

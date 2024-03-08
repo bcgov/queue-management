@@ -105,15 +105,15 @@ class AppointmentPost(Resource):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
-        elif (json_data.get('stat_flag', False)):
-            #for stat
-            csr = CSR.find_by_username(get_username())
-            office_id = json_data.get('office_id', csr.office_id)
-            office = Office.find_by_id(office_id)
+        # elif (json_data.get('stat_flag', False)):
+        #     #for stat
+        #     csr = CSR.find_by_username(get_username())
+        #     office_id = json_data.get('office_id', csr.office_id)
+        #     office = Office.find_by_id(office_id)
 
         else:
             csr = CSR.find_by_username(get_username())
-            office_id = csr.office_id
+            office_id = json_data.get('office_id', csr.office_id)
             office = Office.find_by_id(office_id)
 
         citizen.office_id = office_id

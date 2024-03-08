@@ -191,9 +191,9 @@ export default {
     getAppointments ({ commit, rootState }) {
       let output = []
       const state = rootState
-      console.log("ROOT STATE ", state.appointmentsModule.selected_office_id);
+      const office_id = state.appointmentsModule.selected_office_id
       return new Promise((resolve, reject) => {
-        Axios({ state }).get(`/appointments?office_id=${state.appointmentsModule.selected_office_id}`).then(resp => {
+        Axios({ state }).get(`/appointments/?office_id=${office_id}`).then(resp => {
           const appts = resp.data.appointments
           if (appts.length > 0) {
             output = appts.filter(ap => !ap.checked_in_time)
@@ -274,7 +274,7 @@ export default {
         checked_in_time: moment.utc().format(),
         appointment_id: payload.appointment_id,
         service_id: payload.service_id,
-        citizen_name: payload.title
+        citizen_name: payload.title 
       }
       if (!payload.hasOwnProperty('start_time'))
       {
@@ -404,7 +404,7 @@ export default {
     async postDraftAppointment ({ rootState, commit }, payload) {
       const state = rootState
       // draftAppointments
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/draft', payload).then(resp => {
           commit('setDraftAppointments', resp.data)
@@ -456,7 +456,6 @@ export default {
     setEditedStatus: (state, payload) => state.editing = payload,
     setAppointments: (state, payload) => state.appointments = payload,
     setAppointmentsOfficeId: (state, payload) => {
-      console.log("PAYLOAD", payload);
       state.selected_office_id = payload;
     },
     setCalendarSetup: (state, payload) => {
