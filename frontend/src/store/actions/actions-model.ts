@@ -718,6 +718,7 @@ export const commonActions: any = {
         .then(
           resp => {
             context.commit('setUser', resp.data.csr)
+            context.commit('appointmentsModule/setAppointmentsOfficeId',resp.data.csr.office_id)
             const officeType = resp.data.csr.office.sb.sb_type
             context.commit('setOffice', officeType)
             context.commit(
