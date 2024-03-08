@@ -193,7 +193,7 @@ export default {
       const state = rootState
       console.log("ROOT STATE ", state.appointmentsModule.selected_office_id);
       return new Promise((resolve, reject) => {
-        Axios({ state }).get(`/appointments?office_id=${state.appointmentsModule.selected_office_id}`).then(resp => {
+        Axios({ state }).get(`/appointments/?office_id=${state.appointmentsModule.selected_office_id}`).then(resp => {
           const appts = resp.data.appointments
           if (appts.length > 0) {
             output = appts.filter(ap => !ap.checked_in_time)
