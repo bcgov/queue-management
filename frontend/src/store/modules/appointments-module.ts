@@ -250,7 +250,7 @@ export default {
 
     async createAxioObject ({ rootState }, payload) {
       const state = rootState
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       payload.appointment_draft_id = 1
       return Axios({ state }).post('/appointments/', payload)
     },
@@ -431,13 +431,14 @@ export default {
       const { appointment, action = 'create' } = data
 
       const currentAppointment = state.appointments
+      const office_id = rootState.appointmentsModule.selected_office_id
       let output: any = currentAppointment
       if (action === 'create') {
-        if (appointment.office_id === rootState.user.office_id) {
+        if (appointment.office_id === office_id) {
           output = [...currentAppointment, appointment]
         }
       } else if (action === 'update') {
-        if (appointment.office_id === rootState.user.office_id) {
+        if (appointment.office_id === office_id) {
           const currentApp = currentAppointment.filter(app => {
             return app.appointment_id !== appointment.appointment_id
           })

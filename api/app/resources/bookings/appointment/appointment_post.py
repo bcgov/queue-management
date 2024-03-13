@@ -152,7 +152,7 @@ class AppointmentPost(Resource):
                 except Exception as exc:
                     logging.exception('Error on sms or email sending - %s', exc)
 
-            SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
+            # SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
 
             result = self.appointment_schema.dump(appointment)
 
