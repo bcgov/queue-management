@@ -77,7 +77,7 @@ class AppointmentPut(Resource):
 
         else:
             csr = CSR.find_by_username(get_username())
-            office_id = csr.office_id
+            office_id = json_data.get('office_id', csr.office_id)
             office = Office.find_by_id(office_id)
 
         appointment = Appointment.query.filter_by(appointment_id=id) \
@@ -115,8 +115,8 @@ class AppointmentPut(Resource):
         if "checked_in_time" in json_data:
             schema = 'appointment_checkin'
 
-        if not appointment.is_draft:
-            SnowPlow.snowplow_appointment(None, csr, appointment, schema)
+        # if not appointment.is_draft:
+        #     SnowPlow.snowplow_appointment(None, csr, appointment, schema)
 
         result = self.appointment_schema.dump(appointment)
 
