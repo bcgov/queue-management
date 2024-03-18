@@ -109,7 +109,7 @@ class SnowPlow():
             SnowPlow.make_tracking_call(snowplow_event, citizen, office, agent)
 
     @staticmethod
-    def snowplow_appointment(citizen_obj, csr, appointment, schema):
+    def snowplow_appointment(citizen_obj, csr, appointment, schema, office_id):
 
         #  Make sure you want to track calls.
         if SnowPlow.call_snowplow_flag and appointment.blackout_flag == 'N' and not appointment.stat_flag:
@@ -124,10 +124,14 @@ class SnowPlow():
                 counter_name = 'Counter'
                 office_id = citizen_obj.office_id
                 role_name = "WebSelfServe"
-            else:
+            elif csr.office_id == office_id:
                 csr_id = csr.csr_id
                 counter_name = csr.counter.counter_name
                 office_id = csr.office_id
+                role_name = "TBD"
+            else:
+                csr_id = csr.csr_id
+                counter_name = csr.counter.counter_name
                 role_name = "TBD"
 
             #  Set up the contexts for the call.

@@ -157,8 +157,9 @@ export default {
 
     deleteAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
+      const office_id = state.appointmentsModule.selected_office_id
       return new Promise<void>((resolve, reject) => {
-        Axios({ state }).delete(`/appointments/${payload}/`).then(() => {
+        Axios({ state }).delete(`/appointments/${payload}/?office_id=${office_id}`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
           })
@@ -319,6 +320,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
+      payload.office_id = state.appointmentsModule.selected_office_id
       return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')

@@ -50,8 +50,9 @@ class AppointmentDelete(Resource):
 
         # Must call this prior to deleting from DB, so cannot 
         # combine with repeated is_draft check below
-        # if not appointment.is_draft:
-        #     SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
+        if not appointment.is_draft:
+            office_id = request.args.get("office_id", None)
+            SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete', office_id)
 
         # Do not log snowplow events or send emails if it's a draft.
         # If the appointment is public user's and if staff deletes it send email
