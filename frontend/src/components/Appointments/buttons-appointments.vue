@@ -128,7 +128,6 @@ export default class ButtonsAppointments extends Vue {
   }
   onChangeOffice(office_id) {
     this.setAppointmentsOfficeId(office_id)
-    console.log("Selected Office Id ", this.selected_office_id);
     this.getAppointments();
   }
   mounted(){
