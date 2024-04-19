@@ -13,7 +13,14 @@
 
 import { searchNestedObject } from '../helpers'
 
-function isDesignate(state: any, role): boolean {
+enum UserRole {
+  PesticideDesignate = 'pesticide_designate',
+  FinanceDesignate = 'finance_designate',
+  Ita2Designate = 'ita2_designate',
+  OfficeManager = 'office_manager'
+}
+
+function isDesignate(state: any, role: UserRole): boolean {
     return Boolean(state.user[role]);
 }
 
@@ -200,19 +207,19 @@ export const commonGetters: any = {
   },
 
   is_pesticide_designate (state) {
-    return isDesignate(state, 'pesticide_designate')
+    return isDesignate(state, UserRole.PesticideDesignate)
   },
 
   is_financial_designate (state) {
-    return isDesignate(state, 'financial_designate')
+    return isDesignate(state, UserRole.FinanceDesignate)
   },
 
   is_ita2_designate (state) {
-    return isDesignate(state, 'ita2_designate')
+    return isDesignate(state, UserRole.Ita2Designate)
   },
 
   is_office_manager (state) {
-    return isDesignate(state, 'office_manager')
+    return isDesignate(state, UserRole.OfficeManager)
   },
 
   is_recurring_enabled (state) {
