@@ -13,6 +13,10 @@
 
 import { searchNestedObject } from '../helpers'
 
+function isDesignate(state: any, role): boolean {
+    return Boolean(state.user[role]);
+}
+
 export const commonGetters: any = {
 
   admin_navigation_nonblank (state) {
@@ -196,31 +200,19 @@ export const commonGetters: any = {
   },
 
   is_pesticide_designate (state) {
-    if (state.user.pesticide_designate) {
-      return true
-    }
-    return false
+    return isDesignate(state, 'pesticide_designate')
   },
 
   is_financial_designate (state) {
-    if (state.user.finance_designate) {
-      return true
-    }
-    return false
+    return isDesignate(state, 'financial_designate')
   },
 
   is_ita2_designate (state) {
-    if (state.user.ita2_designate) {
-      return true
-    }
-    return false
+    return isDesignate(state, 'ita2_designate')
   },
 
   is_office_manager (state) {
-    if (state.user.office_manager) {
-      return true
-    }
-    return false
+    return isDesignate(state, 'office_manager')
   },
 
   is_recurring_enabled (state) {
