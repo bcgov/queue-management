@@ -147,6 +147,9 @@ export default {
     },
     getSelectedOfficeId (state) {
       return state.selected_office_id
+    },
+    getSelectedOffice(state, getters, rootState) {
+      return rootState.offices.filter(p=>p.office_id == state.selected_office_id)[0]
     }
   },
   actions: {

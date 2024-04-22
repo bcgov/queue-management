@@ -1,15 +1,6 @@
 <template>
-  <b-modal
-    v-model="modalVisible"
-    @shown="show"
-    size="md"
-    modal-class="q-modal"
-    body-class="q-modal"
-    no-close-on-backdrop
-    no-close-on-esc
-    hide-header
-    class="appt-modal"
-  >
+  <b-modal v-model="modalVisible" @shown="show" size="md" modal-class="q-modal" body-class="q-modal"
+    no-close-on-backdrop no-close-on-esc hide-header class="appt-modal">
     <div id="navi">
       <template v-if="this.$store.state.showServeCitizenSpinner">
         <div class="q-loader2"></div>
@@ -17,43 +8,24 @@
     </div>
     <template slot="modal-footer">
       <div class="d-flex flex-row-reverse">
-        <b-button
-          class="disabled btn-primary ml-2"
-          v-if="(submitDisabled) && (!submitStat)"
-          @click="validate = true"
-          >Submit</b-button
-        >
-        <b-button
-          class="btn-primary ml-2"
-          @click="submit"
-          v-if="(!submitDisabled) && (!submitDisabled)"
-          >Submit</b-button
-        >
-        <b-button
-          class="btn-primary ml-2"
-          @click="submitSingleStat"
-          v-if="(submitStat) && (is_Support)"
-          >Submit</b-button
-        >
+        <b-button class="disabled btn-primary ml-2" v-if="(submitDisabled) && (!submitStat)"
+          @click="validate = true">Submit</b-button>
+        <b-button class="btn-primary ml-2" @click="submit"
+          v-if="(!submitDisabled) && (!submitDisabled)">Submit</b-button>
+        <b-button class="btn-primary ml-2" @click="submitSingleStat"
+          v-if="(submitStat) && (is_Support)">Submit</b-button>
         <b-button @click="cancel()">Cancel</b-button>
       </div>
     </template>
-    <span v-if="this.editDeleteSeries && !stat_flag" style="font-size: 1.75rem"
-      >Book Service Appointment Series</span
-    >
-    <span v-if="this.editDeleteSeries && stat_flag" style="font-size: 1.75rem"
-      >Recurring STAT</span
-    >
-    <span
-      v-if="!this.editDeleteSeries && online_flag"
-      style="font-size: 1.75rem"
-      >Book Service Appointment (Online)</span
-    ><br />
-    <span
-      v-if="!this.editDeleteSeries && !online_flag"
-      style="font-size: 1.75rem"
-      >Book Service Appointment</span>
-      <br />
+    <span v-if="this.editDeleteSeries && !stat_flag" style="font-size: 1.75rem">Book Service Appointment Series</span>
+    <span v-if="this.editDeleteSeries && stat_flag" style="font-size: 1.75rem">Recurring STAT</span>
+    <span v-if="!this.editDeleteSeries && online_flag" style="font-size: 1.75rem">Book Service Appointment
+      (Online)</span><br />
+    <span v-if="!this.editDeleteSeries && !online_flag" style="font-size: 1.75rem">Book Service Appointment</span>
+    <br />
+    <div v-if="!csrOfficeEqualSelectedOffice" class="container">
+      <div class="row  warning-container">Warning: You are booking an appointment for {{ this.selected_office.office_name }}</div>
+    </div>
     <b-form autocomplete="off" v-if="!stat_flag">
       <!--  Citizen Name and Contact Info row -->
       <b-form-row>
@@ -67,12 +39,8 @@
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Send Confirmation</label><br />
-            <b-form-input
-              v-if="isNotBlackoutFlag"
-              v-model="contact_information"
-              class="contact"
-              placeholder="By email or SMS Text"
-            />
+            <b-form-input v-if="isNotBlackoutFlag" v-model="contact_information" class="contact"
+              placeholder="By email or SMS Text" />
             <b-form-input v-else v-model="contact_information" readonly />
           </b-form-group>
         </b-col>
@@ -85,72 +53,40 @@
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Time</label><br />
             <b-form-input :value="displayStart" disabled />
-            <b-button
-                v-show="allow_reschedule"
-                variant="primary"
-                class="mr-3"
-                @click="editAppointTime"
-              >
-                <font-awesome-icon
-                  icon="edit"
-                  class="p0"
-                />
-              </b-button>
+            <b-button v-show="allow_reschedule" variant="primary" class="mr-3" @click="editAppointTime">
+              <font-awesome-icon icon="edit" class="p0" />
+            </b-button>
           </b-form-group>
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Date</label><br />
             <b-form-input :value="displayDate" disabled />
-            <b-button
-                v-show="allow_reschedule"
-                variant="primary"
-                class="mr-3"
-                @click="editAppointDate"
-              >
-                <font-awesome-icon
-                  icon="edit"
-                  class="p0"
-                />
-              </b-button>
+            <b-button v-show="allow_reschedule" variant="primary" class="mr-3" @click="editAppointDate">
+              <font-awesome-icon icon="edit" class="p0" />
+            </b-button>
           </b-form-group>
         </b-col>
       </b-form-row>
       <!--  End of the Time and Date row. -->
-       <!--  The Time and Date edit row. -->
+      <!--  The Time and Date edit row. -->
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
             <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
-            <vue-timepicker
-                v-if="allow_time_edit"
-                id="app_timepicker_id"
-                v-model="app_start_time"
-                class="w-100"
-                icon="clock"
-                editable
-                format="hh:mm A"
-                locale="en-US"
-                @change="setStartDateTime(true)"
-                @input="setStartDateTime(true)"
-                manual-input>
+            <vue-timepicker v-if="allow_time_edit" id="app_timepicker_id" v-model="app_start_time" class="w-100"
+              icon="clock" editable format="hh:mm A" locale="en-US" @change="setStartDateTime(true)"
+              @input="setStartDateTime(true)" manual-input>
             </vue-timepicker>
-            <br/>
+            <br />
             <span class="danger" v-if="time_msg">{{time_msg}}</span>
           </b-form-group>
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
             <label v-if="allow_date_edit" class="mb-0">Select Date</label><br />
-            <DatePicker
-              v-if="allow_date_edit"
-              v-model="app_start_date"
-              type="date"
-              lang="en"
-              class="w-100"
-              @change="setStartDateTime(false)"
-              @input="setStartDateTime(false)"
-            >
+            <DatePicker v-if="allow_date_edit" v-model="app_start_date" type="date" lang="en" class="w-100"
+              @change="setStartDateTime(false)" @input="setStartDateTime(false)">
             </DatePicker>
           </b-form-group>
         </b-col>
@@ -165,77 +101,50 @@
               <b-input-group>
                 <b-input-group-prepend>
                   <b-button-group>
-                    <b-button
-                      variant="primary"
-                      class="px-0"
-                      style="width: 52px"
-                      @click="addService"
-                      >{{ selectedService ? 'Edit' : 'Set' }}</b-button
-                    >
-                    <b-button
-                      variant="secondary"
-                      v-if="selectedService"
-                      class="px-0"
-                      style="width: 52px; border-radius: 0px"
-                      @click="clearService"
-                      >Clear</b-button
-                    >
+                    <b-button variant="primary" class="px-0" style="width: 52px" @click="addService">{{ selectedService
+                      ? 'Edit' : 'Set' }}</b-button>
+                    <b-button variant="secondary" v-if="selectedService" class="px-0"
+                      style="width: 52px; border-radius: 0px" @click="clearService">Clear</b-button>
                   </b-button-group>
                 </b-input-group-prepend>
-                <b-form-input
-                  disabled
-                  :state="validated.selectedService"
-                  :value="service_name"
-                />
+                <b-form-input disabled :state="validated.selectedService" :value="service_name" />
               </b-input-group>
             </div>
           </b-form-group>
         </b-col>
       </b-form-row>
       <!--  End of service selected by the citizen row -->
-            <!--  The Date/Time row -->
+      <!--  The Date/Time row -->
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
             <label class="mb-0">Length</label><br />
-            <b-select v-model="selectLength" :options="lengthOptions" @input="serviceTime"/>
+            <b-select v-model="selectLength" :options="lengthOptions" @input="serviceTime" />
           </b-form-group>
         </b-col>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag && allow_reschedule" class="mb-0 mt-2">
             <label class="mb-0">Change Date/Time</label><br />
-            <b-button @click="reschedule" class="btn-secondary w-100"
-              >Reschedule</b-button
-            >
+            <b-button @click="reschedule" class="btn-secondary w-100">Reschedule</b-button>
           </b-form-group>
           <b-form-group v-if="isNotBlackoutFlag && !allow_reschedule" class="mb-0 mt-2">
             <label class="mb-0">Change Date/Time</label><br />
             <span id="disabled-wrapper">
-            <b-button disabled @click="reschedule" class="btn-secondary w-100"
-              >Reschedule</b-button>
+              <b-button disabled @click="reschedule" class="btn-secondary w-100">Reschedule</b-button>
             </span>
           </b-form-group>
-          <b-tooltip target="disabled-wrapper">Appointments in the past can't be rescheduled - please create new appointment</b-tooltip>
+          <b-tooltip target="disabled-wrapper">Appointments in the past can't be rescheduled - please create new
+            appointment</b-tooltip>
         </b-col>
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
           <b-form-group class="mb-0 mt-2">
-            <label v-if="this.editDeleteSeries" class="mb-0"
-              >Remove Appointment</label
-            >
+            <label v-if="this.editDeleteSeries" class="mb-0">Remove Appointment</label>
             <label v-else class="mb-0">Remove Appointment</label><br />
-            <b-button
-              v-if="clickedAppt && !this.editDeleteSeries"
-              @click="deleteAppt"
-              class="btn-danger w-100"
-            >
+            <b-button v-if="clickedAppt && !this.editDeleteSeries" @click="deleteAppt" class="btn-danger w-100">
               Delete
             </b-button>
-            <b-button
-              v-else
-              @click="deleteRecurringAppts"
-              class="btn-danger w-100"
-            >
+            <b-button v-else @click="deleteRecurringAppts" class="btn-danger w-100">
               Delete Series
             </b-button>
           </b-form-group>
@@ -288,11 +197,11 @@
         </b-col>
       </b-form-row>
       <b-form-row>
-        <b-col >
+        <b-col>
           <b-form-group class="mb-0 mt-2">
             <label class="mb-0">Note</label><br />
-            <b-form-input v-if="is_Support" v-model="comments" maxlength="255"/>
-            <b-form-input v-else :value="comments" disabled/>
+            <b-form-input v-if="is_Support" v-model="comments" maxlength="255" />
+            <b-form-input v-else :value="comments" disabled />
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -303,38 +212,27 @@
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0"
-              >Remove STAT</label
-            >
+            <label class="mb-0">Remove STAT</label>
             <br />
             <b-row>
               <v-col>
-                <b-button
-                  @click="deleteAppt"
-                  class="btn-danger w-100"
-                >
+                <b-button @click="deleteAppt" class="btn-danger w-100">
                   Delete STAT
                 </b-button>
               </v-col>
             </b-row>
             <b-row>
               <v-col>
-                <b-button
-                    @click="deleteRecurringAppts"
-                    class="btn-danger w-100"
-                  >
-                    Delete STAT Series from this Office
-                  </b-button>
+                <b-button @click="deleteRecurringAppts" class="btn-danger w-100">
+                  Delete STAT Series from this Office
+                </b-button>
               </v-col>
             </b-row>
             <b-row>
               <v-col>
-                <b-button
-                    @click="deleteRecurringStatAppts"
-                    class="btn-danger w-100"
-                  >
-                    Delete All STAT Series
-                  </b-button>
+                <b-button @click="deleteRecurringStatAppts" class="btn-danger w-100">
+                  Delete All STAT Series
+                </b-button>
               </v-col>
             </b-row>
           </b-form-group>
@@ -408,7 +306,11 @@ export default class ApptBookingModal extends Vue {
   @Action('deleteRecurringStatBooking') public deleteRecurringStatBooking: any
   @Action('deleteRecurringStatAllOfficeBooking') public deleteRecurringStatAllOfficeBooking: any
   @Action('finishBooking') public finishBooking: any
-  
+  @appointmentsModule.Getter('getSelectedOffice') public selected_office: any;
+  get csrOfficeEqualSelectedOffice () {
+    console.log("selected office", this.selected_office);
+    return this.$store.state.user.office.office_id === this.selected_office.office_id;
+  }
 
   public baseEnd: any = null
   public booking: boolean = false

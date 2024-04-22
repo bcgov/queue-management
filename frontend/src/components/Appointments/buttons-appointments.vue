@@ -6,11 +6,11 @@
           <b-button class="btn-primary mx-2" @click="today">Today</b-button>
           <b-button class="btn-primary mx-2" v-if="toggleAppCalenderView" @click="agendaWeek">Week View</b-button>
           <b-button class="btn-primary mx-2" v-if="!toggleAppCalenderView" @click="agendaDay"> Day View</b-button>
-          <b-button variant="primary" class="ml-0 mx-2" @click="clickBlackout">Create Blackout</b-button>
+          <b-button variant="primary" class="ml-0 mx-2" v-if="csrOfficeEqualSelectedOffice" @click="clickBlackout">Create Blackout</b-button>
         </form>
       </div>
       <div class="col-1">
-        <label class="mb-0">Choose Branch</label>
+        <label class="mb-0">Select Office</label>
       </div>
       <div class="col-3">
         <b-form-select  :value="selected_office_id" :options="officeList" @change="onChangeOffice">
@@ -82,6 +82,9 @@ export default class ButtonsAppointments extends Vue {
   @appointmentsModule.Mutation('setAppointmentsOfficeId') public setAppointmentsOfficeId: any
   @appointmentsModule.Action('getAppointments') private getAppointments: any;
   @State('offices') private offices!: any;
+  get csrOfficeEqualSelectedOffice () {
+    return this.$store.state.user.office.office_id === this.selected_office_id;
+  }
   get dropdownText() {
     if (this.calendar_setup.name === 'day') {
       return 'Day View'
