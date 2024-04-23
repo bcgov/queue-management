@@ -301,7 +301,7 @@ jobs:
           fi
 
       - name: OWASP ZAP Scan
-        uses: zaproxy/action-full-scan@v0.3.0
+        uses: zaproxy/action-full-scan@v0.10.0
         with:
           allow_issue_writing: false
           cmd_options: '-z "-config scanner.threadPerHost=20"'
