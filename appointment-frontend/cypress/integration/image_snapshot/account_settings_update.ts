@@ -58,7 +58,8 @@ describe('Account Settings', () => {
     cy.bceidLogin(
       Cypress.env('BCEID_ENDPOINT'),
       Cypress.env('BCEID_USERNAME'),
-      Cypress.env('BCEID_PASSWORD')
+      Cypress.env('BCEID_PASSWORD'),
+      { timeout: 90000 } 
     )
 
     cy.visit('/')
