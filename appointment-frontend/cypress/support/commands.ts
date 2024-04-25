@@ -77,7 +77,7 @@ declare global {
 //
 Cypress.Commands.add('bceidLogin', (url, username, password) => {
   cy.task('bceidLogin', { url: url, username: username, password: password },
-    { timeout: 60000 }).then(sessionItems => {
+    { timeout: 120000 }).then(sessionItems => {
     Object.keys(sessionItems).forEach(key => {
       sessionStorage.setItem(key, sessionItems[key])
     })
