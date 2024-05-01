@@ -121,11 +121,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
 let kcPath = process.env.KEYCLOAK_JSON_URL?  process.env.KEYCLOAK_JSON_URL: '/static/keycloak/keycloak.json'
 let keycloak = Keycloak(kcPath)
-// let keycloak = Keycloak({
-//   url: "https://dev.loginproxy.gov.bc.ca/auth/",
-//   clientId: "theq-frontend",
-//   realm: "servicebc"
-// });
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
 
