@@ -6,6 +6,7 @@ import { mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import moment from 'moment'
+import { ModelListSelect } from "vue-search-select"
 
 // Checkmark
 @Component({
@@ -182,7 +183,8 @@ export class DateQuestion extends Vue {
 // DropdownQuestion
 @Component({
   components: {
-    Checkmark
+    Checkmark,
+    ModelListSelect
   },
   computed: {
     ...mapState({
@@ -203,31 +205,21 @@ export class DateQuestion extends Vue {
       <b-col>
         <label>Exam Type</label><br>
         <div @click="clickInput" id="exam_type_dropdown">
-          <b-input read-only
-                  autocomplete="off"
-                  :value="inputText"
-                  placeholder="click here to see options"
-                  :style="inputStyle" />
+            <model-list-select
+            :list="dropItems"
+            v-model="objectItem"
+            option-value="exam_type_id"
+            option-text="exam_type_name"
+            @input="preHandleInput"
+            id="type.exam_type_id"
+            name="type.exam_type_id"
+            placeholder="click here to see options"
+          >
+          </model-list-select>
         </div>
+        
       </b-col>
     </b-row
-  <b-row>
-    <div :class="dropclass"
-          style="border: 1px solid grey"
-          @click="clickInput">
-      <template v-for="type in dropItems">
-        <b-dd-header v-if="type.header"
-                      :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
-                      :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-        <b-dd-item v-else :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
-                    @click="preHandleInput(type.exam_type_id)"
-                    :name="type.exam_type_id"
-                    autocomplete="off"
-                    :id="type.exam_type_id"
-                    :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-      </template>
-    </div>
-    </b-row>
   </b-row>
 `
 })
@@ -261,10 +253,14 @@ export class DropdownQuestion extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
   @State('nonITAExam') private nonITAExam!: any
+  private objectItem:any  = {};
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
 
   get dropItems () {
+    this.objectItem = {
+      exam_type_id: this.capturedExam.exam_type_id
+    }
     const sorter = (a, b) => {
       const typeA = a.exam_type_name
       const typeB = b.exam_type_name
@@ -306,6 +302,11 @@ export class DropdownQuestion extends Vue {
     }
   }
 
+  get selectedExam () {
+    console.log("sdfsdf");
+    return this.capturedExam.exam_type_id ?? 0;
+  }
+
   get inputText () {
     if (this.exam_object && this.exam_object.exam_type_name) {
       return this.exam_object.exam_type_name
@@ -337,13 +338,14 @@ export class DropdownQuestion extends Vue {
     this.setAddExamModalSetting({ step1MenuOpen: false })
   }
 
-  preHandleInput (id) {
+  preHandleInput (item) {
     this.handleInput({
       target: {
         name: 'exam_type_id',
-        value: id
+        value: item.exam_type_id
       }
     })
+    console.log("CAPTURED EXAM", item.exam_type_id);
   }
 }
 
