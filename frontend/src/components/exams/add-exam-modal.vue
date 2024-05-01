@@ -9,7 +9,7 @@
     @shown="initialize"
     @hidden="hideModal"
     :size="modalSize"
-    scrollable
+    style="overflow: visible !important;"
   >
     <template slot="modal-footer">
       <template v-if="unSubmitted">

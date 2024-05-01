@@ -15,6 +15,21 @@ export default class ConfigHelper {
       const configUrl = a.protocol + '//' + a.host + '/' + url
       const response = await Axios.get(configUrl)
       this.config = response.data
+      // this.config =  {
+      //   BPM_URL: "https://dev-sbc-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda",
+      //   FORM_IO_USER_ROLES: "formsflow-reviewer",
+      //   FORM_IO_API_URL: "https://dev-sbc-ffa-forms.apps.silver.devops.gov.bc.ca",
+      //   FORM_IO_RESOURCE_ID: "6078c70bdb2a9c357e91ba44",
+      //   FORM_IO_REVIEWER_ID: "6078c79cdb2a9c5ce791ba51",
+      //   FORM_IO_REVIEWER: "formsflow-reviewer",
+      //   FORM_FLOW_API_URL : "https://dev-sbc-ffa-api.apps.silver.devops.gov.bc.ca",
+      //   FORM_FLOW_URL : "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca",
+      //   SERVICEFLOW_ENABLED: true,
+      //   WEBSOCKET_ENCRYPT_KEY: "123455",
+      //   SOCKET_TIMEOUT: 30000,
+      //   SOCKET_DELAY_MAX : 3000,
+      //   FORMIO_JWT_SECRET: "12345"
+      // }
     }
   }
 
