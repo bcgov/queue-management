@@ -64,8 +64,8 @@ class ExamPost(Resource):
             exam = formatted_data["exam"]
             job = self.bcmp_service.check_exam_status(exam)
             my_print(job)
-            if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
-                exam.event_id = job['jobProperties']['JOB_ID']
+            #if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
+                #exam.event_id = job['jobProperties']['JOB_ID']
 
         db.session.add(exam)
         db.session.commit()
