@@ -51,7 +51,7 @@ class ExamPost(Resource):
 
         my_print("json_data: ")
         my_print(json_data)
-
+        logging.warning("json_data: %s" % json_data)
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
@@ -64,8 +64,8 @@ class ExamPost(Resource):
             exam = formatted_data["exam"]
             job = self.bcmp_service.check_exam_status(exam)
             my_print(job)
-            if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
-                exam.event_id = job['jobProperties']['JOB_ID']
+            #if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
+                #exam.event_id = job['jobProperties']['JOB_ID']
 
         db.session.add(exam)
         db.session.commit()

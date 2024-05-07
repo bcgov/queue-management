@@ -38,6 +38,7 @@ class BCMPService:
 
         response_data = response.read().decode('utf8')
         my_print(response_data)
+        logging.warning("Response data: %s" % response_data)
 
         try:
             return json.loads(response_data)
