@@ -34,7 +34,7 @@ class BCMPService:
         my_print(req)
 
         response = urllib.request.urlopen(req)
-        
+        logging.warning("response: %s" % response)
 
         response_data = response.read().decode('utf8')
         my_print(response_data)
