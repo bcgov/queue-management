@@ -63,6 +63,7 @@ class ExamPost(Resource):
             formatted_data = self.format_data(json_data, exam)
             exam = formatted_data["exam"]
             job = self.bcmp_service.check_exam_status(exam)
+            logging.warning("Test job: %s", job)
             my_print(job)
             #if job and job['jobProperties'] and job['jobProperties']['JOB_ID']:
                 #exam.event_id = job['jobProperties']['JOB_ID']
