@@ -467,6 +467,9 @@ export default class AddExamModal extends Vue {
 </script>
 
 <style>
+.modal-content {
+  overflow: unset !important;
+}
 .message-text {
   font-size: 0.9rem;
   font-weight: 500;
