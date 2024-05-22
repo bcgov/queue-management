@@ -7,14 +7,7 @@ COPY . .
 RUN npm run build
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:latest as production-stage
-
-# Update package list and upgrade nghttp2
-RUN apt-get update && \
-    apt-get install -y nghttp2 && \
-    apt-get upgrade -y nghttp2 && \
-    apt-get clean
-
-    COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
 EXPOSE 8080:8080
