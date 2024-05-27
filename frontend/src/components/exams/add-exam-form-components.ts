@@ -303,7 +303,6 @@ export class DropdownQuestion extends Vue {
   }
 
   get selectedExam () {
-    console.log("sdfsdf");
     return this.capturedExam.exam_type_id ?? 0;
   }
 
