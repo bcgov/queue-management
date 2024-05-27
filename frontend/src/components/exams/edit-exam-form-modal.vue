@@ -1,18 +1,9 @@
 <template>
-  <b-modal
-    v-model="showModal"
-    :no-close-on-backdrop="true"
-    hide-header
-    hide-footer
-    @hidden="reset"
-    @shown="populateForm"
-    :size="(examType === 'pest') ? 'lg' : 'md'"
-  >
+  <b-modal v-model="showModal" :no-close-on-backdrop="true" hide-header hide-footer @hidden="reset"
+    @shown="populateForm" :size="(examType === 'pest') ? 'lg' : 'md'">
     <FailureExamAlert class="m-0 p-0" />
     <div v-if="exam">
-      <span style="font-size: 1.4rem; font-weight: 600"
-        >Edit/Print Exam Details</span
-      >
+      <span style="font-size: 1.4rem; font-weight: 600">Edit/Print Exam Details</span>
 
       <!--  Start of template for pesticide exams  -->
       <template v-if="examType === 'pest'">
@@ -36,10 +27,7 @@
                 >Print</b-btn
               >
             </b-col>
-            <b-col
-              :col="!this.fields.exam_received_date"
-              :cols="this.exam_received ? '' : 3"
-            >
+            <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? '' : 3">
               <b-form-group>
                 <label for="exam_received" class="my-0">Exam Printed?</label>
                 <b-select
@@ -144,11 +132,7 @@
                   class="w-100 less-10-mb"
                 >
                   <template slot="calendar-icon">
-                    <font-awesome-icon
-                      icon="clock"
-                      class="m-0 p-0"
-                      style="font-size: 0.9rem"
-                    />
+                    <font-awesome-icon icon="clock" class="m-0 p-0" style="font-size: 0.9rem" />
                   </template>
                 </DatePicker>
               </b-form-group>
@@ -179,13 +163,8 @@
             </b-col>
             <b-col cols="12" v-if="feesOptions !== 'collect'">
               <b-form-group>
-                <b-form-checkbox
-                  id="receipt-sent"
-                  v-model="fields.receipt_sent_ind"
-                  name="receipt-sent"
-                  value="1"
-                  unchecked-value="0"
-                >
+                <b-form-checkbox id="receipt-sent" v-model="fields.receipt_sent_ind" name="receipt-sent" value="1"
+                  unchecked-value="0">
                   Confirmation/Receipt Sent?
                 </b-form-checkbox>
               </b-form-group>
@@ -201,11 +180,7 @@
         <b-form v-if="showAllFields">
           <!--  For group exams, except Monthly Sessional (Challenger)  -->
           <b-form-row v-if="is_ita2_designate && examType === 'group'">
-            <OfficeDrop
-              :columnW="10"
-              :office_number="office_number"
-              :setOffice="setOffice"
-            />
+            <OfficeDrop :columnW="10" :office_number="office_number" :setOffice="setOffice" />
           </b-form-row>
 
           <!-- The Event ID and Exam Method labels row -->
@@ -254,35 +229,20 @@
                     :disabled="true"
                   />
                 </div>
-                <div
-                  :class="examTypeDropClass"
-                  style="border: 1px solid grey"
-                  @click="handleExamInputClick"
-                >
+                <div :class="examTypeDropClass" style="border: 1px solid grey" @click="handleExamInputClick">
                   <template v-for="(type, i) in examTypeDropItems">
-                    <b-dd-header
-                      v-if="type.header"
-                      :key="i + 'exam-type-dd-h'"
-                      :style="
+                    <b-dd-header v-if="type.header" :key="i + 'exam-type-dd-h'" :style="
                         type.exam_color !== '#FFFFF'
                           ? { backgroundColor: type.exam_color }
                           : null
-                      "
-                    >
+                      ">
                       {{ type.exam_type_name }}
                     </b-dd-header>
-                    <b-dd-item
-                      v-else
-                      :id="type.exam_type_id"
-                      :key="i + 'exam-type-dd'"
-                      :style="
+                    <b-dd-item v-else :id="type.exam_type_id" :key="i + 'exam-type-dd'" :style="
                         type.exam_color !== '#FFFFF'
                           ? { backgroundColor: type.exam_color }
                           : null
-                      "
-                      :value="type.exam_type_id"
-                      @click="handleExamDropClick"
-                      >{{ type.exam_type_name }}
+                      " :value="type.exam_type_id" @click="handleExamDropClick">{{ type.exam_type_name }}
                     </b-dd-item>
                   </template>
                 </div>
@@ -326,10 +286,7 @@
           <!-- The Exam Received and number of writers row -->
           <b-form-row v-if="!otherOfficeExam">
             <!--  The Exam received flag label and data column, if exam not received yet -->
-            <b-col
-              :col="!this.fields.exam_received_date"
-              :cols="this.exam_received ? 3 : ''"
-            >
+            <b-col :col="!this.fields.exam_received_date" :cols="this.exam_received ? 3 : ''">
               <b-form-group>
                 <label for="exam_received" class="my-0">Exam Received?</label>
                 <b-select
@@ -385,11 +342,7 @@
                   class="w-100 less-10-mb"
                 >
                   <template slot="calendar-icon">
-                    <font-awesome-icon
-                      icon="clock"
-                      class="m-0 p-0"
-                      style="font-size: 0.9rem"
-                    />
+                    <font-awesome-icon icon="clock" class="m-0 p-0" style="font-size: 0.9rem" />
                   </template>
                 </DatePicker>
               </b-form-group>
@@ -446,15 +399,12 @@
                   </div>
                   <div class="q-id-grid-col">
                     <div>Type:</div>
-                    <div
-                      v-if="isITAGroupOrSingleExam(exam)"
-                      :style="{
+                    <div v-if="isITAGroupOrSingleExam(exam)" :style="{
                         backgroundColor: exam.exam_type.exam_color,
                         height: 10 + 'px',
                         margin: '4px 0px 0px 0px',
                         width: 10 + 'px',
-                      }"
-                    ></div>
+                      }"></div>
                     <div>{{ exam.exam_type.exam_type_name }}</div>
                   </div>
                   <div class="q-id-grid-col">
@@ -522,25 +472,13 @@
 
       <!--  Row of buttons, delete, edit, submit -->
       <div style="display: flex; justify-content: flex-end; width: 100%">
-        <b-btn v-if="canDelete" class="btn-danger mr-2" @click="deleteExam()"
-          >Delete Exam
+        <b-btn v-if="canDelete" class="btn-danger mr-2" @click="deleteExam()">Delete Exam
         </b-btn>
-        <b-btn class="btn-secondary mr-2" @click="toggleEditExamModal(false)"
-          >Cancel
+        <b-btn class="btn-secondary mr-2" @click="toggleEditExamModal(false)">Cancel
         </b-btn>
-        <b-btn
-          v-if="!allowSubmit"
-          id="edit_submit_not_allow"
-          class="btn-primary disabled"
-          @click="setMessage"
-          >Submit
+        <b-btn v-if="!allowSubmit" id="edit_submit_not_allow" class="btn-primary disabled" @click="setMessage">Submit
         </b-btn>
-        <b-btn
-          v-else-if="allowSubmit"
-          id="edit_submit_allow"
-          class="btn-primary"
-          @click="submit"
-          >Submit
+        <b-btn v-else-if="allowSubmit" id="edit_submit_allow" class="btn-primary" @click="submit">Submit
         </b-btn>
       </div>
     </div>
@@ -559,6 +497,7 @@ import FailureExamAlert from './failure-exam-alert.vue'
 import OfficeDrop from './office-drop.vue'
 
 import moment from 'moment'
+import { ModelListSelect } from "vue-search-select"
 
 const FileDownload = require('js-file-download')
 
@@ -567,7 +506,8 @@ const FileDownload = require('js-file-download')
     DatePicker,
     DeleteExamModal,
     FailureExamAlert,
-    OfficeDrop
+    OfficeDrop,
+    ModelListSelect
   }
 })
 export default class EditExamModal extends Vue {
@@ -632,6 +572,7 @@ export default class EditExamModal extends Vue {
   public search: string = ''
   public searching: boolean = false
   public showSearch: boolean = false
+  private objectItem:any  = {};
 
   get canDelete () {
     let examCanBeDeleted = false
@@ -648,7 +589,26 @@ export default class EditExamModal extends Vue {
     return examCanBeDeleted
   }
 
-  get fieldsEdited () {
+  get isITAExam() {
+    const examType = this.examTypes.filter((examType) => examType.exam_type_id === this.actionedExam.exam_type_id);
+    if (!examType) {
+      return false;
+    }
+    return examType[0].ita_ind ===1 && examType[0].group_exam_ind === 0 && !examType[0].exam_type_name.includes('Monthly');
+  }
+
+  get iTAExamTypes() {
+    this.objectItem = {
+      exam_type_id: this.actionedExam.exam_type_id
+    }
+    const exams = this.examTypes.filter(type =>
+        type.ita_ind === 1 &&
+        type.group_exam_ind === 0 &&
+        !type.exam_type_name.includes('Monthly'))
+      return exams.sort((a, b) => a.exam_type_name - b.exam_type_name)
+  }
+
+  get fieldsEdited() {
     const fieldsEdited: any = []
     const data = Object.assign({}, this.fields)
     if (data.exam_received_date) {
@@ -1010,6 +970,7 @@ export default class EditExamModal extends Vue {
   }
 
   mounted () {
+    console.log("Exam", this.actionedExam);
     this.exam_received = this.actionedExam.exam_received_date !== null
     this.getExamTypes()
   }
