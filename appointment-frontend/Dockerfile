@@ -6,7 +6,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.23.2 as production-stage
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.25.3 as production-stage
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
