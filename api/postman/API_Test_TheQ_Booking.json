@@ -14402,13 +14402,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}appointments/{{appointment_id}}/",
+							"raw": "{{url}}appointments/{{appointment_id}}?office_id={{current_office_id}}",
 							"host": [
 								"{{url}}appointments"
 							],
 							"path": [
 								"{{appointment_id}}",
 								""
+							],
+							"query": [
+								{
+									"key": "office_id",
+									"value": "{{current_office_id}}"
+								}
 							]
 						}
 					},
