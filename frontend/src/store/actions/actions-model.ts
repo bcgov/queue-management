@@ -2138,12 +2138,6 @@ export const commonActions: any = {
     if (responses.notes === null) {
       responses.notes = ''
     }
-    // if (context.state.addExamModal.setup === 'other') {
-    //   if (context.state.captureITAExamTabSetup.showRadio === true) {
-    //     delete responses.exam_received_date
-    //   }
-    // }
-
     if (context.state.addExamModal.setup === 'pesticide') {
       responses.exam_name = 'Environment'
       responses.is_pesticide = 1
