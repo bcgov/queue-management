@@ -311,6 +311,10 @@ export default class AddExamFormController extends Vue {
         messages[key] = ''
         return
       }
+      if (key === 'exam_received_date') {
+        valid[key] = true
+        return
+      }
       // To turn this on for event ID checks only on group exams,
       // add && group_exam_indicator to the if block
       // below as well

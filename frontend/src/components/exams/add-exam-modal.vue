@@ -337,6 +337,7 @@ export default class AddExamModal extends Vue {
       return
     case 'other':
       this.resetModal()
+      this.captureExamDetail({ key: 'exam_received_date', value: moment(new Date()).format('YYYY-MM-DD') })
       this.captureExamDetail({ key: 'on_or_off', value: 'on' })
       this.captureExamDetail({ key: 'expiry_date', value: '' })
       return
