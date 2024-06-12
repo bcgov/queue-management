@@ -357,7 +357,7 @@ export class DropdownQuestion extends Vue {
   template: `
   <b-row no-gutters>
     <b-col cols="6">
-      <b-form-group v-if="showRadio">
+      <b-form-group>
         <label>{{ q.text1 }}
           <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
         </label><br>
@@ -365,9 +365,9 @@ export class DropdownQuestion extends Vue {
                             @input="preSetDate()"
                             @change="unsetDate"
                             autocomplete="off"
-                            :options="['other', 'pesticide'].includes(modalSetup) ? otherOptions : options"/>
+                            :options="options"/>
       </b-form-group>
-      <b-form-group v-else>
+      <b-form-group v-if="!showRadio">
         <label>{{ q.text2 }}
           <span v-if="error" style="color: red">{{ validationObj[q.key].message }}</span>
         </label>
@@ -417,7 +417,7 @@ export class ExamReceivedQuestion extends Vue {
   }
 
   set showRadio (e) {
-    this.captureExamDetail({ key: 'exam_received_date', value: null })
+    this.captureExamDetail({ key: 'exam_received_date', value: moment(new Date()).format() })
     this.toggleIndividualCaptureTabRadio(e)
   }
 
@@ -457,6 +457,13 @@ export class ExamReceivedQuestion extends Vue {
         value: e
       }
     })
+  }
+
+  mounted() {
+    // Check if the radio button is initially set to true
+    if (this.modalSetup === 'other' || this.modalSetup === 'pesticide') {
+      this.exam[this.q['exam_received_date']] = moment().format()
+    }
   }
 }
 
