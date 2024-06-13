@@ -48,7 +48,7 @@ on:
 jobs:
   build:
     name: S2I Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Process Image Tags
@@ -67,18 +67,6 @@ jobs:
 
     - name: Verify Podman Version
       run: podman --version
-
-    - name: Install Specific Version of Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-        sudo apt-get update
-        sudo apt-get install -y docker-ce=5:23.0.0-1~ubuntu.20.04 docker-ce-cli=5:23.0.0-1~ubuntu.20.04 containerd.io
-        sudo systemctl start docker
-        sudo systemctl enable docker
-        docker --version
 
     - name: Verify Docker Version
       run: |
