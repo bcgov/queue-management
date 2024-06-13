@@ -68,7 +68,10 @@ jobs:
     - name: Update Podman to Latest Version
       run: |
         sudo apt-get update
-        sudo apt-get install -y podman
+        sudo apt-get install -y wget
+        wget https://github.com/containers/podman/releases/download/v4.9.2/podman-4.9.2-static-linux-amd64.tar.gz
+        tar -xvf podman-4.9.2-static-linux-amd64.tar.gz
+        sudo mv podman /usr/local/bin/
         podman --version
 
     - name: Verify Podman Version
