@@ -65,6 +65,15 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Update Podman to Latest Version
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y podman
+        podman --version
+
+    - name: Verify Podman Version
+      run: podman --version
+
     - name: Update Docker to Latest Version
       run: |
         sudo apt-get install -y docker-ce docker-ce-cli containerd.io
