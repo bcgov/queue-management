@@ -70,6 +70,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install --only-upgrade docker-ce
 
+    - name: Verify Docker Version
+      run: docker --version
+
     - name: Login to Artifactory to Pull Images in S2I Build
       env:
         ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
