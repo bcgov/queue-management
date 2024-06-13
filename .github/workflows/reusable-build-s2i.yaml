@@ -65,6 +65,11 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Update Docker to Latest Version
+      run: |
+        sudo apt-get update
+        sudo apt-get install --only-upgrade docker-ce
+
     - name: Login to Artifactory to Pull Images in S2I Build
       env:
         ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
