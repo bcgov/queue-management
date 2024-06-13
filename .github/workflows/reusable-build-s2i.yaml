@@ -111,6 +111,8 @@ jobs:
 
     - name: Push Image to The Q
       if: inputs.push-theq
+      env:
+        DOCKER_API_VERSION: 1.41
       uses: redhat-actions/push-to-registry@v2.8
       with:
         extra-args: --log-level=debug
