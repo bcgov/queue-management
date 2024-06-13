@@ -65,21 +65,17 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
-    - name: Update Podman to Latest Version
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget
-        wget https://github.com/containers/podman/releases/download/v4.9.2/podman-4.9.2-static-linux-amd64.tar.gz
-        tar -xvf podman-4.9.2-static-linux-amd64.tar.gz
-        sudo mv podman /usr/local/bin/
-        podman --version
-
     - name: Verify Podman Version
       run: podman --version
 
-    - name: Update Docker to Latest Version
+    - name: Install Specific Version of Docker
       run: |
-        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        sudo apt-get update
+        sudo apt-get install -y docker-ce=5:23.0.0-1~ubuntu.20.04 docker-ce-cli=5:23.0.0-1~ubuntu.20.04 containerd.io
         sudo systemctl start docker
         sudo systemctl enable docker
         docker --version
