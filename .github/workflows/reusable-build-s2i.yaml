@@ -73,6 +73,9 @@ jobs:
     - name: Verify Docker Version
       run: docker --version
 
+    - name: Verify apptainer Version
+      run: apptainer --version
+
     - name: Login to Artifactory to Pull Images in S2I Build
       env:
         ARTIFACTORY_REGISTRY: ${{ secrets.artifactory-registry }}    
