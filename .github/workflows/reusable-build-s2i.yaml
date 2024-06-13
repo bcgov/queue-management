@@ -67,14 +67,11 @@ jobs:
 
     - name: Update Docker to Latest Version
       run: |
-        sudo apt-get update
-        sudo apt-get install --only-upgrade docker-ce
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        docker --version
 
     - name: Verify Docker Version
       run: docker --version
-
-    - name: Verify apptainer Version
-      run: apptainer --version
 
     - name: Login to Artifactory to Pull Images in S2I Build
       env:
