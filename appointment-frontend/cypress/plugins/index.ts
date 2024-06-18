@@ -21,9 +21,9 @@ export default (on: any, config: any) => {
   addMatchImageSnapshotPlugin(on, config)
 
   on('task', {
-    bceidLogin ({ url, username, password }) {
+    bceidLogin({ url, username, password }) {
       return (async () => {
-        let bceidLogin: BceidLogin
+        let bceidLogin: BceidLogin | null = null;
         while (true) {
           try {
             bceidLogin = new BceidLogin()
@@ -35,12 +35,15 @@ export default (on: any, config: any) => {
 
             return sessionItems
           } catch (exception) {
+            console.error('Login attempt failed:', exception);
             if (bceidLogin) {
               try {
-                bceidLogin.close()
-              } catch (exception) {
+                await bceidLogin.close();
+              } catch (closeError) {
+                console.error('Failed to close the browser:', closeError);
               }
             }
+            throw exception;
           }
         }
       })()
