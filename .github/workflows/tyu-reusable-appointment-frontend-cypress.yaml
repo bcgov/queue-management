@@ -74,17 +74,19 @@ jobs:
           EOF
 
       - name: Cypress Run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4.1.0
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.cypress-project-id }}
           CYPRESS_RECORD_KEY: ${{ secrets.cypress-record-key }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VUE_APP_PATH: /
         with:
+          config-file: cypress.config.ts
           record: true
           start: npm run serve -- --port 8081
           wait-on: http://localhost:8081
           working-directory: appointment-frontend
+
 
       - name: On Failure Upload Screenshot Artifacts
         uses: actions/upload-artifact@v3
