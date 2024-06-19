@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
-    "cy": "cypress run",
-    "cy:open": "cypress open",
+    "cy": "cypress run --config-file=cypress.config.ts",
+    "cy:open": "cypress open --config-file=cypress.config.ts",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit --testPathPattern=.",
     "preinstall": "npx npm-force-resolutions"
