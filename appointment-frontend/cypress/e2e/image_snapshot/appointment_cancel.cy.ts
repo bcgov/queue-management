@@ -16,19 +16,18 @@
 /// <reference types='cypress-image-snapshot' />
 
 import {
-  SELECTOR_ACCOUNT_SETTINGS_EMAIL_SWITCH,
-  SELECTOR_ACCOUNT_SETTINGS_MSG,
-  SELECTOR_ACCOUNT_SETTINGS_NAV,
-  SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT,
-  SELECTOR_ACCOUNT_SETTINGS_UPDATE_BUTTON,
+  SELECTOR_APPOINTMENT_CANCEL_CANCEL_APPOINTMENT,
+  SELECTOR_APPOINTMENT_CANCEL_CANCEL_CONFIRM,
+  SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS,
   SELECTOR_APPOINTMENT_CANCEL_USER_NAV,
+  SELECTOR_APPOINTMENT_NO_APPOINTMENTS,
   SELECTOR_FEEDBACK,
   SELECTOR_HEADER_IMAGE_BCGOV
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
-describe('Account Settings', () => {
+describe('Cancel Appointment', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
     cy.fixture('offices.json').then((json) => {
@@ -39,15 +38,18 @@ describe('Account Settings', () => {
       cy.intercept('GET', API_PREFIX + 'services', json).as('getServices')
     })
 
+    cy.fixture('users/appointments/appointment_cancel.json').then((json) => {
+      cy.intercept('GET', API_PREFIX + 'users/appointments', json).as('getAppointments')
+    })
+
     cy.fixture('users/me').then((json) => {
       cy.intercept('GET', API_PREFIX + 'users/me', json)
     })
-    cy.fixture('users/id=12706').then((json) => {
-      cy.intercept('PUT', API_PREFIX + 'users/12706', json).as('getUserUpdate')
-    })
 
-    cy.fixture('users/appointments').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'users/appointments', json)
+    cy.intercept('DELETE', API_PREFIX + 'appointments/66/', (req) => {
+      req.reply({
+        statusCode: 204
+      })
     })
 
     // Clear the session storage, otherwise Vuex remembers which page we're on.
@@ -66,13 +68,15 @@ describe('Account Settings', () => {
     cy.get(SELECTOR_APPOINTMENT_CANCEL_USER_NAV)
       .click()
 
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV)
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS)
 
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV)
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS)
       .click()
 
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_CANCEL_APPOINTMENT)
+
     // Need to wait for nav bar to fade
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_NAV).should('not.be.visible')
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_NAV_APPOINTMENTS).should('not.be.visible')
 
     // TODO: Find alternative to the cy.wait below.
     // The above should result in the below line not being required, but the nav bar results in the test failing.
@@ -82,25 +86,24 @@ describe('Account Settings', () => {
   it('page loaded', () => {
     cy.matchImageSnapshot()
   })
-  it('Update User', () => {
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT)
 
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT).clear()
-
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_PHONE_INPUT).type('604-123-1234')
-
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_EMAIL_SWITCH).click({ force: true })
-
+  it('Cancel Appointment', () => {
+    cy.fixture('users/appointments.json').then((json) => {
+      cy.intercept('GET', API_PREFIX + 'users/appointments', json).as('getAppointmentsAfterDeletion')
+    })
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_HEADER_IMAGE_BCGOV)
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
-    cy.workaroundPositionFixed(SELECTOR_ACCOUNT_SETTINGS_MSG)
 
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_UPDATE_BUTTON).click()
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_CANCEL_APPOINTMENT)
+      .click()
 
-    cy.get(SELECTOR_ACCOUNT_SETTINGS_MSG)
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_CANCEL_CONFIRM)
+      .click()
 
-    cy.wait(1000)
+    cy.get(SELECTOR_APPOINTMENT_CANCEL_CANCEL_CONFIRM).should('not.be.visible')
+    cy.wait('@getAppointmentsAfterDeletion')
+    cy.get(SELECTOR_APPOINTMENT_NO_APPOINTMENTS)
 
     cy.matchImageSnapshot()
   })

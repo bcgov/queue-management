@@ -20,24 +20,17 @@ import {
   SELECTOR_HEADER_IMAGE_BCGOV,
   SELECTOR_STEP_1_BUTTON_BOOK_APPOINTMENT,
   SELECTOR_STEP_1_COMBOBOX_OFFICE,
-  SELECTOR_STEP_2_BUTTON_NEXT,
-  SELECTOR_STEP_2_COMBOBOX_SERVICE,
-  SELECTOR_STEP_3_BUTTON_TIMESLOT,
-  SELECTOR_STEP_3_DATE_PICKER
+  SELECTOR_STEP_2_COMBOBOX_SERVICE
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
-describe('step 3', () => {
+describe('step 2', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
 
     cy.fixture('offices').then((json) => {
       cy.intercept('GET', API_PREFIX + 'offices/', json)
-    })
-
-    cy.fixture('offices/3/slots/service_id=85').then((json) => {
-      cy.intercept('GET', API_PREFIX + 'offices/3/slots/?service_id=85', json)
     })
 
     cy.fixture('services/office_id=3').then((json) => {
@@ -57,29 +50,26 @@ describe('step 3', () => {
     cy.get(SELECTOR_STEP_1_BUTTON_BOOK_APPOINTMENT)
       .click()
 
-    cy.get(SELECTOR_STEP_2_COMBOBOX_SERVICE)
-      .type('Legal Change of Name{downarrow}{enter}')
-
-    // The API fixtures are based on a certain date, so act like it's that day.
-    cy.clock(new Date('2022-01-17').getTime())
-
-    cy.get(SELECTOR_STEP_2_BUTTON_NEXT)
-      .click()
-
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
+    cy.get(SELECTOR_STEP_2_COMBOBOX_SERVICE)
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
     cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
-
-    // Flake: v-date-picker has a transition. Wait for it to complete.
-    cy.workaroundDatePickerTransition(SELECTOR_STEP_3_DATE_PICKER)
   })
 
   it('page loaded', () => {
+    cy.matchImageSnapshot()
+  })
+
+  it('service selected', () => {
+    // Blur to remove focus, otherwise the blinking cursor causes image changes.
+    cy.get(SELECTOR_STEP_2_COMBOBOX_SERVICE)
+      .type('Legal Change of Name{downarrow}{enter}')
+      .blur()
+
     cy.matchImageSnapshot()
   })
 })
