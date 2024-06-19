@@ -99,16 +99,10 @@
       <b-col cols="3">
         <span class="confirm-header">Received Date</span>
       </b-col>
-      <b-col align-self="end" v-if="setup === 'individual'">
+      <b-col align-self="end" v-if="setup === 'individual' || setup === 'other'">
         <span class="confirm-item">{{
           formatDate(exam.exam_received_date)
         }}</span>
-      </b-col>
-      <b-col align-self="end" v-else>
-        <span v-if="!tab.showRadio" class="confirm-item">{{
-          formatDate(exam.exam_received_date)
-        }}</span>
-        <span v-if="tab.showRadio" class="confirm-item">Not Yet Received</span>
       </b-col>
     </b-row>
     <b-row no-gutters align-h="between" align-v="end">
