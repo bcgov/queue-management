@@ -48,7 +48,7 @@ on:
 jobs:
   build:
     name: S2I Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Process Image Tags
@@ -61,9 +61,19 @@ jobs:
         echo "IMAGE_TAGS=${{ inputs.image-tags }}" >> $GITHUB_ENV
 
     - name: Check out
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         ref: ${{ inputs.ref }}
+
+    - name: Verify Podman Version
+      run: |
+         podman --version
+         lsb_release -a
+
+    - name: Verify Docker Version
+      run: |
+        docker version
+        docker info
 
     - name: Login to Artifactory to Pull Images in S2I Build
       env:
@@ -71,7 +81,7 @@ jobs:
         ARTIFACTORY_USERNAME: ${{ secrets.artifactory-username }}    
         ARTIFACTORY_PASSWORD: ${{ secrets.artifactory-password }}    
       if: env.ARTIFACTORY_REGISTRY && env.ARTIFACTORY_USERNAME && env.ARTIFACTORY_PASSWORD
-      uses: redhat-actions/podman-login@v1
+      uses: redhat-actions/podman-login@v1.7
       with:
         registry: ${{ secrets.artifactory-registry }}
         username: ${{ secrets.artifactory-username }}
@@ -79,7 +89,7 @@ jobs:
 
     - name: S2I Build
       id: build-image
-      uses: redhat-actions/s2i-build@v2
+      uses: redhat-actions/s2i-build@v2.4
       with:
         builder_image: registry.access.redhat.com/ubi8/python-38:latest
         env_vars: |-
@@ -94,7 +104,7 @@ jobs:
 
     - name: Push Image to The Q
       if: inputs.push-theq
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v2.8
       with:
         extra-args: --log-level=debug
         image: ${{ steps.build-image.outputs.image }}
@@ -108,7 +118,7 @@ jobs:
 
     - name: Push Image to QMS
       if: inputs.push-qms
-      uses: redhat-actions/push-to-registry@v2
+      uses: redhat-actions/push-to-registry@v2.8
       with:
         extra-args: --log-level=debug
         image: ${{ steps.build-image.outputs.image }}
