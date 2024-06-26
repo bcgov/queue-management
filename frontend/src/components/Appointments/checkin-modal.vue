@@ -1,24 +1,16 @@
 <template>
-  <b-modal
-    v-model="modalVisible"
-    @shown="clearTime"
-    modal-class="q-modal"
-    body-class="q-modal"
-    no-close-on-backdrop
-    no-close-on-esc
-    hide-header
-    size="sm"
-  >
+  <b-modal v-model="modalVisible" @shown="clearTime" modal-class="q-modal" body-class="q-modal" no-close-on-backdrop
+    no-close-on-esc hide-header size="sm">
 
- <b-form autocomplete="off" v-if="isDraftAppointment">
+    <b-form autocomplete="off" v-if="isDraftAppointment">
       <b-form-row>
         <b-col>
-          <b-form-group  class="mb-0 mt-2">
+          <b-form-group class="mb-0 mt-2">
             <label class="mb-0 no-edit">You cannot edit or delete draft appointments.</label>
           </b-form-group>
         </b-col>
       </b-form-row>
-  </b-form>
+    </b-form>
     <div id="navi" v-if="!isDraftAppointment">
       <template v-if="this.$store.state.showServeCitizenSpinner">
         <div class="q-loader2"></div>
@@ -32,9 +24,14 @@
         <b-col>
           <b-form-group v-if="(isNotBlackoutFlag) && (!checkRecurringStatStatus)" class="mb-0 mt-2">
             <label class="mb-0">Citizen Has Arrived?</label><br />
-            <b-button class="w-100 btn-success" @click="checkIn">
+            <b-button class="w-100 btn-success" @click="checkIn" :disabled="!csrOfficeEqualSelectedOffice">
               Check-In
             </b-button>
+            <div class="d-flex mt-2 mb-0">
+              <div v-if="!csrOfficeEqualSelectedOffice" style="color: red" class="mb-0">
+                Check-In is disabled as the selected office is not your csr office
+              </div>
+            </div>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -65,7 +62,7 @@
             <label v-else class="mb-0">View STAT?</label>
             <br />
             <b-button class="w-100 btn-secondary" @click="editStatSeries">
-              <span v-if="is_Support" >
+              <span v-if="is_Support">
                 Edit Recurring STAT Series
               </span>
               <span v-else>
@@ -104,11 +101,15 @@ export default class CheckInModal extends Vue {
   @appointmentsModule.Mutation('toggleApptBookingModal') public toggleApptBookingModal: any
   @appointmentsModule.Mutation('toggleEditDeleteSeries') public toggleEditDeleteSeries: any
   @appointmentsModule.Mutation('toggleCheckInClicked') public toggleCheckInClicked: any
+  @appointmentsModule.Getter('getSelectedOfficeId') public selected_office_id!: any;
 
   public showcheckInSpinner: boolean = false
 
   get modalVisible () { return this.showCheckInModal }
   set modalVisible (e) { this.toggleCheckInModal(e) }
+  get csrOfficeEqualSelectedOffice () {
+    return this.$store.state.user.office.office_id === this.selected_office_id;
+  }
 
   get isNotBlackoutFlag () {
     if (this.clickedAppt && this.clickedAppt.blackout_flag) {

@@ -15,6 +15,7 @@ limitations under the License.'''
 import logging
 import pytz
 from datetime import datetime, timedelta
+from flask import request
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Appointment
@@ -33,7 +34,10 @@ class AppointmentList(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
 
-        csr = CSR.find_by_username(get_username())
+        office_id = request.args.get("office_id", default=None)
+        if not office_id:
+            csr = CSR.find_by_username(get_username())
+            office_id = csr.office_id
         appt_limit_int = int(appt_limit)     
         # today's date and time
         dt = datetime.now()
@@ -41,7 +45,7 @@ class AppointmentList(Resource):
         filter_date = pytz.utc.localize(upper_dt)
         # print("filter_date",filter_date)
         try:
-            appointments = Appointment.query.filter_by(office_id=csr.office_id)\
+            appointments = Appointment.query.filter_by(office_id=office_id)\
                                             .filter(Appointment.start_time >= filter_date)\
                                             .all()
             result = self.appointment_schema.dump(appointments)

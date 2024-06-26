@@ -105,15 +105,15 @@ class AppointmentPost(Resource):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
 
-        elif (json_data.get('stat_flag', False)):
-            #for stat
-            csr = CSR.find_by_username(get_username())
-            office_id = json_data.get('office_id', csr.office_id)
-            office = Office.find_by_id(office_id)
+        # elif (json_data.get('stat_flag', False)):
+        #     #for stat
+        #     csr = CSR.find_by_username(get_username())
+        #     office_id = json_data.get('office_id', csr.office_id)
+        #     office = Office.find_by_id(office_id)
 
         else:
             csr = CSR.find_by_username(get_username())
-            office_id = csr.office_id
+            office_id = json_data.get('office_id', csr.office_id)
             office = Office.find_by_id(office_id)
 
         citizen.office_id = office_id
@@ -152,7 +152,7 @@ class AppointmentPost(Resource):
                 except Exception as exc:
                     logging.exception('Error on sms or email sending - %s', exc)
 
-            SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create')
+            SnowPlow.snowplow_appointment(citizen, csr, appointment, 'appointment_create', office_id)
 
             result = self.appointment_schema.dump(appointment)
 
