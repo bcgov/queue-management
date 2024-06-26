@@ -934,7 +934,7 @@ export default class EditExamModal extends Vue {
   }
 
   submit () {
-    if (this.isITAExam && this.actionedExam.booking_id !== null) {
+    if (this.isITAExam && this.actionedExam.booking_id !== null && this.actionedExam.exam_type_id !== this.objectItem.exam_type_id) {
       this.showConfirmationModal = true
     } else {
       this.submitExamDetails()
