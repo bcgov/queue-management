@@ -350,6 +350,7 @@
         </b-btn>
         <b-btn v-else-if="allowSubmit" id="edit_submit_allow" class="btn-primary" @click="submit">Submit
         </b-btn>
+         <EditExamConfirmationModal :visible="showConfirmationModal" @cancel="handleCancel" @confirm="handleConfirm" />
       </div>
     </div>
   </b-modal>
@@ -368,6 +369,7 @@ import OfficeDrop from './office-drop.vue'
 
 import moment from 'moment'
 import { ModelListSelect } from "vue-search-select"
+import EditExamConfirmationModal from './edit-exam-confirmation-modal.vue'
 
 const FileDownload = require('js-file-download')
 
@@ -377,7 +379,8 @@ const FileDownload = require('js-file-download')
     DeleteExamModal,
     FailureExamAlert,
     OfficeDrop,
-    ModelListSelect
+    ModelListSelect,
+    EditExamConfirmationModal
   }
 })
 export default class EditExamModal extends Vue {
@@ -407,6 +410,7 @@ export default class EditExamModal extends Vue {
   @Action('getOffices') public getOffices: any
   @Action('putExamInfo') public putExamInfo: any
   @Action('getExamTypes') public getExamTypes: any
+  @Action('deleteBooking') public deleteBooking: any
 
   @Mutation('setEditExamFailure') public setEditExamFailure: any
   @Mutation('setEditExamSuccess') public setEditExamSuccess: any
@@ -416,6 +420,7 @@ export default class EditExamModal extends Vue {
   @Mutation('toggleEditExamModal') public toggleEditExamModal: any
   @Mutation('toggleDeleteExamModalVisible') public toggleDeleteExamModalVisible: any
 
+  private showConfirmationModal : boolean = false
   public examNotReady: boolean = false
   public feesOptions: any = 'collect'
   public clickedMenu: boolean = false
@@ -502,6 +507,7 @@ export default class EditExamModal extends Vue {
 
   get allowSubmit () {
     if (this.actionedExam) {
+      this.fields.exam_type_id = this.objectItem.exam_type_id
       const fieldsEdited: any = []
       const data = Object.assign({}, this.fields)
       this.formatExamDates(data)
@@ -647,6 +653,16 @@ export default class EditExamModal extends Vue {
     this.toggleEditExamModal(e)
   }
 
+  handleConfirm () {
+    this.showConfirmationModal = false
+    this.deleteBooking(this.actionedExam.booking_id)
+    this.submitExamDetails()
+  }
+
+  handleCancel () {
+    this.showConfirmationModal = false
+  }
+
   handleDate (date) {
     Vue.set(
       this.fields,
@@ -788,9 +804,21 @@ export default class EditExamModal extends Vue {
   }
 
   submit () {
+    if (this.isITAExam && this.actionedExam.booking_id !== null) {
+      this.showConfirmationModal = true
+    } else {
+      this.submitExamDetails()
+    }
+  }
+
+  submitExamDetails () {
     const data = Object.assign({}, this.fields)
     const putRequest: any = {
       exam_id: this.fields.exam_id
+    }
+    if (this.objectItem.exam_type_id) {
+      data.exam_type_id = this.objectItem.exam_type_id
+      data.exam_type_name = this.objectItem.exam_type_name
     }
     if (data.exam_received_date) {
       data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
@@ -840,7 +868,6 @@ export default class EditExamModal extends Vue {
   }
 
   mounted () {
-    console.log("Exam", this.actionedExam);
     this.exam_received = this.actionedExam.exam_received_date !== null
     this.getExamTypes()
   }
