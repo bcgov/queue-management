@@ -3,8 +3,8 @@
     <div class="modal-content">
       <p>Room booking for the exam will be deleted. Are you sure you want to proceed?</p>
       <div class="button-container">
-        <b-btn class="btn-primary" @click="$emit('cancel')">Cancel</b-btn>
-        <b-btn class="btn-danger mr-2" @click="$emit('confirm')">Confirm</b-btn>
+        <b-btn class="btn-primary mr-2" @click="$emit('cancel')">Cancel</b-btn>
+        <b-btn class="btn-danger ml-2" @click="$emit('confirm')">Confirm</b-btn>
       </div>
     </div>
   </div>
@@ -51,6 +51,7 @@ export default {
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px; /* Adjust margin as needed */
+  margin-top: 20px;
+  gap: 20 px
 }
 </style>
