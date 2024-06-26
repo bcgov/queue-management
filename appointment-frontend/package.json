@@ -1,12 +1,12 @@
 {
   "name": "sbcappointmentbooking",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
-    "cy": "cypress run",
-    "cy:open": "cypress open",
+    "cy": "cypress run --config-file=cypress.config.ts",
+    "cy:open": "cypress open --config-file=cypress.config.ts",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit --testPathPattern=.",
     "preinstall": "npx npm-force-resolutions"
@@ -60,7 +60,7 @@
     "@vue/vue2-jest": "^27.0.0-alpha.3",
     "babel-core": "6.26.3",
     "babel-eslint": "^10.0.1",
-    "cypress": "^9.5.2",
+    "cypress": "^13.12.0",
     "cypress-image-snapshot": "^4.0.1",
     "eslint": "^7.32.0",
     "eslint-plugin-cypress": "^2.12.1",

@@ -1,5 +1,12 @@
 #FROM python:3.8.5-buster
-FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.8.5-buster
+FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.10.5-buster
+
+
+# Update package list and upgrade nghttp2
+RUN apt-get update && \
+    apt-get install -y nghttp2 && \
+    apt-get upgrade -y nghttp2 && \
+    apt-get clean
 
 # ========================================================================================================
 # Install go-crond (from https://github.com/BCDevOps/go-crond)
