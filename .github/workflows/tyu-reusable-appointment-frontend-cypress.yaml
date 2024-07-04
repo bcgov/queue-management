@@ -73,27 +73,6 @@ jobs:
           }
           EOF
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Remove node_modules
-        run: rm -rf node_modules
-        working-directory: appointment-frontend
-
-      - name: Remove package-lock.json
-        run: rm package-lock.json
-        working-directory: appointment-frontend
-
-      - name: Install Dependencies
-        run: npm install
-        working-directory: appointment-frontend
-
-
       - name: Cypress Run
         uses: cypress-io/github-action@v6.0.0
         env:
