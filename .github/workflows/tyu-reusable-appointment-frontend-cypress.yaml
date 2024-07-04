@@ -74,9 +74,7 @@ jobs:
           EOF
 
       - name: Install Dependencies
-        run: |
-          cat << EOF > installing dependecies
-          npm install 
+        run: npm install 
         working-directory: appointment-frontend
 
       - name: Cypress Run
