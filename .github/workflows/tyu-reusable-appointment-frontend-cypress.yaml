@@ -73,8 +73,16 @@ jobs:
           }
           EOF
 
+      - name: Remove node_modules
+        run: rm -rf node_modules
+        working-directory: appointment-frontend
+
+      - name: Remove package-lock.json
+        run: rm package-lock.json
+        working-directory: appointment-frontend
+
       - name: Install Dependencies
-        run: npm install 
+        run: npm install
         working-directory: appointment-frontend
 
       - name: Cypress Run
