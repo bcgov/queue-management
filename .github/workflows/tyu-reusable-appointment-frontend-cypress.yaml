@@ -72,6 +72,10 @@ jobs:
             "BCEID_USERNAME": "${{ vars.CYPRESS_BCEID_USERNAME }}"
           }
           EOF
+          
+      - name: Install Dependencies
+        run: npm install
+        working-directory: appointment-frontend
 
       - name: Cypress Run
         uses: cypress-io/github-action@v4.1.0
