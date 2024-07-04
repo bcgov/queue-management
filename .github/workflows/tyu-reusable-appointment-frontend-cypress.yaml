@@ -72,9 +72,11 @@ jobs:
             "BCEID_USERNAME": "${{ vars.CYPRESS_BCEID_USERNAME }}"
           }
           EOF
-          
+
       - name: Install Dependencies
-        run: npm install
+        run: |
+          cat << EOF > installing dependecies
+          npm install 
         working-directory: appointment-frontend
 
       - name: Cypress Run
