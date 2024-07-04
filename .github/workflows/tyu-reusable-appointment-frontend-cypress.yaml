@@ -83,7 +83,7 @@ jobs:
         with:
           config-file: cypress.config.ts
           record: true
-          start: npm run serve -- --port 8081
+          start: npm install & npm run serve -- --port 8081
           wait-on: http://localhost:8081
           working-directory: appointment-frontend
 
