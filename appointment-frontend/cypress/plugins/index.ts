@@ -15,7 +15,7 @@
 /// <reference types='cypress' />
 
 import BceidLogin from './bceidLogin'
-import { addMatchImageSnapshotPlugin } from 'cypress-image-snapshot/plugin'
+import { addMatchImageSnapshotPlugin } from '@simonsmith/cypress-image-snapshot/plugin'
 
 export default (on: any, config: any) => {
   addMatchImageSnapshotPlugin(on, config)
