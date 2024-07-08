@@ -27,7 +27,7 @@ import {
   SELECTOR_STEP_5_DIALOG_APPOINTMENT
 } from '../../support/selectors'
 
-import { API_PREFIX } from '../../support'
+import { API_PREFIX } from '../../support/e2e'
 
 describe('Change Appointment', () => {
   beforeEach(() => {

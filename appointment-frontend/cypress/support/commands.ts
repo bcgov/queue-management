@@ -76,8 +76,7 @@ declare global {
 // https://github.com/bcgov/bcrs-testing
 //
 Cypress.Commands.add('bceidLogin', (url, username, password) => {
-  cy.task('bceidLogin', { url: url, username: username, password: password },
-    { timeout: 120000 }).then(sessionItems => {
+  cy.task<Record<string, string>>('bceidLogin', { url, username, password }, { timeout: 60000 }).then(sessionItems => {
     Object.keys(sessionItems).forEach(key => {
       sessionStorage.setItem(key, sessionItems[key])
     })

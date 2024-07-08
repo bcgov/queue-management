@@ -14,15 +14,15 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-import puppeteer from 'puppeteer'
+import puppeteer,{ Browser, Page }  from 'puppeteer'
 
 class BceidLogin {
   private static readonly SELECTOR_BCEID_BUTTON_SUBMIT = 'input[name=btnSubmit]'
   private static readonly SELECTOR_BCEID_INPUT_PASSWORD = '#password'
   private static readonly SELECTOR_BCEID_INPUT_USER_ID = '#user'
 
-  browser: puppeteer.Browser | null
-  page: puppeteer.Page | null
+  browser: Browser | null = null
+  page: Page | null = null
 
   async init () {
     this.browser = await puppeteer.launch({
@@ -34,13 +34,17 @@ class BceidLogin {
   }
 
   private async open (url: string) {
-    if (this.browser === null) {
+   
+    if (!this.browser ) {
       // TODO: this doesn't work. Change index.ts to remove the init call, and
       // then sort out why setDefaultNavigationTimeout on undefined is failing.
       // Once that's done move init code into this clause.
       this.init()
     }
 
+    if (!this.page) {
+      throw new Error('Page is not initialized');
+    }
     this.page.setDefaultNavigationTimeout(0)
 
     return this.page.goto(url)
@@ -48,7 +52,9 @@ class BceidLogin {
 
   async login (url: string, username: string, password: string) {
     await this.open(url)
-
+    if (!this.page) {
+      throw new Error('Page is not initialized - login');
+    }
     try {
       await this.page.waitForSelector(BceidLogin.SELECTOR_BCEID_INPUT_USER_ID,
         { timeout: 10000, visible: true })
@@ -66,6 +72,9 @@ class BceidLogin {
   }
 
   async getSessionItems () {
+    if (!this.page) {
+      throw new Error('Page is not initialized - session items.');
+    }
     return this.page.evaluate(() => {
       let items = {}
       Object.keys(sessionStorage).forEach(key => {
@@ -77,7 +86,9 @@ class BceidLogin {
   }
 
   async close () {
-    await this.browser.close()
+    if (this.browser) {
+      await this.browser.close();
+    }
   }
 }
 
