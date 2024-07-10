@@ -12,7 +12,7 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command'
+import { addMatchImageSnapshotCommand } from '@simonsmith/cypress-image-snapshot/command'
 
 addMatchImageSnapshotCommand()
 
@@ -165,11 +165,15 @@ Cypress.Commands.add('workaroundPositionFixed', (selector: string) => {
 //
 // Workaround inspired by: https://github.com/cypress-io/cypress/issues/3848
 //
+declare global {
+  interface Window {
+    IntersectionObserver: typeof IntersectionObserver;
+  }
+}
 Cypress.Commands.add('workaroundVisit', (url: string) => {
   cy.visit(url, {
-    onBeforeLoad: (window) => {
-      window.IntersectionObserver =
-        function (callback: IntersectionObserverCallback,
+    onBeforeLoad: (window: Window) => {
+        function createIntersectionObserver (callback: IntersectionObserverCallback,
           options?: IntersectionObserverInit) {
           let instance = new IntersectionObserver(callback, options)
 
@@ -195,6 +199,8 @@ Cypress.Commands.add('workaroundVisit', (url: string) => {
 
           return instance
         }
+        window.IntersectionObserver = IntersectionObserver as typeof IntersectionObserver;
+
     }
   })
 })

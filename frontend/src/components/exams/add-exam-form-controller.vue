@@ -143,7 +143,7 @@ import {
   SelectOffice,
   SelectQuestion,
   TimeQuestion,
-  checkmark
+  Checkmark
 } from './add-exam-form-components'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -157,7 +157,7 @@ import { mapState } from 'vuex'
   components: {
     PesticideFees,
     AddExamCounter,
-    checkmark,
+    Checkmark,
     DateQuestion,
     DropdownQuestion,
     ExamReceivedQuestion,
