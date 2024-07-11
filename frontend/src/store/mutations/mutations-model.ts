@@ -40,7 +40,6 @@ export const commonMutation: any = {
   setReturnExamInfo: (state, payload) => (state.returnExam = payload),
 
   setManifestData (state, payload) {
-    state.manifestdata = ''
     state.manifestdata = payload
   },
 

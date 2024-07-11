@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <span class="q-inline-title">Upload the Digital Signage Video</span>
+      <span class="q-inline-title">Manage Digital Signage</span>
     </div>
   </div>
 </template>

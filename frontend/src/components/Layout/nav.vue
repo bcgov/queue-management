@@ -136,7 +136,7 @@
             <b-dropdown-item v-if="showAdmin" @click="clickRefresh"
               >Refresh</b-dropdown-item
             >
-            <b-dropdown-item v-if="showSupport" to="/upload"
+            <b-dropdown-item v-if="shouldShowUploadOption" to="/upload"
               >Upload File</b-dropdown-item
             >
             <b-dropdown-divider v-if="showAdmin" />
@@ -326,6 +326,15 @@ export default class Nav extends Vue {
     return false
   }
 
+  get showExternal () {
+    if (this.user && this.user.role && this.user.role.role_code) {
+      if (this.user.role.role_code == 'EXTERNAL') {
+        return true
+      }
+    }
+    return false
+  }
+
   // Is this used?
   toggleTrackingIcon (bool: boolean) {
     if (!bool) {
@@ -345,6 +354,10 @@ export default class Nav extends Vue {
     }
     this.clickAddCitizen()
   }
+
+  shouldShowUploadOption() {
+      return this.showSupport || this.showExternal;
+    }
 }
 
 </script>

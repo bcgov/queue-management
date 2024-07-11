@@ -53,10 +53,9 @@ export const commonActions: any = {
 
     // Post the data to the back end.
     Axios(context)
-      .post('/upload/', formData, contenttype)
-      .then(
+    .post('/upload/', formData, contenttype)
+    .then(
         _resp => {
-          context.commit('setMainAlert', 'File uploaded successfully.')
           context.dispatch('requestVideoFileInfo')
         },
         _error => {
@@ -80,8 +79,8 @@ export const commonActions: any = {
   clickDeleteFile (context, payload) {
     // Post the file name to delete to the back end.
     Axios(context)
-      .delete('/videofiles/', { data: payload })
-      .then(
+    .delete('/videofiles/', { data: payload })
+    .then(
         _resp => {
           context.commit('setMainAlert', 'File deleted successfully.')
           context.dispatch('requestVideoFileInfo')
@@ -95,8 +94,8 @@ export const commonActions: any = {
   requestVideoFileInfo (context) {
     // Get video file info from the back end.
     Axios(context)
-      .get('/videofiles/')
-      .then(resp => {
+    .get('/videofiles/')
+    .then(resp => {
         const videofiles = resp.data.videofiles
         const manifestdata = resp.data.manifest
         const diskspace = resp.data.space
