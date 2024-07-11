@@ -74,7 +74,7 @@ jobs:
           EOF
 
       - name: Cypress Run
-        uses: cypress-io/github-action@v4.1.0
+        uses: cypress-io/github-action@v6.0.0
         env:
           CYPRESS_PROJECT_ID: ${{ secrets.cypress-project-id }}
           CYPRESS_RECORD_KEY: ${{ secrets.cypress-record-key }}
@@ -86,6 +86,7 @@ jobs:
           start: npm run serve -- --port 8081
           wait-on: http://localhost:8081
           working-directory: appointment-frontend
+          command: npx cypress run --env  updateSnapshots=true
 
       - name: On Failure Upload Screenshot Artifacts
         uses: actions/upload-artifact@v3

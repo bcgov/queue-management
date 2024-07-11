@@ -1,4 +1,4 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:14 as build-stage
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:20 as build-stage
 ENV VUE_APP_PATH=/
 WORKDIR /app
 COPY ./package*.json ./
