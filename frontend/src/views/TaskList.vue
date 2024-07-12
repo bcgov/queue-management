@@ -4,19 +4,15 @@
       v-if="isServiceFLowEnabled"
       :bpmApiUrl="configs.BPM_URL"
       :token="token"
-      :formIOApiUrl="configs.FORM_IO_API_URL"
-      :formIOResourceId="configs.FORM_IO_RESOURCE_ID"
-      :formIOReviewerId="configs.FORM_IO_REVIEWER_ID"
-      :formIOReviewer="configs.FORM_IO_REVIEWER"
+      :formioServerUrl="configs.FORM_IO_API_URL"
       :formsflowaiUrl="configs.FORM_FLOW_URL"
       :formsflowaiApiUrl="configs.FORM_FLOW_API_URL"
-      :formIOJwtSecret="configs.FORMIO_JWT_SECRET"
+      :reviewer="configs.FORM_IO_REVIEWER"
+      :userRoles="userKeyclockGroups"
+      taskSortBy="applicationId"
+      taskSortOrder="desc"
       :webSocketEncryptkey="configs.WEBSOCKET_ENCRYPT_KEY"
-      :getTaskId="getTaskId"
-      :formIOUserRoles="userKeyclockGroups"
       containerHeight ="280"
-      taskSortBy="dueDate"
-      taskSortOrder="asc"
     />
     <div class="no-content" v-else>You shouldnot be here !!!</div>
   </div>
@@ -58,11 +54,13 @@ export default class TaskList extends Vue {
 
   loadProps () {
     this.isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+    console.log("CONFIGS:", this.configs);
   }
 
   mounted () {
     this.loadProps()
     this.$root.$on('finishBeginServiceTheQ', (customEvent: any) => {
+      console.log('finishBeginServiceTheQ', customEvent);
       this.$root.$emit('navBeginService')
     })
   }
