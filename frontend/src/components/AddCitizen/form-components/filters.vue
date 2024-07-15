@@ -9,6 +9,7 @@
           v-model="search"
           placeholder="Type service here"
           id="simplified_service_input"
+          autocomplete="off"
         />
       </b-col>
       <b-col>
