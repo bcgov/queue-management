@@ -25,7 +25,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
     "humps": "^2.0.1",
-    "keycloak-js": "^20.0.0",
+    "keycloak-js": "^21.0.0",
     "moment": "^2.29.4",
     "regenerator-runtime": "^0.13.9",
     "sbc-common-components": "^2.4.43",
