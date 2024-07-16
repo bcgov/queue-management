@@ -20,7 +20,7 @@ eventlet==0.30.3
 filelock==3.0.12
 Flask-Caching==1.11.1
 Flask-Compress==1.9.0
-Flask-Cors==3.0.10
+Flask-Cors==4.0.1
 flask-marshmallow==0.14.0
 Flask-SocketIO==5.1.0
 #gunicorn==20.1.0
