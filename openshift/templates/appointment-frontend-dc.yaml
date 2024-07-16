@@ -39,19 +39,19 @@ objects:
     data:
         configuration.json: |-
           {
-			  "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
-			  "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
-			  "hideBCServicesCard": "${HIDEBCSERVICESCARD}",
-			  "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
-			  "BCServicesCardUrl": "${BC_SERVICES_CARD}",
-			  "disableSms": "${DISABLE_SMS}",
-			  "VUE_APP_FEEDBACK_API": "${VUE_APP_FEEDBACK_API}",
-			  "FEEDBACK_SERVICE_CHANNEL": "${FEEDBACK_SERVICE_CHANNEL}",
-			  "FEEDBACK_ENABLED": "${FEEDBACK_ENABLED}",
-			  "VUE_APP_HEADER_MSG": "Before you start – do you have the {link}BC Services Card app{link} or {link}Basic BCeID{link}? Login needed to confirm appointment.",
-			  "VUE_APP_HEADER_LINKS": "https://www2.gov.bc.ca/gov/content?id=B2B3A21E797A421A8FD39EEA86E245D6 {link} https://www.bceid.ca/directories/bluepages/details.aspx?serviceID=6971",
-			  "VUE_APP_FOOTER_MSG": "Looking for ICBC Services? Ensure you are at the right place by visiting {link} icbc.com/locators",
-			  "VUE_APP_FOOTER_LINKS": "https://www.icbc.com/locators"
+            "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+            "VUE_APP_ROOT_API": "${VUE_APP_ROOT_API}",
+            "hideBCServicesCard": ${HIDEBCSERVICESCARD},
+            "BCEIDRegistrationUrl": "${BCEID_REG_URL}",
+            "BCServicesCardUrl": "${BC_SERVICES_CARD}",
+            "VUE_APP_FEEDBACK_API": "${VUE_APP_FEEDBACK_API}",
+            "FEEDBACK_SERVICE_CHANNEL": "${FEEDBACK_SERVICE_CHANNEL}",
+            "FEEDBACK_ENABLED": "${FEEDBACK_ENABLED}",
+            "VUE_APP_HEADER_MSG": "Before you start – do you have the {link}BC Services Card app{link} or {link}Basic BCeID{link}? Login needed to confirm appointment.",
+            "VUE_APP_HEADER_LINKS": "https://www2.gov.bc.ca/gov/content?id=B2B3A21E797A421A8FD39EEA86E245D6 {link} https://www.bceid.ca/directories/bluepages/details.aspx?serviceID=6971",
+            "VUE_APP_FOOTER_MSG": "Looking for ICBC Services? Ensure you are at the right place by visiting {link} icbc.com/locators",
+            "VUE_APP_FOOTER_LINKS": "https://www.icbc.com/locators"
+            "disableSms": ${DISABLE_SMS}
           }
   - apiVersion: v1
     kind: ConfigMap
