@@ -1665,6 +1665,12 @@ export const commonActions: any = {
 
   finishServiceFromGA (context, citizen_id) {
     context.dispatch('postFinishService', { citizen_id, inaccurate: 'true' })
+    .then(() => {
+      window.location.reload()
+    })
+    .catch(error => {
+      console.error('Error finishing service:', error)
+    })
   },
 
   clickServiceModalClose (context) {
