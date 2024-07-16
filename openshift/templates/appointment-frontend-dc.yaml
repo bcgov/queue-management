@@ -244,18 +244,18 @@ parameters:
     required: true
     value: true
   - name: BC_SERVICES_CARD
-    description: "Flag to decide if SMS is disabled"
+    description: ""
     required: true
     value: ""
   - name: VUE_APP_FEEDBACK_API
-    description: "Flag to decide if SMS is disabled"
+    description: "feedback api"
     required: true
     value: ""
   - name: FEEDBACK_SERVICE_CHANNEL
-    description: "Flag to decide if SMS is disabled"
+    description: ""
     required: true
     value: ""
   - name: FEEDBACK_ENABLED
-    description: "Flag to decide if SMS is disabled"
+    description: "citizen feedback -CCII"
     required: true
     value: ""
