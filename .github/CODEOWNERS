@@ -1,3 +1,3 @@
 # As a security feature, add these people as reviewers if a PR is created for
 # anything under .github, including GitHub Actions and this file itself.
-.github/ @jhmccoll @josekudiyirippil @gil0109
+.github/ @chrsamp @josekudiyirippil @Rajandeep98
