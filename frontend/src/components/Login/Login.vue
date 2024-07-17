@@ -143,6 +143,7 @@ export default class Login extends Vue {
   @Mutation('setUserCSRStateName') public setUserCSRStateName: any;
   @Mutation('setCounterStatusState') public setCounterStatusState: any;
   @Mutation('setOfficeSwitcher') public setOfficeSwitcher: any;
+  @Mutation('setMainAlert') public setMainAlert: any
 
   $keycloak: any;
   officeQuery = '';
@@ -410,6 +411,12 @@ export default class Login extends Vue {
   }
 
   changeOffice (newOffice) {
+    const role = this.user.role.role_code
+    if (role === 'EXTERNAL' && !newOffice.office_name.startsWith('EXT')) {
+        this.setMainAlert(`You are not permitted to change to the "${newOffice.office_name}" office.`);
+        console.error('Unable to change offices: External users can only switch to offices starting with "ext".');
+        return;
+    }
     this.updateCSROffice(newOffice)
       .then(() => {
         console.log('Done updateCSROffice() then in Login.vue')
