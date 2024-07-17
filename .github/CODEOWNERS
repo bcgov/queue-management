@@ -1,3 +1,4 @@
 # As a security feature, add these people as reviewers if a PR is created for
 # anything under .github, including GitHub Actions and this file itself.
-.github/ @chrsamp @josekudiyirippil @Rajandeep98
+# Define code owners for the entire repository
+* @chrsamp @josekudiyirippil @Rajandeep98
