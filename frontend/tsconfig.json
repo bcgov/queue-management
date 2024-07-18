@@ -19,6 +19,8 @@
       "vue-fragment",
       "vuetify",
       "node",
+      "vue-search-select",
+      "camunda-formio-tasklist-vue" 
     ],
     "paths": {
       "@/*": [
