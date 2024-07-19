@@ -68,13 +68,13 @@ class OfficeConfig(Base):
                          'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg',\
                          'automatic_reminder_at', 'currently_waiting', 'digital_signage_message', 'digital_signage_message_1',\
-                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom' )
+                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom', 'optout_status' )
     form_edit_rules = ('office_name', 'office_number', 'sb', 'services', 'deleted', 'exams_enabled_ind',
                        'appointments_enabled_ind', 'timezone', 'latitude', 'longitude', 'office_appointment_message',
                          'appointments_days_limit', 'appointment_duration', 'soonest_appointment', 'max_person_appointment_per_day',\
                          'civic_address', 'telephone', 'online_status', 'check_in_notification', 'check_in_reminder_msg', \
                          'automatic_reminder_at', 'currently_waiting', 'digital_signage_message', 'digital_signage_message_1',\
-                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom' )
+                         'digital_signage_message_2', 'digital_signage_message_3', 'show_currently_waiting_bottom', 'optout_status' )
     form_choices = {
         'exams_enabled_ind': [
             ("0", 'No - Exams are not enabled for this office'), \
@@ -105,6 +105,10 @@ class OfficeConfig(Base):
         'show_currently_waiting_bottom': [
             ("0", 'Off - Hide Currently Waiting at bottom in Smartboard'), \
             ("1", 'On - Show Currently Waiting  from bottom in Smartboard')
+        ],
+        'optout_status': [
+            ("0", 'Off - Do Not Save Transaction'), \
+            ("1", 'On - Save Transactions')
         ],
     }
     # Defining String constants to appease SonarQube
@@ -140,6 +144,7 @@ class OfficeConfig(Base):
                     'digital_signage_message_2',
                     'digital_signage_message_3',
                     'show_currently_waiting_bottom',
+                    'optout_status',
                    ]
     
     column_list_support = ['office_name',
@@ -170,6 +175,7 @@ class OfficeConfig(Base):
                     'digital_signage_message_2',
                     'digital_signage_message_3',
                     'show_currently_waiting_bottom',
+                    'optout_status',
                    ]
 
     form_excluded_columns = ('citizens',
@@ -213,6 +219,7 @@ class OfficeConfig(Base):
                         'number_of_dlkt',
                         'timeslots',
                         'deleted',
+                        'optout_status',
                         )
 
     form_edit_rules = ('office_name',
@@ -249,6 +256,7 @@ class OfficeConfig(Base):
                        'number_of_dlkt',
                        'timeslots',
                        'deleted',
+                       'optout_status',
                        )
 
     form_args = {
@@ -388,7 +396,8 @@ class OfficeConfigGA(OfficeConfig):
         'appointments_days_limit',        
         'soonest_appointment',
         'max_person_appointment_per_day',
-        'number_of_dlkt',        
+        'number_of_dlkt',   
+        'optout_status' ,    
     )
 
     form_excluded_columns = (
