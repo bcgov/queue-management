@@ -179,9 +179,20 @@ class VideoFiles(Resource):
 
         #  Try to delete the file.
         video_path = application.config['VIDEO_PATH']
-        delete_name = os.path.join(video_path, json_data['name'])
+        constructed_path = os.path.join(video_path, json_data['name'])
+
+        try:
+            delete_name = os.path.realpath(constructed_path)
+        except FileNotFoundError:
+            return {'message': 'File not found.'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
         if not os.path.commonpath([delete_name, video_path]) == video_path:
             return {'message': 'Invalid filename received in DELETE /videofiles/'}, 400
-        os.remove(delete_name)
 
-        return {}, 204
+        try:
+            os.remove(delete_name)
+            return {}, 204
+        except Exception as e:
+            return {'message': str(e)}, 500
