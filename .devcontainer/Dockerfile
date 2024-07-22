@@ -43,11 +43,15 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then \
 # RUN pip3 --disable-pip-version-check --no-cache-dir install -r \
 #    /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp
 
-RUN sudo apt-get update && \
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        # psql is useful and needed in the container post-create commands.
-        postgresql-contrib \
-        # A JRE is needed to run SonarLint.
-        default-jre \
-        # X is needed to run the Cypress GUI.
-        libasound2 libgconf-2-4 libgtk-3-dev libnotify-dev libnss3 libxss1 xvfb
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
+    # Add the Yarn package repository to APT sources
+    RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+    
+    # Update APT package lists and install required packages
+    RUN sudo apt-get update && \
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            postgresql-contrib \
+            default-jre \
+            libasound2 libgconf-2-4 libgtk-3-dev libnotify-dev libnss3 libxss1 xvfb
+    
