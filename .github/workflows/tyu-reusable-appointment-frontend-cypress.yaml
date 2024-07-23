@@ -86,6 +86,7 @@ jobs:
           start: npm run serve -- --port 8081
           wait-on: http://localhost:8081
           working-directory: appointment-frontend
+          command: npx cypress run --env  updateSnapshots=true
 
       - name: On Failure Upload Screenshot Artifacts
         uses: actions/upload-artifact@v3
