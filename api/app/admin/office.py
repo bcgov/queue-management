@@ -107,8 +107,8 @@ class OfficeConfig(Base):
             ("1", 'On - Show Currently Waiting  from bottom in Smartboard')
         ],
         'optout_status': [
-            ("0", 'Off - Do Not Save Transaction'), \
-            ("1", 'On - Save Transactions')
+            ("0", 'Off - Open tickets automatically closed at end of day'), \
+            ("1", 'On - Tickets must be closed manually')
         ],
     }
     # Defining String constants to appease SonarQube
