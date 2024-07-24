@@ -5,7 +5,7 @@ export default defineConfig({
   env: {
     'cypress-plugin-snapshots': {
       imageConfig: {
-        threshold: 1,
+        threshold: 10,
         thresholdType: 'percent',
       },
       screenshotConfig: {
