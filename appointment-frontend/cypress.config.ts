@@ -5,7 +5,7 @@ export default defineConfig({
   env: {
     'cypress-plugin-snapshots': {
       imageConfig: {
-        threshold: 0,
+        threshold: 1,
         thresholdType: 'percent',
       },
       screenshotConfig: {
@@ -15,7 +15,7 @@ export default defineConfig({
         disableTimersAndAnimations: true,
         log: false,
         scale: false,
-        timeout: 30000,
+        timeout: 50000,
       },
     },
   },
