@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState, Counter
+from app.models.theq import Citizen, CSR, CitizenState, Period, PeriodState, ServiceReq, SRState, Counter, Role
 from flask import flash, redirect, request
 from .base import Base
 from flask_admin.babel import gettext
@@ -124,6 +124,11 @@ class CSRConfig(Base):
 
         model = self.get_one(identifier)
 
+        allowed_ga_edit_roles = ['GA', 'CSR']
+        if model and current_user.role.role_code == 'GA' and model.role.role_code not in allowed_ga_edit_roles:
+            flash(gettext('You are not allowed to edit a '+ model.role.role_code +' role.'), 'error')
+            return False
+        
         if model is None:
             flash(gettext('Record does not exist.'), 'error')
             return False
@@ -208,6 +213,11 @@ class CSRConfigGA(CSRConfig):
                          'finance_designate', 'ita2_designate', 'csr_state', 'role', 'office', 'counter')
     form_edit_rules = ('username', 'office_manager', 'pesticide_designate', 'ita2_designate', 'role', 'office')
 
+    form_args = {
+        'role': {
+            'query_factory': lambda: db.session.query(Role).filter(Role.role_code.in_(['CSR', 'GA']))
+        }
+     }
 
 CSRModelView = CSRConfig(CSR, db.session)
 CSRGAModelView = CSRConfigGA(CSR, db.session, endpoint='csrga')
