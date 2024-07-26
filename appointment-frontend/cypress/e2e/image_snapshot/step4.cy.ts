@@ -75,7 +75,7 @@ describe('step 4', () => {
       .click()
 
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_4_IMAGE_BCSC)
+    cy.get(SELECTOR_STEP_4_IMAGE_BCSC, { timeout: 10000 }).should('be.visible');
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
