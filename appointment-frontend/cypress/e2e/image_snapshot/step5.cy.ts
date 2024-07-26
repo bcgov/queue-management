@@ -129,6 +129,8 @@ describe('step 5', () => {
     cy.get(SELECTOR_STEP_5_BUTTON_CONFIRM)
       .should('be.visible')
 
+      cy.screenshot('SELECTOR_STEP_5_BUTTON_CONFIRM');
+
     cy.matchImageSnapshot()
   })
 
