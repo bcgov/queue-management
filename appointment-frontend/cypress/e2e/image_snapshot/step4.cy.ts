@@ -24,7 +24,8 @@ import {
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
   SELECTOR_STEP_3_BUTTON_TIMESLOT,
   SELECTOR_STEP_4_IMAGE_BCEID_LOGIN,
-  SELECTOR_STEP_4_IMAGE_BCSC
+  SELECTOR_STEP_4_IMAGE_BCSC,
+  SELECTOR_STEP_4_BUTTON_BCEID
 } from '../../support/selectors'
 
 import { API_PREFIX } from '../../support/e2e'
@@ -72,10 +73,10 @@ describe('step 4', () => {
       .click()
 
     cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
-      .click()
+      .first().click()
 
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_4_IMAGE_BCSC, { timeout: 10000 }).should('be.visible');
+    cy.get(SELECTOR_STEP_4_BUTTON_BCEID).should('be.visible')
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
