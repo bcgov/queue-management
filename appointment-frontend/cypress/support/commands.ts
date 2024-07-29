@@ -135,7 +135,12 @@ Cypress.Commands.add('workaroundDatePickerTransition', (selector: string) => {
 Cypress.Commands.add('workaroundImageFade', (selector: string) => {
   cy.get(selector)
     .find('.v-image__image.v-image__image--preload')
-    .should('not.exist')
+    .should('be.visible') 
+    .and(($el) => {
+      const img = $el.get(0) as HTMLImageElement;
+      expect(img.naturalWidth).to.be.greaterThan(0);
+      expect(img.naturalHeight).to.be.greaterThan(0);
+    });
 })
 
 // There is a bug in Cypress where screenshot() takes pieces of the browser
