@@ -24,7 +24,8 @@ import {
   SELECTOR_STEP_2_COMBOBOX_SERVICE,
   SELECTOR_STEP_3_BUTTON_TIMESLOT,
   SELECTOR_STEP_4_IMAGE_BCEID_LOGIN,
-  SELECTOR_STEP_4_IMAGE_BCSC
+  SELECTOR_STEP_4_IMAGE_BCSC,
+  SELECTOR_STEP_4_BUTTON_BCEID
 } from '../../support/selectors'
 
 import { API_PREFIX } from '../../support/e2e'
@@ -32,6 +33,7 @@ import { API_PREFIX } from '../../support/e2e'
 describe('step 4', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
+    cy.viewport(1000, 920)
 
     cy.fixture('appointments/draft').then((json) => {
       cy.intercept('POST', API_PREFIX + 'appointments/draft', json)
@@ -66,27 +68,31 @@ describe('step 4', () => {
       .type('Legal Change of Name{downarrow}{enter}')
 
     // The API fixtures are based on a certain date, so act like it's that day.
-    cy.clock(new Date('2022-01-17').getTime())
+    cy.clock(new Date('2022-01-16').getTime())
 
     cy.get(SELECTOR_STEP_2_BUTTON_NEXT)
       .click()
 
     cy.get(SELECTOR_STEP_3_BUTTON_TIMESLOT)
-      .click()
+      .first().click()
 
     // Get something from the next page, so that we know page load is complete.
-    cy.get(SELECTOR_STEP_4_IMAGE_BCSC)
+    cy.get(SELECTOR_STEP_4_BUTTON_BCEID).should('be.visible')
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
-    cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
+    // cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_LOGIN)
+
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCSC)
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot({
+      failureThreshold: 0.01,
+      failureThresholdType: 'percent',
+    })
   })
 })

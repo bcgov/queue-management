@@ -27,6 +27,9 @@
       "scripthost"
     ]
   },
+  "types":[
+    "@simonsmith/cypress-image-snapshot/types"
+  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

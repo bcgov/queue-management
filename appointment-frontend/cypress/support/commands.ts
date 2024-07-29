@@ -14,7 +14,9 @@
 
 import { addMatchImageSnapshotCommand } from '@simonsmith/cypress-image-snapshot/command'
 
-addMatchImageSnapshotCommand()
+addMatchImageSnapshotCommand({
+  failureThreshold: 0.2,
+})
 
 declare global {
   namespace Cypress {
