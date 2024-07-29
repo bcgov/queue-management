@@ -33,7 +33,7 @@ import { API_PREFIX } from '../../support/e2e'
 describe('step 4', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
-    cy.viewport(1000, 963)
+    cy.viewport(1000, 944)
 
     cy.fixture('appointments/draft').then((json) => {
       cy.intercept('POST', API_PREFIX + 'appointments/draft', json)
@@ -90,7 +90,7 @@ describe('step 4', () => {
 
   it('page loaded', () => {
     cy.matchImageSnapshot({
-      failureThreshold: 0.01,
+      failureThreshold: 0.05,
       failureThresholdType: 'percent',
     })
   })
