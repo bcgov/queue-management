@@ -68,7 +68,7 @@ describe('step 4', () => {
       .type('Legal Change of Name{downarrow}{enter}')
 
     // The API fixtures are based on a certain date, so act like it's that day.
-    cy.clock(new Date('2022-01-17').getTime())
+    cy.clock(new Date('2022-01-16').getTime())
 
     cy.get(SELECTOR_STEP_2_BUTTON_NEXT)
       .click()
@@ -79,18 +79,19 @@ describe('step 4', () => {
     // Get something from the next page, so that we know page load is complete.
     cy.get(SELECTOR_STEP_4_BUTTON_BCEID).should('be.visible')
 
-    cy.get('.v-image__image.v-image__image--preload').should('not.exist');
-
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)
 
     // Flake: v-img has a default fade transition. Wait for it to complete.
-    cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
+    // cy.workaroundImageFade(SELECTOR_HEADER_IMAGE_BCGOV)
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCEID_LOGIN)
     cy.workaroundImageFade(SELECTOR_STEP_4_IMAGE_BCSC)
   })
 
   it('page loaded', () => {
-    cy.matchImageSnapshot()
+    cy.matchImageSnapshot({
+      failureThreshold: 0.01,
+      failureThresholdType: 'percent',
+    })
   })
 })

@@ -90,7 +90,7 @@ describe('step 5', () => {
       .type('Legal Change of Name{downarrow}{enter}')
 
     // The API fixtures are based on a certain date, so act like it's that day.
-    cy.clock(new Date('2022-01-17').getTime())
+    cy.clock(new Date('2022-01-16').getTime())
 
     cy.get(SELECTOR_STEP_2_BUTTON_NEXT)
       .click()
