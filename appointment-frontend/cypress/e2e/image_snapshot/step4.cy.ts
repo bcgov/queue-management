@@ -33,6 +33,7 @@ import { API_PREFIX } from '../../support/e2e'
 describe('step 4', () => {
   beforeEach(() => {
     // Intercept API calls to provide testing data.
+    cy.viewport(1000, 963)
 
     cy.fixture('appointments/draft').then((json) => {
       cy.intercept('POST', API_PREFIX + 'appointments/draft', json)
@@ -77,6 +78,8 @@ describe('step 4', () => {
 
     // Get something from the next page, so that we know page load is complete.
     cy.get(SELECTOR_STEP_4_BUTTON_BCEID).should('be.visible')
+
+    cy.get('.v-image__image.v-image__image--preload').should('not.exist');
 
     // Flake: https://github.com/cypress-io/cypress/issues/2681
     cy.workaroundPositionFixed(SELECTOR_FEEDBACK)

@@ -30,6 +30,9 @@ import { API_PREFIX } from '../../support/e2e'
 
 describe('step 3', () => {
   beforeEach(() => {
+
+    cy.viewport(1000, 920)
+
     // Intercept API calls to provide testing data.
 
     cy.fixture('offices').then((json) => {
