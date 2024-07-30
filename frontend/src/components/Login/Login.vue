@@ -302,7 +302,7 @@ export default class Login extends Vue {
   }
 
   logout () {
-    this.$keycloak.logout()
+    this.$keycloak.logout({ redirectUri: window.location.origin + '/queue' })
     this.clearStorage()
   }
 
