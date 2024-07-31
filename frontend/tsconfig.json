@@ -19,7 +19,6 @@
       "vue-fragment",
       "vuetify",
       "node",
-      "@simonsmith/cypress-image-snapshot/types"
     ],
     "paths": {
       "@/*": [
