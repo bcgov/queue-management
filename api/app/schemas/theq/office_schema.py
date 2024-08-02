@@ -49,6 +49,7 @@ class OfficeSchema(BaseSchema):
     office_appointment_message = fields.Str()
     civic_address = fields.Str()
     online_status = fields.Str()
+    optout_status = fields.Int()
     external_map_link = fields.Str()
 
     # for walk-in notifications

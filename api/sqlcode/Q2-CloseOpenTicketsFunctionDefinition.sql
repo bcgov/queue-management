@@ -64,7 +64,7 @@ begin
     set         cs_id = id_got_services,
 	            accurate_time_ind = 0,
 	    		citizen_comments = ''
-    where       citizen.citizen_id in
+    where   office_id in (select office_id from office where optout_status = 0) and citizen.citizen_id in
     (
       select    distinct f.cid
       from
@@ -94,19 +94,33 @@ begin
     set           cs_id = id_got_services,
                   accurate_time_ind = 0,
                   citizen_comments = ''
-    where         cs_id = (select cs_id from citizenstate where cs_state_name = 'Active');
+    where         cs_id = (select cs_id from citizenstate where cs_state_name = 'Active') and office_id in (select office_id from office where optout_status = 0);
     get diagnostics update_active = ROW_COUNT;
 
     /*  Set period time_end to be now for all periods with null ending time. */
-    update        period
-    set           time_end = now()
-    where         time_end is null;
+  
+    UPDATE period
+    SET time_end = NOW()
+    WHERE time_end IS NULL
+    AND sr_id IN (
+        SELECT sr_id
+        FROM servicereq
+        WHERE citizen_id IN (
+            SELECT citizen_id
+            FROM citizen
+            WHERE office_id in (select office_id from office where optout_status = 0)
+        ));
     get diagnostics update_period = ROW_COUNT;
 
     /*  Set all service requests to be complete, for those that aren't marked as complete. */
     update        servicereq
     set           sr_state_id = (select sr_state_id from srstate where sr_code = 'Complete')
-    where         sr_state_id != (select sr_state_id from srstate where sr_code = 'Complete');
+    where         sr_state_id != (select sr_state_id from srstate where sr_code = 'Complete') and
+                  citizen_id in (
+                  SELECT citizen_id
+                  FROM citizen
+                  WHERE office_id  in (select office_id from office where optout_status = 0));
+
     get diagnostics update_sr = ROW_COUNT;
 
     return_message = 'Tickets closed first pass: ' || update_citizen::text
