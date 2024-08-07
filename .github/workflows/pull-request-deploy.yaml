@@ -284,25 +284,6 @@ jobs:
           --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
           --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
           --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
-          
-      - name: Set Status to Success
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { context, github } = require('@actions/github');
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const ref = context.payload.pull_request.head.sha;
-
-            await github.repos.createCommitStatus({
-              owner,
-              repo,
-              sha: ref,
-              state: 'success',
-              context: 'Newman Tests',
-              description: 'Newman Tests passed successfully',
-              target_url: 'https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}'
-            });
 
   owasp-staff:
     name: OWASP ZAP Scan of Staff Frontend
