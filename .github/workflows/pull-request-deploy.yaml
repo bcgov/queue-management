@@ -289,10 +289,10 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context, github } = require('@actions/github');
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const ref = context.payload.pull_request.head.sha;
+            const github = require('@actions/github');
+            const owner = github.context.repo.owner;
+            const repo = github.context.repo.repo;
+            const ref = github.context.payload.pull_request.head.sha;
 
             await github.repos.createCommitStatus({
               owner,
@@ -301,7 +301,7 @@ jobs:
               state: 'success',
               context: 'Newman Tests',
               description: 'Newman Tests passed successfully',
-              target_url: 'https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}'
+              target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
             });
 
   owasp-staff:
