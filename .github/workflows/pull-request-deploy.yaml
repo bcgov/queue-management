@@ -285,16 +285,16 @@ jobs:
           --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
           --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
   
-      - name: Set Status to Success
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { context, github } = require('@actions/github');
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const ref = context.payload.pull_request.head.sha;
+    - name: Set Status to Success
+      uses: actions/github-script@v6
+      with:
+      script: |
+          const { context, github } = require('@actions/github');
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+          const ref = context.payload.pull_request.head.sha;
 
-            await github.repos.createCommitStatus({
+          await github.repos.createCommitStatus({
               owner,
               repo,
               sha: ref,
