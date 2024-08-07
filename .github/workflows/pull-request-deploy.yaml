@@ -85,6 +85,19 @@ jobs:
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
 
+  queue-management-frontend-cypress:
+    name: Appointment Frontend Cypress
+    needs: parse-inputs
+    uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
+    secrets:
+      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
+      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
+      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
+      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+    with:
+      ref: ${{ needs.parse-inputs.outputs.ref }}
+
   ##### BUILD ##################################################################
 
   appointment-frontend:
