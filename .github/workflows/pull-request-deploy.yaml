@@ -65,7 +65,27 @@ jobs:
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
         echo "ref=$REF" >> $GITHUB_OUTPUT
-    
+        
+    - name: Report Status
+      uses: actions/github-script@v6
+      if: ${{ always() }}  # Ensure this step runs even if the previous step fails
+      with:
+        script: |
+          const github = require('@actions/github');
+          const owner = github.context.repo.owner;
+          const repo = github.context.repo.repo;
+          const ref = github.context.sha;
+          const status = ${{ steps.parse.conclusion }} === 'success' ? 'success' : 'failure';
+
+          await github.repos.createCommitStatus({
+            owner,
+            repo,
+            sha: ref,
+            state: status,
+            context: 'Parse Inputs',
+            description: status === 'success' ? 'Parsing inputs completed successfully' : 'Parsing inputs failed',
+            target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
+          });    
 
   ##### TEST ###################################################################
 
