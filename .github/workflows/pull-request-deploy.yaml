@@ -78,7 +78,7 @@ jobs:
           // Determine the status of the previous step
           const status = '${{ steps.parse.conclusion }}' === 'success' ? 'success' : 'failure';
 
-          await github.repos.createCommitStatus({
+          await octokit.repos.createCommitStatus({
             owner,
             repo,
             sha: ref,
