@@ -86,7 +86,7 @@ jobs:
       ref: ${{ needs.parse-inputs.outputs.ref }}
 
   queue-management-frontend-cypress:
-    name: Appointment Frontend Cypress
+    name: Queue Management Frontend Cypress
     needs: parse-inputs
     uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
     secrets:

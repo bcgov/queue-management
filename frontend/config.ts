@@ -1,7 +1,7 @@
 /*eslint-disable */
 const config = {
-    APP_API_URL: process.env.VUE_APP_API_URL || '/api/v1/',
-    SOCKET_URL: process.env.VUE_APP_SOCKET_URL || '',
+    APP_API_URL: process.env.VUE_APP_API_URL || 'http://localhost:5000/api/v1/',
+    SOCKET_URL: process.env.VUE_APP_SOCKET_URL || 'http://localhost:5000/',
     REFRESH_TOKEN_SECONDS_LEFT: process.env.VUE_APP_REFRESH_TOKEN_SECONDS_LEFT || '180',
     BASE_URL: process.env.BASE_URL || '',
     IS_INTERNET_EXPLORER: isInternetExplorer()
