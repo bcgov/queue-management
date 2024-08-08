@@ -71,10 +71,9 @@ jobs:
       if: ${{ always() }}  # Ensure this step runs even if the previous step fails
       with:
         script: |
-          const github = require('@actions/github');
-          const owner = github.context.repo.owner;
-          const repo = github.context.repo.repo;
-          const ref = github.context.sha;
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+          const ref = context.sha;
           const status = ${{ steps.parse.conclusion }} === 'success' ? 'success' : 'failure';
 
           await github.repos.createCommitStatus({
