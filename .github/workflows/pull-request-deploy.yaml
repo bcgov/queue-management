@@ -86,7 +86,7 @@ jobs:
       ref: ${{ needs.parse-inputs.outputs.ref }}
 
   queue-management-frontend-cypress:
-    name: Appointment Frontend Cypress
+    name: Queue Management Frontend Cypress
     needs: parse-inputs
     uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
     secrets:
@@ -102,7 +102,7 @@ jobs:
 
   appointment-frontend:
     name: appointment-frontend
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -125,7 +125,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -145,7 +145,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -165,7 +165,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -188,7 +188,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -211,7 +211,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: [parse-inputs, appointment-frontend-cypress]
+    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}

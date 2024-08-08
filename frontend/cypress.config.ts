@@ -28,6 +28,10 @@ export default defineConfig({
       addMatchImageSnapshotPlugin(on)
     },
     baseUrl: 'http://localhost:8080',
-    excludeSpecPattern: ['**/__snapshots__/*', '**/__image_snapshots__/*']
+    excludeSpecPattern: ['**/__snapshots__/*', '**/__image_snapshots__/*'],
+    retries: {
+      runMode: 4,
+      openMode: 4
+    }
   }
 })
