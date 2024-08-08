@@ -81,6 +81,7 @@ class Office(Base):
     appointment_duration = db.Column(db.Integer, default=30)
     max_person_appointment_per_day = db.Column(db.Integer, default=1)
     civic_address = db.Column(db.String(200))
+    optout_status = db.Column(db.Integer, default=0)
     telephone = db.Column(db.String(20))
     online_status = db.Column(Enum(Status))
     number_of_dlkt = db.Column(db.Integer, nullable=True)
