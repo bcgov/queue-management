@@ -81,12 +81,12 @@ jobs:
           await github.repos.createCommitStatus({
             owner,
             repo,
-            sha: ref,
-            state: status,
-            context: 'Parse Inputs',
-            description: status === 'success' ? 'Parsing inputs completed successfully' : 'Parsing inputs failed',
-            target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
-          });    
+        sha: ref,
+        state: status,
+        context: 'Parse Inputs',
+        description: status === 'success' ? 'Parsing inputs completed successfully' : 'Parsing inputs failed',
+        target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
+      });    
 
   ##### TEST ###################################################################
 
