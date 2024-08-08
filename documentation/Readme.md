@@ -37,6 +37,49 @@ Opening the cloned repo in VSCode will detect the *.devcontainer* directory and 
 TODO: config files
     1. copy *documentation/demo-files/keycloak.json* to *frontend/static/* (**TODO: really? I don't have it**)
 
+
+## Directory Structure for Configuration Files
+    
+```
+queue-management
+    ├───.devcontainer
+    │       devcontainer.json
+    │       docker-compose.yml
+    │       postCreateCommand.sh
+    │
+    ├───api
+    │       .env
+    │
+    ├───appointment-frontend
+    │   └───public
+    │       └───config
+    │           │   configuration.json
+    │           │
+    │           └───kc
+    │                   keycloak-public.json
+    │                   keycloak-public.json_silver
+    │
+    ├───feedback-api
+    │       .env
+    │
+    ├───frontend
+    │   └───public
+    │       ├───config
+    │       │       configuration.json
+    │       │
+    │       └───static
+    │           └───keycloak
+    │                   keycloak.json
+    │                   keycloak.json_silver
+    │
+    ├───jobs
+    │   └───appointment_reminder
+    │           .env
+    │
+    └───notifications-api
+            .env
+```
+
 ## Set up Keycloak:
 
 TODO: automate this.
