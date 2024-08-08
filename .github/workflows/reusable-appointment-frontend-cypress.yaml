@@ -51,7 +51,7 @@ jobs:
           }
           EOF
 
-          cat << EOF > appointment-frontend/public/config/kc/keycloak-public.json
+          cat << EOF > frontend/public/config/kc/keycloak-public.json
           {
             "auth-server-url": "${{ secrets.keycloak-auth-url }}",
             "confidential-port": 0,
