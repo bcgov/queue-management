@@ -74,7 +74,9 @@ jobs:
           const owner = context.repo.owner;
           const repo = context.repo.repo;
           const ref = context.sha;
-          const status = ${{ steps.parse.conclusion }} === 'success' ? 'success' : 'failure';
+          
+          // Determine the status of the previous step
+          const status = '${{ steps.parse.conclusion }}' === 'success' ? 'success' : 'failure';
 
           await github.repos.createCommitStatus({
             owner,
