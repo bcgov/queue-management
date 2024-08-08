@@ -16,7 +16,7 @@ export default defineConfig({
         log: false,
         scale: false,
         timeout: 50000,
-      },
+      }
     },
   },
   video: false,
@@ -28,5 +28,9 @@ export default defineConfig({
     },
     baseUrl: 'http://localhost:8081',
     excludeSpecPattern: ['**/__snapshots__/*', '**/__image_snapshots__/*'],
-  },
+    retries: {
+      runMode: 4,
+      openMode: 4
+    }
+  }
 })

@@ -65,7 +65,28 @@ jobs:
         REF=refs/pull/${{ github.event.inputs.pr-number }}/head
         echo REF:$REF
         echo "ref=$REF" >> $GITHUB_OUTPUT
-    
+        
+    - name: Report Status
+      uses: actions/github-script@v6
+      if: ${{ always() }}  # Ensure this step runs even if the previous step fails
+      with:
+        script: |
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+          const ref = context.sha;
+          
+          // Determine the status of the previous step
+          const status = '${{ steps.parse.conclusion }}' === 'success' ? 'success' : 'failure';
+
+          await octokit.repos.createCommitStatus({
+            owner,
+            repo,
+            sha: ref,
+            state: status,
+            context: 'Parse Inputs',
+            description: status === 'success' ? 'Parsing inputs completed successfully' : 'Parsing inputs failed',
+            target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
+          });    
 
   ##### TEST ###################################################################
 
@@ -258,32 +279,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out
-      uses: actions/checkout@v2
+      - name: Check out
+        uses: actions/checkout@v2
 
-    - name: NPM Install
-      run: |
-        cd api/postman
-        npm install newman
+      - name: NPM Install
+        run: |
+          cd api/postman
+          npm install newman
 
-    - name: Run Newman Tests
-      run: |
-        cd api/postman
-        node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
-          -e postman_env.json \
-          --delay-request 250 \
-          --global-var 'auth_url=${{ vars.POSTMAN_AUTH_URL_DEV }}' \
-          --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
-          --global-var 'clientid=${{ vars.POSTMAN_CLIENTID_DEV }}' \
-          --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
-          --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-          --global-var 'public_url=${{ vars.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
-          --global-var 'public_user_id=${{ vars.POSTMAN_PUBLIC_USERID }}' \
-          --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-          --global-var 'realm=${{ vars.POSTMAN_REALM }}' \
-          --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
-          --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
-          --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
+      - name: Run Newman Tests
+        run: |
+          cd api/postman
+          node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
+            -e postman_env.json \
+            --delay-request 250 \
+            --global-var 'auth_url=${{ vars.POSTMAN_AUTH_URL_DEV }}' \
+            --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
+            --global-var 'clientid=${{ vars.POSTMAN_CLIENTID_DEV }}' \
+            --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
+            --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
+            --global-var 'public_url=${{ vars.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
+            --global-var 'public_user_id=${{ vars.POSTMAN_PUBLIC_USERID }}' \
+            --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
+            --global-var 'realm=${{ vars.POSTMAN_REALM }}' \
+            --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
+            --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
+            --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
+
+      - name: Set Status to Success
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const github = require('@actions/github');
+            const owner = github.context.repo.owner;
+            const repo = github.context.repo.repo;
+            const ref = github.context.payload.pull_request.head.sha;
+
+            await github.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: ref,
+              state: 'success',
+              context: 'Newman Tests',
+              description: 'Newman Tests passed successfully',
+              target_url: `https://github.com/${owner}/${repo}/actions/runs/${{ github.run_id }}`
+            });
 
   owasp-staff:
     name: OWASP ZAP Scan of Staff Frontend
