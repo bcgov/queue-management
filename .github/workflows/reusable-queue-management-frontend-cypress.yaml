@@ -30,20 +30,34 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.11.1' 
+
       - name: Configuration Files
         run: |
           
-          mkdir -p frontend/public/config/kc
+          mkdir -p frontend/public/static/keycloak
+          mkdir -p frontend/public/config
+          echo "Checking directory existence..."
+          if [ -d "frontend/public/config/" ]; then 
+            echo "Directory exists."
+          else
+            echo "Error: Directory does not exist."
+            exit 1
+          fi
 
           cat << EOF > frontend/public/config/configuration.json
           {
+            "VUE_APP_API_URL": "http://localhost:5000/api/v1",
+            "VUE_APP_SOCKET_URL" : "http://localhost:5000",
             "FEEDBACK_ENABLED": true,
-            "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+            "KEYCLOAK_CONFIG_URL": "./public/static/keycloak/keycloak.json",
             "VUE_APP_FOOTER_LINKS": "https://www.icbc.com/locators",
             "VUE_APP_FOOTER_MSG": "Looking for ICBC Services? Ensure you are at the right place by visiting {link} icbc.com/locators",
             "VUE_APP_HEADER_LINKS": "https://www.gov.bc.ca/bcservicescardapp{link}https://www.bceid.ca",
             "VUE_APP_HEADER_MSG": "Before you start – do you have the {link}BC Services Card app{link} or {link}Basic BCeID{link}? Login needed to confirm appointment.",
-            "VUE_APP_ROOT_API": "http://localhost:5000/api/v1"
           }
           EOF
 
@@ -66,6 +80,21 @@ jobs:
           }
           EOF
 
+      - name: Load Configuration JSON
+        id: load_config
+        run: |
+          echo "Loading environment variables from configuration.json"
+          # Extract variables from configuration.json and export them
+          export $(jq -r 'to_entries | .[] | "\(.key)=\(.value)"' frontend/public/config/configuration.json)
+          # Save variables to $GITHUB_ENV
+          echo "VUE_APP_API_URL=${VUE_APP_API_URL}" >> $GITHUB_ENV
+          echo "VUE_APP_SOCKET_URL=${VUE_APP_SOCKET_URL}" >> $GITHUB_ENV
+          echo "FEEDBACK_ENABLED=${FEEDBACK_ENABLED}" >> $GITHUB_ENV
+          echo "KEYCLOAK_CONFIG_URL=${KEYCLOAK_CONFIG_URL}" >> $GITHUB_ENV
+          echo "VUE_APP_FOOTER_LINKS=${VUE_APP_FOOTER_LINKS}" >> $GITHUB_ENV
+          echo "VUE_APP_FOOTER_MSG=${VUE_APP_FOOTER_MSG}" >> $GITHUB_ENV
+          echo "VUE_APP_HEADER_LINKS=${VUE_APP_HEADER_LINKS}" >> $GITHUB_ENV
+          echo "VUE_APP_HEADER_MSG=${VUE_APP_HEADER_MSG}" >> $GITHUB_ENV
       - name: Cypress Run
         uses: cypress-io/github-action@v6.0.0
         env:
