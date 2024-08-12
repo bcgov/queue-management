@@ -1,1 +1,15 @@
 Generic single-database configuration.
+
+Run Migrations:
+
+// make changes to your model
+run "flask db migrate -m "ticket_no_description" 
+OR
+run "python manage.py db migrate -m "ticket_no_description"
+
+//wait for it to generate xyz_ticket_no_description.py in Migrations folder
+// check on the auto generated migration script verify/edit changes as required
+run "flask db upgrade" to apply changes 
+
+run "flask db downgrade" to rollback the latest changes
+
