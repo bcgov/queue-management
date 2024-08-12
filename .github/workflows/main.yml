@@ -42,7 +42,7 @@ jobs:
         echo ENVIRONMENT:$ENVIRONMENT
         echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
-        IMAGE_TAG=pr${{ github.event.number }}
+        IMAGE_TAG=${{ github.event.pull_request.number }}
         echo IMAGE_TAG:$IMAGE_TAG
         echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
