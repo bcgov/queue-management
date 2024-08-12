@@ -17,7 +17,7 @@ Designed for use in an application platform buld for containers specifically Ope
 
 ## Features
 
-Designed to accomodate multiple locations.  
+Designed to accomodate multiple locations..  
 Designed for both reception based offices and direct counter offices.
 
 Additional features for Reception offices:
