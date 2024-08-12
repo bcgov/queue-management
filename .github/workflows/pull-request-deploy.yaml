@@ -1,5 +1,7 @@
 name: Pull Request Deploy
 on:
+  pull_request:
+  push:
   workflow_dispatch:
     inputs:
       pr-number:
