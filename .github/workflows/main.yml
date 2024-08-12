@@ -73,7 +73,7 @@ jobs:
 
   ##### TEST ###################################################################
 
-  appointment-frontend-cypress:
+appointment-frontend-cypress:
     name: Appointment Frontend Cypress
     needs: parse-inputs
     uses: ./.github/workflows/tyu-reusable-appointment-frontend-cypress.yaml
