@@ -20,10 +20,12 @@ on:
 jobs:
 
   ##### SETUP ##################################################################
-
-  parse-inputs:
+  
+    parse-inputs:
     name: refs/pull/$${{ github.event.number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
+    env:
+        PR_NUMBER: ${{ github.event.number }}
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
