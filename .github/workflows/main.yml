@@ -1,4 +1,4 @@
-name: Pull Request Deploy
+name: Pull Request Deployauto
 on:
   pull_request:
   push:
@@ -28,7 +28,7 @@ jobs:
     outputs:
       environment: ${{ github.event.inputs.pr-number }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
-      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-qms: ${{ github.event.number }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
 
