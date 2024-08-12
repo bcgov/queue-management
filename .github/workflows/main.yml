@@ -22,7 +22,7 @@ jobs:
 
   ##### SETUP ##################################################################
 
-  parse-inputs:
+  parse-inpuuts:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
