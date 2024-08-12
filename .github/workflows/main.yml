@@ -24,11 +24,9 @@ jobs:
 
   parse-inputs:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
-    env: 
-        prnumber: ${{ github.event.inputs.pr-number }}
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ steps.parse.outputs.environment }}
+      environment: ${{ github.event.inputs.pr-number }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
       push-qms: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
