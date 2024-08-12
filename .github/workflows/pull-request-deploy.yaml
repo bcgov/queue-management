@@ -22,7 +22,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
@@ -64,7 +64,7 @@ jobs:
         echo PUSH_THEQ:$PUSH_THEQ
         echo "push-theq=$PUSH_THEQ" >> $GITHUB_OUTPUT
 
-        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
+        REF=refs/pull/${{ github.event.pull_request.number }}/head
         echo REF:$REF
         echo "ref=$REF" >> $GITHUB_OUTPUT
     
