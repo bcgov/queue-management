@@ -342,7 +342,7 @@ export default class AddExamModal extends Vue {
       return
     case 'pesticide':
       this.resetModal()
-      const expiry = moment().add(60, 'd')
+      const expiry = moment().add(90, 'd')
       this.captureExamDetail({ key: 'expiry_date', value: expiry })
       return
     default:
