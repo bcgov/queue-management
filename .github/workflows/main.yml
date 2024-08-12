@@ -22,13 +22,13 @@ jobs:
 
   ##### SETUP ##################################################################
 
-  parse-inpuuts:
+  parse-inputs:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ github.event.inputs.pr-number }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
-      push-qms: ${{ github.event.number }}
+      push-qmsssssss: ${{ github.event.number }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
 
