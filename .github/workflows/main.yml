@@ -22,7 +22,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
