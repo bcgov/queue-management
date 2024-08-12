@@ -32,6 +32,9 @@ jobs:
       ref: ${{ steps.parse.outputs.ref }}
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
     # Use the input values to create more coding-friendly values.
     - name: Parse Inputs
       id: parse
