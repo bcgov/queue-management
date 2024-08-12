@@ -1,4 +1,4 @@
-name: Pull Request Deploy
+name: Pull Request Deploy auto
 on:
   pull_request:
   push:
