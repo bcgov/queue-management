@@ -1,4 +1,4 @@
-name: Pull Request Deployauto
+name: Pull Request Deploy
 on:
   pull_request:
   push:
@@ -19,16 +19,15 @@ on:
 
 jobs:
 
-
   ##### SETUP ##################################################################
 
   parse-inputs:
     name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ github.event.inputs.pr-number }}
+      environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
-      push-qmsssssss: ${{ github.event.number }}
+      push-qmssssss: ${{ steps.parse.outputs.push-qms }}
       push-theq: ${{ steps.parse.outputs.push-theq }}
       ref: ${{ steps.parse.outputs.ref }}
 
