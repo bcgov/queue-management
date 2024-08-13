@@ -242,7 +242,7 @@ jobs:
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_TEST || secrets.SA_PASSWORD_THEQ_DEV ) }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST  ) }}
     with:
       image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
