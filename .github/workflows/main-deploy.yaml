@@ -22,11 +22,21 @@ jobs:
       keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
       keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
 
+  queue-management-frontend-cypress:
+    name: Queue Management Frontend Cypress
+    uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
+    secrets:
+      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
+      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
+      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
+      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+
   ##### BUILD ##################################################################
 
   appointment-frontend:
     name: appointment-frontend
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -48,7 +58,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -67,7 +77,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -86,7 +96,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -108,7 +118,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -130,7 +140,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: appointment-frontend-cypress
+    needs: appointment-frontend-cypress, queue-management-frontend-cypress
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
