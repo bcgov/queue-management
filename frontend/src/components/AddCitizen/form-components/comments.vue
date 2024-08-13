@@ -8,7 +8,7 @@
     <b-form-row no-gutters></b-form-row>
     <b-form-row no-gutters>
       <b-col cols="auto">
-        <label class="add_citizen_form_label">Comments:</label>
+        <label class="add_citizen_form_label" for="add_citizen_comment_textarea">Comments:</label>
       </b-col>
       <b-col>
         <b-textarea
