@@ -21,7 +21,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ THE Q DEV }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
@@ -36,7 +36,7 @@ jobs:
       id: parse
       run: |
         # Gets "dev" or "test".
-        ENVIRONMENT=$(echo ${{ The Q Dev }} | \
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | \
             awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
         echo ENVIRONMENT:$ENVIRONMENT
         echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
@@ -49,7 +49,7 @@ jobs:
           # Never push in forks - useful and safer for development.
           PUSH_QMS=false
           PUSH_THEQ=false
-        elif [[ "The Q Dev" == QMS* ]]; then
+        elif [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
           PUSH_QMS=true
           PUSH_THEQ=false
         else
