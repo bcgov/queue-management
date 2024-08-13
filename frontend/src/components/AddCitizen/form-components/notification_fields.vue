@@ -3,10 +3,11 @@
     <b-form-row no-gutters></b-form-row>
     <b-form-row no-gutters>
       <b-col cols="auto">
-        <label class="add_citizen_form_label">Notification:</label>
+        <label for="notification" class="add_citizen_form_label">Notification:</label>
       </b-col>
       <b-col>
         <b-form-input
+          id="notification"
           v-model="notificationPhone"
           type="tel"
           placeholder="Phone Number : (xxx) xxx-xxxx"
@@ -18,6 +19,7 @@
       </b-col>
       <b-col>
         <b-form-input
+          id="notification"
           v-model="notificationEmail"
           type="email"
           placeholder="Email Address"

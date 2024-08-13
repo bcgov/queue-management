@@ -66,17 +66,18 @@
           <!--  The Search label and input box.  -->
           <b-input-group>
             <b-input-group-prepend>
-              <label class="mx-1 pt-3 ml-2 my-auto label-text">Search</label>
+              <label for="search-input" class="mx-1 pt-3 ml-2 my-auto label-text">Search</label>
             </b-input-group-prepend>
-            <b-input size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
+            <b-input id="search-input" size="sm" class="mb-1 mt-3" v-model="searchTerm"></b-input>
           </b-input-group>
 
           <!--  The filters label, and the Office filter.  -->
           <b-input-group class="ml-3">
             <b-input-group-prepend>
-              <label class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
+              <label for="office-filter" class="mx-1 pt-3 mr-2 my-auto label-text">Filters:</label>
             </b-input-group-prepend>
             <b-dd
+              id="office-filter"
               v-if="is_pesticide_designate || is_ita2_designate"
               split
               size="sm"

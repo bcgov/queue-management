@@ -2,7 +2,7 @@
   <div class="add_citizen_form mt-1" v-if="$route.path !== '/appointments'">
     <b-form-row no-gutters>
       <b-col cols="auto">
-        <label class="add_citizen_form_label">Channel:</label>
+        <label class="add_citizen_form_label" for="add_citizen_channels_select">Channel:</label>
       </b-col>
       <b-col>
         <b-select
