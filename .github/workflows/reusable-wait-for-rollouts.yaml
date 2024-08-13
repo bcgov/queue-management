@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Log in to OpenShift ${{ inputs.tag-to }}
+    - name: Log in to OpenShift ${{ dev }}
       uses: redhat-actions/oc-login@v1
       with:
-        namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
+        namespace: ${{ secrets.licence-plate }}-${{ dev }}
         openshift_server_url: ${{ secrets.openshift-api }}
         openshift_token: ${{ secrets.token }}
 
@@ -50,5 +50,5 @@ jobs:
         }
 
         for image in ${{ inputs.image-names }}; do
-          wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
+          wait_for_rollout ${{ secrets.licence-plate }}-${{ dev }} $image
         done
