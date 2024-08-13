@@ -155,14 +155,13 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label for="blackout-date">Blackout Date:</label>
+                <label for="appointment_blackout_date">Blackout Date:</label>
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
                 <DatePicker
-                  id="blackout-date"
                   v-model="blackout_date"
                   id="appointment_blackout_date"
                   type="date"
