@@ -254,7 +254,7 @@ jobs:
   # Only run Newman for The Q dev - other environments will fail due to data.
   newman-theq-dev:
     name: Newman Tests
-    if: The Q Dev == 'The Q Dev'
+    if: github.event.inputs.namespace != 'The Q Dev'
     needs: [parse-inputs, wait-for-rollouts]
     runs-on: ubuntu-latest
 
