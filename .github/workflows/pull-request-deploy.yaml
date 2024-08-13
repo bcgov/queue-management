@@ -21,7 +21,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.pull_request.number }}/head to The Q Dev
+    name: refs/pull/${{ github.event.pull_request.number }}/head to echo 'The Q Dev'
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
