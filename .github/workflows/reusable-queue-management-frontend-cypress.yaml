@@ -1,0 +1,113 @@
+name: Queue Management Frontend Cypress
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: false
+        type: string
+        default: main
+    secrets:
+      cypress-project-id:
+        required: false
+      cypress-record-key:
+        required: false
+      keycloak-auth-url:
+        required: false
+      keycloak-client:
+        required: false
+      keycloak-realm:
+        required: false
+
+jobs:
+  cypress:
+    name: Cypress
+    runs-on: ubuntu-latest
+    environment:
+      name: The Q Dev
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.11.1' 
+
+      - name: Configuration Files
+        run: |
+          
+          mkdir -p frontend/public/static/keycloak
+          mkdir -p frontend/public/config
+          echo "Checking directory existence..."
+          if [ -d "frontend/public/config/" ]; then 
+            echo "Directory exists."
+          else
+            echo "Error: Directory does not exist."
+            exit 1
+          fi
+
+          cat << EOF > frontend/public/config/configuration.json
+          {
+            "VUE_APP_API_URL": "http://localhost:5000/api/v1",
+            "VUE_APP_SOCKET_URL" : "http://localhost:5000",
+            "BPM_URL": "https://dev-sbc-ffa-bpm.apps.silver.devops.gov.bc.ca/camunda",
+            "FORM_IO_USER_ROLES": "formsflow-reviewer",
+            "FORM_IO_API_URL": "https://dev-sbc-ffa-forms.apps.silver.devops.gov.bc.ca",
+            "FORM_IO_RESOURCE_ID": "6078c70bdb2a9c357e91ba44",
+            "FORM_IO_REVIEWER_ID": "6078c79cdb2a9c5ce791ba51",
+            "FORM_IO_REVIEWER": "formsflow-reviewer",
+            "FORM_FLOW_API_URL" : "https://dev-sbc-ffa-api.apps.silver.devops.gov.bc.ca",
+            "FORM_FLOW_URL" : "https://dev-sbc-serviceflow.apps.silver.devops.gov.bc.ca",
+            "SERVICEFLOW_ENABLED": false,
+            "WEBSOCKET_ENCRYPT_KEY": "123455",
+            "SOCKET_TIMEOUT": 30000,
+            "SOCKET_DELAY_MAX" : 3000,
+            "FORMIO_JWT_SECRET": "12345"
+          }
+          EOF
+
+          cat << EOF > frontend/public/static/keycloak/keycloak.json
+          {
+            "auth-server-url": "${{ secrets.keycloak-auth-url }}",
+            "confidential-port": 0,
+            "public-client": true,
+            "realm": "${{ secrets.keycloak-realm }}",
+            "resource": "${{ secrets.keycloak-client }}",
+            "ssl-required": "external"
+          }
+          EOF
+
+      - name: Load Configuration JSON
+        id: load_config
+        run: |
+          echo "Loading environment variables from configuration.json"
+          # Extract variables from configuration.json and export them
+          export $(jq -r 'to_entries | .[] | "\(.key)=\(.value)"' frontend/public/config/configuration.json)
+          # Save variables to $GITHUB_ENV
+          echo "VUE_APP_API_URL=${VUE_APP_API_URL}" >> $GITHUB_ENV
+          echo "VUE_APP_SOCKET_URL=${VUE_APP_SOCKET_URL}" >> $GITHUB_ENV
+
+      - name: Cypress Run
+        uses: cypress-io/github-action@v2
+        env:
+          CYPRESS_PROJECT_ID: ${{ secrets.cypress-project-id }}
+          CYPRESS_RECORD_KEY: ${{ secrets.cypress-record-key }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VUE_APP_PATH: /
+        with:
+          config-file: cypress.config.ts
+          record: true
+          start: npm run serve -- --port 8080
+          wait-on: http://localhost:8080
+          working-directory: frontend
+
+      - name: On Failure Upload Screenshot Artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: queue-management-frontend-cypress
+          path: |
+            frontend/cypress/screenshots
+            frontend/cypress/snapshots/image_snapshot/*/__diff_output__
