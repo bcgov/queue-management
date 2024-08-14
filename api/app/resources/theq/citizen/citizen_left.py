@@ -18,7 +18,7 @@ from qsystem import api, api_call_with_retry, db, socketio, my_print
 from app.models.theq import Citizen, CSR, CitizenState, ServiceReq, Period, Service, Office
 from app.schemas.theq import CitizenSchema, ServiceReqSchema
 from app.models.theq import SRState
-from datetime import datetime
+from datetime import datetime, timezone
 from app.utilities.snowplow import SnowPlow
 import os
 from app.utilities.auth_util import Role, get_username
@@ -84,7 +84,7 @@ class CitizenLeft(Resource):
 
             for p in service_request.periods:
                 if p.time_end is None:
-                    p.time_end = datetime.utcnow()
+                    p.time_end = datetime.now(timezone.utc)
 
             #  Make snowplow calls to finish any stopped services
             if service_request.sr_id != active_sr:
