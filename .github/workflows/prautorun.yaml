@@ -11,7 +11,7 @@ on:
         description: "Deploy To:"
         type: choice
         required: true
-        default: The Q Dev
+        value: The Q Dev
 
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
