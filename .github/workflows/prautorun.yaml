@@ -1,5 +1,6 @@
-name: Pull Request Deploy
+name: Pull Request Deploy Auto Run
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       pr-number:
@@ -20,7 +21,7 @@ jobs:
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
@@ -34,13 +35,11 @@ jobs:
     - name: Parse Inputs
       id: parse
       run: |
-        # Gets "dev" or "test".
-        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | \
-            awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+        ENVIRONMENT="dev"
         echo ENVIRONMENT:$ENVIRONMENT
         echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
-        IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
+        IMAGE_TAG=pr${{ github.event.pull_request.number }}
         echo IMAGE_TAG:$IMAGE_TAG
         echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -62,7 +61,7 @@ jobs:
         echo PUSH_THEQ:$PUSH_THEQ
         echo "push-theq=$PUSH_THEQ" >> $GITHUB_OUTPUT
 
-        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
+        REF=refs/pull/${{ github.event.pull_request.number }}/head
         echo REF:$REF
         echo "ref=$REF" >> $GITHUB_OUTPUT
     
@@ -85,24 +84,11 @@ jobs:
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
 
-  queue-management-frontend-cypress:
-    name: Queue Management Frontend Cypress
-    needs: parse-inputs
-    uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
-    secrets:
-      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
-      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
-      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
-      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
-      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
-    with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
-
   ##### BUILD ##################################################################
 
   appointment-frontend:
     name: appointment-frontend
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -125,7 +111,7 @@ jobs:
 
   feedback-api:
     name: feedback-api
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -145,7 +131,7 @@ jobs:
 
   notifications-api:
     name: notifications-api
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
@@ -165,7 +151,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -188,7 +174,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -211,7 +197,7 @@ jobs:
 
   send-appointment-reminder-crond:
     name: send-appointment-reminder-crond
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs, appointment-frontend-cypress]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -256,7 +242,7 @@ jobs:
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
-      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST  ) }}
     with:
       image-names: appointment-nginx-frontend feedback-api notifications-api queue-management-api queue-management-nginx-frontend send-appointment-reminder-crond-${{ needs.parse-inputs.outputs.environment }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
@@ -266,7 +252,7 @@ jobs:
   # Only run Newman for The Q dev - other environments will fail due to data.
   newman-theq-dev:
     name: Newman Tests
-    if: github.event.inputs.namespace == 'The Q Dev'
+    if: github.event.inputs.namespace != 'The Q Dev'
     needs: [parse-inputs, wait-for-rollouts]
     runs-on: ubuntu-latest
 

@@ -89,7 +89,7 @@
       <b-collapse id="collapse-event-selection">
         <b-card>
           <b-form-row class="mb-2">
-            <label>Step 1: Select Event Type</label>
+            <label for="event-selection">Step 1: Select Event Type</label>
           </b-form-row>
           <b-form-row>
             <b-col class="w-50 mb-1">
@@ -99,6 +99,7 @@
                 v-b-toggle.collapse-single-event
                 @click="setRecurring"
                 size="lg"
+                id="create-single-blackout"
               >
                 Create Single Blackout
               </b-button>
@@ -110,6 +111,7 @@
                 v-b-toggle.collapse-recurring-events
                 @click="setSingle"
                 size="lg"
+                id="create-recurring-blackout"
               >
                 Create Recurring Blackout
               </b-button>
@@ -123,6 +125,7 @@
                 size="lg"
                 v-b-toggle.collapse-recurring-stat
                 @click="setSTAT"
+                id="create-stat"
               >
                 Create STAT
               </b-button>
@@ -141,18 +144,18 @@
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>User Name</label><br />
-              <b-form-input v-model="this.user_name" disabled />
+              <label for="user-name">User Name</label><br />
+              <b-form-input id="user-name" v-model="this.user_name" disabled />
             </b-col>
             <b-col cols="6">
-              <label>Contact Information (optional)</label>
-              <b-form-input v-model="this.user_contact_info" />
+              <label for="contact-info">Contact Information (optional)</label>
+              <b-form-input id="contact-info" v-model="this.user_contact_info" />
             </b-col>
           </b-form-row>
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Date:</label>
+                <label for="appointment_blackout_date">Blackout Date:</label>
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
@@ -175,7 +178,7 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Start Time:</label>
+                <label for="appointment_blackout_start_time" >Blackout Start Time:</label>
                 <font-awesome-icon
                   v-if="this.start_time !== null"
                   icon="check"
@@ -200,7 +203,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout End Time:</label>
+                <label for="appointment_blackout_end_time">Blackout End Time:</label>
                 <font-awesome-icon
                   v-if="this.end_time !== null"
                   icon="check"
@@ -233,22 +236,22 @@
             <h4>Recurring Event</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-            <label style="font-weight: bold">Step 2: Event Information</label>
+            <label for="recurring-event-info" style="font-weight: bold">Step 2: Event Information</label>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>User Name:</label><br />
-              <b-form-input v-model="this.user_name" disabled />
+              <label for="user-name-recurring" >User Name:</label><br />
+              <b-form-input id="user-name-recurring" v-model="this.user_name" disabled />
             </b-col>
             <b-col cols="6">
-              <label>Contact Information (optional):</label>
-              <b-form-input v-model="this.user_contact_info" />
+              <label for="contact-info-recurring" >Contact Information (optional):</label>
+              <b-form-input id="contact-info-recurring" v-model="this.user_contact_info" />
             </b-col>
           </b-form-row>
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Start Time:</label>
+                <label for="recurring_blackout_start_time">Blackout Start Time:</label>
                 <font-awesome-icon
                   v-if="this.recurring_start_time !== null"
                   icon="check"
@@ -273,7 +276,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout End Time:</label>
+                <label for="recurring_blackout_end_time">Blackout End Time:</label>
                 <font-awesome-icon
                   v-if="this.recurring_end_time !== null"
                   icon="check"
@@ -300,7 +303,7 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Start Date:</label>
+                <label for="recurring_start_date">Blackout Start Date:</label>
                 <font-awesome-icon
                   v-if="this.recurring_start_date !== null"
                   icon="check"
@@ -321,7 +324,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout End Date:</label>
+                <label for="recurring_end_date">Blackout End Date:</label>
                 <font-awesome-icon
                   v-if="this.recurring_end_date !== null"
                   icon="check"
@@ -343,7 +346,8 @@
           </b-form-row>
           <b-form-row>
             <b-form-group class="mt-0 ml-1">
-              <label>Frequency:</label>
+              <fieldset>
+              <legend>Frequency:</legend>
               <font-awesome-icon
                 v-if="this.selected_frequency.length === 1"
                 icon="check"
@@ -362,10 +366,12 @@
                 <b-form-checkbox :value="weekly">Weekly</b-form-checkbox>
                 <b-form-checkbox :value="daily">Daily</b-form-checkbox>
               </b-form-checkbox-group>
+              </fieldset>
             </b-form-group>
           </b-form-row>
           <b-form-group>
-            <label>Select Weekdays:</label>
+            <fieldset>
+            <legend>Select Weekdays:</legend>
             <font-awesome-icon
               v-if="this.selected_weekdays.length >= 1"
               icon="check"
@@ -382,10 +388,11 @@
               <b-form-checkbox :value="thursday">Thurs.</b-form-checkbox>
               <b-form-checkbox :value="friday">Fri.</b-form-checkbox>
             </b-form-checkbox-group>
+            </fieldset>
           </b-form-group>
           <b-form-group>
             <b-form-row>
-              <label style="font-weight: bold" class="mt-0"
+              <label for="occurrences-input" style="font-weight: bold" class="mt-0"
                 >Number of Occurences(optional):
               </label>
               <span v-if="this.selected_count !== ''"
@@ -401,6 +408,7 @@
             <b-form-row>
               <b-col cols="6">
                 <b-form-input
+                  id="occurrences-input"
                   type="number"
                   class="mb-1 w-100"
                   v-model="selected_count"
@@ -417,21 +425,20 @@
             <h4>Recurring STAT</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-            <label style="font-weight: bold">Step 2: STAT Information</label>
+            <h5 style="font-weight: bold">Step 2: STAT Information</h5>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>User Name:</label><br />
-              <b-form-input v-model="this.stat_user_name" disabled />
+              <label for="stat_user_name">User Name:</label><br />
+              <b-form-input id="stat_user_name" v-model="this.stat_user_name" disabled />
             </b-col>
             <b-col cols="6">
-              <label>Contact Information (optional):</label>
-              <b-form-input v-model="this.user_contact_info" />
+              <label for="user_contact_info" >Contact Information (optional):</label>
+              <b-form-input id="user_contact_info" v-model="this.user_contact_info" />
             </b-col>
           </b-form-row>
           <b-form-row>
-              <b-form-group>
-                <label>STAT Date/s:</label>
+              <b-form-group label="STAT Date/s">
                 <div
                   v-for="(input, index) in stat_dates"
                   :key="`stat_dates-${index}`"
@@ -524,9 +531,9 @@
         <b-card class="mb-2">
           <b-card-body>
             <b-form-row class="mb-2">
-              <label stlye="font-weight: bold;" class="danger"
+              <p stlye="font-weight: bold;" class="text-danger"
               >Cannot blackout more that 1 year at Once.
-              </label
+              </p
               >
             </b-form-row>
           </b-card-body>
@@ -540,11 +547,11 @@
               <h4 v-else>Recurring STAT</h4>
             </b-form-row>
             <b-form-row class="mb-2">
-              <label stlye="font-weight: bold;"
-                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Dates</label
+              <p stlye="font-weight: bold;"
+                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Dates</p
               >
-              <label stlye="font-weight: bold;"
-                v-else>Step 2 (continued): Confirm Recurring STAT Dates</label
+              <p stlye="font-weight: bold;"
+                v-else>Step 2 (continued): Confirm Recurring STAT Dates</p
               >
             </b-form-row>
             <b-form-row>
@@ -618,15 +625,15 @@
             <h4 v-if="this.recurring_input_boolean">Recurring Event</h4>
           </b-form-row>
           <b-form-row>
-            <label
+            <p
               v-if="this.recurring_input_boolean"
               stlye="font-weight: bold;"
             >
               Step 3 (optional): Event Notes. <br />
-            </label>
-            <label v-if="this.single_input_boolean" stlye="font-weight: bold;">
+            </p>
+            <p v-if="this.single_input_boolean" stlye="font-weight: bold;">
               Step 2 (optional): Event Notes. <br />
-            </label>
+            </p>
             <font-awesome-icon
               v-if="this.notes !== ''"
               icon="check"

@@ -24,6 +24,7 @@ from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlalchemy_continuum import make_versioned
+from flask_migrate import Migrate
 
 
 def my_print(my_data):
@@ -46,6 +47,8 @@ def time_string():
     ms = now.strftime("%f")[:3]
     now_string = now.strftime("%Y-%m-%d %H:%M:%S,")
     return "[" + now_string + ms + "] "
+migrate = Migrate()
+
 
 application = Flask(__name__, instance_relative_config=True)
 
@@ -74,6 +77,7 @@ cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': applicati
 cache.init_app(application)
 
 ma = Marshmallow(application)
+migrate.init_app(application, db)
 
 make_versioned(user_cls=None, plugins=[])
 

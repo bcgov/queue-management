@@ -9,7 +9,7 @@
         <div style="display: flex; justify-content: flex-start">
           <div style="padding: 0; margin-top: auto; margin-left: 20px">
             <b-form inline>
-              <label class="mr-2">
+              <label for="search-input" class="mr-2">
                 Filter Exams
                 <font-awesome-icon
                   icon="filter"
@@ -19,6 +19,7 @@
               </label>
               <b-input-group>
                 <b-form-input
+                  id="search-input"
                   v-model="searchTerm"
                   size="sm"
                   @input="filter"

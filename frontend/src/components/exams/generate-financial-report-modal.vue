@@ -21,9 +21,10 @@
         </b-col>
       </b-row>
       <b-row class="my-1">
-        <b-col sm="4"><label>Start Date:</label></b-col>
+        <b-col sm="4"><label for="start-date-picker" >Start Date:</label></b-col>
         <b-col sm="5.5">
           <DatePicker
+            id="start-date-picker"
             v-model="startDate"
             input-class="form-control"
             class="w-100 less-10-mb"
@@ -32,9 +33,10 @@
         </b-col>
       </b-row>
       <b-row class="my-1">
-        <b-col sm="4"><label>End Date:</label></b-col>
+        <b-col sm="4"><label for="end-date-picker">End Date:</label></b-col>
         <b-col sm="5.5">
           <DatePicker
+            id="end-date-picker"
             v-model="endDate"
             input-class="form-control"
             class="w-100 less-10-mb"
@@ -43,7 +45,7 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col sm="4"><label>Exam Types:</label></b-col>
+        <b-col sm="4"><label for="exam_filter_types_wo_filter">Exam Types:</label></b-col>
         <b-col sm="5.5>">
           <b-form-group v-if="selectedExamFilter !== ''">
             <b-dropdown

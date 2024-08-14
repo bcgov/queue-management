@@ -8,7 +8,7 @@
             class="mb-2"
           >
             <b-form inline @submit.stop.prevent>
-              <label class="mr-2">
+              <label class="mr-2" for="search-input">
                 Filter Appointments
                 <font-awesome-icon
                   icon="filter"
@@ -18,6 +18,7 @@
               </label>
                 <b-input-group>
                   <b-form-input
+                    id="search-input"
                     v-model="searchTerm"
                     size="sm"
                     @input="filter"
