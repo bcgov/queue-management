@@ -11,15 +11,17 @@ on:
         description: "Deploy To:"
         type: choice
         required: true
-        value: The Q Dev
-
+        options:
+        - The Q Dev
+        - QMS Dev
+        - The Q Test
 
 jobs:
 
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.pull_request.number }}/head to ${{ github.event.inputs.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
@@ -74,7 +76,7 @@ jobs:
       bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
       bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
       bceid-username: ${{ secrets.CYPRESS_BCEID_USERNAME }}
-      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+      cypress-project-id: irceax
       cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
       keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
       keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
