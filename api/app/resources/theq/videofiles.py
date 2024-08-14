@@ -22,7 +22,7 @@ import re
 from os.path import isfile, join
 from datetime import datetime, timezone
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
