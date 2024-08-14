@@ -11,20 +11,16 @@ on:
         description: "Deploy To:"
         type: choice
         required: true
-        options:
-        - The Q Dev
-        - QMS Dev
-        - The Q Test
+        default: The Q Dev
+
 
 jobs:
 
   ##### SETUP ##################################################################
 
   parse-inputs:
-    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ env.namespace }}
+    name: refs/pull/${{ github.event.pull_request.number }}/head to echo ${{ github.event.inputs.namespace }}
     runs-on: ubuntu-latest
-    env:
-    namespace: "The Q dev"  # Set the namespace here
     outputs:
       environment: ${{ steps.parse.outputs.environment }}
       image-tag: ${{ steps.parse.outputs.image-tag }}
