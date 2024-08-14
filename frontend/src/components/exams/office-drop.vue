@@ -3,7 +3,7 @@
     <b-col :cols="columnW">
       <b-form autocomplete="off">
         <b-form-group>
-          <label class="my-0"
+          <label for="office_name" class="my-0"
             >Office
             <span v-if="!error"> {{ msg }} </span>
             <span v-if="error" style="color: red"> {{ msg }} </span>
@@ -38,7 +38,7 @@
     <b-col :cols="columnW == 8 ? 4 : 2">
       <b-form>
         <b-form-group>
-          <label class="my-0">Office #</label>
+          <label for="office_number" class="my-0">Office #</label>
           <b-form-input
             id="office_number"
             type="text"

@@ -24,7 +24,7 @@ limitations under the License.*/
       <div></div>
     </div>
     <b-form inline @submit.stop.prevent>
-              <label class="mr-2">
+              <label for="search-input" class="mr-2">
                 Filter Appointments
                 <font-awesome-icon
                   icon="filter"
@@ -34,6 +34,7 @@ limitations under the License.*/
               </label>
                 <b-input-group>
                   <b-form-input
+                    id="search-input"
                     v-model="searchTerm"
                     size="sm"
                     @input="filter"
