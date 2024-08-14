@@ -64,7 +64,7 @@ begin
   /*  If the table doesn't exist, create it.  */
   if not exists_archive then
     CREATE TABLE archive (archive_id   serial primary key,
-                          table_name   character varying NOT NULL,
+                          table_name   character varying(255) NOT NULL,
                           archive_date timestamptz NOT NULL,
 	  					  id_min       integer NOT NULL,
 		  				  id_max       integer NOT NULL,
