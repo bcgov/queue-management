@@ -98,6 +98,6 @@ wheel==0.41.2
 wrapt==1.12.1
 wsproto==1.2.0
 WTForms==3.0.0
-zipp==3.18.1
+zipp==3.19.1
 zope.event==5.0
 zope.interface==6.3
