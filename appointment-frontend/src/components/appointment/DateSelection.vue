@@ -123,6 +123,7 @@ export default class DateSelection extends Mixins(StepperMixin) {
      } else if (this.selectedDateObj) {
        return CommonUtils.getTzFormattedDate(new Date(this.selectedDateObj), Intl.DateTimeFormat().resolvedOptions().timeZone, 'MMM dd, yyyy')
      }
+     return CommonUtils.getTzFormattedDate(new Date(), Intl.DateTimeFormat().resolvedOptions().timeZone, 'MMM dd, yyyy')
    }
 
    private get selectedTimeSlot () {

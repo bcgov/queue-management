@@ -32,7 +32,7 @@ services:
         VARIANT: '0.201.2-3.8'
 
         # Node.js version to install
-        NODE_VERSION: '14.17.5'
+        NODE_VERSION: '20.11.1'
 
       context: '..'
 
