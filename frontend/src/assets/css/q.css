@@ -264,3 +264,7 @@ input#app_timepicker_id {
   position: unset;
   left: unset;
 }
+.warning-container {
+  background-color: rgb(252, 186, 25);
+  padding: 5px;
+}

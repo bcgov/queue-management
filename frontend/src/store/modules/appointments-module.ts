@@ -55,6 +55,7 @@ export default {
     submitClicked: false,
     draftAppointment: {},
     toggleAppCalenderView: false,
+    selected_office_id: null, // selected in the appointment page and reset based on the office_id each time we load appointment page
 
   },
   getters: {
@@ -143,6 +144,12 @@ export default {
     },
     getApiTotalCount (state) {
       return state.apiCallTotal
+    },
+    getSelectedOfficeId (state) {
+      return state.selected_office_id
+    },
+    getSelectedOffice(state, getters, rootState) {
+      return rootState.offices.filter(p=>p.office_id == state.selected_office_id)[0]
     }
   },
   actions: {
@@ -153,8 +160,9 @@ export default {
 
     deleteAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
+      const office_id = state.appointmentsModule.selected_office_id
       return new Promise<void>((resolve, reject) => {
-        Axios({ state }).delete(`/appointments/${payload}/`).then(() => {
+        Axios({ state }).delete(`/appointments/${payload}/?office_id=${office_id}`).then(() => {
           dispatch('getAppointments').then(() => {
             resolve()
           })
@@ -185,10 +193,11 @@ export default {
     },
 
     getAppointments ({ commit, rootState }) {
-      const state = rootState
       let output = []
+      const state = rootState
+      const office_id = state.appointmentsModule.selected_office_id
       return new Promise((resolve, reject) => {
-        Axios({ state }).get('/appointments/').then(resp => {
+        Axios({ state }).get(`/appointments/?office_id=${office_id}`).then(resp => {
           const appts = resp.data.appointments
           if (appts.length > 0) {
             output = appts.filter(ap => !ap.checked_in_time)
@@ -234,7 +243,7 @@ export default {
 
     postAppointment ({ rootState }, payload) {
       const state = rootState
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       payload.appointment_draft_id = 1
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/', payload).then(resp => {
@@ -245,7 +254,7 @@ export default {
 
     async createAxioObject ({ rootState }, payload) {
       const state = rootState
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       payload.appointment_draft_id = 1
       return Axios({ state }).post('/appointments/', payload)
     },
@@ -269,7 +278,7 @@ export default {
         checked_in_time: moment.utc().format(),
         appointment_id: payload.appointment_id,
         service_id: payload.service_id,
-        citizen_name: payload.title
+        citizen_name: payload.title 
       }
       if (!payload.hasOwnProperty('start_time'))
       {
@@ -314,6 +323,7 @@ export default {
     putAppointment ({ dispatch, rootState }, payload) {
       const state = rootState
       const { id } = payload
+      payload.data.office_id = state.appointmentsModule.selected_office_id
       return new Promise<void>((resolve, reject) => {
         Axios({ state }).put(`/appointments/${id}/`, payload.data).then(resp => {
           dispatch('getAppointments')
@@ -399,7 +409,7 @@ export default {
     async postDraftAppointment ({ rootState, commit }, payload) {
       const state = rootState
       // draftAppointments
-      payload.office_id = rootState.user.office_id
+      payload.office_id = state.appointmentsModule.selected_office_id
       return new Promise((resolve, reject) => {
         Axios({ state }).post('/appointments/draft', payload).then(resp => {
           commit('setDraftAppointments', resp.data)
@@ -426,13 +436,14 @@ export default {
       const { appointment, action = 'create' } = data
 
       const currentAppointment = state.appointments
+      const office_id = rootState.appointmentsModule.selected_office_id
       let output: any = currentAppointment
       if (action === 'create') {
-        if (appointment.office_id === rootState.user.office_id) {
+        if (appointment.office_id === office_id) {
           output = [...currentAppointment, appointment]
         }
       } else if (action === 'update') {
-        if (appointment.office_id === rootState.user.office_id) {
+        if (appointment.office_id === office_id) {
           const currentApp = currentAppointment.filter(app => {
             return app.appointment_id !== appointment.appointment_id
           })
@@ -446,11 +457,13 @@ export default {
       }
       commit('setAppointments', output)
     }
-
   },
   mutations: {
     setEditedStatus: (state, payload) => state.editing = payload,
     setAppointments: (state, payload) => state.appointments = payload,
+    setAppointmentsOfficeId: (state, payload) => {
+      state.selected_office_id = payload;
+    },
     setCalendarSetup: (state, payload) => {
       const { title, name, titleRef } = payload
       state.calendarSetup = { title, name, titleRef }
