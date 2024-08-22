@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 import logging, pytz
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import request, g
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, application
@@ -161,8 +161,8 @@ class WalkinDetail(Resource):
         if office:
             office_id = office.office_id
         if office_id:  
-            past_hour = datetime.utcnow() - timedelta(minutes=15)
-            future_hour = datetime.utcnow() + timedelta(minutes=15)
+            past_hour = datetime.now(timezone.utc) - timedelta(minutes=15)
+            future_hour = datetime.now(timezone.utc) + timedelta(minutes=15)
             local_past = pytz.utc.localize(past_hour)
             local_future = pytz.utc.localize(future_hour)
             # getting agenda panel app
@@ -304,7 +304,7 @@ class SendLineReminderWalkin(Resource):
                     if citizen.reminder_flag == 1:
                         flag_value = 2
                     citizen.reminder_flag = flag_value
-                    citizen.notification_sent_time = datetime.utcnow()
+                    citizen.notification_sent_time = datetime.now(timezone.utc)
         return citizen
                 
     
@@ -323,7 +323,7 @@ class SendLineReminderWalkin(Resource):
                     if citizen.reminder_flag == 1:
                         flag_value = 2
                     citizen.reminder_flag = flag_value
-                    citizen.notification_sent_time = datetime.utcnow()
+                    citizen.notification_sent_time = datetime.now(timezone.utc)
         return citizen
 
 @api.route("/smardboard/Q-details/waiting/<string:id>", methods=["GET"])

@@ -148,7 +148,7 @@ class Appointment(Base):
     def find_expired_drafts(cls):
         """Find all is_draft appointments created over expiration cutoff ago."""
         EXPIRATION_CUTOFF = timedelta(minutes=15)
-        expiry_limit = datetime.utcnow().replace(tzinfo=timezone.utc) - EXPIRATION_CUTOFF
+        expiry_limit = datetime.now(timezone.utc).replace(tzinfo=timezone.utc) - EXPIRATION_CUTOFF
 
         query = db.session.query(Appointment). \
             filter(Appointment.is_draft.is_(True)). \
