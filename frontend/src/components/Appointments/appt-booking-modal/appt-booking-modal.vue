@@ -121,7 +121,7 @@
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
-            <label for="app_timepicker_id"  class="mb-0">Select Time</label><br />
+            <label for="app_timepicker_id" v-if="allow_time_edit" class="mb-0">Select Time</label><br />
             <vue-timepicker
                 v-if="allow_time_edit"
                 id="app_timepicker_id"
