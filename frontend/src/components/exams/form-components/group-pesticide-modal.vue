@@ -26,8 +26,9 @@
         <div style="display: flex; justify-content: start">
           <div class="w-50">
             <b-form-group>
-              <label class="my-0 p-0 pl-1">First Name</label>
+              <label for="firstName" class="my-0 p-0 pl-1">First Name</label>
               <b-input
+                id="firstName"
                 size="sm"
                 autocomplete="off"
                 ref="first-name-input"
@@ -38,8 +39,9 @@
           </div>
           <div class="w-50">
             <b-form-group>
-              <label class="my-0 p-0">Last Name</label>
+              <label for="lastName" class="my-0 p-0">Last Name</label>
               <b-input
+                id="lastName"
                 size="sm"
                 autocomplete="off"
                 v-model="lastName"
@@ -53,16 +55,17 @@
       <!--Email-->
       <b-col cols="3">
         <b-form-group>
-          <label class="my-0 p-0">Email</label>
-          <b-input size="sm" autocomplete="off" v-model="email" class="my-0" />
+          <label for="email_input" class="my-0 p-0">Email</label>
+          <b-input id="email_input" size="sm" autocomplete="off" v-model="email" class="my-0" />
         </b-form-group>
       </b-col>
 
       <!--Fees-->
       <b-col :cols="fees === 'paid' ? 1 : 2">
         <b-form-group>
-          <label class="my-0 p-0">Fees</label>
+          <label for="fees_select" class="my-0 p-0">Fees</label>
           <select
+            id="fees_select"
             type="select"
             size="sm"
             autocomplete="off"
@@ -79,16 +82,17 @@
       <!--Receipt-->
       <b-col v-if="fees === 'paid'">
         <b-form-group>
-          <label class="my-0 p-0">Receipt</label>
-          <b-input size="sm" v-model="receipt" class="my-0" />
+          <label for="receipt_input" class="my-0 p-0">Receipt</label>
+          <b-input id="receipt_input" size="sm" v-model="receipt" class="my-0" />
         </b-form-group>
       </b-col>
 
       <!--Bill To-->
       <b-col :cols="fees === 'paid' ? '' : 2">
         <b-form-group>
-          <label class="my-0 p-0">Bill To</label>
+          <label for="bill_to_select" class="my-0 p-0">Bill To</label>
           <b-form-select
+            id="bill_to_select"
             size="sm"
             style="min-height: 30px"
             v-model="billTo"
@@ -105,14 +109,14 @@
       <b-col cols="6" />
       <b-col cols="3">
         <b-form-group>
-          <label class="my-0 p-0">Payee Name</label>
-          <b-input size="sm" v-model="payeeName" />
+          <label for="payee_name_input" class="my-0 p-0">Payee Name</label>
+          <b-input id="payee_name_input" size="sm" v-model="payeeName" />
         </b-form-group>
       </b-col>
       <b-col cols="3">
         <b-form-group>
-          <label class="my-0 p-0">Payee Email</label>
-          <b-input size="sm" v-model="payeeEmail" />
+          <label for="payee_email_input" class="my-0 p-0">Payee Email</label>
+          <b-input id="payee_email_input" size="sm" v-model="payeeEmail" />
         </b-form-group>
       </b-col>
     </b-row>
