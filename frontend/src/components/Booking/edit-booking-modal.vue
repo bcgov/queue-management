@@ -33,7 +33,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label>
+                <label for="contact_information">Contact Information (Email or Phone Number)</label>
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
@@ -52,7 +52,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>STAT Notes</label><br />
+                <label for="blackout_notes">STAT Notes</label><br />
                 <b-input v-if="is_Support"
                   id="blackout_notes"
                   v-model="blackout_notes"
@@ -74,35 +74,35 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Room</label>
-                <b-input readonly :value="resource.name" />
+                <label for="name">Room</label>
+                <b-input id="name" readonly :value="resource.name" />
               </b-form-group>
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Date</label>
-                <b-input readonly :value="displayDates.date" />
+                <label for="data">Date</label>
+                <b-input id="date" readonly :value="displayDates.date" />
               </b-form-group>
             </b-col>
           </b-form-row>
           <b-form-row v-if="!edit_recurring">
             <b-col class="w-100">
               <b-form-group>
-                <label>Start Time</label><br />
-                <b-input type="text" readonly :value="displayDates.start" />
+                <label for="start-date">Start Time</label><br />
+                <b-input id="start_date" type="text" readonly :value="displayDates.start" />
               </b-form-group>
             </b-col>
             <b-col class="w-100">
               <b-form-group>
-                <label>End Time</label><br />
-                <b-input type="text" readonly :value="displayDates.end" />
+                <label for="end_time">End Time</label><br />
+                <b-input id="end_time" type="text" readonly :value="displayDates.end" />
               </b-form-group>
             </b-col>
           </b-form-row>
           <b-form-row class="mt-0" v-if="is_Support">
             <b-col>
               <b-form-group>
-                <label>Delete STAT?</label><br />
+                <p> for="delete_stat" Delete STAT?</p><br />
                 <b-btn class="w-100 btn-danger" @click="confirm = true"
                   >Delete this STAT</b-btn
                 >
@@ -113,7 +113,7 @@
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
-                  <label>Delete All STAT Series?</label>
+                  <p>Delete All STAT Series?</p>
                   <b-button
                     class="w-100 btn-danger"
                     @click="toggleConfirmStatDeleteRecurringCollapse"
@@ -128,7 +128,7 @@
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
-                  <label>Delete All STAT Series from this Office?</label>
+                  <p>Delete All STAT Series from this Office?</p>
                   <b-button
                     class="w-100 btn-danger"
                     @click="toggleConfirmStatCurrOffDeleteRecurringCollapse"
@@ -142,8 +142,8 @@
           <b-collapse id="confirm_delete_recurring_stat_curroff_collapse"  v-if="is_Support">
             <b-form-row>
               <b-form-group>
-                <label
-                  >Are you sure you want to delete this STAT series from this Office?</label
+                <p
+                  >Are you sure you want to delete this STAT series from this Office?</p
                 ><br />
                 <b-row
                   style="
@@ -175,8 +175,8 @@
           <b-collapse id="confirm_delete_recurring_stat_collapse"  v-if="is_Support">
             <b-form-row>
               <b-form-group>
-                <label
-                  >Are you sure you want to delete this STAT series?</label
+                <p
+                  >Are you sure you want to delete this STAT series?</p
                 ><br />
                 <b-row
                   style="
@@ -257,7 +257,7 @@
           <b-form-row v-if="!examAssociated">
             <b-col>
               <b-form-group>
-                <label :style="{ color: labelColor }">Scheduling Party</label
+                <label for="title" :style="{ color: labelColor }">Scheduling Party</label
                 ><br />
                 <b-input
                   :state="state"
@@ -270,7 +270,7 @@
             </b-col>
             <b-col cols="4">
               <b-form-group>
-                <label>Collect Fees</label><br />
+                <label for="fees">Collect Fees</label><br />
                 <b-select
                   id="fees"
                   v-model="fees"
@@ -283,7 +283,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label>
+                <label for="contact_information">Contact Information (Email or Phone Number)</label>
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
@@ -302,7 +302,7 @@
           <b-form-row>
             <b-col>
               <b-form-group v-if="checkBookingBlackout">
-                <label>Blackout Notes</label><br />
+                <label for="blackout_notes">Blackout Notes</label><br />
                 <b-form-textarea
                   id="blackout_notes"
                   v-model="blackout_notes"
@@ -317,33 +317,33 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Room</label>
-                <b-input readonly :value="resource.name" />
+                <label for="room">Room</label>
+                <b-input id="room" readonly :value="resource.name" />
               </b-form-group>
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Date</label>
-                <b-input readonly :value="displayDates.date" />
+                <label for="date">Date</label>
+                <b-input id="date" readonly :value="displayDates.date" />
               </b-form-group>
             </b-col>
           </b-form-row>
           <b-form-row v-if="!edit_recurring">
             <b-col class="w-100">
               <b-form-group>
-                <label>Start Time</label><br />
-                <b-input type="text" readonly :value="displayDates.start" />
+                <label for="start_date" >Start Time</label><br />
+                <b-input id="start_date" type="text" readonly :value="displayDates.start" />
               </b-form-group>
             </b-col>
             <b-col class="w-100">
               <b-form-group>
-                <label>End Time</label><br />
-                <b-input type="text" readonly :value="displayDates.end" />
+                <label for="end_date">End Time</label><br />
+                <b-input id="end_date" type="text" readonly :value="displayDates.end" />
               </b-form-group>
             </b-col>
             <b-col cols="5" v-if="examAssociated">
               <b-form-group>
-                <label>Invigilator</label><br />
+                <label for="invigilator">Invigilator</label><br />
                 <b-select
                   v-model="invigilator"
                   :options="invigilator_dropdown"
@@ -355,7 +355,7 @@
             </b-col>
             <b-col cols="5" v-if="!examAssociated">
               <b-form-group>
-                <label>Duration</label><br />
+                <p>Duration</p><br />
                 <b-button-group>
                   <b-button @click="decrement">
                     <font-awesome-icon
@@ -433,7 +433,7 @@
             </template>
             <b-collapse id="collapse-1" class="mt-2 w-100">
               <b-form-group class="q-info-display-grid-container">
-                <label>Shadow Invigilators</label>
+                <p>Shadow Invigilators</p>
                 <b-form>
                   <b-row>
                     <b-col cols="7">
@@ -528,7 +528,7 @@
           <b-form-row class="mt-0">
             <b-col>
               <b-form-group>
-                <label>Delete Booking?</label><br />
+                <p>Delete Booking?</p><br />
                 <b-btn class="w-100 btn-danger" @click="confirm = true"
                   >Delete Booking</b-btn
                 >
@@ -536,7 +536,7 @@
             </b-col>
             <b-col v-if="!this.edit_recurring">
               <b-form-group>
-                <label>Change Date, Time or Room?</label><br />
+                <p>Change Date, Time or Room?</p><br />
                 <b-btn class="w-100 mb-0" @click="reschedule">
                   Reschedule Booking
                 </b-btn>
@@ -548,7 +548,7 @@
             <b-form-row v-if="this.event.recurring_uuid">
               <b-col class="w-100">
                 <b-form-group>
-                  <label>Delete Booking Series?</label>
+                  <p>Delete Booking Series?</p>
                   <b-button
                     class="w-100 btn-danger"
                     @click="toggleConfirmDeleteRecurringCollapse"
@@ -558,8 +558,8 @@
                 </b-form-group>
               </b-col>
               <b-col class="w-100">
-                <label>Edit Entire Series?</label>
-                <b-form-checkbox switch size="lg" @change="toggleEditRecurring">
+                <label for="edit_series">Edit Entire Series?</label>
+                <b-form-checkbox id="edit_series" switch size="lg" @change="toggleEditRecurring">
                   <span v-if="this.edit_recurring" style="font-size: 0.75em"
                     >Editing entire series.</span
                   >
@@ -573,8 +573,8 @@
           <b-collapse id="confirm_delete_recurring_collapse">
             <b-form-row>
               <b-form-group>
-                <label
-                  >Are you sure you want to delete this booking series?</label
+                <p
+                  >Are you sure you want to delete this booking series?</p
                 ><br />
                 <b-row
                   style="

@@ -123,7 +123,7 @@
       <b-collapse id="collapse-booking-event-selection">
         <b-card>
           <b-form-row class="mb-2">
-            <label>Step 1: Select Event Type</label>
+            <p>Step 1: Select Event Type</p>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col class="w-50">
@@ -171,22 +171,22 @@
             <h4>Single Event</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-            <label style="font-weight: bold">Step 2: Event Information</label>
+            <p style="font-weight: bold">Step 2: Event Information</p>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>Booking Name</label><br />
-              <b-form-input v-model="this.blackout_name" disabled />
+              <label for="booking_name">Booking Name</label><br />
+              <b-form-input id="booking_name" v-model="this.blackout_name" disabled />
             </b-col>
             <b-col cols="6">
-              <label>Contact Information (optional)</label>
-              <b-form-input v-model="this.user_contact_info" />
+              <label for="contact_info">Contact Information (optional)</label>
+              <b-form-input id="contact_info" v-model="this.user_contact_info" />
             </b-col>
           </b-form-row>
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Date</label>
+                <label for="appointment_blackout_date">Blackout Date</label>
                 <font-awesome-icon
                   v-if="this.blackout_date !== null"
                   icon="check"
@@ -210,7 +210,7 @@
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout Start Time</label>
+                <label for="appointment_blackout_start_time">Blackout Start Time</label>
                 <font-awesome-icon
                   v-if="this.start_time !== null"
                   v-model="this.start_time"
@@ -237,7 +237,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label>Blackout End Time</label>
+                <label for="appointment_blackout_end_time">Blackout End Time</label>
                 <font-awesome-icon
                   v-if="this.end_time !== null"
                   icon="check"
@@ -272,21 +272,21 @@
             <h4>Recurring STAT</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-            <label style="font-weight: bold">Step 2: STAT Information</label>
+            <p style="font-weight: bold">Step 2: STAT Information</p>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>Booking Name</label><br />
-              <b-form-input v-model="this.stat_user_name" disabled />
+              <label for="booking_name_2">Booking Name</label><br />
+              <b-form-input id="booking_name_2" v-model="this.stat_user_name" disabled />
             </b-col>
             <b-col cols="6">
-              <label>Contact Information (optional)</label>
-              <b-form-input v-model="this.user_contact_info" />
+              <label for="contact_info_2">Contact Information (optional)</label>
+              <b-form-input id="contact_info_2" v-model="this.user_contact_info" />
             </b-col>
           </b-form-row>
           <b-form-row>
               <b-form-group>
-                <label>STAT Date/s:</label>
+                <label for="appointment_stat_date">STAT Date/s:</label>
                 <div
                   v-for="(input, index) in stat_dates"
                   :key="`stat_dates-${index}`"
@@ -381,21 +381,21 @@
               <h4>Recurring Event</h4>
             </b-form-row>
             <b-form-row class="mb-2">
-              <label>Step 2: Event Information</label>
+              <p>Step 2: Event Information</p>
             </b-form-row>
             <b-form-row class="mb-2">
               <b-col cols="6">
-                <label>Booking Name</label><br />
-                <b-form-input v-model="this.blackout_name" disabled />
+                <label for="booking_name_3">Booking Name</label><br />
+                <b-form-input id="booking_name_3" v-model="this.blackout_name" disabled />
               </b-col>
               <b-col cols="6">
-                <label>Contact Information (optional)</label>
-                <b-form-input v-model="this.user_contact_info" />
+                <label for="contact_info_3">Contact Information (optional)</label>
+                <b-form-input id="contact_info_3" v-model="this.user_contact_info" />
               </b-col>
             </b-form-row>
             <b-form-row class="mb-2">
               <b-col cols="6">
-                <label>Blackout Start Time</label>
+                <label for="recurring_blackout_start_time">Blackout Start Time</label>
                 <font-awesome-icon
                   v-if="this.recurring_booking_start_time !== null"
                   v-model="this.recurring_booking_start_time"
@@ -420,7 +420,7 @@
                   <span class="danger" v-if="reccuring_start_time_msg">{{reccuring_start_time_msg}}</span>
               </b-col>
               <b-col cols="6">
-                <label>Blackout End Time</label>
+                <label for="recurring_blackout_end_time">Blackout End Time</label>
                 <font-awesome-icon
                   v-if="this.recurring_booking_end_time !== null"
                   icon="check"
@@ -446,7 +446,7 @@
             </b-form-row>
             <b-form-row class="mb-2">
               <b-col cols="6">
-                <label>Blackout Start Date</label>
+                <label for="recurring_booking_start_date">Blackout Start Date</label>
                 <font-awesome-icon
                   v-if="this.recurring_booking_start_date !== null"
                   icon="check"
@@ -465,7 +465,7 @@
                 </DatePicker>
               </b-col>
               <b-col cols="6">
-                <label>Blackout End Date</label>
+                <label for="recurring_booking_end_date">Blackout End Date</label>
                 <font-awesome-icon
                   v-if="this.recurring_booking_end_date !== null"
                   icon="check"
@@ -485,7 +485,7 @@
             </b-form-row>
             <b-form-row>
               <b-form-group class="mt-0 mb-0">
-                <label>Frequency</label>
+                <p>Frequency</p>
                 <font-awesome-icon
                   v-if="this.selected_booking_frequency.length === 1"
                   icon="check"
@@ -496,7 +496,7 @@
                   icon="exclamation-triangle"
                   style="font-size: 1rem; color: #ffc32b"
                 />
-                <label v-if="this.selected_booking_frequency.length > 1"
+                <label for="frequency-checkboxes" v-if="this.selected_booking_frequency.length > 1"
                   >Select one frequency</label
                 >
                 <b-form-checkbox-group
@@ -511,7 +511,7 @@
             </b-form-row>
             <b-form-row>
               <b-form-group class="mt-2">
-                <label>Select Weekdays</label>
+                <label for="weekday-checkboxes">Select Weekdays</label>
                 <font-awesome-icon
                   v-if="this.selected_booking_weekdays.length >= 1"
                   icon="check"
@@ -531,8 +531,8 @@
               </b-form-group>
             </b-form-row>
             <b-form-row>
-              <label stlye="font-weight: bold" class="mt-0"
-                >Number of Occurences (optional):</label
+              <p stlye="font-weight: bold" class="mt-0"
+                >Number of Occurences (optional):</p
               >
               <span v-if="this.selected_booking_count !== ''"
                 >&nbsp; Limited to
@@ -563,11 +563,11 @@
             <h4 v-else>Recurring STAT</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-              <label stlye="font-weight: bold;"
-                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Information</label
+              <p stlye="font-weight: bold;"
+                v-if="!is_stat">Step 2 (continued): Confirm Recurring Event Information</p
               >
-              <label stlye="font-weight: bold;"
-                v-else>Step 2 (continued): Confirm Recurring STAT Dates</label
+              <p stlye="font-weight: bold;"
+                v-else>Step 2 (continued): Confirm Recurring STAT Dates</p
               >
             </b-form-row>
           <b-form-row>
@@ -634,9 +634,9 @@
         <b-card class="mb-2">
           <b-card-body>
             <b-form-row class="mb-2">
-              <label stlye="font-weight: bold;" class="danger"
+              <p stlye="font-weight: bold;" class="danger"
               >Cannot blackout more that 1 year at Once.
-              </label
+              </p
               >
             </b-form-row>
           </b-card-body>
@@ -653,22 +653,22 @@
             </h4>
           </b-form-row>
           <b-form-row>
-            <label
+            <p
               v-if="this.recurring_form_state === 'room_selection'"
               style="font-weight: bold"
             >
               Step 3: Room Selection
-            </label>
-            <label
+            </p>
+            <p
               v-if="this.single_form_state === 'room_selection'"
               style="font-weight: bold"
             >
               Step 2: Room Selection
-            </label>
+            </p>
           </b-form-row>
           <b-form-row class="mb-1">
             <b-col class="mr-2">
-              <label>Select Room(s)</label>
+              <h4>Select Room(s)</h4>
               <b-table
                 selectable
                 select-mode="multi"
@@ -695,7 +695,7 @@
             </b-col>
             <b-col>
               <b-row>
-                <label>Selected Room(s)</label>
+                <h4>Selected Room(s)</h4>
               </b-row>
               <b-row
                 v-for="room in selected"
@@ -738,10 +738,10 @@
           </b-form-row>
           <b-form-row>
             <b-form-group class="ml-1" style="width: 465px">
-              <label v-if="this.single_form_state === 'notes'"
+              <label for="appointment_blackout_notes" v-if="this.single_form_state === 'notes'"
                 >Step 3: Blackout Notes (optional)</label
               >
-              <label v-if="this.recurring_form_state === 'notes'"
+              <label for="appointment_blackout_notes" v-if="this.recurring_form_state === 'notes'"
                 >Step 4: Blackout Notes (optional)</label
               >
               <font-awesome-icon
