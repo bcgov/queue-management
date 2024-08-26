@@ -26,7 +26,7 @@ export default (on: any, config: any) => {
         let bceidLogin: BceidLogin | null = null;
         const maxRetries = 3;
         let attempt = 0;
-        while (true) {
+        while (attempt < maxRetries) {
           try {
             bceidLogin = new BceidLogin()
             await bceidLogin.init()
