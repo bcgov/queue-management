@@ -18,7 +18,10 @@ from flask import request, g
 import shutil
 
 import os
+import re
 from os.path import isfile, join
+from datetime import datetime, timezone
+from pathlib import Path
 from datetime import datetime, timezone
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
@@ -168,6 +171,18 @@ class VideoFileSelf(Resource):
 @api.route("/videofiles/", methods=["DELETE"])
 class VideoFiles(Resource):
 
+    # Sanitize the filename by removing path components, restricting allowed characters, and enforcing .mp4 extension.
+    @staticmethod
+    def sanitize_filename(filename):    
+        filename = os.path.basename(filename)
+        if not re.match(r'^[\w\-.]+$', filename):
+            return None, {'message': 'Invalid filename format.'}, 400
+        
+        if not filename.endswith('.mp4'):
+            return None, {'message': 'Only .mp4 files are allowed.'}, 400
+        
+        return filename, None, 200
+    
     @jwt.has_one_of_roles([Role.internal_user.value])
     def delete(self):
 
@@ -177,9 +192,15 @@ class VideoFiles(Resource):
         if 'name' not in json_data:
             return {'message': 'No name key received in DELETE /videofiles/'}, 400
 
+        # sanitation
+        sanitized_name, error, status = self.sanitize_filename(json_data['name'])
+        if error:
+            return error, status
+        
         #  Try to delete the file.
         video_path = application.config['VIDEO_PATH']
-        constructed_path = os.path.join(video_path, json_data['name'])
+        constructed_path = os.path.join(video_path, sanitized_name)
+
 
         try:
             delete_name = os.path.realpath(constructed_path)
