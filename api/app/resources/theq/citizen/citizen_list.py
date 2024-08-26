@@ -20,7 +20,7 @@ from app.models.theq import Citizen, CSR, CitizenState, Period, ServiceReq, citi
 from marshmallow import ValidationError
 from app.schemas.theq import CitizenSchema
 from sqlalchemy import exc
-from datetime import datetime
+from datetime import datetime, timezone
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import Role, get_username, has_role
 from app.auth.auth import jwt
@@ -82,7 +82,7 @@ class CitizenList(Resource):
                 json_data = {}
             citizen = self.citizen_schema.load(json_data)
             citizen.office_id = csr.office_id
-            citizen.start_time = datetime.utcnow()
+            citizen.start_time = datetime.now(timezone.utc)
             citizen.start_position = citizens_waiting + 1
 
         except ValidationError as err:
