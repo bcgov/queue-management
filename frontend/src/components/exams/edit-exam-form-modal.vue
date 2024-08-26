@@ -101,7 +101,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label  for="examinee_email" class="my-0">Candidate's Email</label>
+                <label for="examinee_email" class="my-0">Candidate's Email</label>
                 <b-form-input
                   id="examinee_email"
                   class="less-10-mb"
