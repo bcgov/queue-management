@@ -21,7 +21,7 @@
           <b-form-row v-if="!challengerExam">
             <b-col>
               <b-form-group>
-                <label>Contact Information (Email or Phone Number)</label>
+                <label for="contact_information">Contact Information (Email or Phone Number)</label>
                 <font-awesome-icon
                   v-if="this.booking_contact_information !== ''"
                   icon="check"
@@ -43,16 +43,18 @@
           <b-form-row>
             <b-col cols="12">
               <b-form-group v-if="individualExamInd">
-                <label>Invigilator Selection Options</label>
+                <label for="invigilator_select_individual">Invigilator Selection Options</label>
                 <b-select
+                  id="invigilator_select_individual"
                   :options="invigilatorIndividualOptions"
                   v-model="selectedOption"
                   @input="handleSelect"
                 />
               </b-form-group>
               <b-form-group v-else>
-                <label>Invigilator Selection Options</label>
+                <label for="invigilator_select_group">Invigilator Selection Options</label>
                 <b-select
+                  id="invigilator_select_group"
                   :options="invigilatorGroupOptions"
                   v-model="selectedOption"
                   @input="handleSelect"
@@ -63,7 +65,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label>Notes</label><br />
+                <label for="booking_notes">Notes</label><br />
                 <textarea
                   :rows="2"
                   id="booking_notes"

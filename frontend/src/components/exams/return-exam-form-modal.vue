@@ -60,7 +60,7 @@
       <b-form-row>
         <b-col :cols="returned ? 3 : 12">
           <b-form-group class="mb-0">
-            <label class="mb-0">Exam Status</label><br />
+            <label for="exam-returned-select" class="mb-0">Exam Status</label><br />
             <b-select
               id="exam-returned-select"
               v-model="returned"
@@ -72,7 +72,7 @@
         <template v-if="returned">
           <b-col cols="3">
             <b-form-group class="mb-0">
-              <label class="mb-0">Written?</label><br />
+              <label for="exam-written-select" class="mb-0">Written?</label><br />
               <b-form-select
                 id="exam-written-select"
                 v-model="exam_written_ind"
@@ -83,8 +83,9 @@
           </b-col>
           <b-col>
             <b-form-group class="mb-0">
-              <label class="mb-0">Date of Return</label><br />
+              <label for="exam_returned_date" class="mb-0">Date of Return</label><br />
               <DatePicker
+                id="exam_returned_date"
                 v-model="exam_returned_date"
                 class="w-100"
                 input-class="form-control"
@@ -98,7 +99,7 @@
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
-              <label v-if="!errorText" class="mb-0"
+              <label for="action_taken" v-if="!errorText" class="mb-0"
                 >Action Taken
                 <span
                   v-if="
@@ -108,7 +109,7 @@
                   >Required Field</span
                 >
               </label>
-              <label v-if="errorText" style="color: red" class="mb-0"
+              <label for="action_taken"  v-if="errorText" style="color: red" class="mb-0"
                 >Maximum field length reached. Use Notes field if needed.</label
               >
               <br />
@@ -128,7 +129,7 @@
         <b-form-row>
           <b-col>
             <b-form-group class="mb-0 mt-2">
-              <label class="mb-0">Notes</label><br />
+              <label for="notes" class="mb-0">Notes</label><br />
               <b-input v-model="notes" id="notes" :rows="2" />
             </b-form-group>
           </b-col>

@@ -140,7 +140,7 @@
             <h4>Single Event</h4>
           </b-form-row>
           <b-form-row class="mb-2">
-            <label stlye="font-weight: bold;">Step 2: Event Information</label>
+            <h2 stlye="font-weight: bold;">Step 2: Event Information</h2>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
