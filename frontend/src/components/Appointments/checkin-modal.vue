@@ -14,7 +14,7 @@
       <b-form-row>
         <b-col>
           <b-form-group  class="mb-0 mt-2">
-            <label class="mb-0 no-edit">You cannot edit or delete draft appointments.</label>
+            <p class="mb-0 no-edit">You cannot edit or delete draft appointments.</p>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -31,7 +31,7 @@
       <b-form-row>
         <b-col>
           <b-form-group v-if="(isNotBlackoutFlag) && (!checkRecurringStatStatus)" class="mb-0 mt-2">
-            <label class="mb-0">Citizen Has Arrived?</label><br />
+            <p class="mb-0">Citizen Has Arrived?</p><br />
             <b-button class="w-100 btn-success" @click="checkIn">
               Check-In
             </b-button>
@@ -41,7 +41,7 @@
       <b-form-row v-if="!checkRecurringStatStatus">
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Edit or Cancel Appointment?</label><br />
+            <p class="mb-0">Edit or Cancel Appointment?</p><br />
             <b-button class="w-100 btn-secondary" @click="editAppt">
               Edit Appointment
             </b-button>
@@ -51,7 +51,7 @@
       <b-form-row v-if="checkRecurringStatus">
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Edit or Cancel Recurring Series?</label><br />
+            <p class="mb-0">Edit or Cancel Recurring Series?</p><br />
             <b-button class="w-100 btn-secondary" @click="editSeries">
               Edit Recurring Series
             </b-button>
@@ -61,8 +61,8 @@
       <b-form-row v-if="checkRecurringStatStatus">
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label v-if="is_Support" class="mb-0">Edit or Cancel Recurring STAT Series?</label>
-            <label v-else class="mb-0">View STAT?</label>
+            <span v-if="is_Support" class="mb-0">Edit or Cancel Recurring STAT Series?</span>
+            <span v-else class="mb-0">View STAT?</span>
             <br />
             <b-button class="w-100 btn-secondary" @click="editStatSeries">
               <span v-if="is_Support" >

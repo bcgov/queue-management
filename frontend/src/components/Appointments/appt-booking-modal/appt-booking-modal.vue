@@ -59,15 +59,15 @@
       <b-form-row>
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Citizen Name</label><br />
-            <b-form-input v-if="isNotBlackoutFlag" v-model="citizen_name" />
-            <b-form-input v-else v-model="citizen_name" readonly />
+            <label for="citizenName" class="mb-0">Citizen Name</label><br />
+            <b-form-input id="citizenName" v-if="isNotBlackoutFlag" v-model="citizen_name" />
+            <b-form-input id="citizenName" v-else v-model="citizen_name" readonly />
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Send Confirmation</label><br />
-            <b-form-input
+            <label for="contactInformation" class="mb-0">Send Confirmation</label><br />
+            <b-form-input id="contactInformation"
               v-if="isNotBlackoutFlag"
               v-model="contact_information"
               class="contact"
@@ -83,8 +83,8 @@
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Time</label><br />
-            <b-form-input :value="displayStart" disabled />
+            <label for="timeInput" class="mb-0">Time</label><br />
+            <b-form-input id="timeInput" :value="displayStart" disabled />
             <b-button
                 v-show="allow_reschedule"
                 variant="primary"
@@ -100,8 +100,8 @@
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Date</label><br />
-            <b-form-input :value="displayDate" disabled />
+            <label for="dateInput" class="mb-0">Date</label><br />
+            <b-form-input id="dateInput" :value="displayDate" disabled />
             <b-button
                 v-show="allow_reschedule"
                 variant="primary"
@@ -121,7 +121,7 @@
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
-            <label v-if="allow_time_edit" class="mb-0">Select Time</label><br />
+            <label for="app_timepicker_id" v-if="allow_time_edit" class="mb-0">Select Time</label><br />
             <vue-timepicker
                 v-if="allow_time_edit"
                 id="app_timepicker_id"
@@ -141,8 +141,9 @@
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
-            <label v-if="allow_date_edit" class="mb-0">Select Date</label><br />
+            <label for="app_datepicker_id" v-if="allow_date_edit" class="mb-0">Select Date</label><br />
             <DatePicker
+              id="app_datepicker_id"
               v-if="allow_date_edit"
               v-model="app_start_date"
               type="date"
@@ -160,7 +161,7 @@
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
-            <label class="mb-0">Service Required by Citizen</label><br />
+            <label for="serviceInput"  class="mb-0">Service Required by Citizen</label><br />
             <div style="width: 100%; display: flex">
               <b-input-group>
                 <b-input-group-prepend>
@@ -183,6 +184,7 @@
                   </b-button-group>
                 </b-input-group-prepend>
                 <b-form-input
+                  id="serviceInput" 
                   disabled
                   :state="validated.selectedService"
                   :value="service_name"
@@ -197,19 +199,19 @@
       <b-form-row>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag" class="mb-0 mt-2">
-            <label class="mb-0">Length</label><br />
-            <b-select v-model="selectLength" :options="lengthOptions" @input="serviceTime"/>
+            <label for="lengthSelect" class="mb-0">Length</label><br />
+            <b-select id="lengthSelect" v-model="selectLength" :options="lengthOptions" @input="serviceTime"/>
           </b-form-group>
         </b-col>
         <b-col>
           <b-form-group v-if="isNotBlackoutFlag && allow_reschedule" class="mb-0 mt-2">
-            <label class="mb-0">Change Date/Time</label><br />
+            <p class="mb-0">Change Date/Time</p><br />
             <b-button @click="reschedule" class="btn-secondary w-100"
               >Reschedule</b-button
             >
           </b-form-group>
           <b-form-group v-if="isNotBlackoutFlag && !allow_reschedule" class="mb-0 mt-2">
-            <label class="mb-0">Change Date/Time</label><br />
+            <p class="mb-0">Change Date/Time</p><br />
             <span id="disabled-wrapper">
             <b-button disabled @click="reschedule" class="btn-secondary w-100"
               >Reschedule</b-button>
@@ -247,8 +249,8 @@
       <b-form-row>
         <b-col>
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Notes</label><br />
-            <b-textarea v-model="comments" maxlength="255" rows="2" />
+            <label for="notesTextarea" class="mb-0">Notes</label><br />
+            <b-textarea id="notesTextarea" v-model="comments" maxlength="255" rows="2" />
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -259,14 +261,14 @@
       <b-form-row>
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Citizen Name</label><br />
-            <b-form-input v-model="citizen_name" readonly />
+            <label for="citizenNameInput" class="mb-0">Citizen Name</label><br />
+            <b-form-input id="citizenNameInput" v-model="citizen_name" readonly />
           </b-form-group>
         </b-col>
         <b-col cols="6">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Contact Info</label><br />
-            <b-form-input v-model="contact_information" readonly />
+            <label for="contactInfoInput" class="mb-0">Contact Info</label><br />
+            <b-form-input id="contactInfoInput" v-model="contact_information" readonly />
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -276,23 +278,23 @@
       <b-form-row>
         <b-col cols="4">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Time</label><br />
-            <b-form-input :value="displayStart" disabled />
+            <label for="timeInput" class="mb-0">Time</label><br />
+            <b-form-input id="timeInput" :value="displayStart" disabled />
           </b-form-group>
         </b-col>
         <b-col cols="8">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Date</label><br />ee
-            <b-form-input :value="displayDate" disabled />
+            <label for="dateInput" class="mb-0">Date</label><br />ee
+            <b-form-input id="dateInput" :value="displayDate" disabled />
           </b-form-group>
         </b-col>
       </b-form-row>
       <b-form-row>
         <b-col >
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0">Note</label><br />
-            <b-form-input v-if="is_Support" v-model="comments" maxlength="255"/>
-            <b-form-input v-else :value="comments" disabled/>
+            <label for="noteInput" class="mb-0">Note</label><br />
+            <b-form-input id="noteInput" v-if="is_Support" v-model="comments" maxlength="255"/>
+            <b-form-input v-else id="noteInput" :value="comments" disabled/>
           </b-form-group>
         </b-col>
       </b-form-row>
@@ -303,8 +305,8 @@
         <!--  Column to delete blackout period or series (if a clicked appointment?) -->
         <b-col v-if="clickedAppt">
           <b-form-group class="mb-0 mt-2">
-            <label class="mb-0"
-              >Remove STAT</label
+            <div class="mb-0"
+              >Remove STAT</div
             >
             <br />
             <b-row>

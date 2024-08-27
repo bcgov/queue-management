@@ -20,7 +20,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="mb-0 mt-1">Exam Type</label>
+                <label for="exam_name" class="mb-0 mt-1">Exam Type</label>
                 <b-form-input
                   :value="exam.exam_name"
                   class="less-10-mb form-control"
@@ -31,7 +31,7 @@
               </b-form-group>
             </b-col>
             <b-col>
-              <label class="my-0">Retrieve Exam and Print</label>
+              <p class="my-0">Retrieve Exam and Print</p>
               <b-btn class="btn-success w-100" @click="checkAndDownloadExam()"
                 >Print</b-btn
               >
@@ -41,7 +41,7 @@
               :cols="this.exam_received ? '' : 3"
             >
               <b-form-group>
-                <label class="my-0">Exam Printed?</label>
+                <label for="exam_received" class="my-0">Exam Printed?</label>
                 <b-select
                   id="exam_received"
                   v-model="exam_received"
@@ -53,7 +53,7 @@
             </b-col>
             <b-col v-if="exam_received">
               <b-form-group>
-                <label class="my-0">Printed Date</label><br />
+                <label for="exam_received_date" class="my-0">Printed Date</label><br />
                 <DatePicker
                   :value="fields.exam_received_date"
                   @input="handleDate"
@@ -77,7 +77,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="my-0">Candidate's Name</label>
+                <label for="examinee_name" class="my-0">Candidate's Name</label>
                 <b-form-input
                   id="examinee_name"
                   class="less-10-mb"
@@ -88,7 +88,7 @@
             </b-col>
             <b-col>
               <b-form-group>
-                <label class="my-0">Telephone</label><br />
+                <label for="examinee_phone" class="my-0">Telephone</label><br />
                 <b-form-input
                   id="examinee_phone"
                   class="less-10-mb"
@@ -101,7 +101,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="my-0">Candidate's Email</label>
+                <label for="examinee_email" class="my-0">Candidate's Email</label>
                 <b-form-input
                   id="examinee_email"
                   class="less-10-mb"
@@ -114,15 +114,15 @@
           <b-form-row class="mt-2">
             <b-col>
               <b-form-group class="mb-0">
-                <label class="mb-0">Notes</label><br />
-                <b-textarea v-model="fields.notes" :maxlength="400" />
+                <label for="notes-textarea" class="mb-0">Notes</label><br />
+                <b-textarea id="notes-textarea" v-model="fields.notes" :maxlength="400" />
               </b-form-group>
             </b-col>
           </b-form-row>
           <b-form-row>
             <b-col cols="6">
               <b-form-group>
-                <label class="my-0">Event ID</label>
+                <label for="event_id" class="my-0">Event ID</label>
                 <b-form-input
                   id="event_id"
                   type="text"
@@ -133,7 +133,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-group>
-                <label class="my-0">Expiry Date</label><br />
+                <label for="exam_expiry" class="my-0">Expiry Date</label><br />
                 <DatePicker
                   v-model="fields.expiry_date"
                   lang="en"
@@ -157,8 +157,8 @@
           <b-form-row>
             <b-col :cols="feesOptions === 'collect' ? 12 : 5">
               <b-form-group
-                ><label class="my-0">Fees</label>
-                <b-form-select
+                ><label for="fees-select" class="my-0">Fees</label>
+                <b-form-select id="fees-select"
                   v-model="feesOptions"
                   :disabled="feesOptions === 'liaison'"
                 >
@@ -170,8 +170,8 @@
             </b-col>
             <b-col cols="7" v-if="feesOptions !== 'collect'">
               <b-form-group
-                ><label class="my-0">Receipt</label>
-                <b-input
+                ><label for="receipt-input" class="my-0">Receipt</label>
+                <b-input id="receipt-input"
                   :disabled="feesOptions === 'liaison'"
                   v-model="fields.receipt"
                 />
@@ -213,7 +213,7 @@
             <!-- The Event ID label and data colum -->
             <b-col cols="6">
               <b-form-group>
-                <label class="my-0">Event ID</label>
+                <label for="event_id" class="my-0">Event ID</label>
                 <b-form-input
                   id="event_id"
                   type="text"
@@ -226,7 +226,7 @@
             <!-- The Exam method label and data colum -->
             <b-col cols="6">
               <b-form-group>
-                <label class="my-0">Exam Method</label><br />
+                <label for="exam_method" class="my-0">Exam Method</label><br />
                 <b-select
                   id="exam_method"
                   class="less-10-mb"
@@ -242,9 +242,10 @@
             <b-col>
               <!-- If not a challenger exam, display the exam type -->
               <b-form-group v-if="!['challenger'].includes(examType)">
-                <label class="my-0">Exam Type</label><br />
+                <label for="exam-input" class="my-0">Exam Type</label><br />
                 <div>
                   <b-input
+                    id="exam-input"
                     :style="examInputStyle"
                     :value="examInputText"
                     class="less-15-mb"
@@ -289,7 +290,7 @@
 
               <!-- A Monthly Session (Challenger) exam  -->
               <b-form-group v-else>
-                <label class="mb-0 mt-1">Exam Type</label>
+                <label for="exam_name" class="mb-0 mt-1">Exam Type</label>
                 <b-form-input
                   :value="exam.exam_type.exam_type_name"
                   class="less-10-mb form-control"
@@ -306,8 +307,8 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label v-if="!lengthError" class="mb-0 mt-1">Exam Name</label>
-                <label v-if="lengthError" style="color: red" class="mb-0 mt-1"
+                <label for="exam_name" v-if="!lengthError" class="mb-0 mt-1">Exam Name</label>
+                <label  for="exam_name" v-if="lengthError" style="color: red" class="mb-0 mt-1"
                   >Maximum field length reached.</label
                 >
                 <b-form-input
@@ -330,7 +331,7 @@
               :cols="this.exam_received ? 3 : ''"
             >
               <b-form-group>
-                <label class="my-0">Exam Received?</label>
+                <label for="exam_received" class="my-0">Exam Received?</label>
                 <b-select
                   id="exam_received"
                   v-model="exam_received"
@@ -344,7 +345,7 @@
             <!--  The Exam received date and data column, if the exam has been received -->
             <b-col v-if="exam_received">
               <b-form-group>
-                <label class="my-0">Received Date</label><br />
+                <label for="exam_received_date" class="my-0">Received Date</label><br />
                 <DatePicker
                   :value="fields.exam_received_date"
                   @input="handleDate"
@@ -362,7 +363,7 @@
             <!-- If a group or Monthly Session (challenger) exam, display number of writers. -->
             <b-col v-if="examType === 'group' || examType === 'challenger'" col>
               <b-form-group>
-                <label class="my-0"># of Writers</label><br />
+                <label for="number_of_students" class="my-0"># of Writers</label><br />
                 <b-input
                   v-model="fields.number_of_students"
                   id="number_of_students"
@@ -373,7 +374,7 @@
             <!--  If an individual exam, display the expiry date  -->
             <b-col class="w-100" v-if="examType === 'individual'">
               <b-form-group>
-                <label class="my-0">Expiry Date</label><br />
+                <label for="exam_expiry" class="my-0">Expiry Date</label><br />
                 <DatePicker
                   v-model="fields.expiry_date"
                   lang="en"
@@ -400,7 +401,7 @@
           <b-form-row v-if="examType === 'individual' || examType === 'other'">
             <b-col>
               <b-form-group>
-                <label class="my-0">Candidate's Name</label>
+                <label for="examinee_name" class="my-0">Candidate's Name</label>
                 <b-form-input
                   id="examinee_name"
                   class="less-10-mb"
@@ -415,7 +416,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="my-0">Notes</label><br />
+                <label for="notes" class="my-0">Notes</label><br />
                 <b-textarea
                   id="notes"
                   v-model="fields.notes"
@@ -468,7 +469,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="my-0">Exam Received?</label>
+                <label for="exam_received" class="my-0">Exam Received?</label>
                 <b-select
                   id="exam_received"
                   class="less-10-mb"
@@ -481,7 +482,7 @@
 
             <b-col v-if="exam_received" cols="6">
               <b-form-group>
-                <label class="my-0">Date Received</label><br />
+                <label for="exam_received_date" class="my-0">Date Received</label><br />
                 <DatePicker
                   v-model="fields.exam_received_date"
                   id="exam_received_date"
@@ -499,7 +500,7 @@
           <b-form-row>
             <b-col>
               <b-form-group>
-                <label class="my-0">Notes</label><br />
+                <label for="notes" class="my-0">Notes</label><br />
                 <b-textarea
                   id="notes"
                   v-model="fields.notes"

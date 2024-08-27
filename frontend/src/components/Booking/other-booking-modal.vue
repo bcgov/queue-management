@@ -124,6 +124,7 @@
             <b-form autocomplete="off">
               <b-form-group>
                 <label
+                  for="message"
                   >Scheduling Party<span style="color: red">{{
                     message
                   }}</span></label
@@ -134,6 +135,7 @@
                   style="font-size: 1rem; color: green"
                 />
                 <b-input
+                  id = "message"
                   :state="state"
                   type="text"
                   v-model="title"
@@ -142,13 +144,14 @@
                 />
               </b-form-group>
               <b-form-group>
-                <label>Contact Information(Email or Phone Number)</label>
+                <label for='contact_info'>Contact Information(Email or Phone Number)</label>
                 <font-awesome-icon
                   v-if="this.contact_information !== ''"
                   icon="check"
                   style="font-size: 1rem; color: green"
                 />
                 <b-input
+                  id='contact_info'
                   :state="state"
                   type="text"
                   v-model="contact_information"
@@ -159,13 +162,14 @@
               <b-form-row>
                 <b-col cols="5">
                   <b-form-group>
-                    <label>Collect Fees</label>
+                    <label for='collect_fee'>Collect Fees</label>
                     <font-awesome-icon
                       v-if="this.fees !== ''"
                       icon="check"
                       style="font-size: 1rem; color: green"
                     />
                     <b-select
+                      for='collect_fee'
                       v-model="fees"
                       :options="feesOptions"
                       @input="checkSingleInput"
@@ -175,16 +179,17 @@
                 </b-col>
                 <b-col cols="7">
                   <b-form-group>
-                    <label>Room</label>
-                    <b-input readonly :value="resource.title" />
+                    <label for='room'>Room</label>
+                    <b-input id='room' readonly :value="resource.title" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
               <b-form-row>
                 <b-col>
                   <b-form-group>
-                    <label>Start Time</label><br />
+                    <label for='start_time' >Start Time</label><br />
                     <b-input
+                      id='start_time'
                       type="text"
                       readonly
                       :value="startTime.format('hh:mm a')"
@@ -193,8 +198,9 @@
                 </b-col>
                 <b-col>
                   <b-form-group>
-                    <label>End Time</label><br />
+                    <label for='end-time'>End Time</label><br />
                     <b-input
+                      id='end_time'
                       type="text"
                       readonly
                       :value="endTime.format('hh:mm a')"
@@ -203,8 +209,8 @@
                 </b-col>
                 <b-col cols="5">
                   <b-form-group>
-                    <label>Duration</label><br />
-                    <b-button-group>
+                    <label for='duration' >Duration</label><br />
+                    <b-button-group id='duration'>
                       <b-button @click="decrementDuration">
                         <font-awesome-icon
                           icon="minus"
@@ -243,13 +249,14 @@
           </b-form-row>
           <b-form-row class="mb-1">
             <b-col cols="6">
-              <label>Scheduling Party</label>
+              <label for='sheduling_party'>Scheduling Party</label>
               <font-awesome-icon
                 v-if="this.recurring_title !== ''"
                 icon="check"
                 style="font-size: 1rem; color: green"
               />
               <b-input
+                id='sheduling_party'
                 type="text"
                 v-model="recurring_title"
                 @input="checkRecurringInput"
@@ -258,13 +265,14 @@
               </b-input>
             </b-col>
             <b-col cols="6">
-              <label>Contact Information</label>
+              <label for='contact_information'>Contact Information</label>
               <font-awesome-icon
                 v-if="this.recurring_contact_information !== ''"
                 icon="check"
                 style="font-size: 1rem; color: green"
               />
               <b-input
+                id='contact_information'
                 type="text"
                 v-model="recurring_contact_information"
                 @input="checkRecurringInput"
@@ -275,13 +283,14 @@
           </b-form-row>
           <b-form-row class="mb-1">
             <b-col cols="6">
-              <label>Collect Fees</label>
+              <label for='collect_fees'>Collect Fees</label>
               <font-awesome-icon
                 v-if="this.recurring_fees !== ''"
                 icon="check"
                 style="font-size: 1rem; color: green"
               />
               <b-select
+                id='collect_fees'
                 v-model="recurring_fees"
                 :options="feesOptions"
                 @input="checkRecurringInput"
@@ -289,13 +298,13 @@
               />
             </b-col>
             <b-col cols="6">
-              <label>Room</label>
-              <b-input readonly :value="resource.title" />
+              <label for='room-2'>Room</label>
+              <b-input id='room-2' readonly :value="resource.title" />
             </b-col>
           </b-form-row>
           <b-form-row class="mb-2">
             <b-col cols="6">
-              <label>Booking Start Time</label>
+              <label for='other-recurring-start-time'>Booking Start Time</label>
               <font-awesome-icon
                 v-if="
                   this.other_recurring_start_time !== null ||
@@ -322,7 +331,7 @@
                 <span class="danger" v-if="start_time_msg">{{start_time_msg}}</span>
             </b-col>
             <b-col cols="6">
-              <label>Booking End Time</label>
+              <label for='other-recurring-end-time'>Booking End Time</label>
               <font-awesome-icon
                 v-if="this.other_recurring_end_time !== null"
                 icon="check"
@@ -349,7 +358,7 @@
           </b-form-row>
           <b-form-row>
             <b-col cols="6">
-              <label>Booking Start Date</label>
+              <label for="other_blackout_start_date">Booking Start Date</label>
               <font-awesome-icon
                 v-if="
                   this.other_recurring_start_date !== null ||
@@ -372,7 +381,7 @@
               </DatePicker>
             </b-col>
             <b-col cols="6">
-              <label>Booking End Date</label>
+              <label for="other_blackout_end_date">Booking End Date</label>
               <font-awesome-icon
                 v-if="this.other_recurring_end_date !== null"
                 icon="check"
@@ -404,7 +413,7 @@
                 icon="exclamation-triangle"
                 style="font-size: 1rem; color: #ffc32b"
               />
-              <label v-if="this.other_selected_frequency.length > 1"
+              <label for="other-frequency-checkboxes" v-if="this.other_selected_frequency.length > 1"
                 >Select one frequency</label
               >
               <b-form-checkbox-group
@@ -419,7 +428,7 @@
           </b-form-row>
           <b-form-row>
             <b-form-group class="ml-1">
-              <label>Select Weekdays</label>
+              <label for="weekday-checkboxes">Select Weekdays</label>
               <font-awesome-icon
                 v-if="this.other_selected_weekdays.length >= 1"
                 icon="check"
@@ -439,7 +448,7 @@
             </b-form-group>
           </b-form-row>
           <b-form-row>
-            <label>Number of Occurences (optional)</label>
+            <label for="occurrencesInput">Number of Occurences (optional)</label>
             <span v-if="this.other_selected_count !== ''"
               >&nbsp; Limited to
               {{ this.other_selected_count }} occurences.</span
@@ -453,6 +462,7 @@
           </b-form-row>
           <b-form-row>
             <b-form-input
+              id="occurrencesInput"
               type="number"
               class="mb-1 w-25"
               v-model="other_selected_count"
@@ -474,6 +484,7 @@
           <b-form-row>
             <b-col cols="12">
               <b-button
+                id="recurringInfo" 
                 variant="primary"
                 class="w-100 mb-2"
                 v-b-toggle.other-recurring-rule-collapse

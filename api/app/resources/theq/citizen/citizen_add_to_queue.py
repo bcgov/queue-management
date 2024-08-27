@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import request
 from pprint import pprint
 from flask_restx import Resource
@@ -99,7 +99,7 @@ class CitizenAddToQueue(Resource):
                     update_table = False
                 if update_table:
                     citizen.reminder_flag = 0
-                    citizen.notification_sent_time = datetime.utcnow()
+                    citizen.notification_sent_time = datetime.now(timezone.utc)
         except Exception as err:
             logging.error('{}'.format(str(err)))
             logging.exception(err)

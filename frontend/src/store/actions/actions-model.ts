@@ -757,9 +757,16 @@ export const commonActions: any = {
             resolve(resp)
           },
           error => {
+            let message
+            if(process.env.VUE_APP_API_URL === 'https://qms.sd.gov.bc.ca/api'){
+              message = 'You are not set up in QMS, please contact SDPR.QMSSupportTeam@gov.bc.ca to be set up.'
+            }
+            else{
+              message = 'You are not set up in The Q, please contact RMSHELP@gov.bc.ca to be set up.'
+            }
             context.commit(
               'setLoginAlert',
-              'You are not setup in TheQ, please contact RMSHelp to be setup.'
+              message
             )
             reject(error)
           }

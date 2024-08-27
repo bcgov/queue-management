@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import request
 from flask_restx import Resource
 from qsystem import api, api_call_with_retry, db, socketio, my_print
@@ -75,10 +75,10 @@ class CitizenDetail(Resource):
                     sms_sent = send_walkin_reminder_sms(citizen, office_obj, request.headers['Authorization'].replace('Bearer ', ''))
                     if (json_data.get('is_first_reminder', False)) and (sms_sent):
                         citizen.reminder_flag = 1
-                        citizen.notification_sent_time = datetime.utcnow()
+                        citizen.notification_sent_time = datetime.now(timezone.utc)
                     if (json_data.get('is_second_reminder', False)) and (sms_sent):
                         citizen.reminder_flag = 2
-                        citizen.notification_sent_time = datetime.utcnow()
+                        citizen.notification_sent_time = datetime.now(timezone.utc)
                 if (citizen.notification_email):
                     # code/function call to send first email notification,
                     email_sent = False
@@ -87,10 +87,10 @@ class CitizenDetail(Resource):
                         send_email(request.headers['Authorization'].replace('Bearer ', ''), *email_sent)
                     if (json_data.get('is_first_reminder', False)) and email_sent:
                         citizen.reminder_flag = 1
-                        citizen.notification_sent_time = datetime.utcnow()
+                        citizen.notification_sent_time = datetime.now(timezone.utc)
                     if (json_data.get('is_second_reminder', False)) and email_sent:
                         citizen.reminder_flag = 2
-                        citizen.notification_sent_time = datetime.utcnow()
+                        citizen.notification_sent_time = datetime.now(timezone.utc)
                     
             except ValidationError as err:
                 return {'message': err.messages}, 422
