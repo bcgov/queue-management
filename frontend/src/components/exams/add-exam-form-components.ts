@@ -7,6 +7,7 @@ import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import moment from 'moment'
 import { ModelListSelect } from "vue-search-select"
+import { throws } from 'assert'
 
 // Checkmark
 @Component({
@@ -195,32 +196,30 @@ export class DateQuestion extends Vue {
   },
   template: `
   <b-row no-gutters>
-    <b-row>
-      <b-col class="dropdown">
-        <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
-        <h5 v-if="addExamModal.setup === 'individual' ">Add Individual SkilledTradesBC Exam</h5>
-        <h5 v-if="addExamModal.setup === 'other' ">Add Non-SkilledTradesBC Exam</h5>
-        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
-      </b-col>
-      <b-col>
-        <label>Exam Type</label><br>
-        <div @click="clickInput" id="exam_type_dropdown">
-            <model-list-select
-            :list="dropItems"
-            v-model="objectItem"
-            option-value="exam_type_id"
-            option-text="exam_type_name"
-            @input="preHandleInput"
-            id="type.exam_type_id"
-            name="type.exam_type_id"
-            placeholder="click here to see options"
-          >
-          </model-list-select>
-        </div>
-        
-      </b-col>
-    </b-row
+  <b-row>
+    <b-col class="dropdown">
+      <h5 v-if="addExamModal.setup === 'group'">Add Group Exam</h5>
+      <h5 v-if="addExamModal.setup === 'individual'">Add Individual SkilledTradesBC Exam</h5>
+      <h5 v-if="addExamModal.setup === 'other'">Add Non-SkilledTradesBC Exam</h5>
+      <h5 v-if="addExamModal.setup === 'pesticide'">Add Environment Exam</h5>
+    </b-col>
+    <b-col>
+      <label>Exam Type</label><br>
+      <b-dropdown size="sm" split split-variant="primary" :text="displayText" class="m-md-2 dropdown-scrollable"   variant="info">
+        <b-dropdown-item
+          v-for="type in dropItems"
+          :key="type.exam_type_id"
+          @click="preHandleInput(type)"
+          class="custom-dropdown"
+        >
+          <p
+          :style="{backgroundColor: type.exam_color,  padding: '5px 10px'}"
+          >{{ type.exam_type_name }}</p>
+        </b-dropdown-item>
+      </b-dropdown>
+    </b-col>
   </b-row>
+</b-row>
 `
 })
 export class DropdownQuestion extends Vue {
@@ -253,7 +252,8 @@ export class DropdownQuestion extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
   @State('nonITAExam') private nonITAExam!: any
-  private objectItem:any  = {};
+  private objectItem:any = {};
+  private displayText : string = 'Select An Exam Type'
 
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
 
@@ -313,13 +313,6 @@ export class DropdownQuestion extends Vue {
     return ''
   }
 
-  get inputStyle () {
-    if (this.exam_object && this.exam_object.exam_type_name) {
-      return { backgroundColor: `${this.exam_object.exam_color}` }
-    }
-    return {}
-  }
-
   get dropclass () {
     if (!this.addExamModal.step1MenuOpen) {
       return 'dropdown-menu'
@@ -344,6 +337,7 @@ export class DropdownQuestion extends Vue {
         value: item.exam_type_id
       }
     })
+    this.displayText = item.exam_type_name
     console.log("CAPTURED EXAM", item.exam_type_id);
   }
 }
