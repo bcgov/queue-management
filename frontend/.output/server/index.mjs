@@ -5,6 +5,8 @@ import 'fs';
 import 'path';
 import 'node:fs';
 import 'node:url';
+import '@iconify/utils';
+import 'consola/core';
 import 'unified';
 import 'mdast-util-to-string';
 import 'micromark';

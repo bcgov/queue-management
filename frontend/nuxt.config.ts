@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     baseURL: '/',
   },
 
-  css: ['@/assets/css/main.scss'], // Global CSS
+  css: ['~/assets/css/main.scss'], // Global CSS
 
   vite: {
     optimizeDeps: {
@@ -30,17 +30,24 @@ export default defineNuxtConfig({
 
   buildModules: [
     '@nuxt/typescript-build', // TypeScript support
-    '@nuxtjs/tailwindcss', // Tailwind CSS
   ],
 
   modules: [
+    '@nuxt/ui', 
     '@nuxt/content',
+    '@pinia/nuxt',
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt', // Ensure this is correctly listed
+    '@nuxt/test-utils/module'
   ],
 
   build: {
-    transpile: ['@pinia', 'pinia'], // Ensure Pinia is transpiled correctly
+    transpile: ['@pinia', 'pinia'], 
+    postcss: {
+      plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+      },
+    },
   },
 
   nitro: {
@@ -49,15 +56,10 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    // Private keys are only available on the server
-    // apiSecret: '123',
-
-    // Public keys that are exposed to the client
     public: {
       VUE_APP_API_URL: process.env.VUE_APP_API_URL,
-
     },
   },
 
-  compatibilityDate: '2024-08-16', // Compatibility date for Nuxt presets
+  compatibilityDate: '2024-08-16', 
 });

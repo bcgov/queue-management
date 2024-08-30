@@ -1,39 +1,51 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'vue-bundle-renderer/runtime';
-import { u as useRuntimeConfig, e as eventHandler, s as setResponseHeader, a as send, g as getResponseStatus, b as setResponseStatus, c as useNitroApp, d as setResponseHeaders, j as joinRelativeURL, f as getQuery, h as createError, i as getRouteRules, k as getResponseStatusText } from '../runtime.mjs';
-import { stringify, uneval } from 'devalue';
-import { propsToString, renderSSRHead } from '@unhead/ssr';
-import { createServerHead as createServerHead$1, CapoPlugin } from 'unhead';
-import { version, unref } from 'vue';
-import { defineHeadPlugin } from '@unhead/shared';
-import 'node:http';
-import 'node:https';
-import 'fs';
-import 'path';
+import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'file:///root/repos/queue-management/frontend/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { eventHandler, setResponseHeader, send, getResponseStatus, setResponseStatus, setResponseHeaders, getQuery, createError, appendResponseHeader, getResponseStatusText } from 'file:///root/repos/queue-management/frontend/node_modules/h3/dist/index.mjs';
+import { stringify, uneval } from 'file:///root/repos/queue-management/frontend/node_modules/devalue/index.js';
+import { joinRelativeURL, joinURL, withoutTrailingSlash } from 'file:///root/repos/queue-management/frontend/node_modules/ufo/dist/index.mjs';
+import { propsToString, renderSSRHead } from 'file:///root/repos/queue-management/frontend/node_modules/@unhead/ssr/dist/index.mjs';
+import { u as useRuntimeConfig, a as useNitroApp, b as useStorage, g as getRouteRules } from '../runtime.mjs';
+import { createServerHead as createServerHead$1, CapoPlugin } from 'file:///root/repos/queue-management/frontend/node_modules/unhead/dist/index.mjs';
+import { version, unref } from 'file:///root/repos/queue-management/frontend/node_modules/vue/index.mjs';
+import { defineHeadPlugin } from 'file:///root/repos/queue-management/frontend/node_modules/@unhead/shared/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/ofetch/dist/node.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/destr/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unenv/runtime/fetch/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/hookable/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/klona/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/scule/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/defu/dist/defu.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/ohash/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unstorage/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unstorage/drivers/fs.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unstorage/drivers/fs-lite.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unstorage/drivers/lru-cache.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/radix3/dist/index.mjs';
 import 'node:fs';
 import 'node:url';
-import '@iconify/utils';
-import 'consola/core';
-import 'unified';
-import 'mdast-util-to-string';
-import 'micromark';
-import 'unist-util-stringify-position';
-import 'micromark-util-character';
-import 'micromark-util-chunked';
-import 'micromark-util-resolve-all';
-import 'micromark-util-sanitize-uri';
-import 'slugify';
-import 'remark-parse';
-import 'remark-rehype';
-import 'remark-mdc';
-import 'remark-emoji';
-import 'remark-gfm';
-import 'rehype-external-links';
-import 'rehype-sort-attribute-values';
-import 'rehype-sort-attributes';
-import 'rehype-raw';
-import 'detab';
-import 'hast-util-to-string';
-import 'github-slugger';
+import 'file:///root/repos/queue-management/frontend/node_modules/pathe/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/@iconify/utils/lib/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unenv/runtime/npm/consola.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/unified/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/mdast-util-to-string/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/micromark/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/unist-util-stringify-position/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/micromark-util-character/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/micromark-util-chunked/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/micromark-util-resolve-all/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/micromark-util-sanitize-uri/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/slugify/slugify.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/remark-parse/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/remark-rehype/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/remark-mdc/dist/index.mjs';
+import 'file:///root/repos/queue-management/frontend/node_modules/remark-emoji/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/remark-gfm/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/rehype-external-links/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/rehype-sort-attribute-values/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/rehype-sort-attributes/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/rehype-raw/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/detab/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/hast-util-to-string/index.js';
+import 'file:///root/repos/queue-management/frontend/node_modules/github-slugger/index.js';
 
 function defineRenderHandler(handler) {
   const runtimeConfig = useRuntimeConfig();
@@ -186,6 +198,9 @@ const getSPARenderer = lazyCachedFunction(async () => {
     renderToString
   };
 });
+const payloadCache = useStorage("internal:nuxt:prerender:payload") ;
+useStorage("internal:nuxt:prerender:island") ;
+useStorage("internal:nuxt:prerender:island-props") ;
 const HAS_APP_TELEPORTS = !!(appTeleportAttrs.id);
 const APP_TELEPORT_OPEN_TAG = HAS_APP_TELEPORTS ? `<${appTeleportTag}${propsToString(appTeleportAttrs)}>` : "";
 const APP_TELEPORT_CLOSE_TAG = HAS_APP_TELEPORTS ? `</${appTeleportTag}>` : "";
@@ -212,6 +227,9 @@ const renderer = defineRenderHandler(async (event) => {
     url = url.substring(0, url.lastIndexOf("/")) || "/";
     event._path = url;
     event.node.req.url = url;
+    if (await payloadCache.hasItem(url)) {
+      return payloadCache.getItem(url);
+    }
   }
   const routeOptions = getRouteRules(event);
   const head = createServerHead({
@@ -235,6 +253,11 @@ const renderer = defineRenderHandler(async (event) => {
     modules: /* @__PURE__ */ new Set(),
     islandContext
   };
+  const _PAYLOAD_EXTRACTION = !ssrContext.noSSR && !isRenderingIsland;
+  const payloadURL = _PAYLOAD_EXTRACTION ? joinURL(ssrContext.runtimeConfig.app.cdnURL || ssrContext.runtimeConfig.app.baseURL, url, "_payload.json" ) + "?" + ssrContext.runtimeConfig.app.buildId : void 0;
+  {
+    ssrContext.payload.prerenderedAt = Date.now();
+  }
   const renderer = await getSPARenderer() ;
   const _rendered = await renderer.renderToString(ssrContext).catch(async (error) => {
     if (ssrContext._renderResponse && error.message === "skipping render") {
@@ -253,11 +276,25 @@ const renderer = defineRenderHandler(async (event) => {
   }
   if (isRenderingPayload) {
     const response2 = renderPayloadResponse(ssrContext);
+    {
+      await payloadCache.setItem(url, response2);
+    }
     return response2;
+  }
+  if (_PAYLOAD_EXTRACTION) {
+    appendResponseHeader(event, "x-nitro-prerender", joinURL(url, "_payload.json" ));
+    await payloadCache.setItem(withoutTrailingSlash(url), renderPayloadResponse(ssrContext));
   }
   const inlinedStyles = [];
   const NO_SCRIPTS = routeOptions.experimentalNoScripts;
   const { styles, scripts } = getRequestDependencies(ssrContext, renderer.rendererContext);
+  if (_PAYLOAD_EXTRACTION && !NO_SCRIPTS && !isRenderingIsland) {
+    head.push({
+      link: [
+        { rel: "preload", as: "fetch", crossorigin: "anonymous", href: payloadURL } 
+      ]
+    }, headEntryOptions);
+  }
   if (inlinedStyles.length) {
     head.push({ style: inlinedStyles });
   }
@@ -281,7 +318,7 @@ const renderer = defineRenderHandler(async (event) => {
       link: getPrefetchLinks(ssrContext, renderer.rendererContext)
     }, headEntryOptions);
     head.push({
-      script: renderPayloadJsonScript({ ssrContext, data: ssrContext.payload }) 
+      script: _PAYLOAD_EXTRACTION ? renderPayloadJsonScript({ ssrContext, data: splitPayload(ssrContext).initial, src: payloadURL })  : renderPayloadJsonScript({ ssrContext, data: ssrContext.payload }) 
     }, {
       ...headEntryOptions,
       // this should come before another end of body scripts
@@ -297,7 +334,7 @@ const renderer = defineRenderHandler(async (event) => {
         defer: resource.module ? null : true,
         // if we are rendering script tag payloads that import an async payload
         // we need to ensure this resolves before executing the Nuxt entry
-        tagPosition: "head",
+        tagPosition: _PAYLOAD_EXTRACTION && !true ? "bodyClose" : "head",
         crossorigin: ""
       }))
     }, headEntryOptions);
