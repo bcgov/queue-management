@@ -265,11 +265,13 @@ input#app_timepicker_id {
   left: unset;
 }
 
-.custom-dropdown > a {
-  padding: 0 !important;
+
+.multiselect__option--highlight {
+  background-color: #ffffff;
 }
 
-.dropdown-scrollable .dropdown-menu {
-  max-height: 300px;
-  overflow-y: auto;
+.custom-multiselect .multiselect__option {
+  padding: 0;
+  text-wrap: wrap;
 }
+
