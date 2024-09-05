@@ -42,8 +42,8 @@ export default (on: any, config: any) => {
               } catch (closeError) {
                 console.error('Failed to close the browser:', closeError);
               }
-              throw exception;
             }
+            throw exception;
           }
         
       })()
