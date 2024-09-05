@@ -24,9 +24,7 @@ export default (on: any, config: any) => {
     bceidLogin({ url, username, password }) {
       return (async () => {
         let bceidLogin: BceidLogin | null = null;
-        const maxRetries = 3;
-        let attempt = 0;
-        while (attempt < maxRetries) {
+      
           try {
             bceidLogin = new BceidLogin()
             await bceidLogin.init()
@@ -37,7 +35,6 @@ export default (on: any, config: any) => {
 
             return sessionItems
           } catch (exception) {
-            attempt++;
             console.error('Login attempt failed:', exception);
             if (bceidLogin) {
               try {
@@ -45,13 +42,10 @@ export default (on: any, config: any) => {
               } catch (closeError) {
                 console.error('Failed to close the browser:', closeError);
               }
-            }
-            if (attempt >= maxRetries) {
-              console.error('Max login attempts reached. Aborting.');
               throw exception;
             }
           }
-        }
+        
       })()
     }
   })
