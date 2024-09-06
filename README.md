@@ -11,9 +11,9 @@ Designed for use in an application platform buld for containers specifically Ope
 
 - VueJS & BootStrap for Front End
 - Flask & Python for API Backend
-- Patroni Database Cluster
-- RabbitMQ
-- Caddy HTTP/2 Web Server
+- EDB (Postgres)
+- Redis
+- Ngnix
 
 ## Features
 
