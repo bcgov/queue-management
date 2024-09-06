@@ -1,4 +1,4 @@
-# Installation Guide 
+# Queue-Management : Installation Guide 
 
 We use OpenShift in our environment, and it is our recommendation for running this project. You can then use our build / deployment configs found in the openshift directory.
 
