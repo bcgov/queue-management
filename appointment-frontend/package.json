@@ -9,7 +9,7 @@
     "cy:open": "cypress open --config-file=cypress.config.ts",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit --testPathPattern=.",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npx --yes npm-force-resolutions"
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",

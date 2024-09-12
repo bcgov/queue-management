@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-version: '3.7'
-
 services:
   # The container that contains all the code in the repository, plus the
   # installations of Python requirements and Node packages.
@@ -76,16 +74,6 @@ services:
 
     volumes:
       - 'postgres-data:/var/lib/postgresql/data'
-
-#  keycloak:
-#    environment:
-#      KEYCLOAK_PASSWORD: 'admin'
-#      KEYCLOAK_USER: 'admin'
-#
-#    image: 'jboss/keycloak:9.0.3'
-#
-#    ports:
-#      - '8085:8080'
 
   # Display X clients (like Cypress) on an X server that uses Xpra to forward
   # the display. Set the XPRA_PASSWORD password below and use a browser outside
