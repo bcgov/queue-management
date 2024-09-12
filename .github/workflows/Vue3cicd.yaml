@@ -106,7 +106,7 @@ jobs:
   tag:
     name: Tag
     if: github.repository_owner == 'bcgov'
-    needs: [parse-inputs, appointment-frontend, feedback-api, notifications-api, queue-management-api, queue-management-frontend, send-appointment-reminder-crond]
+    needs: [parse-inputs,queue-management-frontend]
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
