@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import request
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -102,7 +102,7 @@ class ServiceRequestActivate(Resource):
             csr_id=csr.csr_id,
             reception_csr_ind=csr.receptionist_ind,
             ps_id=period_state_being_served.ps_id,
-            time_start=datetime.utcnow()
+            time_start=datetime.now(timezone.utc)
         )
 
         db.session.add(new_period)

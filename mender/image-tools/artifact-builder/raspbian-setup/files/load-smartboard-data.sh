@@ -22,11 +22,17 @@ do
     fi
 done < /uboot/sites.txt
 
+# Check if SMARTBOARD_ID is empty and default to 999 if necessary
+if [[ -z "$SMARTBOARD_ID" ]]; then
+    SMARTBOARD_ID=999
+fi
+
 ln -snf "/usr/share/zoneinfo/${TZPI}" /var/localtime
 
 cp /uboot/smartboard-base-url.txt /var/smartboard/base-url
 
 smartboard_base_url=`cat /uboot/smartboard-base-url.txt | tr -d '\n'`
+
 
 # Leave the test URL with it's zone in the config so the 
 # application knows what to load

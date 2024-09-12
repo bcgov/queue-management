@@ -67,7 +67,7 @@
           <b-form-row v-if="actionedExam.upload_received_ind">
             <b-col :cols="12">
               <b-form-group class="mt-2 mb-0">
-                <label class="mb-0">Upload Again?</label><br />
+                <span  class="mb-0">Upload Again?</span><br />
                 <p>
                   This exam appears to be received, however you can submit it
                   again if needed.
@@ -78,7 +78,7 @@
           <b-form-row>
             <b-col :cols="6">
               <b-form-group class="mb-0">
-                <label class="mb-0">Exam Status</label><br />
+                <label for="exam-status-select" class="mb-0">Exam Status</label><br />
                 <b-select
                   placeholder=""
                   id="exam-status-select"
@@ -91,8 +91,9 @@
           <b-form-row class="mt-2" v-if="status === 'written'">
             <b-col>
               <b-form-group class="mb-0">
-                <label class="mb-0">Attach Scanned Exam</label><br />
+                <label for="scanned_exam_file" class="mb-0">Attach Scanned Exam</label><br />
                 <b-form-file
+                  id="scanned_exam_file"
                   v-model="file"
                   placeholder="Choose a file or drop it here..."
                 ></b-form-file>
@@ -102,7 +103,7 @@
           <b-form-row>
             <b-col>
               <b-form-group class="mb-0 mt-1" v-if="status === 'noshow'">
-                <label class="mb-0">Exam Destroyed?</label><br />
+                <label for="exam-returned-select" class="mb-0">Exam Destroyed?</label><br />
                 <b-select id="exam-returned-select" v-model="destroyed">
                   <option value="true">Yes</option>
                   <option value="false">No</option>

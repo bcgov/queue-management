@@ -37,8 +37,8 @@ limitations under the License.*/
         </div>
       </div>
       <div style="margin-right: 22px; margin-top: 9px">
-        <label id="break-switch">
-          <input type="checkbox" v-model="breakToggle" />
+        <label id="break-switch" for="break_toggle">
+          <input type="checkbox" id="break_toggle" v-model="breakToggle" />
           <span class="circle1"></span>
           <span class="circle2"></span>
         </label>
@@ -65,18 +65,18 @@ limitations under the License.*/
         </select>
       </div>
       <div style="padding-right: 20px">
-        <label v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
-          >User: {{ this.$store.state.user.username }}</label
+        <div v-if="!showOfficeSwitcher" class="navbar-label navbar-user"
+          >User: {{ this.$store.state.user.username }}</div
         >
         <div>
           <template v-if="!showOfficeSwitcher">
-            <label class="navbar-label">
+            <div class="navbar-label">
               <span
                 @click="setOfficeSwitcher(!showOfficeSwitcher)"
                 class="clickable"
                 >Office: {{ this.$store.state.user.office.office_name }}</span
               >
-            </label>
+            </div>
           </template>
           <template v-else>
             <vue-bootstrap-typeahead
