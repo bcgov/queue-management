@@ -27,7 +27,7 @@ services:
         # update to the runtime version. The list of versions available is at
         # https://hub.docker.com/_/microsoft-vscode-devcontainers
         # https://mcr.microsoft.com/v2/vscode/devcontainers/python/tags/list
-        VARIANT: '0.201.2-3.8'
+        VARIANT: '3.8-bullseye'
 
         # Node.js version to install
         NODE_VERSION: '20.11.1'

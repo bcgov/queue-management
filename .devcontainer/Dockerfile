@@ -52,6 +52,4 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/so
 RUN sudo apt-get update && \
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
         postgresql-contrib \
-        default-jre \
         libasound2 libgconf-2-4 libgtk-3-dev libnotify-dev libnss3 libxss1 xvfb
-    
