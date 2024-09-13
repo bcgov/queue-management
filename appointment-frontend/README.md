@@ -15,7 +15,7 @@ cd api
 mkdir client_secrets
 cd ..
 
-cp documentation/demo-files/secrets.json api/client_secrets/secrets.json
+cp -r .devcontainer/config/api/client_secrets  api/
 ```
 
 Note: 
