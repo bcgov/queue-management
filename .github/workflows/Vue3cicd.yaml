@@ -1,0 +1,167 @@
+name: Vue3 cicd
+on:
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull Request Number:"
+        type: string
+        required: true
+      namespace:
+        description: "Deploy To:"
+        type: choice
+        required: true
+        options:
+        - The Q Dev
+
+jobs:
+
+  ##### SETUP ##################################################################
+
+  parse-inputs:
+    name: refs/pull/${{ github.event.inputs.pr-number }}/head to ${{ github.event.inputs.namespace }}
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.parse.outputs.environment }}
+      image-tag: ${{ steps.parse.outputs.image-tag }}
+      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-theq: ${{ steps.parse.outputs.push-theq }}
+      ref: ${{ steps.parse.outputs.ref }}
+
+    steps:
+    # Use the input values to create more coding-friendly values.
+    - name: Parse Inputs
+      id: parse
+      run: |
+        # Gets "dev" or "test".
+        ENVIRONMENT=$(echo ${{ github.event.inputs.namespace }} | \
+            awk -F' ' '{print $NF}' | tr '[:upper:]' '[:lower:]')
+        echo ENVIRONMENT:$ENVIRONMENT
+        echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+        IMAGE_TAG=pr${{ github.event.inputs.pr-number }}
+        echo IMAGE_TAG:$IMAGE_TAG
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        if [ $GITHUB_REPOSITORY_OWNER != "bcgov" ]; then
+          # Never push in forks - useful and safer for development.
+          PUSH_QMS=false
+          PUSH_THEQ=false
+        elif [[ "${{ github.event.inputs.namespace }}" == QMS* ]]; then
+          PUSH_QMS=true
+          PUSH_THEQ=false
+        else
+          PUSH_QMS=false
+          PUSH_THEQ=true
+        fi
+        echo PUSH_QMS:$PUSH_QMS
+        echo "push-qms=$PUSH_QMS" >> $GITHUB_OUTPUT
+        echo PUSH_THEQ:$PUSH_THEQ
+        echo "push-theq=$PUSH_THEQ" >> $GITHUB_OUTPUT
+        REF=refs/pull/${{ github.event.inputs.pr-number }}/head
+        echo REF:$REF
+        echo "ref=$REF" >> $GITHUB_OUTPUT
+    
+
+  ##### TEST ###################################################################
+
+  # queue-management-frontend-cypress:
+  #   name: Queue Management Frontend Cypress
+  #   needs: parse-inputs
+  #   uses: ./.github/workflows/reusable-queue-management-frontend-cypress.yaml
+  #   secrets:
+  #     cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+  #     cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #     keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
+  #     keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
+  #     keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+  #   with:
+  #     ref: ${{ needs.parse-inputs.outputs.ref }}
+
+  ##### BUILD ##################################################################
+
+  queue-management-frontend:
+    name: queue-management-frontend
+    needs: [parse-inputs]
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: ${{ needs.parse-inputs.outputs.ref }}
+      directory: frontend
+      image-name: queue-management-nginx-frontend-vue3
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
+      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+
+
+  ##### DEPLOY #################################################################
+
+  tag:
+    name: Tag
+    if: github.repository_owner == 'bcgov'
+    needs: [parse-inputs, queue-management-frontend]
+    uses: ./.github/workflows/reusable-tag-image.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
+    with:
+      image-names: queue-management-nginx-frontend-vue3
+      tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
+
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
+    needs: [parse-inputs, tag]
+    uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+    with:
+      image-names: queue-management-nginx-frontend-vue3
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
+
+  ##### TEST ###################################################################
+
+  owasp-staff:
+    name: OWASP ZAP Scan of Staff Frontend
+    needs: [parse-inputs, wait-for-rollouts]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Parameters
+        run: |
+          if [ ${{ needs.parse-inputs.outputs.push-qms }} == true ]; then
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_QMS_DEV }}" >> $GITHUB_ENV
+          elif [ ${{ needs.parse-inputs.outputs.environment }} == dev ]; then
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_DEV }}" >> $GITHUB_ENV
+          else
+            echo "ZAP_URL=${{ secrets.ZAP_STAFFURL_THEQ_TEST }}" >> $GITHUB_ENV
+          fi
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          allow_issue_writing: false
+          cmd_options: '-z "-config scanner.threadPerHost=20"'
+          target: ${{ env.ZAP_URL }}
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: OWASP ZAP - Staff Front End Report
+          path: report_html.html
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: OWASP ZAP - Appointment Front End Report
+          path: report_html.html
