@@ -11,7 +11,9 @@
     "lint:prettier": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:prettier",
     "lintfix": "prettier --write --list-different . && npm run lint:js -- --fix",
-    "test": "jest"
+    "test": "jest",
+    "cy": "npx cypress run",
+    "cy:open": "npx cypress open"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.22",
@@ -23,6 +25,7 @@
     "@vue/compiler-sfc": "^3.4.38",
     "consola": "^3.2.3",
     "core-js": "^3.25.3",
+    "cypress": "^13.14.2",
     "nuxt": "^3.12.4",
     "pinia": "^2.2.2",
     "ufo": "^1.5.4",
