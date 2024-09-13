@@ -3,13 +3,14 @@
     <b-row no-gutters>
       <b-col :cols="exam[q.key] === 'collect' ? 11 : 6">
         <b-form-group>
-          <label
+          <label :for="'select_' + q.key"
             >{{ q.text }}
             <span v-if="error" style="color: red">{{
               validationObj[q.key].message
             }}</span> </label
           ><br />
           <b-form-select
+             :id="'select_' + q.key"
             :options="q.options"
             v-model="feesSelect"
             autocomplete="off"
@@ -19,7 +20,7 @@
       </b-col>
       <b-col v-if="showReceiptField" cols="5">
         <b-form-group>
-          <label>Receipt </label>
+          <label for="receipt_number">Receipt </label>
           <b-form-input
             v-model="receiptNumber"
             key="receipt_number"
@@ -33,14 +34,14 @@
     <b-row v-if="showReceiptField">
       <b-col cols="5">
         <b-form-group>
-          <label>Payee is not candidate</label>
-          <b-form-checkbox v-model="capturePayeeDetails" />
+          <label for="payee_details_checkbox">Payee is not candidate</label>
+          <b-form-checkbox id="payee_details_checkbox" v-model="capturePayeeDetails" />
         </b-form-group>
       </b-col>
       <b-col cols="5">
         <b-form-group>
-          <label>Payee has been sent confirmation/receipt</label>
-          <b-form-checkbox v-model="capturePayeeSentReceipt" />
+          <label for="payee_sent_receipt_checkbox">Payee has been sent confirmation/receipt</label>
+          <b-form-checkbox id="payee_sent_receipt_checkbox" v-model="capturePayeeSentReceipt" />
         </b-form-group>
       </b-col>
     </b-row>
