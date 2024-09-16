@@ -1,7 +1,7 @@
 import path from 'path';
 
 export default defineNuxtConfig({
-  ssr: false, 
+  ssr: false,
   devServer: {
     port: 8080,
   },
@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'BC Services: Queue Management',
+      title: 'Service BC Queue Management System',
     },
     baseURL: '/',
   },
@@ -21,19 +21,19 @@ export default defineNuxtConfig({
       include: ['pinia'],
     },
     resolve: {
-      dedupe: ['vue'], 
+      dedupe: ['vue'],
     },
   },
 
-  plugins: [], 
-  components: true, 
+  plugins: [],
+  components: true,
 
   buildModules: [
     '@nuxt/typescript-build', // TypeScript support
   ],
 
   modules: [
-    '@nuxt/ui', 
+    '@nuxt/ui',
     '@nuxt/content',
     '@pinia/nuxt',
     '@nuxtjs/tailwindcss',
@@ -41,7 +41,7 @@ export default defineNuxtConfig({
   ],
 
   build: {
-    transpile: ['@pinia', 'pinia'], 
+    transpile: ['@pinia', 'pinia'],
     postcss: {
       plugins: {
         tailwindcss: {},
@@ -61,5 +61,5 @@ export default defineNuxtConfig({
     },
   },
 
-  compatibilityDate: '2024-08-16', 
+  compatibilityDate: '2024-08-16',
 });
