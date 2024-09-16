@@ -12,7 +12,7 @@
     "test:unit": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service test:unit",
     "lint": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service lint",
     "prebuild": "npm run update-version",
-    "preinstall": "npx npm-force-resolutions",
+    "preinstall": "npx --yes npm-force-resolutions",
     "preserve": "npm run update-version",
     "test": "NODE_OPTIONS=--openssl-legacy-provider jest",
     "update-version": "node src/version.js",

@@ -1,0 +1,15 @@
+{
+  "KEYCLOAK_CONFIG_URL": "./public/config/kc/keycloak-public.json",
+  "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
+  "hideBCServicesCard": false,
+  "BCEIDRegistrationUrl": "",
+  "BCServicesCardUrl": "",
+  "disableSms": false,
+  "VUE_APP_FEEDBACK_API": "http://localhost:5001/api/v1",
+  "FEEDBACK_SERVICE_CHANNEL": "online",
+  "FEEDBACK_ENABLED": true,
+  "VUE_APP_HEADER_MSG": "Unlinked Text {link}Link 1 Text{link} Unlinked Text {link}Link 2 Text{link} Unlinked Text {link}Link 3 Text",
+  "VUE_APP_HEADER_LINKS": "https://example.com/link1{link}https://example.com/link2{link}https://example.com/link3",
+  "VUE_APP_FOOTER_MSG": "Unlinked Text {link}Link 1 Text{link} Unlinked Text {link}Link 2 Text{link} Unlinked Text {link}Link 3 Text",
+  "VUE_APP_FOOTER_LINKS": "https://example.com/link1{link}https://example.com/link2{link}https://example.com/link3"
+}

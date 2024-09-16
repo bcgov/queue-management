@@ -180,3 +180,18 @@ DATABASE_NAME=postgres
 SQLALCHEMY_POOL_SIZE=10
 SQLALCHEMY_MAX_OVERFLOW=20
 SQLALCHEMY_ECHO=False
+
+############################# JWT Config Variables ############################
+
+JWT_OIDC_AUDIENCE=theq-queue-management-api
+JWT_OIDC_WELL_KNOWN_CONFIG=https://dev.loginproxy.gov.bc.ca/auth/realms/servicebc/.well-known/openid-configuration
+
+########################## Exam Management Variables ##########################
+#BCMP_BASE_URL=
+#BCMP_AUTH_TOKEN=
+#BCMP_USER=
+#MINIO_ACCESS_KEY=
+#MINIO_HOST=
+#MINIO_BUCKET=
+#MINIO_USE_SECURE='1'
+#MINIO_SECRET_KEY=
