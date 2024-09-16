@@ -80,10 +80,10 @@
             :now="currentDay"
             color="primary"
             v-model="value"
-            first-time="08:30"
+            :first-time="startTime"
             interval-minutes="30"
             interval-height="40"
-            interval-count="17"
+            :interval-count="intervalCount"
             :type="type"
             category-show-all
             :categories="categories"
@@ -259,6 +259,8 @@ export default class Calendar extends Vue {
   mode: any = 'stack'
   weekday: any = [1, 2, 3, 4, 5]
   start: any = moment().format('YYYY-MM-DD')
+  startTime : string = '08:30'
+  intervalCount : string = '17'
 
   value: any = ''
   eventsList: any = []
@@ -693,10 +695,15 @@ export default class Calendar extends Vue {
 
   toggleOffsite (bool) {
     this.toggleOffsiteVisible(bool)
+  
     if (bool) {
       // I assume this empty block is intentional
+      this.startTime = "00:00"
+      this.intervalCount = "48"
     }
     if (!bool) {
+      this.startTime = "08:30"
+    this.intervalCount = "17"
       if (this.offsiteOnly) {
         // I assume this empty block is intentional
       }
