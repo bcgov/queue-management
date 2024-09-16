@@ -24,7 +24,7 @@ export default (on: any, config: any) => {
     bceidLogin({ url, username, password }) {
       return (async () => {
         let bceidLogin: BceidLogin | null = null;
-        while (true) {
+      
           try {
             bceidLogin = new BceidLogin()
             await bceidLogin.init()
@@ -45,7 +45,7 @@ export default (on: any, config: any) => {
             }
             throw exception;
           }
-        }
+        
       })()
     }
   })
