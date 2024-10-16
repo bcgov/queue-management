@@ -10,6 +10,9 @@ RUN npm run build
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.25.3 as production-stage
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
-COPY --from=build-stage /app/dist /app
+COPY --from=build-stage /app/.nuxt /app/.nuxt
+COPY --from=build-stage /app/static /app/static
+COPY --from=build-stage /app/public /app/public
+
 EXPOSE 8080:8080
 CMD ["nginx", "-g", "daemon off;"]
