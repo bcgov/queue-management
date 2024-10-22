@@ -90,3 +90,7 @@ sw.*
 
 # Vim swap files
 *.swp
+
+.nuxt/
+.output/
+dist

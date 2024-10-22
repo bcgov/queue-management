@@ -18,6 +18,9 @@
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
     "@bcgov/design-tokens": "^3.1.1",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
     "@headlessui/vue": "^1.7.22",
     "@nuxt/content": "^2.13.2",
     "@nuxt/image": "^1.7.0",
