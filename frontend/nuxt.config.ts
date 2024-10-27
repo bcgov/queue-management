@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from 'nuxt/config'
+
 import path from 'path';
 
 export default defineNuxtConfig({
@@ -13,6 +15,9 @@ export default defineNuxtConfig({
       title: 'Service BC Queue Management System',
     },
     baseURL: '/',
+  },
+  routeRules: {
+    '/': { redirect: '/queue' },
   },
 
   css: ['~/assets/css/main.scss'],
