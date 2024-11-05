@@ -1,5 +1,5 @@
 import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { getRequestDependencies, getPreloadLinks, getPrefetchLinks, createRenderer } from 'vue-bundle-renderer/runtime';
-import { u as useRuntimeConfig, e as eventHandler, s as setResponseHeader, a as send, g as getResponseStatus, b as setResponseStatus, c as useNitroApp, d as setResponseHeaders, j as joinRelativeURL, f as getQuery, h as createError, i as getRouteRules, k as getResponseStatusText } from '../runtime.mjs';
+import { u as useRuntimeConfig, e as eventHandler, s as setResponseHeader, a as send, g as getResponseStatus, b as setResponseStatus, c as setResponseHeaders, d as useNitroApp, j as joinRelativeURL, f as getQuery, h as createError, i as getRouteRules, k as getResponseStatusText } from '../runtime.mjs';
 import { stringify, uneval } from 'devalue';
 import { propsToString, renderSSRHead } from '@unhead/ssr';
 import { createServerHead as createServerHead$1, CapoPlugin } from 'unhead';
@@ -7,33 +7,11 @@ import { version, unref } from 'vue';
 import { defineHeadPlugin } from '@unhead/shared';
 import 'node:http';
 import 'node:https';
-import 'fs';
-import 'path';
 import 'node:fs';
+import 'node:path';
 import 'node:url';
 import '@iconify/utils';
 import 'consola/core';
-import 'unified';
-import 'mdast-util-to-string';
-import 'micromark';
-import 'unist-util-stringify-position';
-import 'micromark-util-character';
-import 'micromark-util-chunked';
-import 'micromark-util-resolve-all';
-import 'micromark-util-sanitize-uri';
-import 'slugify';
-import 'remark-parse';
-import 'remark-rehype';
-import 'remark-mdc';
-import 'remark-emoji';
-import 'remark-gfm';
-import 'rehype-external-links';
-import 'rehype-sort-attribute-values';
-import 'rehype-sort-attributes';
-import 'rehype-raw';
-import 'detab';
-import 'hast-util-to-string';
-import 'github-slugger';
 
 function defineRenderHandler(handler) {
   const runtimeConfig = useRuntimeConfig();
@@ -84,7 +62,7 @@ function resolveUnref(r) {
   return typeof r === "function" ? r() : unref(r);
 }
 function resolveUnrefHeadInput(ref) {
-  if (ref instanceof Promise)
+  if (ref instanceof Promise || ref instanceof Date || ref instanceof RegExp)
     return ref;
   const root = resolveUnref(ref);
   if (!ref || !root)
@@ -141,7 +119,7 @@ const unheadPlugins = true ? [CapoPlugin({ track: true })] : [];
 
 const renderSSRHeadOptions = {"omitLineBreaks":false};
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[],"charset":"utf-8","viewport":"width=device-width, initial-scale=1","title":"BC Services: Queue Management"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[],"charset":"utf-8","viewport":"width=device-width, initial-scale=1","title":"Service BC Queue Management System"};
 
 const appRootTag = "div";
 
@@ -172,9 +150,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
   const renderToString = (ssrContext) => {
     const config = useRuntimeConfig(ssrContext.event);
     ssrContext.modules = ssrContext.modules || /* @__PURE__ */ new Set();
-    ssrContext.payload = {
-      serverRendered: false
-    };
+    ssrContext.payload.serverRendered = false;
     ssrContext.config = {
       public: config.public,
       app: config.app
@@ -231,7 +207,7 @@ const renderer = defineRenderHandler(async (event) => {
     nuxt: void 0,
     /* NuxtApp */
     payload: ssrError ? { error: ssrError } : {},
-    _payloadReducers: {},
+    _payloadReducers: /* @__PURE__ */ Object.create(null),
     modules: /* @__PURE__ */ new Set(),
     islandContext
   };

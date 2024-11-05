@@ -1,9 +1,9 @@
 {
-  "date": "2024-08-30T22:38:24.720Z",
+  "date": "2024-10-23T16:21:01.329Z",
   "preset": "node-server",
   "framework": {
     "name": "nuxt",
-    "version": "3.13.0"
+    "version": "3.13.2"
   },
   "versions": {
     "nitro": "2.9.7"

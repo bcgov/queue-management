@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from 'nuxt/config'
+
 import path from 'path';
 
 export default defineNuxtConfig({
@@ -5,6 +7,7 @@ export default defineNuxtConfig({
   devServer: {
     port: 8080,
   },
+  devtools: { enabled: true },
   app: {
     head: {
       charset: 'utf-8',
@@ -13,8 +16,11 @@ export default defineNuxtConfig({
     },
     baseURL: '/',
   },
+  routeRules: {
+    '/': { redirect: '/queue' },
+  },
 
-  css: ['~/assets/css/main.scss'], // Global CSS
+  css: ['~/assets/css/main.scss'],
 
   vite: {
     optimizeDeps: {
@@ -25,11 +31,11 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: [],
+  plugins: ['~/plugins/font-awesome.ts'],
   components: true,
 
   buildModules: [
-    '@nuxt/typescript-build', // TypeScript support
+    '@nuxt/typescript-build',
   ],
 
   modules: [
