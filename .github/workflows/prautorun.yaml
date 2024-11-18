@@ -94,7 +94,7 @@ jobs:
 
   queue-management-frontend:
     name: queue-management-frontend
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs]
     uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
