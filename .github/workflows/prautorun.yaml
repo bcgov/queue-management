@@ -92,43 +92,20 @@ jobs:
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
 
-  queue-management-frontend:
-    name: queue-management-frontend
-    needs: [parse-inputs]
-    uses: ./.github/workflows/reusable-build-dockerfile.yaml
-    secrets:
-      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
-      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
-      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
-      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
-      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
-      namespace-theq-username: ${{ secrets.SA_USERNAME }}
-      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
-      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
-      namespace-qms-username: ${{ secrets.SA_USERNAME }}
-      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
-    with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
-      directory: frontend
-      image-name: queue-management-nginx-frontend
-      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
-      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
-      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
-
 
   ##### DEPLOY #################################################################
 
   tag:
     name: Tag
     if: github.repository_owner == 'bcgov'
-    needs: [parse-inputs, queue-management-api, queue-management-frontend ]
+    needs: [parse-inputs, queue-management-api]
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
-      image-names: queue-management-api queue-management-nginx-frontend
+      image-names: queue-management-api
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
 
