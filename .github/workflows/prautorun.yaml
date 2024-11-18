@@ -138,7 +138,7 @@ jobs:
   newman-theq-dev:
     name: Newman Tests
     if: github.event.inputs.namespace == 'The Q Dev'
-    needs: [parse-inputs]
+    needs: [parse-inputs,tag]
     runs-on: ubuntu-latest
 
     steps:
