@@ -61,7 +61,7 @@
 									"",
 									"//  Display the values of all globals.",
 									"console.log(\"\");",
-									"console.log(\"==> Globals are:\");",
+									
 									"console.log(\"    --> auth_url:          \" + pm.globals.get(\"auth_url\"));",
 									"console.log(\"    --> realm:             \" + pm.globals.get(\"realm\"));",
 									"console.log(\"    --> clientid:          \" + pm.globals.get(\"clientid\"));",
