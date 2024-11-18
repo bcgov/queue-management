@@ -71,6 +71,7 @@
 									"console.log(\"    --> max_response_time: \" + pm.globals.get(\"max_response_time\"));",
 									"console.log(\"    --> public_url:        \" + pm.globals.get(\"public_url\"));",
 									"console.log(\"    --> public_user_id:    \" + pm.globals.get(\"public_user_id\"));",
+									"console.log(\"==> picking up from updated json.......:\")",
 									""
 								],
 								"type": "text/javascript"
@@ -1526,7 +1527,7 @@
 									"var propTaxText = \"Rural Payment/HOG - PTAX\";",
 									"",
 									"//  Look for the MSP and Property Tax IDs.",
-									"allElements.forEach(function(element) {",
+									"alValidate CSR SchemalElements.forEach(function(element) {",
 									"    if (element.service_name === mspText) {",
 									"        mspId = element.service_id;",
 									"    }",
