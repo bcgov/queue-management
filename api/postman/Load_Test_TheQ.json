@@ -1284,7 +1284,7 @@
 									"var mspId = 0;",
 									"var taxId = 0;",
 									"var mspText = \"Payment - MSP\";",
-									"var propTaxText = \"Other - PTAX\";",
+									"var propTaxText = \"Rural Payment/HOG - PTAX\";",
 									"",
 									"//  Look for the MSP and Property Tax IDs.",
 									"allElements.forEach(function(element) {",
