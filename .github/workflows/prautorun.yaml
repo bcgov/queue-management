@@ -71,7 +71,7 @@ jobs:
 
   queue-management-api:
     name: queue-management-api
-    needs: [parse-inputs, queue-management-frontend-cypress, appointment-frontend-cypress]
+    needs: [parse-inputs]
     uses: ./.github/workflows/reusable-build-s2i.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
