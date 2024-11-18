@@ -67,6 +67,7 @@
 									"console.log(\"    --> url:               \" + pm.globals.get(\"url\"));",
 									"console.log(\"    --> max_load_time:     \" + pm.globals.get(\"max_load_time\"));",
 									"console.log(\"    --> max_response_time: \" + pm.globals.get(\"max_response_time\"));",
+									"console.log(\"==> picking up from updated json.......:\")",
 									""
 								],
 								"type": "text/javascript"
