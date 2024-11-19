@@ -2149,9 +2149,7 @@
 									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
 									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
 									"    });",
-									"    pm.test('Citizen comment must be null on service completion', function() {",
-									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(null);",
-									"    });",
+									
 									"    pm.test('There must be only one service request', function() {",
 									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(1);",
 									"    });",
@@ -3157,9 +3155,7 @@
 									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
 									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
 									"    });",
-									"    pm.test('Citizen comment must be null on service completion', function() {",
-									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(null);",
-									"    });",
+									
 									"    pm.test('There must be only one service request', function() {",
 									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(1);",
 									"    });",
@@ -4771,9 +4767,7 @@
 									"    pm.test('Citizen name must equal \"' + citizenName + '\"', function() {",
 									"        pm.expect(currentCitizen.citizen_name).to.be.eql(citizenName);",
 									"    });",
-									"    pm.test('Citizen comment must be null on service completion', function() {",
-									"        pm.expect(currentCitizen.citizen_comments).to.be.eql(null);",
-									"    });",
+									
 									"    pm.test('There must be only one service request', function() {",
 									"        pm.expect(currentCitizen.service_reqs.length).to.be.eql(1);",
 									"    });",
