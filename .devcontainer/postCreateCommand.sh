@@ -21,12 +21,26 @@
 COLOR_DEFAULT='\033[0m'
 COLOR_FAILURE='\033[0;31m'
 
+# Log the output to make it easier to find when things go wrong.
+
+LOGDIR=".devcontainer/logs"
+LOGFILE="$LOGDIR/error.log"
+
+if [ ! -d $LOGDIR ]; then
+    mkdir -p $LOGDIR
+fi
+
+touch $LOGFILE
+
+# Redirect stderr to both the logfile and terminal using tee
+exec 2> >(tee -a $LOGFILE >&2)
+
 # Echo a string in red.
 #
 # Parameter: string
 #
 echo_failure () {
-    echo -e "$COLOR_FAILURE$*$COLOR_DEFAULT"
+    echo -e "$COLOR_FAILURE$*$COLOR_DEFAULT" | tee -a $LOGFILE >&2
 }
 
 # If a configuration file doesn't exist then create a default file.
@@ -79,83 +93,70 @@ check_setting () {
 # Dependency Installations
 ###############################################################################
 
-# Log the output to make it easier to find when things go wrong.
-LOGDIR=.devcontainer/logs
-if [ ! -d $LOGDIR ]; then
-    mkdir $LOGDIR
-fi
 
-# To save time do the installations in parallel.
+install_api_deps () {
+    (
+        cd api
+        # Remove old virtual environment and create a new one
+        rm -rf env || handle_error "Failed to remove old virtual environment."
+        sudo python3 -m venv env || handle_error "Failed to create virtual environment."
 
-(
-    cd api
-    rm -rf env
-    python -m venv env
-    source env/bin/activate
-    python -m pip install --upgrade pip -q
-    pip install -r requirements_dev.txt --progress-bar off
-
-    # Install newman so that the postman tests can be run on the command line.
-    echo Installing newman
-    cd postman
-    rm -rf node_modules
-    npm install newman
-) |& tee $LOGDIR/api.log &
+        # Activate the virtual environment and install dependencies
+        source env/bin/activate || handle_error "Failed to activate virtual environment."
+        sudo chown -R $USER:$USER /workspace
+        python -m pip install --upgrade pip -q || handle_error "Failed to upgrade pip."
+        pip install -r requirements_dev.txt --progress-bar off || handle_error "Failed to install dependencies."
+    )
+}
 
 # If NPM output is piped into a commmand, it does not display any indication of
 # progress. Use "script" to make NPM think it is running on a TTY.
-script -fq -c "(
-    cd appointment-frontend
-    rm -rf node_modules
-    npm install
-    $(npm bin)/cypress install
-)" |& tee $LOGDIR/appointment-frontend.log &
+install_appointment_frontend_deps () {
+    (
+        cd appointment-frontend
+        rm -rf node_modules
+        npm install
+        npx cypress install
+    )
+}
 
-#(
-#    cd feedback-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/feedback-api.log &
+install_frontend_deps () {
+    (
+        cd frontend
+        rm -rf node_modules
+        npm install
+    )
+}
 
-script -fq -c "(
-    cd frontend
-    rm -rf node_modules
-    npm install
-)" |& tee $LOGDIR/frontend.log &
-
-#(
-#    cd notifications-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/notifications-api.log &
-
-# Wait for all the above to complete.
-wait
+install_api_deps
+install_appointment_frontend_deps
+install_frontend_deps
 
 ###############################################################################
 # Database Bootstrapping and Setup
 ###############################################################################
 
-(
-    cd api
-    source env/bin/activate
-    python manage.py db upgrade
+bootstrap_database () {
+    (
+        cd api
+        source env/bin/activate
+        python manage.py db upgrade
+        pip install -r requirements.txt
 
-    # If there is nothing in the CSR table, we're probably starting with a
-    # clean database and need to bootstrap it with default data.
-    COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
-        -U postgres -c "SELECT COUNT(*) FROM csr;" -t)
-    if [ "$COUNT" -eq 0 ]; then
-        python manage.py bootstrap
-        python manage.py adduser
-    fi
-)
+        # If there is nothing in the CSR table, we're probably starting with a
+        # clean database and need to bootstrap it with default data.
+        python manage.py migrate
+        read -p "Enter your IDIR to check if db is bootstrapped: " SEARCH_USER
+        COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
+            -U postgres -c "SELECT COUNT(*) FROM csr WHERE username = '$SEARCH_USER';" -t)
+        if [ "$COUNT" -eq 0 ]; then
+            python manage.py bootstrap
+            echo "$SEARCH_USER" | python manage.py adduser
+        fi
+    )
+}
+
+bootstrap_database
 
 ###############################################################################
 # Configuration Files Setup and Checking
@@ -170,5 +171,16 @@ check_setting api/.env JWT_OIDC_WELL_KNOWN_CONFIG
 copy_config .devcontainer/config/api/client_secrets/secrets.json \
     api/client_secrets/secrets.json
 
+copy_config .devcontainer/config/frontend/public/static/keycloak/keycloak.json \
+    frontend/public/static/keycloak/keycloak.json
+
 copy_config .devcontainer/config/frontend/public/config/configuration.json \
     frontend/public/config/configuration.json
+
+copy_config .devcontainer/config/appointment-frontend/dotenv.local appointment-frontend/.env.local
+
+copy_config .devcontainer/config/appointment-frontend/public/config/kc/keycloak-public.json \
+    appointment-frontend/public/config/kc/keycloak-public.json
+
+copy_config .devcontainer/config/appointment-frontend/public/config/configuration.json \
+    appointment-frontend/public/config/configuration.json

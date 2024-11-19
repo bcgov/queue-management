@@ -34,12 +34,8 @@ Opening the cloned repo in VSCode will detect the *.devcontainer* directory and 
 1. PostgreSQL database
 2. Application code in a Python + Node container
 
-TODO: config files
-    1. copy *documentation/demo-files/keycloak.json* to *frontend/static/* (**TODO: really? I don't have it**)
-
-
 ## Directory Structure for Configuration Files
-    
+
 ```
 queue-management
     ├───.devcontainer
@@ -57,7 +53,6 @@ queue-management
     │           │
     │           └───kc
     │                   keycloak-public.json
-    │                   keycloak-public.json_silver
     │
     ├───feedback-api
     │       .env
@@ -70,7 +65,6 @@ queue-management
     │       └───static
     │           └───keycloak
     │                   keycloak.json
-    │                   keycloak.json_silver
     │
     ├───jobs
     │   └───appointment_reminder
@@ -79,18 +73,6 @@ queue-management
     └───notifications-api
             .env
 ```
-
-## Set up Keycloak:
-
-TODO: automate this.
-
-You should be able to login in with admin/admin on http://localhost:8085/auth
-1. Go to Groups, add new group *theq_internal_user*
-1. Go to Roles, add new role *internal_user*
-1. Go to Users, view all users, edit 'admin', 
-    - under Groups, under Available Groups, join *theq_internal_user*
-    - under Role Mappings, select *internal_user*, add selected, should see under assigned role
-1. Go to Clients, edit *account*, Scope tab, set Full Scope Allowed to ON
 
 ## Frequently Asked Questions
 
@@ -188,7 +170,7 @@ The development environment should be as close as possible to production, includ
 
 The development environment should be as close as possible to production, including the version of Node. The production version of Node is defined by the Red Hat UBI in our buildconfigs.
 
-1. In a live container get the production version to target with *node --version* 
+1. In a live container get the production version to target with *node --version*
 1. Update the *NODE_VERSION* in *.devcontainer/docker-compose.yml* and rebuild the container
 
 </details>
@@ -207,21 +189,9 @@ It's probably a good idea to delete your database volume when changing the versi
 
 </details>
 
-
-# TODO: REMOVE/REVISE/INCLUDE EVERYTHING BELOW
-
-**TODO: Complete these: How do I...**
-
-1. Do stuff with analytics?
-1. Run Redis?
-
 ## To use FRONTEND:
 
-**IMPORTANT: To login, use the Keycloak Login link at the bottom right hand corner. The main login is used with Single Signon integration to our Enterprise Active Directory Domain.**
-
-You should be able to login in using the following IDs:  
-user/user - Regular Customer Service Representative (CSR)  
-admin/admin - Manager of the office (Government Agent)
+Use your IDIR to authenticate against our dev Keycloak realm.
 
 Additional API Environment Variables of note, which you can add to the .env file
 
@@ -245,7 +215,7 @@ For more information, please see the following repositories:
 
 # Running Tests
 
-There are JEST tests as well but I am still working on integrating them to our pipeline. The can be manually run by typing: npm test in the frontend folder.
+There are Jest tests as well but I am still working on integrating them to our pipeline. The can be manually run by typing: npm test in the frontend folder.
 
 For tests to run, you require two additional IDs created in your keycloak:
 
