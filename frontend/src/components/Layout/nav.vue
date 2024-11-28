@@ -79,7 +79,7 @@
             <font-awesome-icon icon="bars" style="font-size: 1.18rem" />
           </span>
           <div :style="{ width: 200 + 'px' }" id="nav-dropdown-buttons">
-            <b-dropdown-item to="/queue" id="the_q" @click="clickRefresh">The Q</b-dropdown-item>
+            <b-dropdown-item to="/queue" id="the_q">The Q</b-dropdown-item>
             <b-dropdown-item to="/booking" v-if="showExams" id="room_bookings"
               >Room Booking</b-dropdown-item
             >
