@@ -13,6 +13,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Import commands.js using ES2015 syntax:
 import './commands'
 
-export const API_PREFIX = 'http://localhost:5000/api/v1/'
+// Alternatively you can use CommonJS syntax:
+// require('./commands')
