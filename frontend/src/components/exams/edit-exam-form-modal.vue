@@ -219,17 +219,14 @@
               <b-form-group v-if="!['challenger'].includes(examType)">
                 <label for="exam-input" class="my-0">Exam Type</label><br />
                 <div>
-                  <b-input
-                    id="exam-input"
-                    :style="examInputStyle"
-                    :value="examInputText"
-                    class="less-15-mb"
-                    placeholder="click here to see options"
-                    read-only
-                    :disabled="true"
-                  />
+                  <b-input v-if="!isITAExam" :style="examInputStyle" :value="examInputText" class="less-15-mb"
+                    placeholder="click here to see options" read-only :disabled="true" />
+                  <model-list-select v-if="isITAExam" :list="iTAExamTypes" v-model="objectItem" option-value="exam_type_id"
+                  option-text="exam_type_name"  id="type.exam_type_id" name="type.exam_type_id"
+                  placeholder="click here to see options">
+                </model-list-select>
                 </div>
-                <div :class="examTypeDropClass" style="border: 1px solid grey" @click="handleExamInputClick">
+                <div :class="examTypeDropClass" style="border: 1px solid grey " @click="handleExamInputClick">
                   <template v-for="(type, i) in examTypeDropItems">
                     <b-dd-header v-if="type.header" :key="i + 'exam-type-dd-h'" :style="
                         type.exam_color !== '#FFFFF'
