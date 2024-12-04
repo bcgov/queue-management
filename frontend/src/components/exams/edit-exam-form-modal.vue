@@ -221,12 +221,29 @@
                 <div>
                   <b-input v-if="!isITAExam" :style="examInputStyle" :value="examInputText" class="less-15-mb"
                     placeholder="click here to see options" read-only :disabled="true" />
-                  <model-list-select v-if="isITAExam" :list="iTAExamTypes" v-model="objectItem" option-value="exam_type_id"
-                  option-text="exam_type_name"  id="type.exam_type_id" name="type.exam_type_id"
-                  placeholder="click here to see options">
-                </model-list-select>
+                <multiselect 
+                  v-if="isITAExam"
+                  v-model="selectedExam" 
+                  :options="iTAExamTypes" 
+                  track-by="exam_type_id" 
+                  label="exam_type_name"
+                  :show-labels="false"
+                  class="custom-multiselect"
+                  :placeholder="displayText"
+                  @input ="setPlaceHolder"
+                  >
+                  <template slot="singleLabel">{{displayText }}</template>
+                  <template #option="{ option }">
+                    <p :style="{ backgroundColor: option.exam_color, padding: '10px' }">
+                      {{ option.exam_type_name }}
+                    </p>
+                  </template>
+                </multiselect>
+
                 </div>
                 <div :class="examTypeDropClass" style="border: 1px solid grey " @click="handleExamInputClick">
+
+
                   <template v-for="(type, i) in examTypeDropItems">
                     <b-dd-header v-if="type.header" :key="i + 'exam-type-dd-h'" :style="
                         type.exam_color !== '#FFFFF'
@@ -498,6 +515,9 @@ import moment from 'moment'
 import { ModelListSelect } from "vue-search-select"
 import EditExamConfirmationModal from './edit-exam-confirmation-modal.vue'
 
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
+
 const FileDownload = require('js-file-download')
 
 @Component({
@@ -507,6 +527,7 @@ const FileDownload = require('js-file-download')
     FailureExamAlert,
     OfficeDrop,
     ModelListSelect,
+    Multiselect,
     EditExamConfirmationModal
   }
 })
@@ -574,7 +595,9 @@ export default class EditExamModal extends Vue {
   public search: string = ''
   public searching: boolean = false
   public showSearch: boolean = false
-  private objectItem:any  = {};
+  private selectedExam: any = []
+  private objectItem:any  = {}
+  private displayText: string = 'Select an option'
 
   get canDelete () {
     let examCanBeDeleted = false
@@ -604,11 +627,11 @@ export default class EditExamModal extends Vue {
       exam_type_id: this.actionedExam.exam_type_id
     }
     const exams = this.examTypes.filter(type =>
-        type.ita_ind === 1 &&
-        type.group_exam_ind === 0 &&
-        !type.exam_type_name.includes('Monthly'))
+      type.ita_ind === 1 &&
+      type.group_exam_ind === 0 &&
+      !type.exam_type_name.includes('Monthly'))
       return exams.sort((a, b) => a.exam_type_name - b.exam_type_name)
-  }
+      }
 
   get fieldsEdited() {
     const fieldsEdited: any = []
@@ -780,6 +803,11 @@ export default class EditExamModal extends Vue {
     this.toggleEditExamModal(e)
   }
 
+  setPlaceHolder (item): void {
+    this.objectItem = { exam_type_id : item.exam_type_id }
+    this.displayText = item.exam_type_name
+  }
+
   handleConfirm () {
     this.showConfirmationModal = false
     this.deleteBooking(this.actionedExam.booking_id)
@@ -787,6 +815,7 @@ export default class EditExamModal extends Vue {
   }
 
   handleCancel () {
+    this.displayText = this.actionedExam.exam_type.exam_type_name
     this.showConfirmationModal = false
   }
 
@@ -888,6 +917,7 @@ export default class EditExamModal extends Vue {
       this.exam_received = true
     }
     this.office_number = exam.office.office_number
+    this.displayText = this.actionedExam.exam_type.exam_type_name
   }
 
   setOffice (officeNumber) {
