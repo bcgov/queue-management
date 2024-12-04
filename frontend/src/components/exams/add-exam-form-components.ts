@@ -223,11 +223,28 @@ export class DateQuestion extends Vue {
               <span >{{ displayText }}</span>
             </span>
           </template>
-          <template #option="{ option }">
-            <p :style="{ backgroundColor: option.exam_color, padding: '10px' }">
-              {{ option.exam_type_name }}
-            </p>
-          </template>
+          <template #option="{ option, index }">
+             <div 
+               :style="{
+                 backgroundColor: option.exam_color ? option.exam_color : '#333',
+                 padding: '10px',
+                 color: isHoveredIndex === index ? '#1A1A4B' : '#000',
+                 border: isHoveredIndex === index ? '2px solid #7181a8' : '2px solid transparent',
+                 borderRadius: isHoveredIndex === index ? '3px' : '0',
+                 transition: 'color 0.3s, border 0.3s, background-color 0.3s, border-radius 0.3s, box-shadow 0.3s, transform 0.3s',
+                 boxShadow: isHoveredIndex === index ? '0 8px 16px rgba(0, 0, 0, 0.3)' : 'none', 
+                 transform: isHoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
+                 fontFamily: 'Roboto, sans-serif',
+                 fontSize: '16px',
+                 lineHeight: '1.5'        
+               }" 
+               @mouseover="isHoveredIndex = index" 
+               @mouseleave="isHoveredIndex = null"
+               @click="preHandleInput(option)"
+             >
+               {{ option.exam_type_name }} - Actual Hours: {{ option.number_of_hours }} hours {{ option.number_of_minutes !== null ? option.number_of_minutes : 0 }} minutes
+             </div>
+           </template>
         </multiselect>
       </b-col>
     </b-row>
@@ -267,7 +284,7 @@ export class DropdownQuestion extends Vue {
   private objectItem:any = {};
   private selectedExam:any = []
   private displayText : string = 'Select An Exam Type'
-
+  private isHoveredIndex: number | null = null
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
 
   get dropItems () {
@@ -275,15 +292,16 @@ export class DropdownQuestion extends Vue {
       exam_type_id: this.capturedExam.exam_type_id
     }
     const sorter = (a, b) => {
-      const typeA = a.exam_type_name
-      const typeB = b.exam_type_name
-      if (typeA < typeB) {
-        return -1
+      if (a.exam_color < b.exam_color) {
+        return -1;
       }
-      if (typeA > typeB) {
-        return 1
+      if (a.exam_color > b.exam_color) {
+        return 1;
       }
-      return 0
+      const totalMinutesA = a.number_of_hours * 60 + a.number_of_minutes;
+      const totalMinutesB = b.number_of_hours * 60 + b.number_of_minutes;
+
+      return totalMinutesA - totalMinutesB; 
     }
     if (this.addExamModal.setup === 'individual') {
       const exams = this.examTypes.filter(type =>
