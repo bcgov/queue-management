@@ -247,6 +247,28 @@ export class DateQuestion extends Vue {
           </template>
         </multiselect>
       </b-col>
+        <multiselect
+          v-model="selectedExam"
+          :options="dropItems"
+          :track-by="'exam_type_id'"
+          :label="'exam_type_name'"
+          class="custom-multiselect"
+          :show-labels="false"
+          @input="preHandleInput"
+          :placeholder="displayText"
+        >
+          <template #singleLabel="{ selectedOptions }">
+            <span class="multiselect__single">
+              <span >{{ displayText }}</span>
+            </span>
+          </template>
+          <template #option="{ option }">
+            <p :style="{ backgroundColor: option.exam_color, padding: '10px' }">
+              {{ option.exam_type_name }}
+            </p>
+          </template>
+        </multiselect>
+      </b-col>
     </b-row>
   </b-row>
 `
