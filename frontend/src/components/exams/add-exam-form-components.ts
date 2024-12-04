@@ -284,7 +284,7 @@ export class DropdownQuestion extends Vue {
   private objectItem:any = {};
   private selectedExam:any = []
   private displayText : string = 'Select An Exam Type'
-
+  private isHoveredIndex: number | null = null
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
 
   get dropItems () {
