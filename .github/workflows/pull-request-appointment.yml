@@ -1,4 +1,4 @@
-name: newman test run Deploy
+name: Pull Request Deploy-appointment
 on:
   workflow_dispatch:
     inputs:
@@ -67,12 +67,30 @@ jobs:
         echo "ref=$REF" >> $GITHUB_OUTPUT
     
 
+  ##### TEST ###################################################################
+
+  appointment-frontend-cypress:
+    name: Appointment Frontend Cypress
+    needs: parse-inputs
+    uses: ./.github/workflows/tyu-reusable-appointment-frontend-cypress.yaml
+    secrets:
+      bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
+      bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
+      bceid-username: ${{ secrets.CYPRESS_BCEID_USERNAME }}
+      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
+      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
+      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
+      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
+      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
+    with:
+      ref: ${{ needs.parse-inputs.outputs.ref }}
+
   ##### BUILD ##################################################################
 
-  queue-management-api:
-    name: queue-management-api
-    needs: [parse-inputs]
-    uses: ./.github/workflows/reusable-build-s2i.yaml
+  appointment-frontend:
+    name: appointment-frontend
+    needs: [parse-inputs, appointment-frontend-cypress]
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -86,62 +104,37 @@ jobs:
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
-      directory: api
-      image-name: queue-management-api
+      directory: appointment-frontend
+      image-name: appointment-nginx-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
-
 
   ##### DEPLOY #################################################################
 
   tag:
     name: Tag
     if: github.repository_owner == 'bcgov'
-    needs: [parse-inputs, queue-management-api]
+    needs: [parse-inputs, appointment-frontend]
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
-      image-names: queue-management-api
+      image-names: appointment-nginx-frontend
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
 
-  ##### TEST ###################################################################
-
-  # Only run Newman for The Q dev - other environments will fail due to data.
-  newman-theq-dev:
-    name: Newman Tests
-    if: github.event.inputs.namespace == 'The Q Dev'
-    needs: [parse-inputs,tag]
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check out
-      uses: actions/checkout@v2
-
-    - name: NPM Install
-      run: |
-        cd api/postman
-        npm install newman
-
-    - name: Run Newman Tests
-      run: |
-        cd api/postman
-        node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
-          -e postman_env.json \
-          --delay-request 250 \
-          --global-var 'auth_url=${{ vars.POSTMAN_AUTH_URL_DEV }}' \
-          --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
-          --global-var 'clientid=${{ vars.POSTMAN_CLIENTID_DEV }}' \
-          --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
-          --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-          --global-var 'public_url=${{ vars.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
-          --global-var 'public_user_id=${{ vars.POSTMAN_PUBLIC_USERID }}' \
-          --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-          --global-var 'realm=${{ vars.POSTMAN_REALM }}' \
-          --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
-          --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
-          --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
+    needs: [parse-inputs, tag]
+    uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+    with:
+      image-names: appointment-nginx-frontend-${{ needs.parse-inputs.outputs.environment }}
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
