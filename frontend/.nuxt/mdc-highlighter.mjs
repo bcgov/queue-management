@@ -1,0 +1,1 @@
+export default () => { throw new Error('[@nuxtjs/mdc] No highlighter specified') }
