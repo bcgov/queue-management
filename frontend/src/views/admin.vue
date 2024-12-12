@@ -21,9 +21,6 @@
     </template>
     <template v-else>
       <div class="loader" style="margin-top: 250px" />
-      <div>
-        <h1>Hello!  test</h1>
-      </div>
     </template>
   </div>
 </template>
