@@ -264,3 +264,14 @@ input#app_timepicker_id {
   position: unset;
   left: unset;
 }
+
+
+.multiselect__option--highlight {
+  background-color: #ffffff;
+}
+
+.custom-multiselect .multiselect__option {
+  padding: 0;
+  text-wrap: wrap;
+}
+

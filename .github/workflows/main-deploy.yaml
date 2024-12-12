@@ -247,7 +247,7 @@ jobs:
           target: ${{ secrets.ZAP_STAFFURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
@@ -266,7 +266,7 @@ jobs:
           target: ${{ secrets.ZAP_APPTMNTURL_THEQ_DEV  }}
 
       - name: Upload Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html

@@ -67,7 +67,7 @@ class BceidLogin {
     await this.page.type(BceidLogin.SELECTOR_BCEID_INPUT_USER_ID, username)
     await this.page.type(BceidLogin.SELECTOR_BCEID_INPUT_PASSWORD, password)
     await this.page.click(BceidLogin.SELECTOR_BCEID_BUTTON_SUBMIT)
-
+    await this.page.waitForTimeout(3000)
     await this.page.waitForNavigation({ waitUntil: 'networkidle2' })
   }
 

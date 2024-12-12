@@ -1,4 +1,4 @@
-name: newman test run Deploy
+name: Pull Request Deploy frontend
 on:
   workflow_dispatch:
     inputs:
@@ -67,12 +67,15 @@ jobs:
         echo "ref=$REF" >> $GITHUB_OUTPUT
     
 
+  ##### TEST ###################################################################
+
+
   ##### BUILD ##################################################################
 
-  queue-management-api:
-    name: queue-management-api
+  queue-management-frontend:
+    name: queue-management-frontend
     needs: [parse-inputs]
-    uses: ./.github/workflows/reusable-build-s2i.yaml
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
     secrets:
       artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
       artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
@@ -86,26 +89,25 @@ jobs:
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
-      directory: api
-      image-name: queue-management-api
+      directory: frontend
+      image-name: queue-management-nginx-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
       push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
-
 
   ##### DEPLOY #################################################################
 
   tag:
     name: Tag
     if: github.repository_owner == 'bcgov'
-    needs: [parse-inputs, queue-management-api]
+    needs: [parse-inputs, queue-management-frontend]
     uses: ./.github/workflows/reusable-tag-image.yaml
     secrets:
       licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
       openshift-api: ${{ secrets.OPENSHIFT_API }}
       token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
     with:
-      image-names: queue-management-api
+      image-names: queue-management-nginx-frontend
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
 
