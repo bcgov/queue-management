@@ -19,7 +19,9 @@
       "vue-fragment",
       "vuetify",
       "node",
-      "@simonsmith/cypress-image-snapshot/types"
+      "@simonsmith/cypress-image-snapshot/types",
+      "vue-search-select",
+      "camunda-formio-tasklist-vue" 
     ],
     "paths": {
       "@/*": [

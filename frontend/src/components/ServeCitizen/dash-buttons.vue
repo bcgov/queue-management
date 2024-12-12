@@ -56,7 +56,7 @@
           >Add Citizen</b-button
         >
         <b-dropdown
-          v-if="user.office.quick_list.length > 0"
+          v-if="quickListItems.length > 0"
           :variant="
             citizenInvited === true || performingAction || showAdmin
               ? ''
@@ -71,7 +71,7 @@
           right
         >
           <b-dropdown-item
-            v-for="item in user.office.quick_list"
+            v-for="item in quickListItems"
             :data-id="item.service_id"
             :key="item.service_id"
             @click="quickServeCitizen"
@@ -94,7 +94,7 @@
           >Back Office</b-button
         >
         <b-dropdown
-          v-if="user.office.back_office_list.length > 0"
+          v-if="backOfficeItems.length > 0"
           :variant="
             citizenInvited === true || performingAction || showAdmin
               ? ''
@@ -109,7 +109,7 @@
           right
         >
           <b-dropdown-item
-            v-for="item in user.office.back_office_list"
+            v-for="item in backOfficeItems"
             :data-id="item.service_id"
             :key="item.service_id"
             @click="quickBackOffice"
@@ -156,6 +156,18 @@ export default class DashButtons extends Vue {
   @Mutation('setMainAlert') public setMainAlert: any
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('setAddModalSelectedItem') public setAddModalSelectedItem: any
+
+  get quickListItems() {
+    return this.user?.office?.quick_list?.filter(
+      (item: any) => item.deleted === null
+    ) || []
+  }
+
+  get backOfficeItems() {
+    return this.user?.office?.back_office_list?.filter(
+      (item: any) => item.deleted === null
+    ) || []
+  }
 
   get queueLength () {
     return this.citizens_queue.length

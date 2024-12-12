@@ -6,6 +6,10 @@ import { mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import moment from 'moment'
+import { ModelListSelect } from "vue-search-select"
+import { throws } from 'assert'
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 // Checkmark
 @Component({
@@ -182,7 +186,9 @@ export class DateQuestion extends Vue {
 // DropdownQuestion
 @Component({
   components: {
-    Checkmark
+    Checkmark,
+    ModelListSelect,
+    Multiselect
   },
   computed: {
     ...mapState({
@@ -195,38 +201,52 @@ export class DateQuestion extends Vue {
   <b-row no-gutters>
     <b-row>
       <b-col class="dropdown">
-        <h5 v-if="addExamModal.setup === 'group' ">Add Group Exam</h5>
-        <h5 v-if="addExamModal.setup === 'individual' ">Add Individual SkilledTradesBC Exam</h5>
-        <h5 v-if="addExamModal.setup === 'other' ">Add Non-SkilledTradesBC Exam</h5>
-        <h5 v-if="addExamModal.setup === 'pesticide' ">Add Environment Exam</h5>
+        <h5 v-if="addExamModal.setup === 'group'">Add Group Exam</h5>
+        <h5 v-if="addExamModal.setup === 'individual'">Add Individual SkilledTradesBC Exam</h5>
+        <h5 v-if="addExamModal.setup === 'other'">Add Non-SkilledTradesBC Exam</h5>
+        <h5 v-if="addExamModal.setup === 'pesticide'">Add Environment Exam</h5>
       </b-col>
       <b-col>
         <label>Exam Type</label><br>
-        <div @click="clickInput" id="exam_type_dropdown">
-          <b-input read-only
-                  autocomplete="off"
-                  :value="inputText"
-                  placeholder="click here to see options"
-                  :style="inputStyle" />
-        </div>
+        <multiselect
+          v-model="selectedExam"
+          :options="dropItems"
+          :track-by="'exam_type_id'"
+          :label="'exam_type_name'"
+          class="custom-multiselect"
+          :show-labels="false"
+          @input="preHandleInput"
+          :placeholder="displayText"
+        >
+          <template #singleLabel="{ selectedOptions }">
+            <span class="multiselect__single">
+              <span >{{ displayText }}</span>
+            </span>
+          </template>
+          <template #option="{ option, index }">
+             <div 
+               :style="{
+                 backgroundColor: option.exam_color ? option.exam_color : '#333',
+                 padding: '10px',
+                 color: isHoveredIndex === index ? '#1A1A4B' : '#000',
+                 border: isHoveredIndex === index ? '2px solid #7181a8' : '2px solid transparent',
+                 borderRadius: isHoveredIndex === index ? '3px' : '0',
+                 transition: 'color 0.3s, border 0.3s, background-color 0.3s, border-radius 0.3s, box-shadow 0.3s, transform 0.3s',
+                 boxShadow: isHoveredIndex === index ? '0 8px 16px rgba(0, 0, 0, 0.3)' : 'none', 
+                 transform: isHoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
+                 fontFamily: 'Roboto, sans-serif',
+                 fontSize: '16px',
+                 lineHeight: '1.5'        
+               }" 
+               @mouseover="isHoveredIndex = index" 
+               @mouseleave="isHoveredIndex = null"
+               @click="preHandleInput(option)"
+             >
+               {{ option.exam_type_name }} - Actual Hours: {{ option.number_of_hours }} hours {{ option.number_of_minutes !== null ? option.number_of_minutes : 0 }} minutes
+             </div>
+           </template>
+        </multiselect>
       </b-col>
-    </b-row
-  <b-row>
-    <div :class="dropclass"
-          style="border: 1px solid grey"
-          @click="clickInput">
-      <template v-for="type in dropItems">
-        <b-dd-header v-if="type.header"
-                      :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
-                      :class="type.class">{{ type.exam_type_name }}</b-dd-header>
-        <b-dd-item v-else :style="{backgroundColor: type.exam_color, listStyleType: 'none'}"
-                    @click="preHandleInput(type.exam_type_id)"
-                    :name="type.exam_type_id"
-                    autocomplete="off"
-                    :id="type.exam_type_id"
-                    :class="type.class">{{ type.exam_type_name }}</b-dd-item>
-      </template>
-    </div>
     </b-row>
   </b-row>
 `
@@ -261,20 +281,27 @@ export class DropdownQuestion extends Vue {
   @State('addExamModal') private addExamModal!: any
   @State('capturedExam') private capturedExam!: any
   @State('nonITAExam') private nonITAExam!: any
-
+  private objectItem:any = {};
+  private selectedExam:any = []
+  private displayText : string = 'Select An Exam Type'
+  private isHoveredIndex: number | null = null
   @Mutation('setAddExamModalSetting') public setAddExamModalSetting: any
 
   get dropItems () {
+    this.objectItem = {
+      exam_type_id: this.capturedExam.exam_type_id
+    }
     const sorter = (a, b) => {
-      const typeA = a.exam_type_name
-      const typeB = b.exam_type_name
-      if (typeA < typeB) {
-        return -1
+      if (a.exam_color < b.exam_color) {
+        return -1;
       }
-      if (typeA > typeB) {
-        return 1
+      if (a.exam_color > b.exam_color) {
+        return 1;
       }
-      return 0
+      const totalMinutesA = a.number_of_hours * 60 + a.number_of_minutes;
+      const totalMinutesB = b.number_of_hours * 60 + b.number_of_minutes;
+
+      return totalMinutesA - totalMinutesB; 
     }
     if (this.addExamModal.setup === 'individual') {
       const exams = this.examTypes.filter(type =>
@@ -313,13 +340,6 @@ export class DropdownQuestion extends Vue {
     return ''
   }
 
-  get inputStyle () {
-    if (this.exam_object && this.exam_object.exam_type_name) {
-      return { backgroundColor: `${this.exam_object.exam_color}` }
-    }
-    return {}
-  }
-
   get dropclass () {
     if (!this.addExamModal.step1MenuOpen) {
       return 'dropdown-menu'
@@ -337,13 +357,19 @@ export class DropdownQuestion extends Vue {
     this.setAddExamModalSetting({ step1MenuOpen: false })
   }
 
-  preHandleInput (id) {
+  customLabel(option) {
+    return option.exam_type_name
+  }
+
+  preHandleInput (item) {
     this.handleInput({
       target: {
         name: 'exam_type_id',
-        value: id
+        value: item.exam_type_id
       }
     })
+    this.displayText = item.exam_type_name
+    console.log("CAPTURED EXAM", item.exam_type_id);
   }
 }
 

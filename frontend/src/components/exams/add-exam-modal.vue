@@ -9,7 +9,7 @@
     @shown="initialize"
     @hidden="hideModal"
     :size="modalSize"
-    scrollable
+    style="overflow: visible !important;"
   >
     <template slot="modal-footer">
       <template v-if="unSubmitted">
@@ -467,6 +467,14 @@ export default class AddExamModal extends Vue {
 </script>
 
 <style>
+/* .modal-content {
+  overflow: unset !important;
+} */
+#add-exam-modal {
+  .modal-content {
+    overflow: unset !important;
+  }
+}
 .message-text {
   font-size: 0.9rem;
   font-weight: 500;
