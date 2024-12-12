@@ -18,8 +18,6 @@ import 'babel-polyfill'; // For IE11 compat
 import './router/componentHooks'; // <-- Needs to be first to work beforeRouteLeave
 import 'core-js/stable'; // For IE11 compat
 
-import { Store } from 'vuex';
-
 import Vue from 'vue';
 import vuetify from './plugins/vuetify';
 import Buefy from 'buefy';
@@ -77,13 +75,6 @@ import './assets/css/bc-gov-style.css';
 import MainApp from './MainApp.vue';
 
 import ConfigHelper from '@/utils/config-helper';
-import { StateModelIF } from './interfaces';
-
-declare global {
-  interface Window {
-    store: Store<StateModelIF>;
-  }
-}
 
 require('es6-shim');
 Vue.use(Buefy);
@@ -137,8 +128,6 @@ let keycloak = Keycloak(kcPath);
 // })
 Vue.prototype.$keycloak = keycloak;
 Vue.config.productionTip = false;
-window.store = store;
-
 
 /* eslint-disable no-new */
 

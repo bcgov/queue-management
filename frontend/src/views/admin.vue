@@ -56,14 +56,11 @@ export default class Admin extends Vue {
 
   get url () {
     //  The default admin edit URL is for GA csr view.
-    console.log("This is the iframe Value whrn url(): " + this.iframeLogedIn)
-    console.log('This is the number navigation used: ' + this.admin_navigation_nonblank)
     return config.SOCKET_URL + '/admin/' + this.admin_navigation_nonblank + '/'
   }
 
   created () {
     this.loginIframe()
-    console.log("This is the iframe Value: " + this.iframeLogedIn)
   }
 }
 
