@@ -1,5 +1,5 @@
 [![img](https://img.shields.io/badge/Lifecycle-Stable-97ca00)]
-## Queue Managment System
+## Queue Managment System - About
 
 The Queue Managment System will be used to manage the citizen flow and provide analtyics for our Service BC locations. This system is designed to be used for government offices with a large number of services.
 
@@ -11,9 +11,9 @@ Designed for use in an application platform buld for containers specifically Ope
 
 - VueJS & BootStrap for Front End
 - Flask & Python for API Backend
-- Patroni Database Cluster
-- RabbitMQ
-- Caddy HTTP/2 Web Server
+- EDB (Postgres)
+- Redis
+- Ngnix
 
 ## Features
 

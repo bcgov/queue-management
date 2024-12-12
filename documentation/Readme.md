@@ -1,4 +1,4 @@
-# Installation Guide - Work in Progress
+# Queue-Management : Installation Guide 
 
 We use OpenShift in our environment, and it is our recommendation for running this project. You can then use our build / deployment configs found in the openshift directory.
 
@@ -6,10 +6,11 @@ For development, we recommend you use Visual Studio Code's *Remote - Containers*
 
 ## Key features of the platform:
 
-Jenkins Build process includes:
+Git Actions Build process includes:
 
 - Building our Flask/Python API
-- Building our Vue FrontEnd and copying the output to CADDY Webserver
+- Building our Vue FrontEnd
+- Cypress e2e Tests
 - Postman tests
 - Zap Vulnerability tests
 
@@ -79,18 +80,7 @@ queue-management
     └───notifications-api
             .env
 ```
-
-## Set up Keycloak:
-
-TODO: automate this.
-
-You should be able to login in with admin/admin on http://localhost:8085/auth
-1. Go to Groups, add new group *theq_internal_user*
-1. Go to Roles, add new role *internal_user*
-1. Go to Users, view all users, edit 'admin', 
-    - under Groups, under Available Groups, join *theq_internal_user*
-    - under Role Mappings, select *internal_user*, add selected, should see under assigned role
-1. Go to Clients, edit *account*, Scope tab, set Full Scope Allowed to ON
+NOTE: get .env files from Teams Channel : "DevOps - Openshift"
 
 ## Frequently Asked Questions
 
@@ -207,13 +197,6 @@ It's probably a good idea to delete your database volume when changing the versi
 
 </details>
 
-
-# TODO: REMOVE/REVISE/INCLUDE EVERYTHING BELOW
-
-**TODO: Complete these: How do I...**
-
-1. Do stuff with analytics?
-1. Run Redis?
 
 ## To use FRONTEND:
 
