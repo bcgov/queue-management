@@ -13,3 +13,15 @@ run "flask db upgrade" to apply changes
 
 run "flask db downgrade" to rollback the latest changes
 
+// Seed Data from CSV
+
+//create empty file with correct alembic revision
+run flask db revision -m "ticket_number"
+ OR
+
+ // add ticket number in the script on line 12 if needed
+cd api/Migrations
+run python seed.py
+//validate the migration file before applying
+
+
