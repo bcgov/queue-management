@@ -42,7 +42,10 @@ class ServiceConfig(Base):
         'online_link',
         'online_availability',
         'timeslot_duration',
-        'is_dlkt'
+        'is_dlkt',
+        'partner',
+        'program',
+        'recoverable'
     ]
     column_labels = {
         'service_desc': 'Description',
@@ -85,7 +88,10 @@ class ServiceConfig(Base):
         'timeslot_duration',
         'is_dlkt',
         'email_paragraph',
-        'css_colour'
+        'css_colour',
+        'partner',
+        'program',
+        'recoverable'
     )
     form_choices = {
         'actual_service_ind': [
