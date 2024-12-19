@@ -88,6 +88,8 @@ class Office(Base):
     office_email_paragraph = db.Column(db.String(2000), nullable=True)
     external_map_link = db.Column(db.String(500), nullable=True)
     soonest_appointment = db.Column(db.Integer, default=0)
+    core_service_partners = db.Column(db.String(), nullable=True)
+    service_model = db.Column(db.String(), default="Reception", server_default='Reception', nullable=False)
 
     counters = db.relationship("Counter", secondary='office_counter')
     services = db.relationship("Service", secondary='office_service')
