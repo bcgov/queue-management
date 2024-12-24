@@ -20,9 +20,8 @@ import shutil
 import os
 import re
 from os.path import isfile, join
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timezone
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
@@ -98,7 +97,7 @@ class VideoFiles(Resource):
                             info = entry.stat()
                             new_info = {}
                             new_info['name'] = entry.name
-                            new_info['date'] = datetime.fromtimestamp(info.st_mtime, tz=timezone.utc).strftime('%Y-%m-%d %I:%H:%M %p')
+                            new_info['date'] = datetime.utcfromtimestamp(info.st_mtime).strftime('%Y-%m-%d %I:%H:%M %p')
                             new_info['size'] = "{:10.3f}".format(info.st_size / 2**20) + "Mb"
                             newfiles.append(new_info)
 
