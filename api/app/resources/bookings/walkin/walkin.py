@@ -163,8 +163,18 @@ class WalkinDetail(Resource):
         if office_id:  
             past_hour = datetime.now(timezone.utc) - timedelta(minutes=15)
             future_hour = datetime.now(timezone.utc) + timedelta(minutes=15)
-            local_past = pytz.utc.localize(past_hour)
-            local_future = pytz.utc.localize(future_hour)
+            if past_hour.tzinfo is None:
+                # If it's naive, localize to UTC
+                local_past = pytz.utc.localize(past_hour)
+            else:
+                # If it's already timezone-aware, no need to localize
+                local_past = past_hour
+            if future_hour.tzinfo is None:
+                # Only localize if the datetime is naive
+                local_future = pytz.utc.localize(future_hour)
+            else:
+                # If it's already timezone-aware, no need to localize
+                local_future = future_hour
             # getting agenda panel app
             appointments = Appointment.query.filter_by(office_id=office_id)\
                                         .filter(Appointment.start_time <= local_future)\
