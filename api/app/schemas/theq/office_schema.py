@@ -51,6 +51,8 @@ class OfficeSchema(BaseSchema):
     online_status = fields.Str()
     optout_status = fields.Int()
     external_map_link = fields.Str()
+    core_service_partners = fields.Str()
+    service_model = fields.Str()
 
     # for walk-in notifications
     check_in_notification = fields.Int()
