@@ -4,7 +4,7 @@ python-dotenv
 Jinja2
 pytz
 Flask-Caching
-Werkzeug==2.2.3
+Werkzeug==3.0.6
 aniso8601
 attrs
 flask-cors
