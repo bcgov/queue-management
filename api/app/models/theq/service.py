@@ -48,6 +48,9 @@ class Service(Base):
     is_dlkt = db.Column(Enum(YesNo))
     email_paragraph = db.Column(db.String(2000), nullable=True)
     css_colour = db.Column(db.String(50), nullable=True)
+    partner = db.Column(db.String(), nullable=True)
+    program = db.Column(db.String(), nullable=True)
+    recoverable = db.Column(db.String(), nullable=True)
 
     offices = db.relationship("Office", secondary='office_service')
     parent = db.relationship("Service", remote_side=[service_id])
