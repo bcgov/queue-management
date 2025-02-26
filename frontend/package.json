@@ -38,7 +38,7 @@
     "es6-promise": "^4.2.8",
     "es6-shim": "^0.35.6",
     "js-file-download": "^0.4.12",
-    "keycloak-js": "^20.0.0",
+    "keycloak-js": "^26.2.0",
     "lodash": "^4.17.19",
     "luxon": "^1.28.1",
     "moment": "^2.29.4",
