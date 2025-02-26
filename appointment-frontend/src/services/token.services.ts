@@ -35,7 +35,7 @@ class TokenServices {
     }
 
     return new Promise((resolve, reject) => {
-      this.kc = Keycloak(ConfigHelper.getKeycloakConfigUrl())
+      this.kc = new Keycloak(ConfigHelper.getKeycloakConfigUrl())
       this.kc.init(kcOptions)
         .then(authenticated => {
           // eslint-disable-next-line no-console
