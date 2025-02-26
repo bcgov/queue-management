@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInitOptions, KeycloakInstance } from 'keycloak-js'
+import Keycloak, { KeycloakInitOptions } from 'keycloak-js'
 import AuthModule from '@/store/modules/auth'
 import ConfigHelper from '@/utils/config-helper'
 import { SessionStorageKeys } from '@/utils/constants'
@@ -6,13 +6,13 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 class TokenServices {
-  private kc: KeycloakInstance | undefined
+  private kc: Keycloak | undefined
   private counter = 0
   private REFRESH_ATTEMPT_INTERVAL = 10 // in seconds
   private timerId = 0
   private store: Store<any> | null = null
 
-  initUsingKc (kcInstance: KeycloakInstance) {
+  initUsingKc (kcInstance: Keycloak) {
     this.kc = kcInstance
   }
 
