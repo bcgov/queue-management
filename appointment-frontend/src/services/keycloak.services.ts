@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions, KeycloakTokenParsed } from 'keycloak-js'
+import Keycloak, { KeycloakInitOptions, KeycloakLoginOptions, KeycloakTokenParsed } from 'keycloak-js'
 import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { KCUserProfile } from '@/models/KCUserProfile'
@@ -17,7 +17,7 @@ interface UserToken extends KeycloakTokenParsed {
 }
 
 class KeyCloakService {
-  private kc: KeycloakInstance | undefined
+  private kc: Keycloak | undefined
   private parsedToken: any
   private static instance: KeyCloakService
   private store: Store<any> | null = null
@@ -35,7 +35,7 @@ class KeyCloakService {
     this.cleanupSession()
     const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
     const keycloakConfig = ConfigHelper.getKeycloakConfigUrl()
-    this.kc = Keycloak(keycloakConfig)
+    this.kc = new Keycloak(keycloakConfig)
     const kcLogin = this.kc.login
     this.kc.login = (options?: KeycloakLoginOptions) => {
       if (options) {
@@ -82,7 +82,7 @@ class KeyCloakService {
   async logout (redirectUrl?: string) {
     const token = ConfigHelper.getFromSession(SessionStorageKeys.KeyCloakToken) || undefined
     if (token) {
-      this.kc = Keycloak(ConfigHelper.getKeycloakConfigUrl())
+      this.kc = new Keycloak(ConfigHelper.getKeycloakConfigUrl())
       const kcOptions :KeycloakInitOptions = {
         onLoad: 'login-required',
         checkLoginIframe: false,
@@ -118,7 +118,7 @@ class KeyCloakService {
     }
   }
 
-  getKCInstance () : KeycloakInstance | undefined {
+  getKCInstance () : Keycloak | undefined {
     return this.kc
   }
 
