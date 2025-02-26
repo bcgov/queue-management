@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions, KeycloakTokenParsed } from 'keycloak-js'
+import Keycloak, { KeycloakInitOptions,  KeycloakLoginOptions, KeycloakTokenParsed } from 'keycloak-js'
 import { AuthModule } from '@/store/modules'
 import ConfigHelper from '@/utils/config-helper'
 import { KCUserProfile } from '@/models/KCUserProfile'
@@ -17,7 +17,7 @@ interface UserToken extends KeycloakTokenParsed {
 }
 
 class KeyCloakService {
-  private kc: KeycloakInstance | undefined
+  private kc: Keycloak | undefined
   private parsedToken: any
   private static instance: KeyCloakService
   private store: Store<any> | null = null
@@ -118,7 +118,7 @@ class KeyCloakService {
     }
   }
 
-  getKCInstance () : KeycloakInstance | undefined {
+  getKCInstance () : Keycloak | undefined {
     return this.kc
   }
 
