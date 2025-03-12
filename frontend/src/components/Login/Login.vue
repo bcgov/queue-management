@@ -219,7 +219,7 @@ export default class Login extends Vue {
             token: sessionStorage.getItem('token'),
             tokenExp: sessionStorage.getItem('tokenExp')
           })
-          .success(() => {
+          .then(() => {
             // Set a timer to auto-refresh the token
             setInterval(() => {
               this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
@@ -227,7 +227,7 @@ export default class Login extends Vue {
             this.setTokenToSessionStorage()
             this.$store.commit('setBearer', sessionStorage.getItem('token'))
           })
-          .error(() => {
+          .catch(() => {
             this.init()
           })
       } else {
@@ -245,7 +245,7 @@ export default class Login extends Vue {
         flow: 'standard',
         onLoad: 'check-sso'
       })
-      .success(() => {
+      .then(() => {
         setInterval(() => {
           this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
         }, 60 * 1000)
@@ -343,7 +343,7 @@ export default class Login extends Vue {
     )
     this.$keycloak
       .updateToken(minValidity)
-      .success((refreshed: any) => {
+      .then((refreshed: any) => {
         if (refreshed) {
           console.log('Token refreshed and is below')
           console.log(this.$keycloak.tokenParsed)
@@ -363,7 +363,7 @@ export default class Login extends Vue {
             ' seconds'
         )
       })
-      .error((error: any) => {
+      .catch((error: any) => {
         console.log('Failed to refresh token')
         console.log(error)
         const errorSecondsLeft = Math.round(
