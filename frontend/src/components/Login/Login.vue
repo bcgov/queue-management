@@ -343,7 +343,7 @@ export default class Login extends Vue {
     )
     this.$keycloak
       .updateToken(minValidity)
-      .success((refreshed: any) => {
+      .then((refreshed: any) => {
         if (refreshed) {
           console.log('Token refreshed and is below')
           console.log(this.$keycloak.tokenParsed)
@@ -363,7 +363,7 @@ export default class Login extends Vue {
             ' seconds'
         )
       })
-      .error((error: any) => {
+      .catch((error: any) => {
         console.log('Failed to refresh token')
         console.log(error)
         const errorSecondsLeft = Math.round(
