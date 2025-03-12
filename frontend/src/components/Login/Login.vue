@@ -245,7 +245,7 @@ export default class Login extends Vue {
         flow: 'standard',
         onLoad: 'check-sso'
       })
-      .success(() => {
+      .then(() => {
         setInterval(() => {
           this.refreshToken(config.REFRESH_TOKEN_SECONDS_LEFT)
         }, 60 * 1000)
