@@ -34,7 +34,7 @@ Flask-SQLAlchemy==2.5.1
 future==0.18.2
 gevent==24.2.1
 greenlet==3.0.3
-gunicorn==22.0.0
+gunicorn==23.0.0
 h11==0.14.0
 idna==3.7
 ijson==2.6.1
