@@ -1,0 +1,8 @@
+{
+  "realm": "servicebc",
+  "auth-server-url": "https://dev.loginproxy.gov.bc.ca/auth/",
+  "ssl-required": "external",
+  "resource": "theq-frontend",
+  "public-client": "true",
+  "confidential-port": 0
+}
