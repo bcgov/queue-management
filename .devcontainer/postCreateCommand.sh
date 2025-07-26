@@ -93,19 +93,19 @@ check_setting () {
 # Dependency Installations
 ###############################################################################
 
-
 install_api_deps () {
     (
         cd api
-        # Remove old virtual environment and create a new one
-        rm -rf env || handle_error "Failed to remove old virtual environment."
-        sudo python3 -m venv env || handle_error "Failed to create virtual environment."
+        # Ensure the env directory is owned by the current user
+        if [ -d env ]; then
+            sudo chown -R $(id -u):$(id -g) env
+        fi
+        python3 -m venv env || echo_failure "Failed to create virtual environment."
 
         # Activate the virtual environment and install dependencies
-        source env/bin/activate || handle_error "Failed to activate virtual environment."
-        sudo chown -R $USER:$USER /workspace
-        python -m pip install --upgrade pip -q || handle_error "Failed to upgrade pip."
-        pip install -r requirements_dev.txt --progress-bar off || handle_error "Failed to install dependencies."
+        source env/bin/activate || echo_failure "Failed to activate virtual environment."
+        python -m pip install --upgrade pip -q || echo_failure "Failed to upgrade pip."
+        pip install -r requirements_dev.txt --progress-bar off || echo_failure "Failed to install dependencies."
     )
 }
 
@@ -114,8 +114,10 @@ install_api_deps () {
 install_appointment_frontend_deps () {
     (
         cd appointment-frontend
-        rm -rf node_modules
-        rm -rf package-lock.json
+        # Ensure the node_modules directory is owned by the current user
+        if [ -d node_modules ]; then
+            sudo chown -R $(id -u):$(id -g) node_modules
+        fi
         npm install
         npx cypress install
     )
@@ -124,8 +126,10 @@ install_appointment_frontend_deps () {
 install_frontend_deps () {
     (
         cd frontend
-        rm -rf node_modules
-        rm -rf package-lock.json
+        # Ensure the node_modules directory is owned by the current user
+        if [ -d node_modules ]; then
+            sudo chown -R $(id -u):$(id -g) node_modules
+        fi
         npm install
     )
 }
