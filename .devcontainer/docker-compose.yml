@@ -56,8 +56,11 @@ services:
     network_mode: 'service:db'
 
     volumes:
-      - 'x11:/tmp/.X11-unix:rw'
-      - '..:/workspace:cached'
+      - x11:/tmp/.X11-unix:rw
+      - ..:/workspace:cached
+      - api-env:/workspace/api/env
+      - appointment-frontend-node-modules:/workspace/appointment-frontend/node_modules
+      - frontend-node-modules:/workspace/frontend/node_modules
 
   # Run PostgreSQL as the database used by the API. Keep the version in sync
   # with what is used in the runtime deployments.
@@ -99,3 +102,6 @@ services:
 volumes:
   postgres-data:
   x11:
+  api-env:
+  appointment-frontend-node-modules:
+  frontend-node-modules:
