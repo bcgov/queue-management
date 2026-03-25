@@ -19,6 +19,7 @@ from flask_socketio import SocketIO
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
+from app.utilities.flask_admin_compat import apply_wtforms_compat
 from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
 from jose.exceptions import JOSEError
 from sqlalchemy import event
@@ -55,6 +56,7 @@ ma = Marshmallow()
 
 
 application = Flask(__name__, instance_relative_config=True)
+apply_wtforms_compat()
 
 # Make sure we 404 when the trailing slash is not present on ALL routes
 application.url_map.strict_slashes = True
