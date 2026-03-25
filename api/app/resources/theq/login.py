@@ -33,14 +33,6 @@ class Login(Resource):
         if username != '':
             csr = CSR.find_by_username(username)
             if csr:
-                if csr.deleted is None:
-                    csr.is_active = True
-                else:
-                    csr.is_active = False
-
-                csr.is_authenticated = False
-                csr.is_anonymous = False
-
                 login_user(csr)
                 if application.config['USE_HTTPS']:
                     return redirect(url_for(admin_index_const,
