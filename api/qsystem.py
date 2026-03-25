@@ -23,7 +23,6 @@ from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
 from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from sqlalchemy_continuum import make_versioned
 from flask_migrate import Migrate
 
 
@@ -47,7 +46,12 @@ def time_string():
     ms = now.strftime("%f")[:3]
     now_string = now.strftime("%Y-%m-%d %H:%M:%S,")
     return "[" + now_string + ms + "] "
+
+
 migrate = Migrate()
+db = SQLAlchemy()
+cache = Cache()
+ma = Marshmallow()
 
 
 application = Flask(__name__, instance_relative_config=True)
@@ -64,7 +68,7 @@ engine_flag = application.config['ENGINE_FLAG']
 appt_limit = application.config['APPOINTMENT_LIMIT_DAYS']
 
 #   Set up SQL Alchemy, caching, marshmallow
-db = SQLAlchemy(application)
+db.init_app(application)
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
 ping_timeout_seconds = application.config['SOCKETIO_PING_TIMEOUT']
 ping_interval_seconds = application.config['SOCKETIO_PING_INTERVAL']
@@ -75,10 +79,8 @@ logging.info("    --> ping_interval_seconds:   " + str(ping_interval_seconds))
 cache = Cache(config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
 cache.init_app(application)
 
-ma = Marshmallow(application)
+ma.init_app(application)
 migrate.init_app(application, db)
-
-make_versioned(user_cls=None, plugins=[])
 
 #   Set up socket io and rabbit mq.
 socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout=ping_timeout_seconds,ping_interval=ping_interval_seconds,
@@ -97,29 +99,8 @@ if application.config['CORS_ALLOWED_ORIGINS'] is not None:
 
 api = Api(application, prefix='/api/v1', doc='/api/v1/')
 
-
-#  Set up Flask Admin.
-from app import admin
-flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
-flask_admin.add_view(admin.ChannelModelView)
-flask_admin.add_view(admin.CounterModelView)
-flask_admin.add_view(admin.CSRModelView)
-flask_admin.add_view(admin.CSRGAModelView)
-flask_admin.add_view(admin.InvigilatorModelView)
-flask_admin.add_view(admin.OfficeModelView)
-flask_admin.add_view(admin.OfficeGAModelView)
-flask_admin.add_view(admin.RoleModelView)
-flask_admin.add_view(admin.ServiceModelView)
-flask_admin.add_view(admin.SmartBoardModelView)
-flask_admin.add_view(admin.RoomModelView)
-flask_admin.add_view(admin.ExamTypeModelView)
-flask_admin.add_view(admin.TimeslotModelView)
-flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
-flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
-
 login_manager = LoginManager()
 login_manager.init_app(application)
-import app.auth
 
 compress = Compress()
 compress.init_app(application)
@@ -140,32 +121,24 @@ configure_logging(application)
 # mail.init_app(application)
 # application.extensions['mail'].debug = 0
 
+def log_startup_state():
+    if not print_flag:
+        return
 
-#  Code to determine all db.engine properties and sub-properties, as necessary.
-if print_flag:
-    logging.info("==> All DB Engine options")
-    for attr in dir(db._engine_options.keys):
-        logging.info("    --> db._engine_options.keys." + attr + " = " + str(getattr(db._engine_options.keys, attr)))
-        # print("db.engine.%s = %s") % (attr, getattr(db.engine, attr))
+    logging.info("==> DB Engine options")
+    logging.info("    --> db options:    " + str(db.engine))
+    logging.info("    --> pool size:    " + str(db.engine.pool.size()))
+    logging.info("    --> max overflow: " + str(db.engine.pool._max_overflow))
+    logging.info("    --> echo:         " + str(db.engine.echo))
+    logging.info("    --> pre ping:     " + str(db.engine.pool._pre_ping))
+    logging.info("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
+    logging.info("")
 
-#  See whether options took.
-if print_flag:
-     logging.info("==> DB Engine options")
-     logging.info("    --> db options:    " + str(db.engine))
-     logging.info("    --> pool size:    " + str(db.engine.pool.size()))
-     logging.info("    --> max overflow: " + str(db.engine.pool._max_overflow))
-     logging.info("    --> echo:         " + str(db.engine.echo))
-     logging.info("    --> pre ping:     " + str(db.engine.pool._pre_ping))
-     logging.info("    --> Database URI: " + application.config['SQLALCHEMY_DATABASE_URI_DISPLAY'])
-     logging.info("")
+    logging.info("==> Socket/Engine options")
+    logging.info("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
+    logging.info("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
+    logging.info("")
 
-     logging.info("==> Socket/Engine options")
-     logging.info("    --> socket: " + os.getenv('LOG_SOCKETIO', '') + '; flag: ' + str(socket_flag))
-     logging.info("    --> engine: " + os.getenv('LOG_ENGINEIO', '') + '; flag: ' + str(engine_flag))
-     logging.info("")
-
-#  Get list of available loggers.
-if print_flag:
     logging.info("==> List of available loggers and associated information:")
     for name in logging.root.manager.loggerDict:
         temp_logger = logging.getLogger(name)
@@ -269,76 +242,100 @@ def get_key():
     char_ms = str(time_now.microsecond)[:2]
     return char_year + char_month + char_day + char_hour + char_minute + char_ms
 
-import app.resources.theq.categories
-import app.resources.theq.upload
-import app.resources.theq.channels
-import app.resources.theq.citizen.citizen_add_to_queue
-import app.resources.theq.citizen.citizen_remove_from_queue
-import app.resources.theq.citizen.citizen_begin_service
-import app.resources.theq.citizen.citizen_detail
-import app.resources.theq.citizen.citizen_finish_service
-import app.resources.theq.citizen.citizen_generic_invite
-import app.resources.theq.citizen.citizen_left
-import app.resources.theq.citizen.citizen_list
-import app.resources.theq.citizen.citizen_place_on_hold
-import app.resources.theq.citizen.citizen_service_requests
-import app.resources.theq.citizen.citizen_specific_invite
-import app.resources.theq.csrs
-import app.resources.theq.csr_states
-import app.resources.theq.csr_detail
-import app.resources.theq.feedback
-import app.resources.theq.health
-import app.resources.theq.login
-import app.resources.theq.offices
-import app.resources.theq.services
-import app.resources.theq.service_requests_list
-import app.resources.theq.service_requests_detail
-import app.resources.theq.smartboard
-import app.resources.theq.videofiles
-import app.resources.theq.websocket
-import app.resources.theq.user.user
-import app.resources.theq.user.user_appointments
+with application.app_context():
+    log_startup_state()
 
-import app.resources.bookings.appointment.all_recurring_stat_delete
-import app.resources.bookings.appointment.appointment_availability
-import app.resources.bookings.appointment.appointment_detail
-import app.resources.bookings.appointment.appointment_list
-import app.resources.bookings.appointment.appointment_post
-import app.resources.bookings.appointment.appointment_draft_post
-import app.resources.bookings.appointment.appointment_draft_delete
-import app.resources.bookings.appointment.appointment_draft_flush
-import app.resources.bookings.appointment.appointment_put
-import app.resources.bookings.appointment.appointment_delete
-import app.resources.bookings.appointment.appointment_recurring_delete
-import app.resources.bookings.appointment.appointment_recurring_put
-import app.resources.bookings.booking.booking_delete
-import app.resources.bookings.booking.booking_detail
-import app.resources.bookings.booking.booking_list
-import app.resources.bookings.booking.booking_post
-import app.resources.bookings.booking.booking_put
-import app.resources.bookings.booking.booking_recurring_delete
-import app.resources.bookings.booking.booking_recurring_put
-import app.resources.bookings.booking.booking_recurring_stat_delete
-import app.resources.bookings.exam.exam_bcmp
-import app.resources.bookings.exam.exam_bulk_status
-import app.resources.bookings.exam.exam_delete
-import app.resources.bookings.exam.exam_detail
-import app.resources.bookings.exam.exam_email_invigilator
-import app.resources.bookings.exam.exam_list
-import app.resources.bookings.exam.exam_post
-import app.resources.bookings.exam.exam_put
-import app.resources.bookings.exam.exam_export_list
-import app.resources.bookings.exam.exam_event_id_detail
-import app.resources.bookings.exam.exam_download
-import app.resources.bookings.exam.exam_transfer
-import app.resources.bookings.exam.exam_upload
-import app.resources.bookings.invigilator.invigilator_list
-import app.resources.bookings.invigilator.invigilator_list_offsite
-import app.resources.bookings.invigilator.invigilator_put
-import app.resources.bookings.room.room_list
-import app.resources.bookings.exam_type.exam_type_list
-import app.resources.bookings.appointment.appointment_reminder_get
-import app.resources.bookings.walkin.walkin
+    from app import admin
+
+    flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
+    flask_admin.add_view(admin.ChannelModelView)
+    flask_admin.add_view(admin.CounterModelView)
+    flask_admin.add_view(admin.CSRModelView)
+    flask_admin.add_view(admin.CSRGAModelView)
+    flask_admin.add_view(admin.InvigilatorModelView)
+    flask_admin.add_view(admin.OfficeModelView)
+    flask_admin.add_view(admin.OfficeGAModelView)
+    flask_admin.add_view(admin.RoleModelView)
+    flask_admin.add_view(admin.ServiceModelView)
+    flask_admin.add_view(admin.SmartBoardModelView)
+    flask_admin.add_view(admin.RoomModelView)
+    flask_admin.add_view(admin.ExamTypeModelView)
+    flask_admin.add_view(admin.TimeslotModelView)
+    flask_admin.add_link(admin.LoginMenuLink(name='Login', category='', url="/api/v1/login/"))
+    flask_admin.add_link(admin.LogoutMenuLink(name='Logout', category='', url="/api/v1/logout/"))
+
+    import app.auth
+
+    import app.resources.theq.categories
+    import app.resources.theq.upload
+    import app.resources.theq.channels
+    import app.resources.theq.citizen.citizen_add_to_queue
+    import app.resources.theq.citizen.citizen_remove_from_queue
+    import app.resources.theq.citizen.citizen_begin_service
+    import app.resources.theq.citizen.citizen_detail
+    import app.resources.theq.citizen.citizen_finish_service
+    import app.resources.theq.citizen.citizen_generic_invite
+    import app.resources.theq.citizen.citizen_left
+    import app.resources.theq.citizen.citizen_list
+    import app.resources.theq.citizen.citizen_place_on_hold
+    import app.resources.theq.citizen.citizen_service_requests
+    import app.resources.theq.citizen.citizen_specific_invite
+    import app.resources.theq.csrs
+    import app.resources.theq.csr_states
+    import app.resources.theq.csr_detail
+    import app.resources.theq.feedback
+    import app.resources.theq.health
+    import app.resources.theq.login
+    import app.resources.theq.offices
+    import app.resources.theq.services
+    import app.resources.theq.service_requests_list
+    import app.resources.theq.service_requests_detail
+    import app.resources.theq.smartboard
+    import app.resources.theq.videofiles
+    import app.resources.theq.websocket
+    import app.resources.theq.user.user
+    import app.resources.theq.user.user_appointments
+
+    import app.resources.bookings.appointment.all_recurring_stat_delete
+    import app.resources.bookings.appointment.appointment_availability
+    import app.resources.bookings.appointment.appointment_detail
+    import app.resources.bookings.appointment.appointment_list
+    import app.resources.bookings.appointment.appointment_post
+    import app.resources.bookings.appointment.appointment_draft_post
+    import app.resources.bookings.appointment.appointment_draft_delete
+    import app.resources.bookings.appointment.appointment_draft_flush
+    import app.resources.bookings.appointment.appointment_put
+    import app.resources.bookings.appointment.appointment_delete
+    import app.resources.bookings.appointment.appointment_recurring_delete
+    import app.resources.bookings.appointment.appointment_recurring_put
+    import app.resources.bookings.booking.booking_delete
+    import app.resources.bookings.booking.booking_detail
+    import app.resources.bookings.booking.booking_list
+    import app.resources.bookings.booking.booking_post
+    import app.resources.bookings.booking.booking_put
+    import app.resources.bookings.booking.booking_recurring_delete
+    import app.resources.bookings.booking.booking_recurring_put
+    import app.resources.bookings.booking.booking_recurring_stat_delete
+    import app.resources.bookings.exam.exam_bcmp
+    import app.resources.bookings.exam.exam_bulk_status
+    import app.resources.bookings.exam.exam_delete
+    import app.resources.bookings.exam.exam_detail
+    import app.resources.bookings.exam.exam_email_invigilator
+    import app.resources.bookings.exam.exam_list
+    import app.resources.bookings.exam.exam_post
+    import app.resources.bookings.exam.exam_put
+    import app.resources.bookings.exam.exam_export_list
+    import app.resources.bookings.exam.exam_event_id_detail
+    import app.resources.bookings.exam.exam_download
+    import app.resources.bookings.exam.exam_transfer
+    import app.resources.bookings.exam.exam_upload
+    import app.resources.bookings.invigilator.invigilator_list
+    import app.resources.bookings.invigilator.invigilator_list_offsite
+    import app.resources.bookings.invigilator.invigilator_put
+    import app.resources.bookings.room.room_list
+    import app.resources.bookings.exam_type.exam_type_list
+    import app.resources.bookings.appointment.appointment_reminder_get
+    import app.resources.bookings.walkin.walkin
 
 
 # Hostname for debug purposes

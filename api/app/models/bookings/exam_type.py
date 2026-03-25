@@ -30,7 +30,7 @@ class ExamType(Base):
     deleted = db.Column(db.DateTime, nullable=True)
 
     # changed lazy=false to lazy=raise
-    exam = db.relationship("Exam", lazy='raise')
+    exam = db.relationship("Exam", lazy='raise', overlaps='exam_type')
 
     # changed lazy4-false to no lazy option
     #exam = db.relationship("Exam", lazy=False)

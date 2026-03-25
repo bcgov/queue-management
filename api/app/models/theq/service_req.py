@@ -29,9 +29,15 @@ class ServiceReq(Base):
     sr_number = db.Column(db.Integer, default=1, nullable=False)
 
     channel = db.relationship('Channel')
-    periods = db.relationship('Period', backref=db.backref("request_periods", lazy=False), lazy='joined', order_by='Period.period_id')
+    periods = db.relationship(
+        'Period',
+        backref=db.backref("request_periods", lazy=False, overlaps='sr'),
+        lazy='joined',
+        order_by='Period.period_id',
+        overlaps='sr'
+    )
     sr_state = db.relationship('SRState', lazy='joined')
-    citizen = db.relationship('Citizen')
+    citizen = db.relationship('Citizen', overlaps='service_reqs')
     service = db.relationship('Service', lazy='joined')
 
     # Defining String constants to appease SonarQube

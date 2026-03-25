@@ -22,8 +22,6 @@ from app.models import theq, bookings
 # Alias for Flask CLI auto-discovery (FLASK_APP=manage)
 app = application
 
-fm.Migrate(application, db)
-
 @application.cli.group('db')
 def db_cli():
     '''Database migration commands.'''

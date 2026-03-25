@@ -49,7 +49,7 @@ class Service(Base):
     email_paragraph = db.Column(db.String(2000), nullable=True)
     css_colour = db.Column(db.String(50), nullable=True)
 
-    offices = db.relationship("Office", secondary='office_service')
+    offices = db.relationship("Office", secondary='office_service', overlaps='services')
     parent = db.relationship("Service", remote_side=[service_id])
 
     def __repr__(self):

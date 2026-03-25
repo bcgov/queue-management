@@ -47,7 +47,7 @@ class OfficeSlots(Resource):
             service = None
             service_id = request.args.get('service_id')
             if (service_id):
-                service = Service.query.get(int(service_id))
+                service = db.session.get(Service, int(service_id))
 
             return AvailabilityService.get_available_slots(office=office, days=days, service=service)
 

@@ -26,7 +26,7 @@ class Period(Base):
     time_start = db.Column(db.DateTime, nullable=False)
     time_end = db.Column(db.DateTime, nullable=True)
 
-    csr = db.relationship("CSR", lazy='joined')
+    csr = db.relationship("CSR", lazy='joined', overlaps='periods')
     ps = db.relationship("PeriodState", lazy='joined')
     sr = db.relationship("ServiceReq", lazy='joined')
 

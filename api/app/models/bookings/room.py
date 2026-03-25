@@ -25,7 +25,7 @@ class Room(Base):
     color = db.Column(db.String(25), nullable=False)
     deleted = db.Column(db.DateTime, nullable=True)
 
-    booking = db.relationship("Booking")
+    booking = db.relationship("Booking", overlaps='room')
     office = db.relationship("Office", lazy='joined')
 
     def __repr__(self):

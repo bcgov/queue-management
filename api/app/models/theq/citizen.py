@@ -87,4 +87,4 @@ class Citizen(Base):
     @classmethod
     def find_citizen_by_id(cls, citizen_id):
         """Find citizen record by user id."""
-        return cls.query.get(citizen_id)
+        return db.session.get(cls, citizen_id)

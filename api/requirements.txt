@@ -1,4 +1,4 @@
-alembic==1.13.3
+alembic==1.18.4
 amqp==5.2.0
 aniso8601==9.0.1
 astroid==4.0.4
@@ -22,11 +22,11 @@ Flask-Compress==1.17
 Flask-Cors==5.0.0
 flask-jwt-oidc==0.3.0
 Flask-Login==0.6.3
-flask-marshmallow==0.14.0
-Flask-Migrate==3.1.0
+flask-marshmallow==1.4.0
+Flask-Migrate==4.1.0
 flask-restx==1.3.0
 Flask-SocketIO==5.1.0
-Flask-SQLAlchemy==2.5.1
+Flask-SQLAlchemy==3.1.1
 gevent==24.2.1
 greenlet==3.0.3
 gunicorn==22.0.0
@@ -46,7 +46,7 @@ lazy-object-proxy==1.10.0
 Mako==1.3.3
 MarkupSafe==2.1.5
 marshmallow==3.21.2
-marshmallow-sqlalchemy==0.26.1
+marshmallow-sqlalchemy==1.4.2
 mccabe==0.6.1
 minio==7.0.4
 oauthlib==3.2.2
@@ -77,10 +77,9 @@ rsa==4.9
 simple-websocket==1.0.0
 six==1.17.0
 snowplow-tracker==1.1.0
-SQLAlchemy==1.3.24
-SQLAlchemy-Continuum==1.3.11
-SQLAlchemy-Utc==0.12.0
-SQLAlchemy-Utils==0.41.2
+SQLAlchemy==2.0.48
+SQLAlchemy-Utc==0.14.0
+SQLAlchemy-Utils==0.42.1
 toml==0.10.2
 tomlkit==0.14.0
 typing_extensions==4.15.0

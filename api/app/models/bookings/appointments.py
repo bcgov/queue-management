@@ -15,20 +15,16 @@ limitations under the License.'''
 from app.models.bookings import Base
 from qsystem import db
 from sqlalchemy_utc import UtcDateTime, utcnow
-from sqlalchemy import func, or_, and_
+from sqlalchemy import event, func, or_, and_, text
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 from dateutil import tz
 from app.utilities.date_util import current_pacific_time
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import declared_attr
 from flask import g
 
 
 class Appointment(Base):
-    __versioned__ = {
-        'exclude': []
-    }
-
     appointment_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     office_id = db.Column(db.Integer, db.ForeignKey("office.office_id"), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey("service.service_id"), nullable=True)
@@ -175,5 +171,103 @@ class Appointment(Base):
         draft_ids = [appointment.appointment_id for appointment in drafts]
         Appointment.delete_appointments(draft_ids)
         return draft_ids
-        
 
+
+def _record_appointment_version(connection, appointment, operation_type):
+    transaction_id = connection.execute(
+        text(
+            "INSERT INTO transaction (issued_at, remote_addr) "
+            "VALUES (:issued_at, :remote_addr) RETURNING id"
+        ),
+        {"issued_at": datetime.utcnow(), "remote_addr": None},
+    ).scalar()
+
+    connection.execute(
+        text(
+            """
+            INSERT INTO appointment_version (
+                appointment_id,
+                office_id,
+                service_id,
+                citizen_id,
+                start_time,
+                end_time,
+                checked_in_time,
+                comments,
+                citizen_name,
+                contact_information,
+                blackout_flag,
+                recurring_uuid,
+                online_flag,
+                is_draft,
+                created_at,
+                stat_flag,
+                updated_at,
+                updated_by,
+                transaction_id,
+                end_transaction_id,
+                operation_type
+            ) VALUES (
+                :appointment_id,
+                :office_id,
+                :service_id,
+                :citizen_id,
+                :start_time,
+                :end_time,
+                :checked_in_time,
+                :comments,
+                :citizen_name,
+                :contact_information,
+                :blackout_flag,
+                :recurring_uuid,
+                :online_flag,
+                :is_draft,
+                :created_at,
+                :stat_flag,
+                :updated_at,
+                :updated_by,
+                :transaction_id,
+                :end_transaction_id,
+                :operation_type
+            )
+            """
+        ),
+        {
+            "appointment_id": appointment.appointment_id,
+            "office_id": appointment.office_id,
+            "service_id": appointment.service_id,
+            "citizen_id": appointment.citizen_id,
+            "start_time": appointment.start_time,
+            "end_time": appointment.end_time,
+            "checked_in_time": appointment.checked_in_time,
+            "comments": appointment.comments,
+            "citizen_name": appointment.citizen_name,
+            "contact_information": appointment.contact_information,
+            "blackout_flag": appointment.blackout_flag,
+            "recurring_uuid": appointment.recurring_uuid,
+            "online_flag": appointment.online_flag,
+            "is_draft": appointment.is_draft,
+            "created_at": appointment.created_at,
+            "stat_flag": appointment.stat_flag,
+            "updated_at": appointment.updated_at,
+            "updated_by": appointment.updated_by,
+            "transaction_id": transaction_id,
+            "end_transaction_id": None,
+            "operation_type": operation_type,
+        },
+    )
+
+
+@event.listens_for(Appointment, "after_insert")
+def _record_appointment_insert(mapper, connection, target):  # pragma: no cover - SQLAlchemy hook
+    _record_appointment_version(connection, target, 0)
+
+
+@event.listens_for(Appointment, "after_update")
+def _record_appointment_update(mapper, connection, target):  # pragma: no cover - SQLAlchemy hook
+    _record_appointment_version(connection, target, 1)
+
+
+@event.listens_for(Appointment, "after_delete")
+def _record_appointment_delete(mapper, connection, target):  # pragma: no cover - SQLAlchemy hook
+    _record_appointment_version(connection, target, 2)
