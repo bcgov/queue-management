@@ -26,7 +26,6 @@ flask-marshmallow==0.14.0
 Flask-Migrate==2.7.0
 Flask-Moment==0.11.0
 flask-restx==0.5.1
-Flask-Script==2.0.6
 Flask-SocketIO==5.1.0
 Flask-SQLAlchemy==2.5.1
 gevent==24.2.1

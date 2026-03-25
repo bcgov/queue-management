@@ -184,7 +184,6 @@ class BaseConfig(object):
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False
-    ENV = 'dev'
 
     USE_HTTPS = False
     PREFERRED_URL_SCHEME = 'http'
@@ -227,7 +226,6 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'dev'
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
@@ -240,7 +238,6 @@ class TestConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'test'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -252,7 +249,6 @@ class ProductionConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'production'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')

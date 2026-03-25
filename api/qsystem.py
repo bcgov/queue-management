@@ -65,7 +65,6 @@ appt_limit = application.config['APPOINTMENT_LIMIT_DAYS']
 
 #   Set up SQL Alchemy, caching, marshmallow
 db = SQLAlchemy(application)
-db.init_app(application)
 query_limit = application.config['DB_LONG_RUNNING_QUERY']
 ping_timeout_seconds = application.config['SOCKETIO_PING_TIMEOUT']
 ping_interval_seconds = application.config['SOCKETIO_PING_INTERVAL']
