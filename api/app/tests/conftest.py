@@ -64,6 +64,10 @@ def postgres_database():
             "DATABASE_USERNAME",
             "DATABASE_PASSWORD",
             "DATABASE_NAME",
+            "JWT_OIDC_WELL_KNOWN_CONFIG",
+            "JWT_OIDC_JWKS_URI",
+            "JWT_OIDC_ISSUER",
+            "JWT_OIDC_AUDIENCE",
         )
     }
 
@@ -76,6 +80,10 @@ def postgres_database():
             "DATABASE_USERNAME": settings["user"],
             "DATABASE_PASSWORD": settings["password"],
             "DATABASE_NAME": database_name,
+            "JWT_OIDC_WELL_KNOWN_CONFIG": "",
+            "JWT_OIDC_JWKS_URI": "https://example.com/jwks.json",
+            "JWT_OIDC_ISSUER": "https://example.com/",
+            "JWT_OIDC_AUDIENCE": "queue-api-tests",
         }
     )
 

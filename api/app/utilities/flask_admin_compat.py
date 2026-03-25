@@ -2,12 +2,12 @@
 
 from collections.abc import Mapping
 
-from flask_admin._backwards import Markup
 from flask_admin.contrib.sqla.fields import QuerySelectField, QuerySelectMultipleField
 from flask_admin.contrib.sqla.widgets import CheckboxListInput
 from flask_admin.contrib.sqla.validators import Unique
 from flask_admin.form.fields import Select2Field
 from flask_admin.form.validators import FieldListInputRequired
+from markupsafe import Markup
 from wtforms.widgets.core import Select, escape, html_params
 
 

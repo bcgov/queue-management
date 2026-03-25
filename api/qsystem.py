@@ -4,10 +4,12 @@ import time
 import traceback
 import os
 import datetime
+from urllib.error import URLError
 
 from config import configure_app, configure_logging, debug_level_to_debug_string
 from flask import Flask
 from flask_admin import Admin
+from flask_admin.theme import Bootstrap4Theme
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_cors import CORS
@@ -20,7 +22,7 @@ from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from app.utilities.flask_admin_compat import apply_wtforms_compat
-from flask_jwt_oidc.exceptions import AuthError as JwtAuthError
+from flask_jwt_oidc import AuthError as JwtAuthError
 from jose.exceptions import JOSEError
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -249,7 +251,12 @@ with application.app_context():
 
     from app import admin
 
-    flask_admin = Admin(application, name='Admin Console', template_mode='bootstrap3', index_view=admin.HomeView())
+    flask_admin = Admin(
+        application,
+        name='Admin Console',
+        theme=Bootstrap4Theme(),
+        index_view=admin.HomeView(),
+    )
     flask_admin.add_view(admin.ChannelModelView)
     flask_admin.add_view(admin.CounterModelView)
     flask_admin.add_view(admin.CSRModelView)
@@ -426,7 +433,22 @@ def setup_jwt_manager(app):
 
     app.config['JWT_ROLE_CALLBACK'] = get_roles
 
-    jwt_manager.init_app(app)
+    try:
+        jwt_manager.init_app(app)
+    except URLError:
+        well_known_config = app.config.get('JWT_OIDC_WELL_KNOWN_CONFIG')
+        jwks_uri = app.config.get('JWT_OIDC_JWKS_URI')
+        issuer = app.config.get('JWT_OIDC_ISSUER')
+
+        if not (well_known_config and jwks_uri and issuer):
+            raise
+
+        app.logger.warning(
+            'JWT well-known config could not be reached; retrying with direct JWKS and issuer settings.'
+        )
+        app.config['JWT_OIDC_WELL_KNOWN_CONFIG'] = None
+        jwt_manager.init_app(app)
+        app.config['JWT_OIDC_WELL_KNOWN_CONFIG'] = well_known_config
 
 
 setup_jwt_manager(application)

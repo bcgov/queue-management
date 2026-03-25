@@ -19,8 +19,8 @@ from flask_socketio import emit, join_room
 from app.auth.auth import jwt
 from app.models.theq import CSR, Office
 from app.utilities.auth_util import get_username
+from flask_jwt_oidc import AuthError
 from qsystem import socketio, my_print
-from flask_jwt_oidc.exceptions import AuthError
 
 
 @socketio.on('joinRoom')
