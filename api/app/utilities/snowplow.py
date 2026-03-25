@@ -344,8 +344,8 @@ class SnowPlow():
 # Set up core Snowplow environment
 if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
-    e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
-    t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+    e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https", method="get")
+    t = Tracker(namespace=SnowPlow.sp_namespace, emitters=e, encode_base64=False, app_id=SnowPlow.sp_appid)
 
     #  Set up the correct level of logging.
     print_flag = application.config['PRINT_ENABLE']
