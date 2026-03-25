@@ -151,7 +151,7 @@ bootstrap_database () {
 
         # If there is nothing in the CSR table, we're probably starting with a
         # clean database and need to bootstrap it with default data.
-        python manage.py migrate
+        python manage.py migrate_db
         read -p "Enter your IDIR to check if db is bootstrapped: " SEARCH_USER
         COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
             -U postgres -c "SELECT COUNT(*) FROM csr WHERE username = '$SEARCH_USER';" -t)
