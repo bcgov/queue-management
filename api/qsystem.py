@@ -72,7 +72,7 @@ logging.info("==> socketIO Engine options")
 logging.info("    --> ping_timeout_seconds:    " + str(ping_timeout_seconds))
 logging.info("    --> ping_interval_seconds:   " + str(ping_interval_seconds))
 
-cache = Cache(config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
+cache = Cache(config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': application.config['CACHE_DEFAULT_TIMEOUT']})
 cache.init_app(application)
 
 ma = Marshmallow(application)

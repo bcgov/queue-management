@@ -13,12 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from flask_login import UserMixin
 from qsystem import cache, db, my_print
 from app.models.theq import Base
 from sqlalchemy import func
 
 
-class CSR(Base):
+class CSR(UserMixin, Base):
 
     csr_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(150), nullable=False, unique=True)
@@ -94,3 +95,7 @@ class CSR(Base):
 
     def get_id(self):
         return str(self.csr_id)
+
+    @property
+    def is_active(self):
+        return self.deleted is None
