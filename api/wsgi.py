@@ -1,7 +1,7 @@
-import eventlet
+from gevent import monkey
 
-#Monkey patch to allow for async actions (aka multiple workers)
-eventlet.monkey_patch()
+# Monkey patch to allow for async actions (aka multiple workers)
+monkey.patch_all()
 
 from qsystem import application, socketio
 
