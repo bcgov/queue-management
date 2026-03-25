@@ -67,7 +67,7 @@ def get_service(service_request, json_data, csr):
 
     service = None
     try:
-        service = Service.query.get(service_request.service_id)
+        service = db.session.get(Service, service_request.service_id)
     except:
         logging.exception("==> An exception getting service info")
         logging.exception(csr_const + csr.username)
@@ -153,11 +153,11 @@ class ServiceRequestsList(Resource):
             offset_start_time = citizen.start_time - timedelta(hours=11)
 
             service_count = ServiceReq.query \
-                    .join(ServiceReq.citizen, aliased=True) \
+                    .join(ServiceReq.citizen) \
                     .filter(Citizen.start_time >= offset_start_time.strftime("%Y-%m-%d")) \
-                    .filter_by(office_id=csr.office_id) \
-                    .join(ServiceReq.service, aliased=True) \
-                    .filter_by(prefix=service.prefix) \
+                    .filter(Citizen.office_id == csr.office_id) \
+                    .join(ServiceReq.service) \
+                    .filter(Service.prefix == service.prefix) \
                     .count()
 
             citizen.ticket_number = service.prefix + str(service_count)
@@ -172,7 +172,7 @@ class ServiceRequestsList(Resource):
             )
             service_request.periods.append(ticket_create_period)
 
-        citizen.cs_id = active_id
+        citizen.cs_id = get_active_citizen_state_id()
 
         #  If first service, just choose it.  If additional service, more work needed.
         if len(citizen.service_reqs) == 0:
@@ -203,10 +203,11 @@ class ServiceRequestsList(Resource):
         return {'service_request': result,
                 'errors': self.service_request_schema.validate(service_request)}, 201
 
-try:
-    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-    active_id = citizen_state.cs_id
-except:
-    active_id = 1
-    logging.exception("==> In service_requests_list.py")
-    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+def get_active_citizen_state_id():
+    try:
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+        return citizen_state.cs_id
+    except Exception:
+        logging.exception("==> In service_requests_list.py")
+        logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+        return 1

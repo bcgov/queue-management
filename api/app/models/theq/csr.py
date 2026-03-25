@@ -39,7 +39,7 @@ class CSR(UserMixin, Base):
     office = db.relationship("Office", lazy='joined')
     counter = db.relationship("Counter", lazy='joined')
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
-                              order_by='desc(Period.time_start)')
+                              order_by='desc(Period.time_start)', overlaps='csr')
 
     format_string = 'csr_detail_%s'
 

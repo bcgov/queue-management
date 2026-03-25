@@ -31,14 +31,14 @@ class CSRConfig(Base):
     roles_allowed = ['GA', 'HELPDESK', 'SUPPORT']
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+        return self.get_current_role_code() in self.roles_allowed
 
     create_modal = False
     edit_modal = False
 
     @property
     def can_create(self):
-        return current_user.role.role_code != 'GA'
+        return self.get_current_role_code() != 'GA'
 
     can_delete = False
     # Defining String constants to appease SonarQube
@@ -125,7 +125,7 @@ class CSRConfig(Base):
         model = self.get_one(identifier)
 
         allowed_ga_edit_roles = ['GA', 'CSR']
-        if model and current_user.role.role_code == 'GA' and model.role.role_code not in allowed_ga_edit_roles:
+        if model and self.get_current_role_code() == 'GA' and model.role.role_code not in allowed_ga_edit_roles:
             flash(gettext('You are not allowed to edit a '+ model.role.role_code +' role.'), 'error')
             return False
         

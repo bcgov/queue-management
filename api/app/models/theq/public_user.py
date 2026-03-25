@@ -46,7 +46,7 @@ class PublicUser(Base):
     @classmethod
     def find_by_user_id(cls, user_id):
         """Find User records by user_id."""
-        user = cls.query.get(user_id)
+        user = db.session.get(cls, user_id)
         return user
 
     @classmethod

@@ -16,6 +16,13 @@ config = {
     "default": "config.LocalConfig"
 }
 
+
+def normalize_database_engine(db_engine):
+    if db_engine == "postgres":
+        return "postgresql+psycopg2"
+    return db_engine
+
+
 class BaseConfig(object):
 
     #   Set up miscellaneous environment variables.
@@ -60,7 +67,7 @@ class BaseConfig(object):
 
     DB_LONG_RUNNING_QUERY = float(os.getenv("DATABASE_LONG_RUNNING_QUERY", '0.5'))
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
+    DB_ENGINE = normalize_database_engine(os.getenv('DATABASE_ENGINE', ''))
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
     DB_NAME = os.getenv('DATABASE_NAME','')
@@ -196,7 +203,7 @@ class LocalConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'postgres')
+    DB_ENGINE = normalize_database_engine(os.getenv('DATABASE_ENGINE', 'postgresql+psycopg2'))
     DB_USER = os.getenv('DATABASE_USERNAME', 'postgres')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
     DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')

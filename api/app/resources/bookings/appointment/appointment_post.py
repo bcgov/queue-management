@@ -87,7 +87,7 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
-            service = Service.query.get(int(service_id))
+            service = db.session.get(Service, int(service_id))
 
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,

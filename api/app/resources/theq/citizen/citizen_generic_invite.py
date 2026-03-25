@@ -125,7 +125,7 @@ class CitizenGenericInvite(Resource):
         lock = FileLock("lock/invite_citizen_{}.lock".format(csr.office_id))
         with lock:
 
-            active_citizen_state = citizen_state
+            active_citizen_state = find_active()
 
             waiting_period_state = find_wait()
             citizen = None
@@ -170,11 +170,3 @@ class CitizenGenericInvite(Resource):
 
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 200
-
-try:
-    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-    active_id = citizen_state.cs_id
-except:
-    active_id = 1
-    logging.exception("==> In citizen_generic_invite.py")
-    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")

@@ -90,18 +90,18 @@ class Office(Base):
     soonest_appointment = db.Column(db.Integer, default=0)
 
     counters = db.relationship("Counter", secondary='office_counter')
-    services = db.relationship("Service", secondary='office_service')
+    services = db.relationship("Service", secondary='office_service', overlaps='offices')
     quick_list = db.relationship("Service", secondary='office_quick_list')
     back_office_list = db.relationship("Service", secondary='office_back_office_list')
-    csrs = db.relationship('CSR')
-    citizens = db.relationship('Citizen', backref='office_citizens')
-    timeslots = db.relationship('TimeSlot')
+    csrs = db.relationship('CSR', overlaps='office')
+    citizens = db.relationship('Citizen', backref=db.backref('office_citizens', overlaps='office'), overlaps='office')
+    timeslots = db.relationship('TimeSlot', overlaps='office')
 
     sb = db.relationship('SmartBoard')
     timezone = db.relationship('Timezone')
 
-    exams = db.relationship("Exam")
-    rooms = db.relationship('Room')
+    exams = db.relationship("Exam", overlaps='office')
+    rooms = db.relationship('Room', overlaps='office')
 
     # for walk-in notifications
     check_in_notification = db.Column(db.Integer)
@@ -131,7 +131,7 @@ class Office(Base):
         key = Office.format_string % office_id
         office = cache.get(key)
         if not office:
-            office = cls.query.get(office_id)
+            office = db.session.get(cls, office_id)
             office.timeslots
             office.timezone
         return office
