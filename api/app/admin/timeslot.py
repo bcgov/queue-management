@@ -28,10 +28,10 @@ class MultipleSelect2Field(Select2Field):
     def iter_choices(self):
         """Iterate over choices especially to check if one of the values is selected."""
         if self.allow_blank:
-            yield (u'__None', self.blank_text, self.data is None)
+            yield (u'__None', self.blank_text, self.data is None, {})
 
         for value, label in self.choices:
-            yield (value, label, self.coerce(value) in self.data)
+            yield (value, label, self.coerce(value) in self.data, {})
 
     def process_data(self, value):
         """This is called when you create the form with existing data."""
