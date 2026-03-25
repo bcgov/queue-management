@@ -63,7 +63,7 @@ pylint==4.0.5
 pyparsing==3.0.7
 pytest==9.0.2
 python-dateutil==2.9.0.post0
-python-dotenv==0.17.1
+python-dotenv==1.2.2
 python-editor==1.0.4
 python-engineio==4.9.0
 python-jose==3.3.0
