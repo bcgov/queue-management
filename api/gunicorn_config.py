@@ -14,7 +14,7 @@ PROFILER = bool(int(os.environ.get("PROFILER", 0)))
 workers = int(os.environ.get('GUNICORN_PROCESSES', '1'))
 threads = int(os.environ.get('GUNICORN_THREADS', '1'))
 
-worker_class = 'eventlet'
+worker_class = 'gevent'
 worker_connections = 500
 timeout = 10
 keepalive = 20

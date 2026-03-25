@@ -86,12 +86,12 @@ socketio = SocketIO(logger=socket_flag, engineio_logger=engine_flag,ping_timeout
                     cors_allowed_origins=application.config['CORS_ALLOWED_ORIGINS'])
 
 if application.config['ACTIVE_MQ_URL'] is not None:
-    socketio.init_app(application, async_mode='eventlet',
+    socketio.init_app(application, async_mode='gevent',
                       message_queue=application.config['ACTIVE_MQ_URL'],
                       redis_options={'REDIS_OPTIONS'},
                       path='/api/v1/socket.io')
 else:
-    socketio.init_app(application, path='/api/v1/socket.io')
+    socketio.init_app(application, async_mode='gevent',path='/api/v1/socket.io')
 
 if application.config['CORS_ALLOWED_ORIGINS'] is not None:
     CORS(application, supports_credentials=True, origins=application.config['CORS_ALLOWED_ORIGINS'])
