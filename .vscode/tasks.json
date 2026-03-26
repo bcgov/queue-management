@@ -3,7 +3,7 @@
     {
       "args": [
         "-c",
-        "cd ${workspaceFolder}/api; source env/bin/activate; python manage.py db upgrade"
+        "cd ${workspaceFolder}/api; source .venv/bin/activate; python manage.py db upgrade"
       ],
       "command": "bash",
       "detail": "python manage.py db upgrade",
@@ -13,6 +13,21 @@
         "close": true,
         "panel": "new",
         "reveal": "always",
+      },
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "cd ${workspaceFolder}/api; uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0"
+      ],
+      "command": "bash",
+      "detail": "uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0",
+      "label": "api: gunicorn hot reload",
+      "presentation": {
+        "close": false,
+        "panel": "new",
+        "reveal": "always"
       },
       "type": "shell"
     }

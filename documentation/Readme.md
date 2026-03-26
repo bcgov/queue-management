@@ -103,7 +103,25 @@ Note: starting Vue.js applications takes a long time for the webpack. When run o
 <details>
 <summary>How do I do development on Python code?</summary>
 
-The *.vscode/launch.json* file in the repo contains launchers for the API. Select the API you want from the drop-down list and then hit F5 to run it in *gunicorn*. Once the code is running, whenever you save a file *gunicorn* will automatically reload itself with the changes. You can set breakpoints in the code and then test with a browser, newman, or postman.
+There are now two recommended local workflows for the API:
+
+1. **Stable breakpoint debugging in VS Code**
+
+   Use the **queue_management_api** launcher from *.vscode/launch.json* and hit F5. This starts *api/wsgi.py* directly in a single process, which is more reliable for breakpoints on macOS.
+
+   This launcher does **not** auto-reload on file save. Restart the debugger manually after code changes.
+
+1. **Hot reload in a terminal or VS Code task**
+
+   Run the API with *gunicorn* when you want auto-reload while editing:
+
+   ```
+   uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
+   ```
+
+   You can also run the **api: gunicorn hot reload** VS Code task.
+
+The two workflows are separate because the VS Code `debugpy` launcher plus *gunicorn* reloading can fork worker processes in a way that crashes on macOS with Objective-C fork-safety checks enabled. Keeping debugging single-process avoids that restart loop while preserving the existing *gunicorn* hot-reload workflow for normal development.
 
 </details>
 
