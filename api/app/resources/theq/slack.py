@@ -18,7 +18,6 @@ import sqlalchemy.orm
 from qsystem import application, api, db, socketio
 from app.auth import required_scope
 from app.models.theq import Citizen, CSR
-from cockroachdb.sqlalchemy import run_transaction
 import logging
 from marshmallow import ValidationError, pre_load
 from sqlalchemy import exc
