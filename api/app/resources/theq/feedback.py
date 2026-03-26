@@ -24,6 +24,8 @@ import json
 from app.utilities.auth_util import Role, has_any_role
 from app.auth.auth import jwt
 
+request_timeout_seconds = 30
+
 
 @api.route("/feedback/", methods=['POST'])
 class Feedback(Resource):
@@ -94,7 +96,7 @@ class Feedback(Resource):
         }
         params = json.dumps(feedback_json_data).encode('utf8')
         try:
-            result = requests.post(url, params)
+            result = requests.post(url, json=feedback_json_data, timeout=request_timeout_seconds)
         except Exception as err:
             return {"message": "Error posting to Rocket Chat. " + str(err)}, 400
 

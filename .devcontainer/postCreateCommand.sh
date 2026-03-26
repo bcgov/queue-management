@@ -96,16 +96,14 @@ check_setting () {
 install_api_deps () {
     (
         cd api
-        # Ensure the env directory is owned by the current user
-        if [ -d env ]; then
-            sudo chown -R $(id -u):$(id -g) env
+        export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        # Ensure the environment directory is owned by the current user
+        if [ -d .venv ]; then
+            sudo chown -R $(id -u):$(id -g) .venv
         fi
-        python3 -m venv env || echo_failure "Failed to create virtual environment."
-
-        # Activate the virtual environment and install dependencies
-        source env/bin/activate || echo_failure "Failed to activate virtual environment."
-        python -m pip install --upgrade pip -q || echo_failure "Failed to upgrade pip."
-        pip install -r requirements_dev.txt --progress-bar off || echo_failure "Failed to install dependencies."
+        python3 -m pip install --upgrade pip -q || echo_failure "Failed to upgrade pip."
+        python3 -m pip install uv -q || echo_failure "Failed to install uv."
+        uv sync --group dev || echo_failure "Failed to sync API dependencies."
     )
 }
 
@@ -145,19 +143,18 @@ install_frontend_deps
 bootstrap_database () {
     (
         cd api
-        source env/bin/activate
-        python manage.py db upgrade
-        pip install -r requirements.txt
+        export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        uv run python manage.py db upgrade
 
         # If there is nothing in the CSR table, we're probably starting with a
         # clean database and need to bootstrap it with default data.
-        python manage.py migrate_db
+        uv run python manage.py migrate_db
         read -p "Enter your IDIR to check if db is bootstrapped: " SEARCH_USER
         COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
             -U postgres -c "SELECT COUNT(*) FROM csr WHERE username = '$SEARCH_USER';" -t)
         if [ "$COUNT" -eq 0 ]; then
-            python manage.py bootstrap
-            echo "$SEARCH_USER" | python manage.py adduser
+            uv run python manage.py bootstrap
+            echo "$SEARCH_USER" | uv run python manage.py adduser
         fi
     )
 }

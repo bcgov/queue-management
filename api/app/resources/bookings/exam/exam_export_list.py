@@ -22,11 +22,11 @@ from app.schemas.bookings import ExamSchema
 from app.schemas.theq import OfficeSchema, TimezoneSchema
 from qsystem import api, my_print
 from datetime import datetime, timedelta, timezone
-import pytz
 import csv
 import io
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import get_timezone, localize
 
 
 @api.route("/exams/export/", methods=["GET"])
@@ -62,10 +62,10 @@ class ExamList(Resource):
             csr_office = Office.query.filter(Office.office_id == csr.office_id).first()
             csr_timezone = Timezone.query.filter(Timezone.timezone_id == csr_office.timezone_id).first()
             csr_timename = csr_timezone.timezone_name
-            timezone = pytz.timezone(csr_timename)
-            start_local = timezone.localize(start_date)
+            timezone = get_timezone(csr_timename)
+            start_local = localize(start_date, csr_timename)
             end_date += timedelta(days=1)
-            end_local = timezone.localize(end_date)
+            end_local = localize(end_date, csr_timename)
 
             exams = Exam.query.join(Booking, Exam.booking_id == Booking.booking_id) \
                               .filter(Booking.start_time >= start_local) \

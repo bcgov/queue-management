@@ -18,6 +18,8 @@ import re
 import requests
 from flask import current_app
 
+request_timeout_seconds = 30
+
 
 def send_email(token, subject, email, sender, html_body):
     """Send the email asynchronously, using the given details."""
@@ -34,7 +36,8 @@ def send_email(token, subject, email, sender, html_body):
     }
     response = requests.post(send_email_endpoint,
                              headers={'Content-Type': 'application/json', 'Authorization': f'Bearer {token}'},
-                             data=json.dumps(payload))
+                             json=payload,
+                             timeout=request_timeout_seconds)
     response.raise_for_status()
 
 

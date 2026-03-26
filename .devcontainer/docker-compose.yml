@@ -48,6 +48,7 @@ services:
       # For container "x11" used by Cypress.
       DISPLAY: ':14'
       LIBGL_ALWAYS_INDIRECT: '0'
+      UV_PROJECT_ENVIRONMENT: '/workspace/api/.venv'
 
     init: true
 
@@ -58,7 +59,7 @@ services:
     volumes:
       - x11:/tmp/.X11-unix:rw
       - ..:/workspace:cached
-      - api-env:/workspace/api/env
+      - api-venv:/workspace/api/.venv
       - appointment-frontend-node-modules:/workspace/appointment-frontend/node_modules
       - frontend-node-modules:/workspace/frontend/node_modules
 
@@ -102,6 +103,6 @@ services:
 volumes:
   postgres-data:
   x11:
-  api-env:
+  api-venv:
   appointment-frontend-node-modules:
   frontend-node-modules:
