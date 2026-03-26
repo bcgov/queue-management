@@ -22,7 +22,7 @@ from app.schemas.theq import CitizenSchema
 from datetime import datetime
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
-from sqlalchemy.orm import contains_eager, raiseload, joinedload
+from sqlalchemy.orm import raiseload
 from sqlalchemy.dialects import postgresql
 
 
@@ -50,11 +50,10 @@ def find_wait():
 @api_call_with_retry
 def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
     citizen = Citizen.query \
-        .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+        .options(raiseload(Citizen.office), raiseload(Citizen.counter), raiseload(Citizen.user)) \
         .filter_by(counter_id=counter_id, cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
         .join(Citizen.service_reqs) \
         .join(ServiceReq.periods) \
-        .options(contains_eager(Citizen.service_reqs).contains_eager(ServiceReq.periods)) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
         .order_by(Citizen.priority, Citizen.start_time) 
@@ -65,11 +64,10 @@ def find_citizen(counter_id, active_citizen_state, csr, waiting_period_state):
 @api_call_with_retry
 def find_citizen2(active_citizen_state, csr, waiting_period_state):
     citizen = Citizen.query \
-        .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods, innerjoin=True).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
+        .options(raiseload(Citizen.office), raiseload(Citizen.counter), raiseload(Citizen.user)) \
         .filter_by(cs_id=active_citizen_state.cs_id, office_id=csr.office_id) \
         .join(Citizen.service_reqs) \
         .join(ServiceReq.periods) \
-        .options(contains_eager(Citizen.service_reqs).contains_eager(ServiceReq.periods)) \
         .filter_by(ps_id=waiting_period_state.ps_id) \
         .filter(Period.time_end.is_(None)) \
         .order_by(Citizen.priority, Citizen.citizen_id) 

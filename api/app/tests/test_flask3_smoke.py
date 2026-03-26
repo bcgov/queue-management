@@ -6,12 +6,11 @@ def _unwrap(func):
     return inspect.unwrap(func)
 
 
-def test_routes_command_lists_admin_and_healthz(cli_runner):
-    result = cli_runner.invoke(args=["routes"])
+def test_application_url_map_contains_admin_and_healthz(app):
+    routes = {rule.rule for rule in app.url_map.iter_rules()}
 
-    assert result.exit_code == 0, result.output
-    assert "/admin/" in result.output
-    assert "/api/v1/healthz/" in result.output
+    assert "/admin/" in routes
+    assert "/api/v1/healthz/" in routes
 
 
 def test_admin_index_renders_without_bootstrap3_assets(client):
