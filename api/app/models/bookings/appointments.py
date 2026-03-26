@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-from sqlalchemy_utc import UtcDateTime, utcnow
+from app.utilities.sqlalchemy_compat import UtcDateTime, utcnow
 from sqlalchemy import event, func, or_, and_, text
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
@@ -39,9 +39,9 @@ class Appointment(Base):
     recurring_uuid = db.Column(db.String(255), nullable=True)
     online_flag = db.Column(db.Boolean(), nullable=True, default=False)
     is_draft = db.Column(db.Boolean(), nullable=True, default=False)
-    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
+    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow)
     stat_flag = db.Column(db.Boolean, default=False, nullable=False)
-    updated_at = db.Column(UtcDateTime, onupdate=utcnow(), default=None)
+    updated_at = db.Column(UtcDateTime, onupdate=utcnow, default=None)
 
     office = db.relationship("Office")
     service = db.relationship("Service")

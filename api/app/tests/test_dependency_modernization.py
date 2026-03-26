@@ -4,6 +4,7 @@ from flask import Flask
 
 from app.utilities.date_util import add_delta_to_time, current_pacific_time
 from app.utilities.notification_email import send_email
+from app.utilities.sqlalchemy_compat import utcnow
 from app.utilities.timezone_utils import as_utc, get_timezone, localize
 
 
@@ -32,6 +33,13 @@ def test_current_pacific_time_uses_vancouver_zone():
     pacific_now = current_pacific_time()
 
     assert pacific_now.tzinfo == get_timezone("America/Vancouver")
+
+
+def test_utcnow_returns_aware_utc_datetime():
+    current = utcnow()
+
+    assert current.utcoffset().total_seconds() == 0
+    assert current.tzname() == "UTC"
 
 
 def test_send_email_posts_json_payload_with_timeout(monkeypatch):
