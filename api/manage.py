@@ -6,9 +6,9 @@ Manages the database with commands for:
         data suitable for development or demos.
 
 Usage:
-    python manage.py db <arguments>
-    python manage.py migrate_db
-    python manage.py bootstrap # ***will wipe your database***
+    uv run python manage.py db <arguments>
+    uv run python manage.py migrate_db
+    uv run python manage.py bootstrap # ***will wipe your database***
 '''
 
 import logging

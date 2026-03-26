@@ -15,13 +15,13 @@ limitations under the License.'''
 import re
 from datetime import datetime
 
-import pytz
 from flask import current_app
 from jinja2 import Environment, FileSystemLoader
 from .notification_email import send_email
 
 from app.models.bookings import Appointment
 from app.models.theq import Citizen, Office
+from app.utilities.timezone_utils import get_timezone
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
@@ -120,7 +120,7 @@ def is_valid_email(email: str):
 
 
 def formatted_date(dt: datetime, timezone):
-    dt_local = dt.astimezone(pytz.timezone(timezone.timezone_name))
+    dt_local = dt.astimezone(get_timezone(timezone.timezone_name))
     return dt_local.strftime('%B %d, %Y at %I:%M %p'), dt_local.strftime('%B %d, %Y')
 
 

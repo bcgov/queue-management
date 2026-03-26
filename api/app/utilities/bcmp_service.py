@@ -4,8 +4,8 @@ import urllib
 from qsystem import application, my_print
 from app.utilities.document_service import DocumentService
 from datetime import datetime
-import pytz
 from dateutil import parser
+from app.utilities.timezone_utils import get_timezone
 
 class BCMPService:
     base_url = application.config['BCMP_BASE_URL']
@@ -128,10 +128,10 @@ class BCMPService:
         my_print("  ==> create_group_exam_bcmp    url: %s" % url)
 
         office_name = None
-        time_zone = pytz.timezone('America/Vancouver')
+        time_zone = get_timezone('America/Vancouver')
         if pesticide_office:
             office_name = pesticide_office.office_name
-            time_zone = pytz.timezone(pesticide_office.timezone.timezone_name)
+            time_zone = get_timezone(pesticide_office.timezone.timezone_name)
 
         my_print(exam.expiry_date.strftime("%a %b %d, %Y at %-I:%M %p"))
         exam_text = None

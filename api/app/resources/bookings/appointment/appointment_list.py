@@ -13,8 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
-import pytz
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask_restx import Resource
 from sqlalchemy import exc
 from app.models.bookings import Appointment
@@ -38,7 +37,7 @@ class AppointmentList(Resource):
         # today's date and time
         dt = datetime.now()
         upper_dt = dt - timedelta(days=appt_limit_int)
-        filter_date = pytz.utc.localize(upper_dt)
+        filter_date = upper_dt.replace(tzinfo=timezone.utc)
         # print("filter_date",filter_date)
         try:
             appointments = Appointment.query.filter_by(office_id=csr.office_id)\

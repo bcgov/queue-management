@@ -6,6 +6,6 @@ api_dir="$(cd "${script_dir}/.." && pwd)"
 
 cd "${api_dir}"
 export SQLALCHEMY_WARN_20=1
-python3 -m pytest app/tests -q \
+uv run pytest app/tests -q \
   -W "error::sqlalchemy.exc.RemovedIn20Warning" \
   -W "error::sqlalchemy.exc.SADeprecationWarning"
