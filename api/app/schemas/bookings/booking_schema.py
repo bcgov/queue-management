@@ -69,7 +69,7 @@ class BookingSchema(BaseSchema):
             data['invigilators'] = invigilator_list
         return data
 
-    @post_dump(pass_many=True)
+    @post_dump(pass_collection=True)
     def fix_invigilators(self, data, many, **kwargs):
         if not many:
             data = self.update_invigilators(data)
