@@ -11,42 +11,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The report Microservice.This module is the API for the Legal Entity system."""
+"""Flask application factory."""
 
 import os
+
 from flask import Flask
 
-import config  # pylint: disable=import-error
+from api import app_config as config
 from api.resources import API
 
 
-def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
-    """Return a configured Flask App using the Factory method."""
+def create_app(run_mode: str | None = None):
+    """Return a configured Flask application."""
     app = Flask(__name__)
-    app.config.from_object(config.CONFIGURATION[run_mode])  # pylint: disable=no-member
+    app.config.from_object(config.get_named_config(run_mode))
     API.init_app(app)
     setup_jwt_manager(app)
 
     @app.after_request
-    def add_version(response):  # pylint:  disable=unused-variable
-        version = os.getenv('OPENSHIFT_BUILD_COMMIT', '')
-        response.headers['API'] = f'notifications_api/{version}'
+    def add_version(response):
+        version = os.getenv("OPENSHIFT_BUILD_COMMIT", "")
+        response.headers["API"] = f"notifications_api/{version}"
         return response
 
     register_shellcontext(app)
-
     return app
 
 
 def setup_jwt_manager(app):
-    """Use flask app to configure the JWTManager to work for a particular Realm."""
+    """Configure the JWT manager for the app."""
     from api.auth.auth import jwt as jwt_manager
 
     def get_roles(a_dict):
-        return a_dict['realm_access']['roles']  # pragma: no cover
+        return a_dict["realm_access"]["roles"]  # pragma: no cover
 
-    app.config['JWT_ROLE_CALLBACK'] = get_roles
-
+    app.config["JWT_ROLE_CALLBACK"] = get_roles
     jwt_manager.init_app(app)
 
 
@@ -54,7 +53,6 @@ def register_shellcontext(app):
     """Register shell context objects."""
 
     def shell_context():
-        """Shell context objects."""
-        return {'app': app}  # pragma: no cover
+        return {"app": app}  # pragma: no cover
 
     app.shell_context_processor(shell_context)

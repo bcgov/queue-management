@@ -89,6 +89,22 @@
         "<node_internals>/**"
       ],
       "type": "node"
+    },
+    {
+      // Run the Notifications API in a single process for reliable debugging.
+      "cwd": "${workspaceFolder}/notifications-api",
+      "env": {
+        "WSGI_DEBUG": "1",
+        "WSGI_HOST": "0.0.0.0",
+        "WSGI_PORT": "5002",
+        "WSGI_USE_RELOADER": "0"
+      },
+      "envFile": "${workspaceFolder}/notifications-api/.env",
+      "name": "notifications_api",
+      "program": "${workspaceFolder}/notifications-api/wsgi.py",
+      "python": "${workspaceFolder}/notifications-api/.venv/bin/python",
+      "request": "launch",
+      "type": "debugpy"
     }
   ],
   "version": "0.2.0"

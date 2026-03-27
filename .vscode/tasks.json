@@ -30,6 +30,21 @@
         "reveal": "always"
       },
       "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "cd ${workspaceFolder}/notifications-api; uv run gunicorn wsgi:application --bind=0.0.0.0:5002 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0"
+      ],
+      "command": "bash",
+      "detail": "uv run gunicorn wsgi:application --bind=0.0.0.0:5002 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0",
+      "label": "notifications-api: gunicorn hot reload",
+      "presentation": {
+        "close": false,
+        "panel": "new",
+        "reveal": "always"
+      },
+      "type": "shell"
     }
   ],
   "version": "2.0.0"
