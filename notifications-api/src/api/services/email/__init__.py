@@ -22,11 +22,14 @@ def get_email_service():
     """Return email service implementation."""
     from .email_ches_notify import EmailChesNotify
     from .email_gc_notify import EmailGCNotify
+    from .email_log_notify import EmailLogNotify
 
-    provider = current_app.config.get("EMAIL_PROVIDER", "GC_NOTIFY")
+    provider = current_app.config.get("EMAIL_PROVIDER", "GC_NOTIFY").upper()
     instance: EmailBaseService
     if provider == "CHES":
         instance = EmailChesNotify()
+    elif provider == "LOG":
+        instance = EmailLogNotify()
     else:
         instance = EmailGCNotify()
     return instance

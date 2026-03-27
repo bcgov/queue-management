@@ -18,14 +18,28 @@ from flask import current_app
 from .sms_base_service import SmsBaseService
 
 
+def get_sms_provider() -> str:
+    """Return the normalized SMS provider."""
+    provider = current_app.config.get("SMS_PROVIDER", "")
+    normalized = provider.strip().upper() if isinstance(provider, str) else ""
+    return normalized or "CUSTOM"
+
+
 def get_sms_service():
     """Return SMS service implementation."""
     from .custom_notify import CustomNotify
     from .gc_notify import GCNotify
+    from .log_notify import SmsLogNotify
+
+    provider = get_sms_provider()
+    current_app.config["SMS_PROVIDER"] = provider
+    current_app.config["SMS_USE_GC_NOTIFY"] = provider == "GC_NOTIFY"
 
     instance: SmsBaseService
-    if current_app.config.get("SMS_USE_GC_NOTIFY", True):
+    if provider == "GC_NOTIFY":
         instance = GCNotify()
+    elif provider == "LOG":
+        instance = SmsLogNotify()
     else:
         instance = CustomNotify()
     return instance

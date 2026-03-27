@@ -22,7 +22,8 @@
       "configurations": [
         "appointment_front_end",
         "queue_management_api",
-        "queue_management_front_end"
+        "queue_management_front_end",
+        "notifications_api"
       ]
     }
   ],

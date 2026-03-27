@@ -72,7 +72,8 @@ class _Config:  # pylint: disable=too-few-public-methods
     JWT_OIDC_CACHING_ENABLED = os.getenv("JWT_OIDC_CACHING_ENABLED", "true").lower() == "true"
     JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv("JWT_OIDC_JWKS_CACHE_TIMEOUT", "300"))
 
-    SMS_USE_GC_NOTIFY = os.getenv("SMS_USE_GC_NOTIFY", "true").lower() == "true"
+    SMS_PROVIDER = os.getenv("SMS_PROVIDER", "").strip().upper() or "CUSTOM"
+    SMS_USE_GC_NOTIFY = SMS_PROVIDER == "GC_NOTIFY"
     GC_NOTIFY_API_KEY = os.getenv("GC_NOTIFY_API_KEY", "")
     GC_NOTIFY_API_BASE_URL = os.getenv("GC_NOTIFY_API_BASE_URL", "https://api.notification.canada.ca/")
     GC_NOTIFY_SMS_TEMPLATE_ID = os.getenv("GC_NOTIFY_SMS_TEMPLATE_ID", "")
@@ -82,7 +83,7 @@ class _Config:  # pylint: disable=too-few-public-methods
     SMS_REMINDER_TEMPLATE = os.getenv("SMS_REMINDER_TEMPLATE", "")
     SMS_CHECKIN_CONFIRMATION_TEMPLATE = os.getenv("SMS_CHECKIN_CONFIRMATION_TEMPLATE", "")
 
-    EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "GC_NOTIFY")
+    EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "GC_NOTIFY").strip().upper()
     CHES_SSO_TOKEN_URL = os.getenv("CHES_SSO_TOKEN_URL", "")
     CHES_SSO_CLIENT_ID = os.getenv("CHES_SSO_CLIENT_ID", "")
     CHES_SSO_CLIENT_SECRET = os.getenv("CHES_SSO_CLIENT_SECRET", "")
