@@ -27,16 +27,19 @@
         "dbaeumer.vscode-eslint",
         "github.vscode-pull-request-github",
         "ms-python.python",
-        "ms-python.pylint",
         "ms-python.vscode-pylance",
         "ms-python.debugpy",
         "mtxr.sqltools",
         "mtxr.sqltools-driver-pg",
         "octref.vetur",
-        "sonarsource.sonarlint-vscode"
+        "sonarsource.sonarlint-vscode",
+        "charliermarsh.ruff"
       ],
       "settings": {
+        "python-envs.terminal.autoActivationType": "shellStartup",
+        "python.terminal.activateEnvironment": false,
         "python.languageServer": "Pylance",
+        "sonarlint.ls.javaHome": "/usr",
         "sqltools.connections": [
           {
             "database": "postgres",

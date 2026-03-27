@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "queue_api"
 version = "0.0.0"
 description = "Queue management API"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.14.0, <3.15"
 dependencies = [
     "alembic>=1.18,<1.19",
     "amqp>=5.3,<5.4",
@@ -49,6 +49,7 @@ dev = [
     "pylint>=4.0,<4.1",
     "pytest>=9.0,<9.1",
     "pytest-cov>=7.1,<7.2",
+    "ruff>=0.15.8",
 ]
 
 [tool.setuptools]
