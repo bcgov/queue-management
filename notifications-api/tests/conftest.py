@@ -28,6 +28,8 @@ def app(monkeypatch):
     monkeypatch.setenv("GC_NOTIFY_SMS_TEMPLATE_ID", "sms-template")
     monkeypatch.setenv("GC_NOTIFY_EMAIL_TEMPLATE_ID", "email-template")
     monkeypatch.setenv("APPOINTMENT_APP_URL", "http://localhost:8081")
+    monkeypatch.delenv("SMS_PROVIDER", raising=False)
+    monkeypatch.delenv("SMS_USE_GC_NOTIFY", raising=False)
     monkeypatch.setenv("SMS_REMINDER_TEMPLATE", "Reminder {display_name} {app_url}")
     monkeypatch.setenv(
         "SMS_CHECKIN_CONFIRMATION_TEMPLATE",
@@ -38,12 +40,18 @@ def app(monkeypatch):
     for module_name in [
         "config",
         "api",
+        "api.app_config",
         "api.auth.auth",
         "api.resources",
         "api.resources.notifications",
         "api.resources.email",
         "api.services.sms",
+        "api.services.sms.log_notify",
+        "api.services.sms.payloads",
         "api.services.email",
+        "api.services.email.email_log_notify",
+        "api.services.email.payloads",
+        "api.services.notification_logging",
     ]:
         sys.modules.pop(module_name, None)
 

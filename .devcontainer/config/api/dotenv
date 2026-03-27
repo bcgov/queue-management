@@ -195,3 +195,7 @@ JWT_OIDC_WELL_KNOWN_CONFIG=https://dev.loginproxy.gov.bc.ca/auth/realms/serviceb
 #MINIO_BUCKET=
 #MINIO_USE_SECURE='1'
 #MINIO_SECRET_KEY=
+
+############################## Notifications Variables ########################
+NOTIFICATIONS_ENDPOINT=http://localhost:5002/api/v1/notifications/sms
+NOTIFICATIONS_EMAIL_ENDPOINT=http://localhost:5002/api/v1/notifications/email
