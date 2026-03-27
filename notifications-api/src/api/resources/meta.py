@@ -15,11 +15,10 @@
 
 Currently this only provides API versioning information
 """
-from flask import jsonify
-from flask_restx import cors
-from flask_restx import Resource
-from flask_restx import Namespace
 import os
+
+from flask import jsonify
+from flask_restx import Namespace, Resource, cors
 
 api = Namespace('', description='API for Sending Service BC Notifications')
 

@@ -11,18 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""SMS provider selection."""
+
+from flask import current_app
+
 from .sms_base_service import SmsBaseService
-import os
 
 
 def get_sms_service():
-    """Return SMS Service implementation."""
+    """Return SMS service implementation."""
     from .custom_notify import CustomNotify
     from .gc_notify import GCNotify
 
-    _instance: SmsBaseService
-    if os.getenv('SMS_USE_GC_NOTIFY', 'true').lower() == 'true':
-        _instance = GCNotify()
+    instance: SmsBaseService
+    if current_app.config.get("SMS_USE_GC_NOTIFY", True):
+        instance = GCNotify()
     else:
-        _instance = CustomNotify()
-    return _instance
+        instance = CustomNotify()
+    return instance
