@@ -179,7 +179,7 @@ def _record_appointment_version(connection, appointment, operation_type):
             "INSERT INTO transaction (issued_at, remote_addr) "
             "VALUES (:issued_at, :remote_addr) RETURNING id"
         ),
-        {"issued_at": datetime.utcnow(), "remote_addr": None},
+        {"issued_at": utcnow().replace(tzinfo=None), "remote_addr": None},
     ).scalar()
 
     connection.execute(
