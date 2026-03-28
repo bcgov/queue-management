@@ -19,4 +19,5 @@ from app.models.bookings.exam import Exam
 from app.models.bookings.exam_type import ExamType
 from app.models.bookings.invigilator import Invigilator
 from app.models.bookings.room import Room
+from app.models.bookings.versioning import appointment_version, transaction
 from app.models.bookings.appointments import Appointment
