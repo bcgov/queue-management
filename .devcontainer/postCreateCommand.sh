@@ -144,17 +144,16 @@ bootstrap_database () {
     (
         cd api
         export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        SEARCH_USER=admin
         uv run python manage.py db upgrade
 
-        # If there is nothing in the CSR table, we're probably starting with a
-        # clean database and need to bootstrap it with default data.
+        # If the default bootstrap admin CSR is missing, we're probably
+        # starting with a clean database and need to bootstrap it.
         uv run python manage.py migrate_db
-        read -p "Enter your IDIR to check if db is bootstrapped: " SEARCH_USER
         COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
-            -U postgres -c "SELECT COUNT(*) FROM csr WHERE username = '$SEARCH_USER';" -t)
+            -U postgres -tA -c "SELECT COUNT(*) FROM csr WHERE username = '$SEARCH_USER';")
         if [ "$COUNT" -eq 0 ]; then
             uv run python manage.py bootstrap
-            echo "$SEARCH_USER" | uv run python manage.py adduser
         fi
     )
 }

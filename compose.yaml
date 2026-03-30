@@ -1,0 +1,16 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.2
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_DB: dev-mem
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: password
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./keycloak-local:/opt/keycloak/data/import:ro
