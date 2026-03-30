@@ -184,7 +184,7 @@ SQLALCHEMY_ECHO=False
 ############################# JWT Config Variables ############################
 
 JWT_OIDC_AUDIENCE=theq-queue-management-api
-JWT_OIDC_WELL_KNOWN_CONFIG=https://dev.loginproxy.gov.bc.ca/auth/realms/servicebc/.well-known/openid-configuration
+JWT_OIDC_WELL_KNOWN_CONFIG=http://localhost:8085/auth/realms/servicebc-local/.well-known/openid-configuration
 
 ########################## Exam Management Variables ##########################
 #BCMP_BASE_URL=

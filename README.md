@@ -154,9 +154,26 @@ The devcontainer installs dependencies automatically, applies database migration
    cp ./.devcontainer/config/appointment-frontend/public/config/configuration.json ./appointment-frontend/public/config/configuration.json
    ```
 
-4. Start PostgreSQL and make sure the database settings in `api/.env` point to your local database.
+4. Start the local auth server and PostgreSQL:
 
-5. Run database migrations:
+   ```bash
+   docker compose up -d keycloak
+   ```
+
+   Local Keycloak details:
+
+   - Realm: `servicebc-local`
+   - Base URL: `http://localhost:8085/auth`
+   - Admin console: `http://localhost:8085/auth/admin/`
+   - Admin credentials: `admin` / `password`
+   - Demo users: `csr@idir`, `ga@idir`, `support@idir`, `citizen@bceidboth`
+   - Demo user password: `password`
+   - Confidential client id: `theq-queue-management-api`
+   - Confidential client secret: `theq-local-dev-secret`
+
+5. Make sure the database settings in `api/.env` point to your local database.
+
+6. Run database migrations:
 
    ```bash
    cd ./api
@@ -206,6 +223,8 @@ These are the main local files you should expect to have in place when running t
 - `appointment-frontend/.env.local`
 - `appointment-frontend/public/config/kc/keycloak-public.json`
 - `appointment-frontend/public/config/configuration.json`
+
+The checked-in local auth defaults now target the local Keycloak realm on `http://localhost:8085/auth`. If you need to switch back to the shared dev Keycloak server, update the copied local config files before starting the apps.
 
 ## Deployment
 
