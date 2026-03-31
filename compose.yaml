@@ -14,3 +14,27 @@ services:
       - "8085:8080"
     volumes:
       - ./keycloak-local:/opt/keycloak/data/import:ro
+
+  api:
+    profiles:
+      - api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak
+    env_file:
+      - ./api/.env
+    environment:
+      FLASK_CONFIGURATION: localhost
+      DATABASE_HOST: host.docker.internal
+      DATABASE_PORT: "5432"
+      NOTIFICATIONS_ENDPOINT: http://host.docker.internal:5002/api/v1/notifications/sms
+      NOTIFICATIONS_EMAIL_ENDPOINT: http://host.docker.internal:5002/api/v1/notifications/email
+      JWT_OIDC_WELL_KNOWN_CONFIG: ""
+      JWT_OIDC_JWKS_URI: http://keycloak:8080/auth/realms/servicebc-local/protocol/openid-connect/certs
+      JWT_OIDC_ISSUER: http://localhost:8085/auth/realms/servicebc-local
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "5000:8080"
