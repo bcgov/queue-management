@@ -166,7 +166,7 @@ The devcontainer installs dependencies automatically, applies database migration
    - Base URL: `http://localhost:8085/auth`
    - Admin console: `http://localhost:8085/auth/admin/`
    - Admin credentials: `admin` / `password`
-   - Demo users: `csr@idir`, `ga@idir`, `support@idir`, `citizen@bceidboth`
+   - Demo users: `democsr@idir`, `demoga@idir`, `admin@idir`, `citizen@bceidboth`
    - Demo user password: `password`
    - Confidential client id: `theq-queue-management-api`
    - Confidential client secret: `theq-local-dev-secret`
