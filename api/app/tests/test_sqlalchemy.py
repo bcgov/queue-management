@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta, timezone
 
+import pytest
 from sqlalchemy import text
 
-
 def test_app_boots_with_disposable_postgres(app, postgres_database):
+    """Assert that the Flask app boots against the disposable Postgres database."""
     assert app.config["SQLALCHEMY_DATABASE_URI"] == postgres_database["database_uri"]
 
     with app.app_context():
@@ -11,16 +12,19 @@ def test_app_boots_with_disposable_postgres(app, postgres_database):
 
 
 def test_db_current_command_runs(cli_runner):
+    """Assert that the Alembic current command runs successfully in the test harness."""
     result = cli_runner.invoke(args=["db", "current"])
 
     assert result.exit_code == 0, result.output
 
 
 def test_db_upgrade_command_runs(migrated_database):
+    """Assert that database migrations upgrade cleanly in the smoke suite."""
     assert migrated_database.exit_code == 0, migrated_database.output
 
 
 def test_healthz_uses_database_connection(client, migrated_database):
+    """Assert that the health endpoint confirms a working database connection."""
     response = client.get("/api/v1/healthz/")
 
     assert response.status_code == 200
@@ -28,6 +32,7 @@ def test_healthz_uses_database_connection(client, migrated_database):
 
 
 def test_appointment_crud_and_version_rows(app, db, migrated_database):
+    """Assert that appointment CRUD still writes versioning and transaction rows."""
     from app.models.bookings import Appointment
     from app.models.theq.office import Office
     from app.models.theq.smartboard import SmartBoard
@@ -81,7 +86,10 @@ def test_appointment_crud_and_version_rows(app, db, migrated_database):
         assert transaction_count >= 2
 
 
-def test_local_utc_type_round_trips_booking_appointment_and_citizen(app, db, migrated_database):
+def test_local_utc_type_round_trips_booking_appointment_and_citizen(
+    app, db, migrated_database
+):
+    """Assert that LocalUTC-backed columns round-trip as UTC-aware datetimes."""
     from app.models.bookings import Appointment, Booking, Room
     from app.models.theq.citizen import Citizen
     from app.models.theq.citizen_state import CitizenState

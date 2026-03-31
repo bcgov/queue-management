@@ -82,4 +82,4 @@ class BookingPost(Resource):
             return {"booking": result,
                     "errors": self.booking_schema.validate(booking)}, 201
         else:
-            return {"The Booking Office ID and CSR Office ID do not match!"}, 403
+            return {"message": "The Booking Office ID and CSR Office ID do not match!"}, 403

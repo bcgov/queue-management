@@ -39,21 +39,22 @@ class ExamBcmpPost(Resource):
         csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
+        exam_payload = ExamPost.model_payload(json_data)
 
         if 'bookdata' in json_data.keys():
             booking = json_data["bookdata"]
         else:
             booking = None
 
-        exam = self.exam_schema.load(json_data)
-        warning = self.exam_schema.validate(json_data)
+        exam = self.exam_schema.load(exam_payload)
+        warning = self.exam_schema.validate(exam_payload)
 
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
         
         if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
-            return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
+            return {"message": "The Exam Office ID and CSR Office ID do not match!"}, 403
             
         formatted_data = ExamPost.format_data(self, json_data, exam)
         exam = formatted_data["exam"]
@@ -82,4 +83,3 @@ class ExamBcmpPost(Resource):
         else:
             return {"message": "create_group_exam_bcmp failed",
                 "error": bcmp_response}, 403
-

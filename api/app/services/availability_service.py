@@ -52,6 +52,7 @@ class AvailabilityService():
 
             # soonest a citizen can book an appointment
             soonest_appointment_date = today + datetime.timedelta(minutes = office.soonest_appointment or 0)
+            soonest_appointment_time = soonest_appointment_date.timetz()
 
             # Find all appointments between the dates
             appointments = Appointment.find_appointment_availability(office_id=office.office_id, first_date=today,
@@ -91,7 +92,7 @@ class AvailabilityService():
                             }
                             # Check if today's time is past appointment slot
                             # Arc - also check if in office.soonest_appointment
-                            if ((day_in_month.date() == soonest_appointment_date.date() and start_time >= soonest_appointment_date.time()) or day_in_month.date() > soonest_appointment_date.date()) and slot not in available_slots_per_day[formatted_date]: 
+                            if ((day_in_month.date() == soonest_appointment_date.date() and start_time >= soonest_appointment_time) or day_in_month.date() > soonest_appointment_date.date()) and slot not in available_slots_per_day[formatted_date]: 
                                 available_slots_per_day[formatted_date].append(slot)
 
                             start_time = end_time.replace(tzinfo=tz)
@@ -159,7 +160,7 @@ class AvailabilityService():
             # Because services can be artbitary duration, we just check if times fall within duration
             # e.g slot is 8-9, but start_time/end_time are 8:30-8:45.
             # We do NOT check across slots, only within an individual slot
-            if slot['start_time'] <= start_time.time() and slot['end_time'] >= end_time.time():
+            if slot['start_time'] <= start_time.timetz() and slot['end_time'] >= end_time.timetz():
                 has_available_slot = True
 
         return has_available_slot
@@ -173,8 +174,8 @@ class AvailabilityService():
             if not filtered_appointments.get(formatted_date, None):
                 filtered_appointments[formatted_date] = []
             filtered_appointments[formatted_date].append({
-                'start_time': app.start_time.astimezone(app_timezone).time(),
-                'end_time': app.end_time.astimezone(app_timezone).time(),
+                'start_time': app.start_time.astimezone(app_timezone).timetz(),
+                'end_time': app.end_time.astimezone(app_timezone).timetz(),
                 'blackout_flag': app.blackout_flag == 'Y' or app.stat_flag,
                 'is_dlkt': (app.service.is_dlkt == YesNo.YES) if app.service else False
             })

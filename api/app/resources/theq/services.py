@@ -37,7 +37,10 @@ class Refresh(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         if request.args.get('office_id'):
-            office_id = int(request.args.get('office_id'))
+            try:
+                office_id = int(request.args.get('office_id'))
+            except ValueError:
+                return {'message': 'office_id must be an integer.'}, 400
             csr = CSR.find_by_username(get_username())
             
             if csr.role.role_code == "GA":

@@ -37,7 +37,7 @@ class ExamEmailInvigilator(Resource):
             exam = Exam.query.filter_by(exam_id=exam_id).first()
 
             if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
-                return {"The Exam Office ID and CSR Office ID do not match!"}, 403
+                return {"message": "The Exam Office ID and CSR Office ID do not match!"}, 403
 
             json_data = request.get_json()
             invigilator_id = json_data["invigilator_id"]
@@ -46,7 +46,7 @@ class ExamEmailInvigilator(Resource):
             invigilator_phone = json_data["invigilator_phone"]
 
             if not invigilator_email or not invigilator_phone or not invigilator_name:
-                return {"Invigilator name, email, and phone number are required"}, 422
+                return {"message": "Invigilator name, email, and phone number are required"}, 422
 
             response = self.bcmp_service.email_exam_invigilator(
                 exam,
