@@ -154,7 +154,7 @@ The devcontainer installs dependencies automatically, applies database migration
    cp ./.devcontainer/config/appointment-frontend/public/config/configuration.json ./appointment-frontend/public/config/configuration.json
    ```
 
-4. Start the local auth server and PostgreSQL:
+4. Start the local auth server:
 
    ```bash
    docker compose up -d keycloak
@@ -171,7 +171,7 @@ The devcontainer installs dependencies automatically, applies database migration
    - Confidential client id: `theq-queue-management-api`
    - Confidential client secret: `theq-local-dev-secret`
 
-5. Make sure the database settings in `api/.env` point to your local database.
+5. Make sure the database settings in `api/.env` point to your local PostgreSQL instance.
 
 6. Run database migrations:
 
@@ -184,12 +184,20 @@ The devcontainer installs dependencies automatically, applies database migration
 
 Start the services in separate terminals.
 
-Queue management API:
+Queue management API using the local Python environment:
 
 ```bash
 cd ./api
 uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
 ```
+
+Queue management API using the production Dockerfile through Compose:
+
+```bash
+docker compose --profile api up --build api
+```
+
+The optional `api` Compose service still serves the application on `http://localhost:5000`. It reads `api/.env`, then overrides container-only settings so it can reach the host PostgreSQL and host-run notifications API while continuing to use the local Keycloak on `http://localhost:8085/auth`.
 
 Notifications API:
 
