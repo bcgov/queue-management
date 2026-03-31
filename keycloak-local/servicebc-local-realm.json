@@ -54,6 +54,17 @@
           }
         },
         {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
           "name": "username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-attribute-mapper",
@@ -182,6 +193,17 @@
           "consentRequired": false,
           "config": {
             "included.client.audience": "theq-queue-management-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
             "id.token.claim": "false",
             "access.token.claim": "true"
           }
@@ -408,6 +430,14 @@
           }
         }
       ]
+    },
+    {
+      "clientId": "theq-notifications-api",
+      "name": "TheQ Notifications API",
+      "description": "Notifications API Client for The Q (SBC)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true
     }
   ],
   "users": [
