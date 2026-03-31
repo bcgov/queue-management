@@ -83,4 +83,4 @@ class BookingPut(Resource):
                     "errors": self.booking_schema.validate(booking)}, 200
 
         else:
-            return {"The Booking Office ID and the CSR Office ID do not match!"}, 403
+            return {"message": "The Booking Office ID and the CSR Office ID do not match!"}, 403

@@ -48,7 +48,9 @@ class ExamList(Resource):
             end_param = request.args.get("end_date")
             exam_type = request.args.get("exam_type")
 
-            validate_params(start_param, end_param)
+            validation_error = validate_params(start_param, end_param)
+            if validation_error:
+                return validation_error
 
             try:
                 start_date = datetime.strptime(request.args['start_date'], "%Y-%m-%d")
@@ -56,7 +58,7 @@ class ExamList(Resource):
 
             except ValueError as exception:
                 logging.exception(exception)
-                return {"message", "Unable to return date time string"}, 422
+                return {"message": "Unable to return date time string"}, 422
 
             #   Code for UTC time.
             csr_office = Office.query.filter(Office.office_id == csr.office_id).first()
@@ -339,6 +341,7 @@ def write_exam_returned(row, exam):
 def validate_params(start_param, end_param):
     if not (start_param and end_param):
         return {"message": "Must provide both start and end time"}, 422
+    return None
 
 
 def write_non_exam_name(booking, row):

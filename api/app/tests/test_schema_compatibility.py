@@ -3,6 +3,8 @@ import inspect
 import pkgutil
 from datetime import datetime, timezone
 
+import pytest
+
 
 def _schema_classes():
     import app.schemas as schema_package
@@ -26,6 +28,7 @@ def _schema_classes():
 
 
 def test_all_schema_classes_instantiate(app, seeded_database):
+    """Assert that every Marshmallow schema class still instantiates with fields."""
     del seeded_database
 
     with app.app_context():
@@ -38,6 +41,7 @@ def test_all_schema_classes_instantiate(app, seeded_database):
 
 
 def test_schema_validate_is_safe_for_orm_objects(app, seeded_data):
+    """Assert that schema validation still accepts ORM instances under Marshmallow 4."""
     with app.app_context():
         from app.models.theq import Citizen, Service
         from app.schemas.theq import CitizenSchema, ServiceSchema
@@ -60,6 +64,7 @@ def test_schema_validate_is_safe_for_orm_objects(app, seeded_data):
 
 
 def test_service_schema_serializes_parent_name(app, seeded_data):
+    """Assert that services still serialize parent names and DLKT flags correctly."""
     del seeded_data
 
     with app.app_context():
@@ -95,6 +100,7 @@ def test_service_schema_serializes_parent_name(app, seeded_data):
 
 
 def test_exam_schema_preserves_exam_received_date_format(app, seeded_data):
+    """Assert that exam received dates keep their UTC contract format during serialization."""
     with app.app_context():
         from app.models.bookings import Exam, ExamType, Invigilator
         from app.models.theq import Office
@@ -129,6 +135,7 @@ def test_exam_schema_preserves_exam_received_date_format(app, seeded_data):
 
 
 def test_booking_schema_post_dump_supports_single_and_many(app, seeded_data):
+    """Assert that booking post-dump hooks normalize invigilators for single and many dumps."""
     with app.app_context():
         from app.models.bookings import Booking, Invigilator, Room
         from app.models.theq import Office
@@ -160,12 +167,15 @@ def test_booking_schema_post_dump_supports_single_and_many(app, seeded_data):
         dumped_single = schema.dump(booking)
         dumped_many = schema.dump([booking], many=True)
 
-        expected_invigilators = [invigilator.invigilator_id for invigilator in invigilators]
+        expected_invigilators = [
+            invigilator.invigilator_id for invigilator in invigilators
+        ]
         assert dumped_single["invigilators"] == expected_invigilators
         assert dumped_many[0]["invigilators"] == expected_invigilators
 
 
 def test_csr_schema_post_dump_supports_single_and_many(app, seeded_data):
+    """Assert that CSR post-dump hooks preserve the counter alias for single and many dumps."""
     del seeded_data
 
     with app.app_context():
@@ -180,10 +190,13 @@ def test_csr_schema_post_dump_supports_single_and_many(app, seeded_data):
         dumped_many = schema.dump(csrs, many=True)
 
         assert dumped_single["counter"] == dumped_single["counter_id"]
-        assert [csr["counter"] for csr in dumped_many] == [csr["counter_id"] for csr in dumped_many]
+        assert [csr["counter"] for csr in dumped_many] == [
+            csr["counter_id"] for csr in dumped_many
+        ]
 
 
 def test_appointment_availability_schema_smoke(app, seeded_data):
+    """Assert that appointment availability schema dumps the core slot fields needed by the API."""
     with app.app_context():
         from app.models.bookings import Appointment
         from app.schemas.bookings.appointment_availability_schema import (
