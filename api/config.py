@@ -2,6 +2,7 @@ import logging
 import os
 import dotenv
 from pprint import pprint
+from sqlalchemy.engine import URL
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -21,6 +22,23 @@ def normalize_database_engine(db_engine):
     if db_engine == "postgres":
         return "postgresql+psycopg2"
     return db_engine
+
+
+def normalize_database_port(db_port):
+    if db_port in (None, ""):
+        return None
+    return int(db_port)
+
+
+def build_database_uri(engine, user, password, host, port, name):
+    return URL.create(
+        drivername=engine,
+        username=user,
+        password=password,
+        host=host,
+        port=normalize_database_port(port),
+        database=name,
+    ).render_as_string(hide_password=False)
 
 
 class BaseConfig(object):
@@ -76,7 +94,7 @@ class BaseConfig(object):
     DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
     DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
 
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = build_database_uri(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -211,7 +229,7 @@ class LocalConfig(BaseConfig):
     DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
     DB_HOST = os.getenv('DATABASE_HOST', '127.0.0.1')
     DB_PORT = os.getenv('DATABASE_PORT', '5432')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = build_database_uri(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
