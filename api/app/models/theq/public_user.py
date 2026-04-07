@@ -22,7 +22,7 @@ class PublicUser(Base):
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(100), unique=True, index=True)
-    last_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(200))
     display_name = db.Column(db.String(200))
     email = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
