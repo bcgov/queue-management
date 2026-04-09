@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from app.models.theq.channel import Channel
 from app.models.theq.citizen import Citizen
+from app.models.theq.counter import Counter
 from app.models.theq.csr import CSR
 from app.models.theq.office import Office
 from app.models.theq.role import Role
@@ -151,10 +152,13 @@ class SnowPlow():
     def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
         citizen_type = counter_name
-        if citizen_obj.office.sb.sb_type == "nocallonsmartboard":
+        office = db.session.get(Office, citizen_obj.office_id)
+        if office.sb.sb_type == "nocallonsmartboard":
             citizen_type = "Counter"
-        elif citizen_obj.counter is not None:
-            citizen_type = citizen_obj.counter.counter_name
+        elif citizen_obj.counter_id is not None:
+            counter = db.session.get(Counter, citizen_obj.counter_id)
+            if counter is not None:
+                citizen_type = counter.counter_name
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/4-0-0',
