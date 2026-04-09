@@ -19,6 +19,7 @@ from app.tests.api_test_support import (
 )
 from app.tests.contracts.conftest import validate_schema
 from app.tests.contracts.schemas import CITIZEN_RESPONSE_SCHEMA
+from sqlalchemy.orm import raiseload
 
 pytestmark = [pytest.mark.flows, pytest.mark.usefixtures("seeded_database")]
 
@@ -493,6 +494,49 @@ def test_qt6_first_generic_invite_prefers_the_quick_transaction_counter(
     _assert_period_count_delta(
         _primary_service_request(invited_citizen), queued_period_count
     )
+
+
+def test_generic_invite_snowplow_context_handles_raiseloaded_citizen(
+    internal_ga_client, seeded_data, app
+):
+    """Assert that SnowPlow can build citizen context from the generic invite query shape."""
+    citizen, _service_request, _queued_citizen = _create_queue_ready_citizen(
+        internal_ga_client,
+        seeded_data,
+        position=0,
+        name="SnowPlow Generic Invite Citizen",
+        service_id_key="ptax",
+        channel_id_key="phone",
+        quantity=1,
+        counter_id_key="quick_trans",
+        qt_xn_citizen_ind=1,
+    )
+
+    with app.app_context():
+        from app.models.theq import Citizen
+        from app.utilities.snowplow import SnowPlow
+
+        citizen_model = (
+            Citizen.query.options(
+                raiseload(Citizen.office),
+                raiseload(Citizen.counter),
+                raiseload(Citizen.user),
+            )
+            .filter_by(citizen_id=citizen["citizen_id"])
+            .first()
+        )
+
+        citizen_context = SnowPlow.get_citizen(
+            citizen_model,
+            "Counter",
+            svc_number=3,
+        )
+
+        assert citizen_context.data == {
+            "client_id": citizen["citizen_id"],
+            "service_count": 3,
+            "counter_type": "Quick Trans",
+        }
 
 
 def test_qt6_second_generic_invite_returns_the_remaining_standard_queue_citizen(
