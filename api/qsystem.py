@@ -19,6 +19,7 @@ from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 from functools import wraps
+from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import AuthError
 from app.utilities.flask_admin_compat import apply_wtforms_compat
@@ -363,6 +364,15 @@ def error_handler(e):
     '''Default error handler'''
     logging.error(e)
     return "error"
+
+
+@application.errorhandler(ValidationError)
+@api.errorhandler(ValidationError)
+def handle_validation_error(error):
+    logging.warning("Validation error: %s", error.messages)
+    response = {"message": error.messages}
+    error.data = response
+    return response, 422
 
 
 @application.errorhandler(AuthError)
