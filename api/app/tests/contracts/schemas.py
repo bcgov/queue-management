@@ -501,7 +501,7 @@ EXAM_SCHEMA = object_schema(
         "exam_method": nullable({"type": "string"}),
         "exam_name": {"type": "string"},
         "exam_received": nullable({"type": "integer"}),
-        "exam_received_date": nullable(UTC_DATETIME_SCHEMA),
+        "exam_received_date": nullable(ISO_DATETIME_SCHEMA),
         "exam_type_id": {"type": "integer"},
         "examinee_name": nullable({"type": "string"}),
         "examinee_phone": nullable({"type": "string"}),

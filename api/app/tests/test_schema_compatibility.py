@@ -1,6 +1,8 @@
+import ast
 import importlib
 import inspect
 import pkgutil
+import sys
 from datetime import datetime, timezone
 
 import pytest
@@ -99,8 +101,8 @@ def test_service_schema_serializes_parent_name(app, seeded_data):
         assert dumped["is_dlkt"] is True
 
 
-def test_exam_schema_preserves_exam_received_date_format(app, seeded_data):
-    """Assert that exam received dates keep their UTC contract format during serialization."""
+def test_exam_schema_uses_iso_exam_received_date_format(app, seeded_data):
+    """Assert that exam received dates use Marshmallow's normal ISO contract."""
     with app.app_context():
         from app.models.bookings import Exam, ExamType, Invigilator
         from app.models.theq import Office
@@ -131,7 +133,78 @@ def test_exam_schema_preserves_exam_received_date_format(app, seeded_data):
 
         dumped = ExamSchema().dump(exam)
 
-        assert dumped["exam_received_date"] == "2026-03-25T12:30:00Z"
+        assert dumped["exam_received_date"] == "2026-03-25T12:30:00+00:00"
+
+
+def test_exam_schema_accepts_iso_exam_received_date_inputs(app, seeded_data):
+    """Assert that frontend ISO offset dates load without strict literal-Z parsing."""
+    with app.app_context():
+        from app.schemas.bookings import ExamSchema
+
+        base_payload = {
+            "exam_method": "paper",
+            "expiry_date": "2026-05-22T07:00:00+00:00",
+            "exam_type_id": seeded_data["exam_type_id"],
+            "event_id": "test1234887",
+            "exam_name": "test exam",
+            "examinee_name": "test candidate",
+            "notes": "test notes",
+            "office_id": seeded_data["office_ids"]["test_office"],
+            "payee_ind": 0,
+            "receipt_sent_ind": 0,
+            "sbc_managed_ind": 0,
+            "exam_returned_ind": 0,
+            "exam_written_ind": 0,
+            "number_of_students": 1,
+        }
+
+        offset_exam = ExamSchema().load(
+            {
+                **base_payload,
+                "exam_received_date": "2026-04-17T07:00:00+00:00",
+            }
+        )
+        z_exam = ExamSchema().load(
+            {
+                **base_payload,
+                "exam_received_date": "2026-04-17T07:00:00Z",
+            }
+        )
+
+        assert offset_exam.exam_received_date.isoformat() == (
+            "2026-04-17T07:00:00+00:00"
+        )
+        assert z_exam.exam_received_date.isoformat() == "2026-04-17T07:00:00+00:00"
+
+
+def test_no_schema_explicitly_uses_strict_literal_z_datetime_format(app, seeded_database):
+    """Assert DateTime fields do not opt into literal-Z-only parsing."""
+    del seeded_database
+
+    with app.app_context():
+        strict_fields = []
+        for schema_cls in _schema_classes():
+            source = inspect.getsource(sys.modules[schema_cls.__module__])
+            tree = ast.parse(source)
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.Call):
+                    continue
+                if not (
+                    isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "DateTime"
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id == "fields"
+                ):
+                    continue
+                for keyword in node.keywords:
+                    if (
+                        keyword.arg == "format"
+                        and isinstance(keyword.value, ast.Constant)
+                        and keyword.value.value == "%Y-%m-%dT%H:%M:%SZ"
+                    ):
+                        strict_fields.append(f"{schema_cls.__module__}:{node.lineno}")
+
+        assert strict_fields == []
 
 
 def test_booking_schema_post_dump_supports_single_and_many(app, seeded_data):
