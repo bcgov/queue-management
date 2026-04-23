@@ -580,6 +580,41 @@
       "realmRoles": [
         "online_appointment_user"
       ]
+    },
+    {
+      "username": "citizen2@bceidboth",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Test2",
+      "lastName": "Citizen2",
+      "email": "citizen2@example.com",
+      "attributes": {
+        "theq_username": [
+          "citizen2"
+        ],
+        "identity_provider": [
+          "bceid"
+        ],
+        "display_name": [
+          "Test2 Citizen2"
+        ],
+        "userid": [
+          "CITIZEN2"
+        ],
+        "name": [
+          "Test2 Citizen2"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
     }
   ]
 }
