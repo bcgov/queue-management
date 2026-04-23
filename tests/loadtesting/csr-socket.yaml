@@ -33,7 +33,7 @@ scenarios:
     flow:
       - log: " socket connectiong starting"
       - emit:
-          channel: "connect"
+          channel: "connecting"
           data: "ping"
       - think: 1
       - emit:
