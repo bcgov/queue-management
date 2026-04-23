@@ -2,21 +2,28 @@
 set -e
 set -u
 
-# Set environment variables below.
 echo "Loading environment variables"
 
-# We update the API key from keycloak 
-export SERVICE_API_KEY=$(npm run get-keycloak-token --silent)
 export MAX_VIRTUAL_USERS=200
-
-# Note - Changing target may require additional keycloak changes, depending on setup.
-# Currently this is configured to work with Keycloak/OIDC dev in OpenShifit DEV 
-# and even localhost if your loaclhost uses OIDC dev.
-# Load-testing logs into keycloak via `admin:admin`.
-# Implementation details, including Keycloak URI, are in `function.js`
 export TARGET="http://localhost:5000"
-# export TARGET="https://dev-theq.pathfinder.gov.bc.ca"
-export KEYCLOAK_USERNAME='admin'
-export KEYCLOAK_PASSWORD='admin'
+export KEYCLOAK_BASE_URL="http://localhost:8085/auth"
+export KEYCLOAK_REALM="servicebc-local"
+export KEYCLOAK_CLIENT_ID="theq-queue-management-api"
+export KEYCLOAK_CLIENT_SECRET="theq-local-dev-secret"
+export KEYCLOAK_USERNAME="admin@idir"
+export KEYCLOAK_PASSWORD="password"
 
-echo "Target: $TARGET\n"
+# These IDs assume a local database seeded with `uv run python manage.py bootstrap`.
+export LOADTEST_OFFICE_ID=1
+export LOADTEST_CREATE_SERVICE_ID=11
+export LOADTEST_UPDATE_SERVICE_ID=7
+export LOADTEST_DRAFT_OFFICE_ID=2
+export LOADTEST_DRAFT_SERVICE_ID=11
+export LOADTEST_OFFICE_TIMEZONE="America/Vancouver"
+export LOADTEST_DRAFT_OFFICE_TIMEZONE="America/Creston"
+export LOADTEST_DRAFT_SLOT_WEEK_RANGE=300000
+
+# Resolve a fresh access token after the Keycloak variables are exported.
+export SERVICE_API_KEY="$(npm run get-keycloak-token --silent)"
+
+echo "Target: $TARGET"
