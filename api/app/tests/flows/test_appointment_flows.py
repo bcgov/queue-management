@@ -6,16 +6,36 @@ import pytest
 from app.tests.api_test_support import (
     assert_json_response,
     create_public_user,
+    future_utc_window,
     first_day_with_slots,
     json_of,
     public_slot_payload,
     slot_window_to_iso,
+    unique_name,
 )
 from app.tests.api_test_support import (
     create_internal_appointment as _create_internal_appointment,
 )
 
 pytestmark = [pytest.mark.flows, pytest.mark.usefixtures("seeded_database")]
+
+
+def _create_blackout_appointment(api_client, seeded_data, *, days_from_now: int) -> dict:
+    start_time, end_time = future_utc_window(days_from_now)
+    response = api_client.post(
+        "/appointments/",
+        json={
+            "office_id": seeded_data["office_ids"]["test_office"],
+            "start_time": start_time,
+            "end_time": end_time,
+            "comments": "Blackout coverage",
+            "citizen_name": unique_name("blackout-appt"),
+            "contact_information": "blackout@example.com",
+            "blackout_flag": "Y",
+        },
+    )
+    assert_json_response(response, 201)
+    return json_of(response)["appointment"]
 
 
 def test_internal_appointment_can_be_listed_and_retrieved(
@@ -64,6 +84,62 @@ def test_internal_appointment_can_be_deleted(internal_ga_client, seeded_data):
     """Assert that internal appointments can be deleted from the API."""
     appointment = _create_internal_appointment(
         internal_ga_client, seeded_data, days_from_now=2
+    )
+
+    response = internal_ga_client.delete(
+        f"/appointments/{appointment['appointment_id']}/"
+    )
+
+    assert response.status_code == 204, response.get_data(as_text=True)
+
+
+def test_blackout_appointment_update_skips_notifications(
+    monkeypatch, internal_ga_client, seeded_data
+):
+    """Assert that service-less blackout updates do not invoke notification builders."""
+    appointment = _create_blackout_appointment(
+        internal_ga_client, seeded_data, days_from_now=2
+    )
+
+    def _unexpected(*args, **kwargs):
+        raise AssertionError("blackout appointments should not trigger notifications")
+
+    monkeypatch.setattr(
+        "app.resources.bookings.appointment.appointment_put.get_confirmation_email_contents",
+        _unexpected,
+    )
+    monkeypatch.setattr(
+        "app.resources.bookings.appointment.appointment_put.send_sms",
+        _unexpected,
+    )
+
+    response = internal_ga_client.put(
+        f"/appointments/{appointment['appointment_id']}/",
+        json={
+            "comments": "Blackout appointment updated",
+            "citizen_name": "Updated blackout",
+            "contact_information": "updated-blackout@example.com",
+        },
+    )
+
+    assert_json_response(response, 200)
+    assert json_of(response)["appointment"]["comments"] == "Blackout appointment updated"
+
+
+def test_blackout_appointment_delete_skips_notifications(
+    monkeypatch, internal_ga_client, seeded_data
+):
+    """Assert that service-less blackout deletes do not invoke cancellation email builders."""
+    appointment = _create_blackout_appointment(
+        internal_ga_client, seeded_data, days_from_now=2
+    )
+
+    def _unexpected(*args, **kwargs):
+        raise AssertionError("blackout appointments should not trigger notifications")
+
+    monkeypatch.setattr(
+        "app.resources.bookings.appointment.appointment_delete.get_cancel_email_contents",
+        _unexpected,
     )
 
     response = internal_ga_client.delete(

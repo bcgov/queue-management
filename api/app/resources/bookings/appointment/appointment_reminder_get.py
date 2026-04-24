@@ -17,7 +17,7 @@ from flask_restx import Resource
 from app.models.bookings import Appointment
 from app.utilities.auth_util import Role, has_any_role
 from app.utilities.email import is_valid_email, formatted_date, get_email, \
-    get_duration
+    get_duration, can_send_service_notification
 from qsystem import api, api_call_with_retry
 from app.auth.auth import jwt
 from app.utilities.sms import is_valid_phone, format_sms_date
@@ -52,7 +52,7 @@ class AppointmentRemindersGet(Resource):
                         send_reminder = True
                         user_telephone = appointment.contact_information
 
-                if send_reminder:
+                if send_reminder and can_send_service_notification(appointment):
                     if reminder_type == 'email':
                         date, day = formatted_date(appointment.start_time, timezone)
                     else:
