@@ -13,7 +13,7 @@
   - [Resources](#resources)
   - [FAQ / Troubleshooting](#faq--troubleshooting)
     - [Verify IDs are correct](#verify-ids-are-correct)
-    - [Verify the "admin" user is assigned to correct office](#verify-the-admin-user-is-assigned-to-correct-office)
+    - [Verify the Load-Test User Is Assigned to the Correct Office](#verify-the-load-test-user-is-assigned-to-the-correct-office)
     - [I get errors when testing locally, but not when testing OpenShift dev](#i-get-errors-when-testing-locally-but-not-when-testing-openshift-dev)
 
 ## Installation
@@ -57,7 +57,7 @@ Important local defaults:
 * Keycloak realm: `servicebc-local`
 * Keycloak client id: `theq-queue-management-api`
 * Keycloak client secret: `theq-local-dev-secret`
-* Demo load-test user: `admin@idir`
+* Demo load-test user: `cfms-postman-operator`
 * Demo load-test password: `password`
 
 `bootstrap` wipes and recreates development data. The default load test IDs in `envs.sh` assume that freshly bootstrapped dataset.
@@ -89,7 +89,7 @@ Configuration of varables is done in `envs.sh`.  The main variables that will be
 * `MAX_VIRTUAL_USERS` - determines the maximum amount of concurrent virtual users that are accessing the system at once
 * `TARGET` - the endpoint being load tested. The default is the local API at `http://localhost:5000`
 * `KEYCLOAK_BASE_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET` - local Keycloak token settings
-* `KEYCLOAK_USERNAME`, `KEYCLOAK_PASSWORD` - the demo user used to mint the token for the load test
+* `KEYCLOAK_USERNAME`, `KEYCLOAK_PASSWORD` - the demo user used to mint the token for the load test. The checked-in default is `cfms-postman-operator`.
 * `LOADTEST_OFFICE_ID`, `LOADTEST_CREATE_SERVICE_ID`, `LOADTEST_UPDATE_SERVICE_ID` - seeded local data IDs used by the appointment scenarios
 * `LOADTEST_DRAFT_OFFICE_ID`, `LOADTEST_DRAFT_SERVICE_ID` - seeded local data IDs used for draft creation. The local bootstrap default uses office `2` because office `1` has no appointment timeslots.
 * `LOADTEST_OFFICE_TIMEZONE` - IANA timezone used to turn slot times into draft appointment timestamps. The local bootstrap default is `America/Vancouver`.
@@ -316,11 +316,15 @@ The default values assume `uv run python manage.py bootstrap` has been run local
 * `LOADTEST_CREATE_SERVICE_ID=11`
 * `LOADTEST_UPDATE_SERVICE_ID=7`
 
-### Verify the "admin" user is assigned to correct office
+### Verify the Load-Test User Is Assigned to the Correct Office
 
-The admin user must be assigned to the same office that the tests try to use.
+The seeded load-test user must be assigned to the same office that the tests try to use.
 
-For example, if `LOADTEST_OFFICE_ID=1`, then the app-level `admin` CSR record must still be assigned to Test Office. With a fresh local bootstrap, that is the default arrangement.
+With the checked-in defaults, `KEYCLOAK_USERNAME=cfms-postman-operator` should resolve to the app-level CSR `cfms-postman-operator`, which should belong to Test Office (`LOADTEST_OFFICE_ID=1`) after a fresh local `bootstrap`.
+
+If you copied `envs.example.sh` to `envs.sh` before this change, your local `envs.sh` may still override the checked-in defaults with an older username such as `admin@idir`.
+
+The load-test harness checks `/api/v1/csrs/me/` before proceeding with authenticated requests. If the CSR office and `LOADTEST_OFFICE_ID` differ, the run fails fast and tells you which `KEYCLOAK_USERNAME` was used, which office it resolved to, and that you should switch to `cfms-postman-operator` or re-bootstrap/reconfigure the chosen user.
 
 
 ### I get errors when testing locally, but not when testing OpenShift dev

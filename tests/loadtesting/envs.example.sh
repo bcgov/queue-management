@@ -10,7 +10,7 @@ export KEYCLOAK_BASE_URL="http://localhost:8085/auth"
 export KEYCLOAK_REALM="servicebc-local"
 export KEYCLOAK_CLIENT_ID="theq-queue-management-api"
 export KEYCLOAK_CLIENT_SECRET="theq-local-dev-secret"
-export KEYCLOAK_USERNAME="admin@idir"
+export KEYCLOAK_USERNAME="cfms-postman-operator"
 export KEYCLOAK_PASSWORD="password"
 
 # These IDs assume a local database seeded with `uv run python manage.py bootstrap`.
