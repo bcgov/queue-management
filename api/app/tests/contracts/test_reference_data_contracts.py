@@ -64,6 +64,13 @@ def test_services_contract_includes_parent_relationships(internal_ga_client):
     assert service["parent_id"] is not None
     assert service["parent"]["service_name"]
 
+    rural_ptax = next(
+        service
+        for service in body["services"]
+        if service["service_name"] == "Other - Rural PTAX"
+    )
+    assert rural_ptax["parent"]["service_name"] == "Property Tax"
+
 
 def test_office_scoped_services_filter_deleted_entries_and_preserve_sort_order(
     internal_ga_client, seeded_data, app

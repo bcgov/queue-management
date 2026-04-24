@@ -30,6 +30,21 @@ from qsystem import api, db
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
 
+
+def _token_last_name(user_info):
+    return user_info.get('family_name') or user_info.get('lastName') or ''
+
+
+def _normalize_user_defaults(user: PublicUserModel):
+    if user.last_name is None:
+        user.last_name = ''
+    if user.telephone is None:
+        user.telephone = ''
+    if user.send_email_reminders is None:
+        user.send_email_reminders = False
+    if user.send_sms_reminders is None:
+        user.send_sms_reminders = False
+
 @api.route("/users/", methods=['POST'])
 class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
@@ -47,7 +62,9 @@ class PublicUsers(Resource):
                 if not user.email:
                     user.email = user_info.get('email')
             user.display_name = user_info.get('display_name')
-            user.last_name = user_info.get('family_name')
+            if not user.last_name:
+                user.last_name = _token_last_name(user_info)
+            _normalize_user_defaults(user)
             db.session.add(user)
             db.session.commit()
 

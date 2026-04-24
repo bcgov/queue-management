@@ -35,6 +35,18 @@ from app.auth.auth import jwt
 from app.utilities.sms import send_sms
 
 
+def _get_valid_service(service_id):
+    if service_id in (None, ""):
+        return None
+
+    try:
+        service_id = int(service_id)
+    except (TypeError, ValueError):
+        return None
+
+    return db.session.get(Service, service_id)
+
+
 @api.route("/appointments/", methods=["POST"])
 class AppointmentPost(Resource):
     appointment_schema = AppointmentSchema()
@@ -87,7 +99,11 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
-            service = db.session.get(Service, int(service_id))
+            service = _get_valid_service(service_id)
+            if service is None:
+                return {
+                    "message": "Could not find service for service_id: " + str(service_id)
+                }, 400
 
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
@@ -115,6 +131,23 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            service_id = json_data.get('service_id')
+
+            # Preserve legacy Newman blackout payloads, which omit service_id for
+            # internal recurring blackout appointments.
+            if not (is_blackout_appt and service_id in (None, "")):
+                service = _get_valid_service(service_id)
+                if service is None:
+                    return {
+                        "message": "Could not find service for service_id: " + str(service_id)
+                    }, 400
+            else:
+                service = None
+
+            if service is None and not is_blackout_appt:
+                return {
+                    "message": "Could not find service for service_id: " + str(service_id)
+                }, 400
 
         citizen.office_id = office_id
         citizen.qt_xn_citizen_ind = 0

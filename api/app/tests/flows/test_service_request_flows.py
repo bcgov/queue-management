@@ -61,6 +61,24 @@ def test_service_request_create_rejects_category_selection(
     assert "category" in json_of(response)["message"].lower()
 
 
+def test_service_request_create_rejects_unknown_service_id(
+    internal_ga_client, seeded_data
+):
+    """Assert that unknown service ids return a stable JSON 400 instead of an HTML 500."""
+    citizen = create_citizen(internal_ga_client, 0, name="Invalid Service Citizen")
+    response = internal_ga_client.post(
+        "/service_requests/",
+        json=_service_request_payload(
+            citizen["citizen_id"],
+            seeded_data,
+            service_id=999999,
+        ),
+    )
+
+    assert_json_response(response, 400)
+    assert json_of(response)["message"] == "Could not find service for service_id: 999999"
+
+
 def test_first_service_request_assigns_ticket_numbers_and_choose_service_event(
     internal_ga_client, seeded_data, app, monkeypatch
 ):

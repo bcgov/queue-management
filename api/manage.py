@@ -357,6 +357,17 @@ def bootstrap():
         display_dashboard_ind=1,
         actual_service_ind=1
     )
+    service_ptax5 = theq.Service(
+        service_code='PTAX - 005',
+        service_name='Other - Rural PTAX',
+        service_desc='PTax/RPT - Providing information, forms, searches, '
+        'tax clearance certificate, address changes, add new owner, '
+        'extensions, forfeiture status, tax search, etc.',
+        parent_id=category_ptax.service_id,
+        prefix='A',
+        display_dashboard_ind=1,
+        actual_service_ind=1
+    )
     service_ptax1 = theq.Service(
         service_code='PTAX - 001',
         service_name='Deferment Application',
@@ -453,6 +464,7 @@ def bootstrap():
     db.session.add(service_ptax1)
     db.session.add(service_ptax2)
     db.session.add(service_ptax4)
+    db.session.add(service_ptax5)
     db.session.add(service_exams)
     db.session.add(service_dlkt)
     db.session.commit()
@@ -737,6 +749,7 @@ def bootstrap():
     office_test.services.append(service_ptax1)
     office_test.services.append(service_ptax2)
     office_test.services.append(service_ptax4)
+    office_test.services.append(service_ptax5)
     office_test.services.append(service_exams)
     office_test.services.append(service_dlkt)
 
@@ -758,6 +771,7 @@ def bootstrap():
     office_100.services.append(service_ptax1)
     office_100.services.append(service_ptax2)
     office_100.services.append(service_ptax4)
+    office_100.services.append(service_ptax5)
     office_100.services.append(service_dlkt)
     db.session.commit()
 
