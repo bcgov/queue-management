@@ -332,6 +332,17 @@
           }
         },
         {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
           "name": "username",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-attribute-mapper",
@@ -603,6 +614,93 @@
         ],
         "name": [
           "Test2 Citizen2"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-operator",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Operator",
+      "email": "cfms-postman-operator@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-operator"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "Postman Operator"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-non-operator",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Non Operator",
+      "email": "cfms-postman-non-operator@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-non-operator"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "Postman Non Operator"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-public-user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Public User",
+      "email": "cfms-postman-public-user@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-public-user"
+        ],
+        "identity_provider": [
+          "bceid"
+        ],
+        "display_name": [
+          "cfms-postman-public-user"
         ]
       },
       "credentials": [

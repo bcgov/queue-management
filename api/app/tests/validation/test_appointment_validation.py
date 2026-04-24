@@ -4,9 +4,11 @@ import pytest
 from app.tests.api_test_support import (
     assert_json_response,
     create_public_user,
+    future_utc_window,
     json_of,
     public_slot_payload,
     slot_window_to_iso,
+    unique_name,
 )
 
 pytestmark = [pytest.mark.validation, pytest.mark.usefixtures("seeded_database")]
@@ -148,3 +150,42 @@ def test_public_user_create_rejects_when_the_daily_limit_is_reached(
         "code": "MAX_NO_OF_APPOINTMENTS_REACHED",
         "message": "Maximum number of appointments reached",
     }
+
+
+def test_internal_appointment_create_rejects_unknown_service_id(
+    internal_ga_client, seeded_data
+):
+    """Assert that internal appointment creation returns JSON 400 for invalid service ids."""
+    start_time, end_time = future_utc_window(2)
+    response = internal_ga_client.post(
+        "/appointments/",
+        json={
+            "service_id": 999999,
+            "office_id": seeded_data["office_ids"]["test_office"],
+            "start_time": start_time,
+            "end_time": end_time,
+            "comments": "Internal invalid service",
+            "citizen_name": unique_name("invalid-service"),
+            "contact_information": "internal@example.com",
+        },
+    )
+
+    assert_json_response(response, 400)
+    assert json_of(response)["message"] == "Could not find service for service_id: 999999"
+
+
+def test_public_appointment_create_rejects_unknown_service_id(
+    public_client, seeded_data
+):
+    """Assert that public appointment creation returns JSON 400 for invalid service ids."""
+    create_public_user(public_client)
+    payload, _day_key, _slots = public_slot_payload(
+        public_client, seeded_data, minimum_slots=1
+    )
+    response = public_client.post(
+        "/appointments/",
+        json={**payload, "service_id": 999999},
+    )
+
+    assert_json_response(response, 400)
+    assert json_of(response)["message"] == "Could not find service for service_id: 999999"

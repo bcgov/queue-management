@@ -82,6 +82,34 @@ def test_qt1_specific_invite_appends_an_invited_period(internal_ga_client, seede
     )
 
 
+def test_generic_invite_accepts_an_empty_post_body(
+    internal_ga_client, seeded_data
+):
+    """Assert that legacy empty-body invites still default to the CSR counter under Flask 3."""
+    citizen, _service_request, queued_citizen = _create_queue_ready_citizen(
+        internal_ga_client,
+        seeded_data,
+        position=0,
+        name="Empty Body Invite Citizen",
+        service_id_key="ptax",
+        channel_id_key="phone",
+        quantity=1,
+        counter_id_key="counter",
+        qt_xn_citizen_ind=0,
+    )
+
+    queued_period_count = len(_primary_service_request(queued_citizen)["periods"])
+    invited_citizen = _citizen_from_response(
+        internal_ga_client.post("/citizens/invite/", data="")
+    )
+
+    assert invited_citizen["citizen_id"] == citizen["citizen_id"]
+    assert _latest_period_name(_primary_service_request(invited_citizen)) == "Invited"
+    _assert_period_count_delta(
+        _primary_service_request(invited_citizen), queued_period_count
+    )
+
+
 def test_qt1_begin_service_after_invite_appends_a_being_served_period(
     internal_ga_client, seeded_data
 ):

@@ -118,3 +118,13 @@ def test_public_user_can_reach_public_user_routes(
 
     assert_status(response, case.expected_status)
     assert response.get_json() is not None
+
+
+def test_public_user_create_backfills_legacy_required_fields(public_client_alt):
+    """Assert that user creation returns non-null legacy fields expected by the Postman collection."""
+    user = create_public_user(public_client_alt)
+
+    assert user["last_name"] == "PublicAlt"
+    assert user["telephone"] == ""
+    assert user["send_email_reminders"] is False
+    assert user["send_sms_reminders"] is False

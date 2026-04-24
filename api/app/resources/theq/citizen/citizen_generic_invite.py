@@ -127,7 +127,7 @@ class CitizenGenericInvite(Resource):
 
             waiting_period_state = find_wait()
             citizen = None
-            json_data = request.get_json()
+            json_data = request.get_json(silent=True) or {}
 
             if json_data and 'counter_id' in json_data:
                 counter_id = int(json_data.get('counter_id'))

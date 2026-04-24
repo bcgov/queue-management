@@ -68,10 +68,16 @@ def get_service(service_request, json_data, csr):
     service = None
     try:
         service = db.session.get(Service, service_request.service_id)
-    except:
+    except Exception:
         logging.exception("==> An exception getting service info")
         logging.exception(csr_const + csr.username)
         logging.exception(json_data_const + json.dumps(json_data['service_request']))
+        return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
+
+    if service is None:
+        logging.info("==> No service found in POST /service_requests/")
+        logging.info(csr_const + csr.username)
+        logging.info(json_data_const + json.dumps(json_data['service_request']))
         return (None, ("Could not find service for service_id: " + str(service_request.service_id)), 400)
 
     if service.parent_id is None:
@@ -92,9 +98,12 @@ class ServiceRequestsList(Resource):
     @api_call_with_retry
     def post(self):
         try:
-            json_data = request.get_json()
+            json_data = request.get_json(silent=True)
         except Exception as error:
             return {"message": str(error)}, 401
+
+        if json_data is None:
+            return {"message": "No input data received for creating service request"}, 400
 
         csr = CSR.find_by_username(get_username())
         service_request, message, code = get_service_request(self, json_data, csr)
