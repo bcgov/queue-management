@@ -27,7 +27,7 @@ from app.services import AvailabilityService
 from app.utilities.auth_util import Role, get_username
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, \
-    get_blackout_email_contents
+    get_blackout_email_contents, can_send_service_notification
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, my_print, application
 from qsystem import socketio
@@ -176,7 +176,7 @@ class AppointmentPost(Resource):
             
             is_stat = (json_data.get('stat_flag', False))
 
-            if ((not is_stat) and (not is_blackout_appt)):
+            if can_send_service_notification(appointment):
                 # Send confirmation email and sms
                 try:
                     send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))

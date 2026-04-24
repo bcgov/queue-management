@@ -23,7 +23,7 @@ from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, get_username
-from app.utilities.email import send_email, get_confirmation_email_contents
+from app.utilities.email import send_email, get_confirmation_email_contents, can_send_service_notification
 from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
@@ -130,13 +130,14 @@ class AppointmentPut(Resource):
         db.session.add(appointment)
         db.session.commit()
 
-        # Send confirmation email
-        try:
-            send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
-            send_sms(appointment, office, office.timezone, user,
-                             request.headers['Authorization'].replace('Bearer ', ''))
-        except Exception as exc:
-            logging.exception('Error on token generation - %s', exc)
+        if can_send_service_notification(appointment):
+            # Send confirmation email
+            try:
+                send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                send_sms(appointment, office, office.timezone, user,
+                                 request.headers['Authorization'].replace('Bearer ', ''))
+            except Exception as exc:
+                logging.exception('Error on token generation - %s', exc)
 
         #   Make Snowplow call.
         schema = 'appointment_update'

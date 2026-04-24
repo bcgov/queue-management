@@ -87,6 +87,18 @@ def get_blackout_email_contents(blackout_appt: Appointment, cancelled_appointmen
     return subject, get_email(user, cancelled_appointment), sender, body
 
 
+def can_send_service_notification(appointment: Appointment) -> bool:
+    """Return whether the appointment supports service-based notifications."""
+    return bool(
+        appointment
+        and not appointment.is_draft
+        and appointment.blackout_flag != "Y"
+        and not appointment.stat_flag
+        and appointment.service_id is not None
+        and appointment.service is not None
+    )
+
+
 def get_confirmation_email_contents(appointment: Appointment, office, timezone, user):
     """Send confirmation email"""
     sender = current_app.config.get('MAIL_FROM_ID')
