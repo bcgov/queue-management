@@ -196,4 +196,4 @@ class AppointmentPost(Resource):
                     "errors": {}}, 201
 
         else:
-            return {"The Appointment Office ID and CSR Office ID do not match!"}, 403
+            return {"message": "The Appointment Office ID and CSR Office ID do not match!"}, 403

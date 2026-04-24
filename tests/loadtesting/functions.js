@@ -5,7 +5,7 @@ const DEFAULT_KEYCLOAK_BASE_URL = 'http://localhost:8085/auth';
 const DEFAULT_KEYCLOAK_REALM = 'servicebc-local';
 const DEFAULT_KEYCLOAK_CLIENT_ID = 'theq-queue-management-api';
 const DEFAULT_KEYCLOAK_CLIENT_SECRET = 'theq-local-dev-secret';
-const DEFAULT_KEYCLOAK_USERNAME = 'admin@idir';
+const DEFAULT_KEYCLOAK_USERNAME = 'cfms-postman-operator';
 const DEFAULT_KEYCLOAK_PASSWORD = 'password';
 const DEFAULT_TARGET = 'http://localhost:5000';
 const DEFAULT_OFFICE_TIMEZONE = 'America/Vancouver';
@@ -18,6 +18,7 @@ const DEFAULT_DRAFT_SLOT_WEEK_RANGE = 300000;
 // As most load testing is short lived (minutes, not hours) this works fine.
 // Cache auth tokens to a plain old JavaScript object
 const authTokenList = {};
+const loadTestOfficeAlignmentChecks = {};
 
 function getKeycloakConfig() {
     return {
@@ -197,9 +198,96 @@ async function loginToKeycloak(username, password) {
     return tokenResponse;
 }
 
+function extractCsrOffice(payload) {
+    const csr = payload && payload.csr;
+    const officeId = csr && csr.office_id;
+    const officeName = csr && csr.office && csr.office.office_name;
+
+    if (typeof officeId !== 'number') {
+        throw new Error(`Unable to determine CSR office from /api/v1/csrs/me/: ${JSON.stringify(payload)}`);
+    }
+
+    return {
+        officeId,
+        officeName: officeName || `office ${officeId}`,
+    };
+}
+
+async function fetchCsrSelf(accessToken, target) {
+    const url = buildApiUrl(target, '/api/v1/csrs/me/');
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            cookie: `oidc-jwt=${accessToken}`,
+        },
+        method: 'GET',
+    });
+    const responseBody = await res.text();
+    let payload;
+
+    try {
+        payload = JSON.parse(responseBody);
+    } catch (error) {
+        throw new Error(`Unable to parse /api/v1/csrs/me/ response for load-test preflight: ${responseBody}`);
+    }
+
+    return { res, payload };
+}
+
+async function assertLoadTestOfficeAlignment(accessToken, cacheKey, username, password) {
+    const { target, officeId } = getLoadTestConfig();
+    let currentAccessToken = accessToken;
+    let { res, payload } = await fetchCsrSelf(currentAccessToken, target);
+
+    // Retry once with a freshly minted token to smooth over transient startup
+    // or token-validation hiccups without hiding persistent auth problems.
+    if (res.status === 401) {
+        const refreshedToken = await loginToKeycloak(username, password);
+        authTokenList[cacheKey] = refreshedToken;
+        currentAccessToken = refreshedToken.access_token;
+        ({ res, payload } = await fetchCsrSelf(currentAccessToken, target));
+    }
+
+    if (!res.ok) {
+        throw new Error(`Load-test preflight failed when checking /api/v1/csrs/me/: ${res.status} ${JSON.stringify(payload)}`);
+    }
+
+    const actualOffice = extractCsrOffice(payload);
+    if (actualOffice.officeId !== officeId) {
+        throw new Error(
+            `Load-test auth mismatch: KEYCLOAK_USERNAME=${username} resolved to CSR office ${actualOffice.officeId} (${actualOffice.officeName}), but LOADTEST_OFFICE_ID=${officeId}. Switch KEYCLOAK_USERNAME to cfms-postman-operator in tests/loadtesting/envs.sh or your shell, or re-bootstrap/reconfigure that user so the offices match.`
+        );
+    }
+
+    loadTestOfficeAlignmentChecks[cacheKey] = Promise.resolve({
+        ...actualOffice,
+        accessToken: currentAccessToken,
+    });
+    return {
+        ...actualOffice,
+        accessToken: currentAccessToken,
+    };
+}
+
 async function applyAuthHeader(requestParams) {
     const { username, password } = getKeycloakCredentials();
-    const { access_token } = await getAuthToken(username, password);
+    let { access_token } = await getAuthToken(username, password);
+    const authCacheKey = getAuthCacheKey(username);
+
+    if (!loadTestOfficeAlignmentChecks[authCacheKey]) {
+        loadTestOfficeAlignmentChecks[authCacheKey] = assertLoadTestOfficeAlignment(
+            access_token,
+            authCacheKey,
+            username,
+            password
+        ).catch((error) => {
+            delete loadTestOfficeAlignmentChecks[authCacheKey];
+            throw error;
+        });
+    }
+
+    const alignment = await loadTestOfficeAlignmentChecks[authCacheKey];
+    access_token = alignment.accessToken;
 
     requestParams.headers = requestParams.headers || {};
     requestParams.headers.Authorization = `Bearer ${access_token}`;

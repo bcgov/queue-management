@@ -174,6 +174,31 @@ def test_internal_appointment_create_rejects_unknown_service_id(
     assert json_of(response)["message"] == "Could not find service for service_id: 999999"
 
 
+def test_internal_appointment_create_rejects_mismatched_office_as_json(
+    internal_ga_client, seeded_data
+):
+    """Assert that internal appointment creation returns a JSON 403 when the payload office differs from the CSR office."""
+    start_time, end_time = future_utc_window(2)
+    response = internal_ga_client.post(
+        "/appointments/",
+        json={
+            "service_id": seeded_data["service_ids"]["msp"],
+            "office_id": seeded_data["office_ids"]["limited_office"],
+            "start_time": start_time,
+            "end_time": end_time,
+            "comments": "Internal mismatched office",
+            "citizen_name": unique_name("mismatched-office"),
+            "contact_information": "internal@example.com",
+        },
+    )
+
+    assert_json_response(response, 403)
+    assert (
+        json_of(response)["message"]
+        == "The Appointment Office ID and CSR Office ID do not match!"
+    )
+
+
 def test_public_appointment_create_rejects_unknown_service_id(
     public_client, seeded_data
 ):
