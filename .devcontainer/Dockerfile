@@ -22,7 +22,7 @@
 # 3.9-bullseye, 3.8-bullseye, 3.7-bullseye, 3.6-bullseye, 3-buster,
 # 3.10-buster, 3.9-buster, 3.8-buster, 3.7-buster, 3.6-buster
 #
-# Note: this ARG is overwritten by the value in docker-compose.yml.
+# Note: this ARG is overwritten by the value in compose.yaml.
 ARG VARIANT=3-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/python:${VARIANT}
 
@@ -31,7 +31,7 @@ ENV PYTHONUNBUFFERED 1
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 #
-# Note: this ARG is overwritten by the value in docker-compose.yml.
+# Note: this ARG is overwritten by the value in compose.yaml.
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then \
     su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && \

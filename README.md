@@ -8,7 +8,16 @@ Service BC connects people with services offered by the B.C. provincial governme
 
 ### `api`
 
-The primary backend service for the platform. It provides the REST API and Socket.IO endpoints used by the staff and public frontends for queue operations, office administration, appointments, walk-ins, exams, uploads, smartboard data, and real-time updates.
+The primary backend service for the platform. It serves the main REST API under `/api/v1` plus Socket.IO endpoints used by the staff and public frontends.
+
+Key responsibilities include:
+
+- Queue and citizen service flows: create and manage citizens, service requests, queue state transitions, invite and serve flows, hold flows, and completion flows.
+- Office and reference data: offices, services, categories, channels, CSR state, user context, and related administrative data.
+- Appointments, bookings, and walk-ins: appointment slots, appointment creation and updates, recurring bookings, walk-in queue support, and reminder-related workflows.
+- Exams, rooms, and invigilators: exam scheduling, uploads, exports, room management, and invigilator management.
+- Smartboard and real-time updates: smartboard data endpoints plus Socket.IO events for queue changes and office-specific live updates.
+- Health endpoints: readiness and health checks for operational monitoring.
 
 ### `frontend`
 
@@ -20,7 +29,7 @@ The public-facing Vue 2 application for booking appointments, viewing booked app
 
 ### `notifications-api`
 
-A separate Flask service for outbound notifications. It exposes authenticated SMS and email endpoints and supports pluggable delivery providers, including GC Notify, CHES, and logging/custom implementations.
+A separate Flask service for outbound notifications. It exposes authenticated `POST /api/v1/notifications/sms` and `POST /api/v1/notifications/email` endpoints and supports pluggable delivery providers, including GC Notify, CHES, and logging/custom implementations.
 
 ### `feedback-api`
 
@@ -28,46 +37,6 @@ A separate Flask service for outbound notifications. It exposes authenticated SM
 > `feedback-api` is deprecated, retained only for legacy compatibility, and will be removed in a future version.
 
 This legacy Flask service accepts feedback submissions and forwards them to the older Camunda-based feedback flow.
-
-## API Overview
-
-The primary API is served from `api` and exposes endpoints under `/api/v1`.
-
-- Queue and citizen service flows: create and manage citizens, service requests, queue state transitions, invite and serve flows, hold flows, and completion flows.
-- Office and reference data: offices, services, categories, channels, CSR state, user context, and related administrative data.
-- Appointments, bookings, and walk-ins: appointment slots, appointment creation and updates, recurring bookings, walk-in queue support, and reminder-related workflows.
-- Exams, rooms, and invigilators: exam scheduling, uploads, exports, room management, and invigilator management.
-- Smartboard and real-time updates: smartboard data endpoints plus Socket.IO events for queue changes and office-specific live updates.
-- Health endpoints: readiness and health checks for operational monitoring.
-
-## Supporting APIs
-
-### `notifications-api`
-
-The notifications service exposes:
-
-- `POST /api/v1/notifications/sms`
-- `POST /api/v1/notifications/email`
-
-These endpoints are authenticated and are used for outbound text and email delivery.
-
-### `feedback-api`
-
-The legacy feedback service exposes:
-
-- `POST /api/v1/feedback`
-
-It exists for backward compatibility only and should not be treated as a core long-term service.
-
-## Frontends
-
-### Staff frontend
-
-The [`frontend`](./frontend) application is the internal operational interface used by Service BC staff. It includes queue dashboards, admin screens, appointment and exam workflows, upload tools, smartboard support, and integrations with other line-of-business applications.
-
-### Public appointment frontend
-
-The [`appointment-frontend`](./appointment-frontend) application is the public web experience. It supports appointment booking, reviewing booked appointments, sign-in and account management, and walk-in queue status pages.
 
 ## Technology Stack
 
@@ -82,8 +51,8 @@ Older references to RabbitMQ remain in the repository, but they are not part of 
 
 This repository supports two local development workflows:
 
-- Devcontainer
-- Local host
+- Using a [development container](https://containers.dev/)
+- Developing locally on your host machine
 
 ### Dev Container Workflow
 
@@ -95,10 +64,14 @@ This repository supports two local development workflows:
 
 #### Steps
 
-1. Open the repository in VS Code.
-2. Use the Dev Containers command to reopen the project in the devcontainer.
-3. Let the post-create script finish installing Python and Node dependencies.
-4. Confirm that the container has provisioned PostgreSQL and forwarded the main ports.
+1. Open the repository in an editor with dev container support
+2. Use the editor to reopen the project in the devcontainer
+   - For example, in VS Code, click the popup prompt or use the Command Palette to select "Dev Containers: Reopen in Container"
+3. Let the container build from the root `compose.yaml` definition and finish running the post-create script
+4. Confirm that the container has provisioned PostgreSQL and Keycloak, and forwarded the main ports
+
+The devcontainer now prepares local config files before API migrations/bootstrap and waits for PostgreSQL and Keycloak readiness before the post-create flow continues.
+It also provisions project-local Python environments for both `api` and `notifications-api`, so the checked-in VS Code debug configurations work without extra manual setup.
 
 #### Expected Ports
 
@@ -106,19 +79,18 @@ This repository supports two local development workflows:
 - `5002`: notifications API
 - `8080`: staff frontend
 - `8081`: appointment frontend
+- `8085`: Keycloak auth server
 - `5432`: PostgreSQL
 
-The devcontainer installs dependencies automatically, applies database migrations, and may initialize seed data depending on the current database state.
+The devcontainer installs dependencies automatically for `api`, `notifications-api`, `frontend`, and `appointment-frontend`, applies database migrations, and may initialize seed data depending on the current database state.
 
 ### Local Host Workflow
 
 #### Prerequisites
 
-- Python 3.14
-- `uv`
-- Node.js 20
-- `npm`
-- PostgreSQL 16 or a compatible local PostgreSQL instance
+- Python 3.14 with `uv`
+- Node.js 20 with `npm`
+- PostgreSQL 16
 
 #### Setup
 
@@ -142,17 +114,13 @@ The devcontainer installs dependencies automatically, applies database migration
    npm install
    ```
 
-3. Create the required local config files from the repo's devcontainer config sources:
+3. Create the required local config files:
 
    ```bash
-   cp ./.devcontainer/config/api/dotenv ./api/.env
-   cp ./.devcontainer/config/api/client_secrets/secrets.json ./api/client_secrets/secrets.json
-   cp ./.devcontainer/config/frontend/public/static/keycloak/keycloak.json ./frontend/public/static/keycloak/keycloak.json
-   cp ./.devcontainer/config/frontend/public/config/configuration.json ./frontend/public/config/configuration.json
-   cp ./.devcontainer/config/appointment-frontend/dotenv.local ./appointment-frontend/.env.local
-   cp ./.devcontainer/config/appointment-frontend/public/config/kc/keycloak-public.json ./appointment-frontend/public/config/kc/keycloak-public.json
-   cp ./.devcontainer/config/appointment-frontend/public/config/configuration.json ./appointment-frontend/public/config/configuration.json
+   ./scripts/setup-local-config.sh
    ```
+
+   This script copies the checked-in local config defaults from `.devcontainer/config`, creates missing destination directories, validates required API auth keys, and leaves any existing local files untouched.
 
 4. Start the local auth server:
 
@@ -197,7 +165,7 @@ Queue management API using the production Dockerfile through Compose:
 docker compose --profile api up --build api
 ```
 
-The optional `api` Compose service still serves the application on `http://localhost:5000`. It reads `api/.env`, then overrides container-only settings so it can reach the host PostgreSQL and host-run notifications API while continuing to use the local Keycloak on `http://localhost:8085/auth`.
+The root `compose.yaml` is the single source of truth for local Docker services and the devcontainer. The optional `api` Compose service still serves the application on `http://localhost:5000`. It reads `api/.env`, then overrides container-only settings so it can reach the host PostgreSQL and host-run notifications API while continuing to use the local Keycloak on `http://localhost:8085/auth`.
 
 Notifications API:
 
@@ -233,6 +201,116 @@ These are the main local files you should expect to have in place when running t
 - `appointment-frontend/public/config/configuration.json`
 
 The checked-in local auth defaults now target the local Keycloak realm on `http://localhost:8085/auth`. If you need to switch back to the shared dev Keycloak server, update the copied local config files before starting the apps.
+
+## Testing
+
+This repository includes Python/pytest suites, Artillery-based load tests, and Postman/Newman collections. The commands below assume you already completed the local setup for the relevant service and, for API-backed tests, have the local stack running.
+
+### Pytest Suites
+
+The main application test suite lives in `api/app/tests` and is split into a DB-free `smoke` slice and a Postgres-backed `integration` slice.
+
+From `api`:
+
+```bash
+./scripts/run_api_smoke_tests.sh
+./scripts/run_api_integration_tests.sh
+./scripts/run_api_full_tests.sh
+```
+
+Equivalent direct pytest commands:
+
+```bash
+uv run pytest app/tests -m smoke -q --override-ini "addopts=--strict-markers"
+uv run pytest app/tests -m integration -q --override-ini "addopts=--strict-markers" --require-integration-db
+uv run pytest app/tests -q --require-integration-db
+```
+
+Additional pytest suites:
+
+```bash
+cd ./notifications-api
+uv sync --group dev
+uv run pytest
+```
+
+```bash
+cd ./feedback-api
+make setup
+make test
+```
+
+### Load Tests
+
+Load testing lives in `tests/loadtesting` and uses Artillery against the local API stack.
+
+Initial setup:
+
+```bash
+cd ./tests/loadtesting
+npm install
+cp envs.example.sh envs.sh
+chmod +x envs.sh profile-python.sh
+```
+
+Before running the load tests locally, start the local Keycloak realm and seed the API data:
+
+```bash
+docker compose up -d keycloak
+
+cd ./api
+uv run python manage.py db upgrade
+uv run python manage.py bootstrap
+```
+
+Run the load suites from `tests/loadtesting`:
+
+```bash
+npm run tests:all
+npm run tests:http
+npm run tests:socket
+```
+
+Optional Python profiling commands are also available there:
+
+```bash
+npm run python:profile
+npm run python:top
+```
+
+### Newman Tests
+
+Postman collections live in `api/postman`. They target the local API and local Keycloak realm, and the checked-in local setup expects the demo users from `keycloak-local/servicebc-local-realm.json`.
+
+Before running Newman locally, make sure the API database is migrated and bootstrapped:
+
+```bash
+cd ./api
+uv run python manage.py db upgrade
+uv run python manage.py bootstrap
+```
+
+Then install Newman and run the main collection from `api/postman`:
+
+```bash
+cd ./api/postman
+npm install
+./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --bail failure \
+  --global-var userid=cfms-postman-operator \
+  --global-var password=password \
+  --global-var userid_nonqtxn=cfms-postman-non-operator \
+  --global-var password_nonqtxn=password \
+  --global-var client_secret=theq-local-dev-secret \
+  --global-var url=http://localhost:5000/api/v1/ \
+  --global-var auth_url=http://localhost:8085 \
+  --global-var clientid=theq-queue-management-api \
+  --global-var realm=servicebc-local \
+  --global-var public_url=http://localhost:5000/api/v1/ \
+  --global-var public_user_id=cfms-postman-public-user \
+  --global-var public_user_password=password
+```
+
+See `api/postman/README-local-auth.md` for local auth troubleshooting details.
 
 ## Deployment
 
