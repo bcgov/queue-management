@@ -38,6 +38,8 @@ class PublicUser(Base):
     @classmethod
     def find_by_username(cls, username):
         """Find User records by username."""
+        if not username or not username.strip():
+            return None
         user = cls.query.filter_by(username=username).one_or_none()
         return user
 
@@ -50,6 +52,8 @@ class PublicUser(Base):
     @classmethod
     def find_appointments_by_username(cls, username: str):
         """Find all appointments for the user."""
+        if not username or not username.strip():
+            return []
         today = datetime.now(timezone.utc)
 
         query = db.session.query(Appointment) \

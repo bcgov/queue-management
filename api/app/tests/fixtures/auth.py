@@ -31,6 +31,16 @@ def public_client_alt(api_client_factory):
 
 
 @pytest.fixture()
+def public_client_malformed(api_client_factory):
+    return api_client_factory("public_user_malformed")
+
+
+@pytest.fixture()
+def public_client_missing_username(api_client_factory):
+    return api_client_factory("public_user_missing_username")
+
+
+@pytest.fixture()
 def reminder_job_client(api_client_factory):
     return api_client_factory("reminder_job")
 
@@ -38,4 +48,3 @@ def reminder_job_client(api_client_factory):
 @pytest.fixture()
 def bare_client(api_client_factory):
     return api_client_factory(identity_name=None, token=None)
-

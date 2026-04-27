@@ -53,10 +53,11 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.jwt_oidc_token_info
-            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
+            username = get_username()
+            user: PublicUserModel = PublicUserModel.find_by_username(username)
             if not user:
                 user = PublicUserModel()
-                user.username = get_username()
+                user.username = username
                 user.email = user_info.get('email')
             else:  # update email only if the email is None for existing user
                 if not user.email:
@@ -84,7 +85,8 @@ class PublicUser(Resource):
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
-            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
+            username = get_username()
+            user: PublicUserModel = PublicUserModel.find_by_username(username)
             current_sms_reminder: bool = user.send_sms_reminders
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
@@ -96,7 +98,7 @@ class PublicUser(Resource):
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
             if not current_sms_reminder and user.send_sms_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
-                    get_username())
+                    username)
                 for appointment in appointments:
                     office = appointment.office
                     send_sms(appointment, office, office.timezone, user,

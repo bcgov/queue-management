@@ -74,6 +74,27 @@ def _context(bare_client, internal_ga_client, public_client, seeded_data):
     }
 
 
+def _seed_blank_public_user(app):
+    with app.app_context():
+        from app.models.theq import PublicUser
+        from qsystem import db
+
+        user = PublicUser.query.filter_by(username="").one_or_none()
+        if user is None:
+            user = PublicUser(
+                username="",
+                display_name="Legacy Blank User",
+                last_name="Legacy",
+                email="legacy-blank@example.com",
+                telephone="2505550199",
+                send_email_reminders=False,
+                send_sms_reminders=False,
+            )
+            db.session.add(user)
+            db.session.commit()
+        return user.user_id
+
+
 @pytest.mark.parametrize("case", PUBLIC_ROUTE_CASES, ids=lambda case: case.id)
 def test_bare_client_receives_401_for_public_user_routes(
     bare_client, case, internal_ga_client, public_client, seeded_data
@@ -128,3 +149,54 @@ def test_public_user_create_backfills_legacy_required_fields(public_client_alt):
     assert user["telephone"] == ""
     assert user["send_email_reminders"] is False
     assert user["send_sms_reminders"] is False
+
+
+def test_malformed_public_identity_cannot_create_or_match_blank_user(
+    public_client_malformed, app
+):
+    """Assert that malformed public identities fail auth instead of matching a legacy blank username row."""
+    blank_user_id = _seed_blank_public_user(app)
+
+    response = public_client_malformed.post("/users/")
+
+    assert_unauthorized(response)
+
+    with app.app_context():
+        from app.models.theq import PublicUser
+
+        blank_user = PublicUser.find_by_user_id(blank_user_id)
+        assert blank_user is not None
+        assert blank_user.display_name == "Legacy Blank User"
+        assert PublicUser.query.filter_by(username="").count() == 1
+
+
+def test_malformed_public_identity_cannot_read_me_as_blank_user(
+    public_client_malformed, app
+):
+    """Assert that malformed public identities cannot resolve /users/me/ to a blank username row."""
+    _seed_blank_public_user(app)
+
+    response = public_client_malformed.get("/users/me/")
+
+    assert_unauthorized(response)
+
+
+def test_public_identity_without_username_claim_cannot_read_me_as_blank_user(
+    public_client_missing_username, app
+):
+    """Assert that a public token missing the username claim cannot resolve /users/me/ to the legacy blank user."""
+    _seed_blank_public_user(app)
+
+    response = public_client_missing_username.get("/users/me/")
+
+    assert_unauthorized(response)
+
+
+def test_blank_username_lookups_are_rejected(app):
+    """Assert that blank usernames no longer resolve public-user or CSR lookups."""
+    with app.app_context():
+        from app.models.theq import CSR, PublicUser
+
+        assert PublicUser.find_by_username("") is None
+        assert PublicUser.find_appointments_by_username("") == []
+        assert CSR.find_by_username("") is None
