@@ -51,6 +51,8 @@ class CSR(UserMixin, Base):
 
     @classmethod
     def find_by_username(cls, username):
+        if not username or not username.strip():
+            return None
         #   Possible keycloak->TheQ id values are user@idir->user, idir/user->user or user@bceid->user@bceid
         idir_id = username.split("idir/")[-1].lower()
         if "@idir" in username:
@@ -77,6 +79,8 @@ class CSR(UserMixin, Base):
 
     @classmethod
     def delete_user_cache(cls, username):
+        if not username or not username.strip():
+            return
         idir_id = username.split("idir/")[-1]
         key = (CSR.format_string % idir_id).lower()
         cache.delete(key)

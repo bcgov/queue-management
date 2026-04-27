@@ -49,6 +49,21 @@ TEST_IDENTITIES = {
         "display_name": "Public Alt User",
         "family_name": "PublicAlt",
     },
+    "public_user_malformed": {
+        "username": "   ",
+        "identity_provider": "bceid",
+        "realm_access": {"roles": ["online_appointment_user"]},
+        "email": "public-malformed@example.com",
+        "display_name": "Public Malformed User",
+        "family_name": "PublicMalformed",
+    },
+    "public_user_missing_username": {
+        "identity_provider": "bceid",
+        "realm_access": {"roles": ["online_appointment_user"]},
+        "email": "public-missing-username@example.com",
+        "display_name": "Public Missing Username User",
+        "family_name": "PublicMissingUsername",
+    },
     "reminder_job": {
         "username": "theq-reminder-job",
         "identity_provider": "idir",

@@ -30,18 +30,15 @@ class Login(Resource):
     @jwt.requires_auth_cookie
     def get(self):
         username = get_username()
-        if username != '':
-            csr = CSR.find_by_username(username)
-            if csr:
-                login_user(csr)
-                if application.config['USE_HTTPS']:
-                    return redirect(url_for(admin_index_const,
-                                            _scheme=application.config['PREFERRED_URL_SCHEME'],
-                                            _external=application.config['USE_HTTPS']))
-                else:
-                    return redirect(url_for(admin_index_const))
+        csr = CSR.find_by_username(username)
+        if csr:
+            login_user(csr)
+            if application.config['USE_HTTPS']:
+                return redirect(url_for(admin_index_const,
+                                        _scheme=application.config['PREFERRED_URL_SCHEME'],
+                                        _external=application.config['USE_HTTPS']))
             else:
-                return abort(401, self.auth_string)
+                return redirect(url_for(admin_index_const))
         else:
             return abort(401, self.auth_string)
 
