@@ -15,9 +15,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options,
 // see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/python-3-postgres
-// Update the VARIANT arg in docker-compose.yml to pick a Python version
+// Update the VARIANT arg in compose.yaml to pick a Python version
 {
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": "../compose.yaml",
 
   // Add the extensions you want installed when the container is created.
   "customizations": {
@@ -77,6 +77,10 @@
     },
     "8081": {
       "label": "Appointments Frontend",
+      "onAutoForward": "silent"
+    },
+    "8085": {
+      "label": "Keycloak",
       "onAutoForward": "silent"
     },
     "10000": {
