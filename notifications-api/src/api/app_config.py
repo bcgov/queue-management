@@ -66,6 +66,8 @@ class _Config:  # pylint: disable=too-few-public-methods
     SECRET_KEY = os.getenv("SECRET_KEY")
 
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv("JWT_OIDC_WELL_KNOWN_CONFIG")
+    JWT_OIDC_JWKS_URI = os.getenv("JWT_OIDC_JWKS_URI")
+    JWT_OIDC_ISSUER = os.getenv("JWT_OIDC_ISSUER")
     JWT_OIDC_ALGORITHMS = os.getenv("JWT_OIDC_ALGORITHMS", "RS256")
     JWT_OIDC_AUDIENCE = os.getenv("JWT_OIDC_AUDIENCE")
     JWT_OIDC_CLIENT_SECRET = os.getenv("JWT_OIDC_CLIENT_SECRET", "")

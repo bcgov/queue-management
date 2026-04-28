@@ -14,6 +14,7 @@
 """Flask application factory."""
 
 import os
+from urllib.error import URLError
 
 from flask import Flask
 
@@ -46,7 +47,22 @@ def setup_jwt_manager(app):
         return a_dict["realm_access"]["roles"]  # pragma: no cover
 
     app.config["JWT_ROLE_CALLBACK"] = get_roles
-    jwt_manager.init_app(app)
+    try:
+        jwt_manager.init_app(app)
+    except URLError:
+        well_known_config = app.config.get("JWT_OIDC_WELL_KNOWN_CONFIG")
+        jwks_uri = app.config.get("JWT_OIDC_JWKS_URI")
+        issuer = app.config.get("JWT_OIDC_ISSUER")
+
+        if not (well_known_config and jwks_uri and issuer):
+            raise
+
+        app.logger.warning(
+            "JWT well-known config could not be reached; retrying with direct JWKS and issuer settings."
+        )
+        app.config["JWT_OIDC_WELL_KNOWN_CONFIG"] = None
+        jwt_manager.init_app(app)
+        app.config["JWT_OIDC_WELL_KNOWN_CONFIG"] = well_known_config
 
 
 def register_shellcontext(app):

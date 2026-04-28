@@ -22,6 +22,8 @@ def app(monkeypatch):
         "JWT_OIDC_WELL_KNOWN_CONFIG",
         "https://example.com/.well-known/openid-configuration",
     )
+    monkeypatch.setenv("JWT_OIDC_JWKS_URI", "https://example.com/jwks.json")
+    monkeypatch.setenv("JWT_OIDC_ISSUER", "https://example.com/")
     monkeypatch.setenv("JWT_OIDC_AUDIENCE", "theq-notifications-api")
     monkeypatch.setenv("GC_NOTIFY_API_KEY", "test-key")
     monkeypatch.setenv("GC_NOTIFY_API_BASE_URL", "https://api.notification.canada.ca/")
