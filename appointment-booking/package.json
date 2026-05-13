@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "node server.js",
+    "build": "tsc -b && npm run build:client && npm run build:server",
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
     "lint": "eslint .",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
+    "start": "NODE_ENV=production node server.js",
     "type-check": "tsc --noEmit",
-    "preview": "vite preview",
+    "preview": "npm run start",
     "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0\""
   },
   "dependencies": {
