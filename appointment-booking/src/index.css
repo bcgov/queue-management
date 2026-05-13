@@ -46,6 +46,12 @@ p {
   margin: 0 auto;
 }
 
+.bc-logo {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
 .header-content h1 {
   color: white;
   margin: 0;
