@@ -11,9 +11,11 @@
     "format:check": "prettier --check src",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause\" --excludePackages \"appointment-booking@0.0.0\""
+    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0\""
   },
   "dependencies": {
+    "@bcgov/design-system-react-components": "^0.7.0",
+    "@bcgov/design-tokens": "^4.0.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
