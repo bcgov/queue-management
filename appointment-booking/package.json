@@ -10,7 +10,8 @@
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "type-check": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause\" --excludePackages \"appointment-booking@0.0.0\""
   },
   "dependencies": {
     "react": "^19.2.6",
@@ -31,6 +32,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "license-checker": "^25.0.1",
     "prettier": "^3.8.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
