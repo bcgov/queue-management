@@ -39,6 +39,25 @@ function send(res, statusCode, body, headers = {}) {
   res.end(body)
 }
 
+async function renderPage(url, res) {
+  let template
+  let render
+
+  if (!isProd) {
+    template = await fs.readFile(path.resolve(__dirname, 'index.html'), 'utf-8')
+    template = await vite.transformIndexHtml(url, template)
+    render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
+  } else {
+    template = prodTemplate
+    render = (await import(pathToFileURL(path.resolve(__dirname, 'dist/server/entry-server.js')).href)).render
+  }
+
+  const { appHtml } = await render(url)
+  const html = template.replace('<!--ssr-outlet-->', appHtml)
+
+  send(res, 200, html, { 'Content-Type': 'text/html; charset=utf-8' })
+}
+
 async function tryServeStatic(urlPath, res) {
   if (!isProd) {
     return false
@@ -67,32 +86,25 @@ async function tryServeStatic(urlPath, res) {
 const server = http.createServer(async (req, res) => {
   const url = req.url || '/'
 
+  if (!isProd && vite) {
+    return vite.middlewares(req, res, async () => {
+      try {
+        await renderPage(url, res)
+      } catch (error) {
+        vite.ssrFixStacktrace(error)
+        send(res, 500, 'Internal Server Error')
+      }
+    })
+  }
+
   try {
     const served = await tryServeStatic(url, res)
     if (served) {
       return
     }
 
-    let template
-    let render
-
-    if (!isProd) {
-      template = await fs.readFile(path.resolve(__dirname, 'index.html'), 'utf-8')
-      template = await vite.transformIndexHtml(url, template)
-      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
-    } else {
-      template = prodTemplate
-      render = (await import(pathToFileURL(path.resolve(__dirname, 'dist/server/entry-server.js')).href)).render
-    }
-
-    const { appHtml } = await render(url)
-    const html = template.replace('<!--ssr-outlet-->', appHtml)
-
-    send(res, 200, html, { 'Content-Type': 'text/html; charset=utf-8' })
-  } catch (error) {
-    if (!isProd && vite) {
-      vite.ssrFixStacktrace(error)
-    }
+    await renderPage(url, res)
+  } catch {
     send(res, 500, 'Internal Server Error')
   }
 })
