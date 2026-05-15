@@ -5,7 +5,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProd = process.env.NODE_ENV === 'production'
-const port = Number(process.env.PORT || 5173)
+const preferredPort = Number(process.env.PORT || 5173)
+const fallbackPort = Number(process.env.FALLBACK_PORT || preferredPort + 1)
 const apiProxyTarget = (process.env.API_PROXY_TARGET || 'http://localhost:5000').replace(/\/$/, '')
 
 const mimeTypes = {
@@ -182,7 +183,29 @@ const server = http.createServer(async (req, res) => {
   }
 })
 
-server.listen(port, () => {
-  // Keep startup logging concise for local dev and container logs.
-  console.log(`SSR server running on http://localhost:${port}`)
+let isRetryingWithFallbackPort = false
+
+function startServer(onPort) {
+  server.listen(onPort, () => {
+    // Keep startup logging concise for local dev and container logs.
+    console.log(`SSR server running on http://localhost:${onPort}`)
+  })
+}
+
+server.on('error', (error) => {
+  if (
+    error &&
+    error.code === 'EADDRINUSE' &&
+    !isRetryingWithFallbackPort &&
+    preferredPort !== fallbackPort
+  ) {
+    isRetryingWithFallbackPort = true
+    console.warn(`Port ${preferredPort} is already in use. Falling back to ${fallbackPort}.`)
+    startServer(fallbackPort)
+    return
+  }
+
+  throw error
 })
+
+startServer(preferredPort)
