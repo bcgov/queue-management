@@ -17,7 +17,7 @@
     "start": "NODE_ENV=production node server.js",
     "type-check": "tsc --noEmit",
     "preview": "npm run start",
-    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0\"",
+    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0;@bcgov/bc-sans@2.1.0\"",
     "ci:check": "npm run lint && npm run type-check && npm run test && npm run build && npm run license-check"
   },
   "dependencies": {
@@ -40,7 +40,6 @@
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",

@@ -1,3 +1,5 @@
+import '@bcgov/design-tokens/css/variables.css'
+import '@bcgov/bc-sans/css/BC_Sans.css'
 import { StrictMode } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import './index.css'

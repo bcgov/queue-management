@@ -28,7 +28,7 @@ jobs:
           cache-dependency-path: appointment-booking/package-lock.json
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Run quality gates
         run: npm run ci:check

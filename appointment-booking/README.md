@@ -1,77 +1,38 @@
 # Appointment Booking App
 
-A modern React 19 + TypeScript appointment booking interface built for BC Gov, featuring server-side rendering (SSR), automated tests, and OpenShift deployment readiness.
+A React 19 + TypeScript appointment booking interface built for BC Gov, featuring server-side rendering (SSR), automated tests, and OpenShift deployment readiness.
 
-## Quick Start (clean machine)
+## Prerequisites
 
-### Prerequisites
 - Node.js 22+
 - npm 10+
-- Docker (for local Postgres)
-- `uv` (for running Python backend)
 
-### 1. Clone and install frontend dependencies
+For database and backend setup, follow the instructions in the [root README](../README.md).
 
-Run from repository root:
+## Local Development
 
-```bash
-git clone https://github.com/bcgov/queue-management.git
-```
-
-### 2. Start database
-
-From repository root:
-
-```bash
-cd ../
-docker start citz-sbc-queue-postgres-1 || docker compose up -d db
-```
-
-### 3. Start backend API first (required for API calls)
-
-In terminal A, from repository root:
-
-```bash
-cd api
-uv sync
-DATABASE_HOST=127.0.0.1 \
-DATABASE_PORT=5432 \
-DATABASE_NAME=sbc_queue \
-DATABASE_USERNAME=postgres \
-DATABASE_PASSWORD=postgres \
-uv run gunicorn wsgi --bind=0.0.0.0:5100 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
-```
-
-### 4. Start frontend
-
-In terminal B, from repository root:
+### Install dependencies
 
 ```bash
 cd appointment-booking
-npm install --legacy-peer-deps
+npm install
+```
+
+### Start the frontend
+
+```bash
+# Default: proxies /api/v1 to http://localhost:5000
+npm run dev
+
+# If your local API runs on a different port (e.g. 5100 on macOS where port 5000 is reserved by mDNS):
 npm run dev:local
 ```
 
-Open:
-- `http://localhost:5173`
-- If 5173 is in use, the server automatically falls back to 5174.
+Open `http://localhost:5173`. If that port is in use, the server automatically falls back to `5174`.
 
-### 5. Verify everything is connected
+### Frontend-only (without backend)
 
-From repository root:
-
-```bash
-curl -i http://localhost:5173/config/runtime-config.json
-curl -i http://localhost:5173/api/v1/healthz/
-curl -i http://localhost:5173/api/v1/offices/
-```
-
-Expected: all three return `HTTP/1.1 200 OK`.
-
-### Frontend-only checks (without backend)
-
-If you only want to verify SSR/frontend startup, backend is not required.
-In that case, `api/v1/*` calls will fail until backend is running.
+The frontend starts without a running backend. API calls to `/api/v1/*` will fail gracefully until the backend is running.
 
 ### Run Checks
 
@@ -116,7 +77,7 @@ docker build -t appointment-booking:latest .
 
 ```bash
 docker run -p 5173:5173 \
-  -e API_PROXY_TARGET=http://host.docker.internal:5100 \
+  -e API_BASE_URL=http://api-service/api/v1 \
   -e NODE_ENV=production \
   appointment-booking:latest
 ```
@@ -137,10 +98,11 @@ docker-compose up appointment-booking
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `API_PROXY_TARGET` | `http://localhost:5000` | Backend API URL for proxy (dev) or sidecar (prod) |
-| `NODE_ENV` | `development` | Node environment (development/production) |
+| `NODE_ENV` | `development` | Controls production vs development mode |
 | `PORT` | `5173` | Server listen port |
-| `FALLBACK_PORT` | `5174` | Backup port used when `PORT` is already in use |
+| `FALLBACK_PORT` | `PORT + 1` | Fallback port when `PORT` is already in use (dev) |
+| `API_PROXY_TARGET` | `http://localhost:5000` | Backend URL for Vite's `/api/v1` dev proxy (**dev only**) |
+| `API_BASE_URL` | `/api/v1` | API base URL served to the client via runtime config (**production**) |
 | `REQUEST_TIMEOUT_MS` | `10000` | API request timeout in milliseconds |
 
 ### Runtime Config
