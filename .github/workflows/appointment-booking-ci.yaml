@@ -27,9 +27,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: appointment-booking/package-lock.json
 
-      - name: Update npm
-        run: npm install -g npm@11
-
       - name: Install dependencies
         run: npm ci
 
