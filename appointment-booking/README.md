@@ -50,6 +50,7 @@ In terminal B, from repository root:
 
 ```bash
 cd appointment-booking
+npm install --legacy-peer-deps
 npm run dev:local
 ```
 
