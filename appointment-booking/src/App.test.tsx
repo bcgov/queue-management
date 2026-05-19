@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import App from './App'
@@ -13,15 +13,34 @@ vi.mock('@/components/common', () => ({
   ),
 }))
 
-const loadRuntimeConfigMock = vi.fn()
-const getOfficesMock = vi.fn()
-
-vi.mock('@/services/runtime-config.service', () => ({
-  loadRuntimeConfig: () => loadRuntimeConfigMock(),
-}))
-
-vi.mock('@/services/booking-api.service', () => ({
-  getOffices: () => getOfficesMock(),
+vi.mock('@bcgov/design-system-react-components', () => ({
+  Button: ({ children, variant, ...props }: any) => (
+    <button {...props}>
+      {children}
+    </button>
+  ),
+  Callout: ({ title, children }: any) => (
+    <section>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  ),
+  Heading: ({ level, children, ...props }: any) => {
+    const Tag = `h${level}` as any
+    return <Tag {...props}>{children}</Tag>
+  },
+  Link: ({ children, href, ...props }: any) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+  TagGroup: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  TagList: ({ children, items = [], ...props }: any) => (
+    <div {...props}>
+      {typeof children === 'function' ? items.map((item: any) => children(item)) : children}
+    </div>
+  ),
+  Tag: ({ children }: any) => <span>{children}</span>,
 }))
 
 describe('App', () => {
@@ -29,20 +48,30 @@ describe('App', () => {
     vi.clearAllMocks()
   })
 
-  it('shows successful API bootstrap state', async () => {
-    loadRuntimeConfigMock.mockResolvedValue({
-      apiBaseUrl: '/api/v1',
-      requestTimeoutMs: 10000,
-    })
-    getOfficesMock.mockResolvedValue({ offices: [], errors: {} })
+  it('renders the public Service BC locations directory', () => {
+    render(<App initialPath="/locations" />)
 
-    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Service BC Locations' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Service BC - Victoria Courthouse' })).toHaveAttribute(
+      'href',
+      '/locations/victoria-courthouse',
+    )
+    expect(screen.getAllByText('Monday to Friday, 8:30 a.m. to 4:30 p.m.')[0]).toBeInTheDocument()
+    expect(screen.getByText('Continue to the appointment booking flow')).toBeInTheDocument()
+  })
 
-    expect(screen.getByRole('heading', { name: 'Appointment Booking' })).toBeInTheDocument()
+  it('renders a public location detail page', () => {
+    render(<App initialPath="/locations/nanaimo-service-centre" />)
 
-    await waitFor(() => {
-      expect(screen.getByText('API base URL: /api/v1')).toBeInTheDocument()
-      expect(screen.getByText('Booking API connection established.')).toBeInTheDocument()
-    })
+    expect(screen.getByRole('heading', { name: 'Service BC - Nanaimo Service Centre' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Services at this location' })).toBeInTheDocument()
+    expect(screen.getByText('Start booking an appointment')).toBeInTheDocument()
+  })
+
+  it('shows a public not found page for unknown locations', () => {
+    render(<App initialPath="/locations/unknown-office" />)
+
+    expect(screen.getByRole('heading', { name: 'Location not found' })).toBeInTheDocument()
+    expect(screen.getByText('View all Service BC locations')).toBeInTheDocument()
   })
 })

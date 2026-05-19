@@ -1,4 +1,53 @@
-/* App-specific styles - keep minimal */
 #app {
   width: 100%;
+}
+
+.intro-paragraph {
+  max-width: 70ch;
+  font-size: 1.05rem;
+}
+
+.content-section + .content-section {
+  margin-top: 2rem;
+}
+
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.location-card {
+  border: 1px solid #d8d8d8;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.location-card h3 {
+  margin-top: 0;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.service-tag-item {
+  margin: 0;
+  padding: 0;
+}
+
+.cta-paragraph {
+  margin-top: 1rem;
+}
+
+.cta-paragraph button,
+.cta-paragraph a {
+  display: inline-block;
 }
