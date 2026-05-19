@@ -16,8 +16,6 @@ Run from repository root:
 
 ```bash
 git clone https://github.com/bcgov/queue-management.git
-cd queue-management/appointment-booking
-npm install --legacy-peer-deps
 ```
 
 ### 2. Start database
