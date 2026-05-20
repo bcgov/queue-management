@@ -20,6 +20,7 @@
       // Run the components used for the Queue Management system.
       "name": "Queue Management",
       "configurations": [
+        "appointment_booking_front_end",
         "appointment_front_end",
         "queue_management_api",
         "queue_management_front_end",
@@ -28,6 +29,24 @@
     }
   ],
   "configurations": [
+    {
+      // Run the React SSR front end for the new Appointment Booking application.
+      "cwd": "${workspaceFolder}/appointment-booking",
+      "env": {
+        "API_PROXY_TARGET": "http://localhost:5000"
+      },
+      "name": "appointment_booking_front_end",
+      "request": "launch",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "runtimeExecutable": "npm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
     {
       // Run the Vue.js front end for the Appointment application.
       "cwd": "${workspaceFolder}/appointment-frontend",

@@ -1,0 +1,510 @@
+
+> appointment-booking@0.0.0 ci:check
+> npm run lint && npm run type-check && npm run test && npm run build && npm run license-check
+
+
+> appointment-booking@0.0.0 lint
+> eslint .
+
+
+> appointment-booking@0.0.0 type-check
+> tsc --noEmit
+
+
+> appointment-booking@0.0.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.6 [39m[90m/Users/vveenu/Documents/GitHub/queue-management/appointment-booking[39m
+
+ [32m✓[39m src/services/api-client.service.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/App.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 52[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 16:12:08
+[2m   Duration [22m 781ms[2m (transform 45ms, setup 296ms, import 43ms, tests 57ms, environment 963ms)[22m
+
+
+> appointment-booking@0.0.0 build
+> tsc -b && npm run build:client && npm run build:server
+
+
+> appointment-booking@0.0.0 build:client
+> vite build --outDir dist/client
+
+vite v8.0.12 building client environment for production...
+[2Ktransforming...✓ 26 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/client/index.html                                  0.48 kB │ gzip:  0.30 kB
+dist/client/assets/BCSans-LightItalic-dN5bWDr3.woff2  200.23 kB
+dist/client/assets/BCSans-Italic-_P9wZbgV.woff2       201.80 kB
+dist/client/assets/BCSans-Bold-Ciclm6eX.woff2         209.33 kB
+dist/client/assets/BCSans-BoldItalic-bEalI5bL.woff2   215.60 kB
+dist/client/assets/BCSans-Light-DTetth3X.woff2        223.74 kB
+dist/client/assets/BCSans-Regular-DKwZ9GnR.woff2      253.98 kB
+dist/client/assets/BCSans-LightItalic-C2AxY9aU.woff   356.58 kB
+dist/client/assets/BCSans-Italic-BSFPKGgR.woff        359.68 kB
+dist/client/assets/BCSans-Bold-BmoTexmK.woff          360.36 kB
+dist/client/assets/BCSans-BoldItalic-Dg_86UDa.woff    378.33 kB
+dist/client/assets/BCSans-Light-CmVrKSZi.woff         388.54 kB
+dist/client/assets/BCSans-Regular-CMx_o1HH.woff       486.61 kB
+dist/client/assets/index-CeFoQ9g5.css                   9.34 kB │ gzip:  2.11 kB
+dist/client/assets/index-DfOt3hr1.js                  356.99 kB │ gzip: 95.59 kB
+
+✓ built in 111ms
+
+> appointment-booking@0.0.0 build:server
+> vite build --ssr src/entry-server.tsx --outDir dist/server
+
+vite v8.0.12 building ssr environment for production...
+[2Ktransforming...✓ 10 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/server/entry-server.js  5.01 kB │ gzip: 1.79 kB
+
+✓ built in 19ms
+
+> appointment-booking@0.0.0 license-check
+> license-checker --production --onlyAllow "MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD" --excludePackages "appointment-booking@0.0.0;@bcgov/bc-sans@2.1.0"
+
+(node:65471) [DEP0170] DeprecationWarning: The URL git+ssh://git@github.com:bcgov/bc-sans.git is invalid. Future versions of Node.js will throw an error.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+├─ @adobe/react-spectrum-ui@1.2.1
+│  ├─ licenses: Apache-2.0
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum-ui
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum-ui/LICENSE
+├─ @adobe/react-spectrum-workflow@2.3.5
+│  ├─ licenses: Apache-2.0
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum-workflow
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum-workflow/LICENSE
+├─ @adobe/react-spectrum@3.47.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum/LICENSE
+├─ @babel/runtime@7.29.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/babel/babel
+│  ├─ publisher: The Babel Team
+│  ├─ url: https://babel.dev/team
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@babel/runtime
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@babel/runtime/LICENSE
+├─ @bcgov/design-system-react-components@0.7.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/bcgov/design-system
+│  ├─ publisher: Tyler Krys
+│  ├─ email: Tyler.Krys@gov.bc.ca
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-system-react-components
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-system-react-components/README.md
+├─ @bcgov/design-tokens@3.2.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/bcgov/design-system
+│  ├─ publisher: Tyler Krys
+│  ├─ email: Tyler.Krys@gov.bc.ca
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-system-react-components/node_modules/@bcgov/design-tokens
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-system-react-components/node_modules/@bcgov/design-tokens/README.md
+├─ @bcgov/design-tokens@4.0.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/bcgov/design-system
+│  ├─ publisher: Tyler Krys
+│  ├─ email: Tyler.Krys@gov.bc.ca
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-tokens
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@bcgov/design-tokens/README.md
+├─ @formatjs/ecma402-abstract@2.3.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ publisher: Long Ho
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/ecma402-abstract
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/ecma402-abstract/LICENSE.md
+├─ @formatjs/fast-memoize@2.2.7
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ publisher: Long Ho
+│  ├─ email: holevietlong@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/fast-memoize
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/fast-memoize/LICENSE.md
+├─ @formatjs/icu-messageformat-parser@2.11.4
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/icu-messageformat-parser
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/icu-messageformat-parser/LICENSE.md
+├─ @formatjs/icu-skeleton-parser@1.8.16
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/icu-skeleton-parser
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/icu-skeleton-parser/LICENSE.md
+├─ @formatjs/intl-localematcher@0.6.2
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ publisher: Long Ho
+│  ├─ email: holevietlong@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/intl-localematcher
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@formatjs/intl-localematcher/LICENSE.md
+├─ @internationalized/date@3.12.1
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum/tree/main/packages/@internationalized/date
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/date
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/date/LICENSE
+├─ @internationalized/message@3.1.9
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/message
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/message/LICENSE
+├─ @internationalized/number@3.6.6
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/number
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/number/LICENSE
+├─ @internationalized/string@3.2.8
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/string
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@internationalized/string/LICENSE
+├─ @react-aria/autocomplete@3.0.0-rc.6
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/autocomplete
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/autocomplete/LICENSE
+├─ @react-aria/button@3.15.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/button
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/button/LICENSE
+├─ @react-aria/collections@3.1.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/collections
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/collections/LICENSE
+├─ @react-aria/combobox@3.16.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/combobox
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/combobox/LICENSE
+├─ @react-aria/dnd@3.12.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/dnd
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/dnd/LICENSE
+├─ @react-aria/focus@3.22.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/focus
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/focus/LICENSE
+├─ @react-aria/i18n@3.13.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/i18n
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/i18n/LICENSE
+├─ @react-aria/interactions@3.28.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/interactions
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/interactions/LICENSE
+├─ @react-aria/listbox@3.16.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/listbox
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/listbox/LICENSE
+├─ @react-aria/live-announcer@3.5.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/live-announcer
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/live-announcer/LICENSE
+├─ @react-aria/overlays@3.32.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/overlays
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/overlays/LICENSE
+├─ @react-aria/searchfield@3.9.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/searchfield
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/searchfield/LICENSE
+├─ @react-aria/ssr@3.10.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/ssr
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/ssr/LICENSE
+├─ @react-aria/textfield@3.19.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/textfield
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/textfield/LICENSE
+├─ @react-aria/toolbar@3.0.0-beta.24
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/toolbar
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/toolbar/LICENSE
+├─ @react-aria/utils@3.34.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/utils
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/utils/LICENSE
+├─ @react-aria/virtualizer@4.2.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/virtualizer
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-aria/virtualizer/LICENSE
+├─ @react-spectrum/button@3.18.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/button
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/button/LICENSE
+├─ @react-spectrum/combobox@3.17.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/combobox
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/combobox/LICENSE
+├─ @react-spectrum/form@3.8.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/form
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/form/LICENSE
+├─ @react-spectrum/provider@3.11.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/provider
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/provider/LICENSE
+├─ @react-spectrum/searchfield@3.9.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/searchfield
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/searchfield/LICENSE
+├─ @react-spectrum/table@3.18.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/table
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-spectrum/table/LICENSE
+├─ @react-stately/autocomplete@3.0.0-beta.4
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/autocomplete
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/autocomplete/LICENSE
+├─ @react-stately/combobox@3.14.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/combobox
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/combobox/LICENSE
+├─ @react-stately/grid@3.12.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/grid
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/grid/LICENSE
+├─ @react-stately/layout@4.7.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/layout
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/layout/LICENSE
+├─ @react-stately/searchfield@3.6.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/searchfield
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/searchfield/LICENSE
+├─ @react-stately/selection@3.21.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/selection
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/selection/LICENSE
+├─ @react-stately/table@3.16.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/table
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/table/LICENSE
+├─ @react-stately/utils@3.12.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/utils
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/utils/LICENSE
+├─ @react-stately/virtualizer@4.5.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/virtualizer
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-stately/virtualizer/LICENSE
+├─ @react-types/autocomplete@3.0.0-alpha.38
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/autocomplete
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/autocomplete/LICENSE
+├─ @react-types/button@3.16.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/button
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/button/LICENSE
+├─ @react-types/combobox@3.15.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/combobox
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/combobox/LICENSE
+├─ @react-types/form@3.8.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/form
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/form/LICENSE
+├─ @react-types/grid@3.4.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/grid
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/grid/LICENSE
+├─ @react-types/searchfield@3.7.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/searchfield
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/searchfield/LICENSE
+├─ @react-types/shared@3.34.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/shared
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/shared/LICENSE
+├─ @react-types/table@3.14.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/table
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@react-types/table/LICENSE
+├─ @spectrum-icons/ui@3.7.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@spectrum-icons/ui
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@spectrum-icons/ui/LICENSE
+├─ @spectrum-icons/workflow@4.3.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@spectrum-icons/workflow
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@spectrum-icons/workflow/LICENSE
+├─ @swc/helpers@0.5.21
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/swc-project/swc
+│  ├─ publisher: 강동윤
+│  ├─ email: kdy1997.dev@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@swc/helpers
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@swc/helpers/LICENSE
+├─ aria-hidden@1.2.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/theKashey/aria-hidden
+│  ├─ publisher: Anton Korzunov
+│  ├─ email: thekashey@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/aria-hidden
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/aria-hidden/LICENSE
+├─ client-only@0.0.1
+│  ├─ licenses: MIT
+│  └─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/client-only
+├─ clsx@2.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/lukeed/clsx
+│  ├─ publisher: Luke Edwards
+│  ├─ email: luke.edwards05@gmail.com
+│  ├─ url: https://lukeed.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/clsx
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/clsx/license
+├─ csstype@3.2.3
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/frenic/csstype
+│  ├─ publisher: Fredrik Nicol
+│  ├─ email: fredrik.nicol@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/csstype
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/csstype/LICENSE
+├─ decimal.js@10.6.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/MikeMcl/decimal.js
+│  ├─ publisher: Michael Mclaughlin
+│  ├─ email: M8ch88l@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/decimal.js
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/decimal.js/LICENCE.md
+├─ dom-helpers@5.2.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/react-bootstrap/dom-helpers
+│  ├─ publisher: Jason Quense
+│  ├─ email: monastic.panic@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/dom-helpers
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/dom-helpers/LICENSE
+├─ intl-messageformat@10.7.18
+│  ├─ licenses: BSD-3-Clause
+│  ├─ repository: https://github.com/formatjs/formatjs
+│  ├─ publisher: Eric Ferraiuolo
+│  ├─ email: eferraiuolo@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/intl-messageformat
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/intl-messageformat/LICENSE.md
+├─ js-tokens@4.0.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/lydell/js-tokens
+│  ├─ publisher: Simon Lydell
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/js-tokens
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/js-tokens/LICENSE
+├─ loose-envify@1.4.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/zertosh/loose-envify
+│  ├─ publisher: Andres Suarez
+│  ├─ email: zertosh@gmail.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/loose-envify
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/loose-envify/LICENSE
+├─ object-assign@4.1.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/sindresorhus/object-assign
+│  ├─ publisher: Sindre Sorhus
+│  ├─ email: sindresorhus@gmail.com
+│  ├─ url: sindresorhus.com
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/object-assign
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/object-assign/license
+├─ prop-types@15.8.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/facebook/prop-types
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/prop-types
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/prop-types/LICENSE
+├─ react-aria-components@1.16.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-aria-components
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-aria-components/LICENSE
+├─ react-aria-components@1.17.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum/node_modules/react-aria-components
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/@adobe/react-spectrum/node_modules/react-aria-components/LICENSE
+├─ react-aria@3.48.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-aria
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-aria/LICENSE
+├─ react-dom@19.2.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/facebook/react
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-dom
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-dom/LICENSE
+├─ react-is@16.13.1
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/facebook/react
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-is
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-is/LICENSE
+├─ react-stately@3.46.0
+│  ├─ licenses: Apache-2.0
+│  ├─ repository: https://github.com/adobe/react-spectrum
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-stately
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-stately/LICENSE
+├─ react-transition-group@4.4.5
+│  ├─ licenses: BSD-3-Clause
+│  ├─ repository: https://github.com/reactjs/react-transition-group
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-transition-group
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react-transition-group/LICENSE
+├─ react@19.2.6
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/facebook/react
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/react/LICENSE
+├─ scheduler@0.27.0
+│  ├─ licenses: MIT
+│  ├─ repository: https://github.com/facebook/react
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/scheduler
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/scheduler/LICENSE
+├─ tslib@2.8.1
+│  ├─ licenses: 0BSD
+│  ├─ repository: https://github.com/Microsoft/tslib
+│  ├─ publisher: Microsoft Corp.
+│  ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/tslib
+│  └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/tslib/LICENSE.txt
+└─ use-sync-external-store@1.6.0
+   ├─ licenses: MIT
+   ├─ repository: https://github.com/facebook/react
+   ├─ path: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/use-sync-external-store
+   └─ licenseFile: /Users/vveenu/Documents/GitHub/queue-management/appointment-booking/node_modules/use-sync-external-store/LICENSE
+
