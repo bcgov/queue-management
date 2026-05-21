@@ -4,12 +4,18 @@ import {
   getServiceLocations,
   type ServiceLocation,
 } from '@/data/service-locations'
-import { Button, Callout, Heading, Link, Tag, TagGroup, TagList } from '@bcgov/design-system-react-components'
+import { Button, Callout, Heading, Link, TagGroup, TagList } from '@bcgov/design-system-react-components'
 import './App.css'
 
 type AppProps = {
   initialPath?: string
   locations?: ServiceLocation[]
+}
+
+function navigateTo(path: string) {
+  if (typeof window !== 'undefined') {
+    window.location.assign(path)
+  }
 }
 
 function getCurrentPath(initialPath?: string) {
@@ -32,10 +38,8 @@ function renderServiceTags(location: ServiceLocation) {
   const serviceItems = location.services.map((service) => ({ id: service, textValue: service }))
 
   return (
-    <TagGroup aria-label={`Services at ${location.name}`} selectionMode="none">
-      <TagList items={serviceItems}>
-        {(item) => <Tag color="gray" tagStyle="circular" id={item.id} textValue={item.textValue} />}
-      </TagList>
+    <TagGroup aria-label={`Services at ${location.name}`}>
+      <TagList items={serviceItems} />
     </TagGroup>
   )
 }
@@ -108,9 +112,9 @@ function renderDirectoryPage(locations: ServiceLocation[]) {
                       Get directions
                     </a>
                     <span className="action-sep" aria-hidden="true">·</span>
-                    <a href="/book-an-appointment" className="row-action-link">
+                    <Button variant="primary" size="small" onClick={() => navigateTo('/book-an-appointment')}>
                       Book an appointment
-                    </a>
+                    </Button>
                   </div>
                 </div>
                 <div className="location-col location-col-hours">
@@ -139,11 +143,9 @@ function renderDirectoryPage(locations: ServiceLocation[]) {
             available separately for people who only need office information.
           </p>
           <p className="cta-paragraph">
-            <a href="/book-an-appointment" role="button">
-              <Button variant="primary">
-                Continue to the appointment booking flow
-              </Button>
-            </a>
+            <Button variant="primary" onClick={() => navigateTo('/book-an-appointment')}>
+              Continue to the appointment booking flow
+            </Button>
           </p>
         </Callout>
       </section>
@@ -201,11 +203,9 @@ function renderLocationDetailPage(location: ServiceLocation) {
               and time.
             </p>
             <p className="cta-paragraph">
-              <a href="/book-an-appointment" role="button">
-                <Button variant="primary">
-                  Start booking an appointment
-                </Button>
-              </a>
+              <Button variant="primary" onClick={() => navigateTo('/book-an-appointment')}>
+                Start booking an appointment
+              </Button>
             </p>
           </Callout>
         ) : (

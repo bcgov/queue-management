@@ -56,7 +56,7 @@ describe('App', () => {
       'href',
       '/locations/victoria-courthouse',
     )
-    expect(screen.getAllByText('Monday to Friday, 8:30 a.m. to 4:30 p.m.')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Monday to Friday, 9 am to 4:30 pm')[0]).toBeInTheDocument()
     expect(screen.getByText('Continue to the appointment booking flow')).toBeInTheDocument()
   })
 

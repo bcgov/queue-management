@@ -97,7 +97,7 @@
 
 .location-row-title a {
   color: var(--typography-color-link);
-  text-decoration: none;
+  text-decoration: underline;
   font-weight: var(--typography-font-weights-bold);
 }
 
@@ -153,7 +153,7 @@
 .row-action-link {
   font-size: var(--typography-font-size-small-body);
   color: var(--typography-color-link);
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .row-action-link:hover {
@@ -198,13 +198,6 @@
   color: var(--typography-color-placeholder);
   margin: 0;
   font-style: italic;
-}
-
-/* ── Service tags ───────────────────────────────────────────── */
-/* Tags here are read-only labels — override the default pointer cursor */
-.location-col-services .bcds-react-aria-Tag,
-.detail-services .bcds-react-aria-Tag {
-  cursor: default;
 }
 
 /* ── CTA ────────────────────────────────────────────────────── */
