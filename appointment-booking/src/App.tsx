@@ -25,48 +25,111 @@ function getCurrentPath(initialPath?: string) {
 }
 
 function renderServiceTags(location: ServiceLocation) {
-  const serviceItems = location.services.map((service) => ({ id: service, label: service }))
+  if (location.services.length === 0) {
+    return <p className="no-services-text">Contact this office for service information.</p>
+  }
+
+  const serviceItems = location.services.map((service) => ({ id: service, textValue: service }))
 
   return (
-    <TagGroup aria-label={`${location.name} services`} className="tag-list" selectionMode="none">
-      <div className="tag-list-inner">
-        <TagList items={serviceItems}>
-          {(item: { id: string; label: string }) => (
-            <Tag key={item.id} color="blue" className="service-tag-item" id={item.id}>
-              {item.label}
-            </Tag>
-          )}
-        </TagList>
-      </div>
+    <TagGroup aria-label={`Services at ${location.name}`} selectionMode="none">
+      <TagList items={serviceItems}>
+        {(item) => <Tag color="gray" tagStyle="circular" id={item.id} textValue={item.textValue} />}
+      </TagList>
     </TagGroup>
   )
 }
 
 function renderDirectoryPage(locations: ServiceLocation[]) {
-
   return (
     <Page title="Service BC Locations">
       <p className="intro-paragraph">
         Browse Service BC locations, hours of operation, and the services available at each office.
       </p>
 
+      <div className="search-bar-wrapper" role="search">
+        <label htmlFor="location-search" className="search-label">Search locations</label>
+        <div className="search-input-group">
+          <svg className="search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            id="location-search"
+            type="search"
+            className="search-input"
+            placeholder="Search by office name or city…"
+            aria-label="Search Service BC locations"
+          />
+        </div>
+      </div>
+
       <section aria-labelledby="location-list-heading" className="content-section">
-        <Heading id="location-list-heading" level={2}>All locations</Heading>
-        <div className="card-grid">
+        <Heading id="location-list-heading" level={2}>
+          All locations <span className="location-count">({locations.length})</span>
+        </Heading>
+        <ul className="location-list" aria-label="Service BC office locations">
           {locations.map((location) => (
-            <article key={location.slug} className="location-card">
-              <Heading level={3}>
+            <li key={location.slug} className="location-row">
+              <Heading level={3} className="location-row-title">
                 <Link href={`/locations/${location.slug}`}>{location.name}</Link>
               </Heading>
-              <p>{location.address}</p>
-              <p>
-                <strong>Hours:</strong> {location.hours}
-              </p>
-              <p>{location.summary}</p>
-              {renderServiceTags(location)}
-            </article>
+              <div className="location-row-body">
+                <div className="location-col location-col-contact">
+                  <p className="col-label">Contact</p>
+                  <div className="location-meta-item">
+                    <svg aria-hidden="true" className="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>{location.address}</span>
+                  </div>
+                  {location.phone && (
+                    <div className="location-meta-item">
+                      <svg aria-hidden="true" className="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.59 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.28 17.5z"/>
+                      </svg>
+                      <a href={`tel:${location.phone}`}>{location.phone}</a>
+                    </div>
+                  )}
+                  {location.email && (
+                    <div className="location-meta-item">
+                      <svg aria-hidden="true" className="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                      </svg>
+                      <a href={`mailto:${location.email}`}>{location.email}</a>
+                    </div>
+                  )}
+                  <div className="location-row-actions">
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="row-action-link"
+                    >
+                      Get directions
+                    </a>
+                    <span className="action-sep" aria-hidden="true">·</span>
+                    <a href="/book-an-appointment" className="row-action-link">
+                      Book an appointment
+                    </a>
+                  </div>
+                </div>
+                <div className="location-col location-col-hours">
+                  <p className="col-label">Hours of operation</p>
+                  <div className="location-meta-item">
+                    <svg aria-hidden="true" className="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span>{location.hours}</span>
+                  </div>
+                </div>
+                <div className="location-col location-col-services">
+                  <p className="col-label">Services available</p>
+                  {renderServiceTags(location)}
+                </div>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section aria-labelledby="book-appointment-heading" className="content-section">
@@ -95,11 +158,34 @@ function renderLocationDetailPage(location: ServiceLocation) {
 
       <section aria-labelledby="location-details-heading" className="content-section">
         <Heading id="location-details-heading" level={2}>Location details</Heading>
-        <p>{location.address}</p>
-        <p>
-          <strong>Hours:</strong> {location.hours}
-        </p>
-        <p>{location.summary}</p>
+        <dl className="detail-list">
+          <div className="detail-item">
+            <dt>Address</dt>
+            <dd>{location.address}</dd>
+          </div>
+          <div className="detail-item">
+            <dt>Hours</dt>
+            <dd>{location.hours}</dd>
+          </div>
+          {location.phone && (
+            <div className="detail-item">
+              <dt>Phone</dt>
+              <dd><a href={`tel:${location.phone}`}>{location.phone}</a></dd>
+            </div>
+          )}
+          {location.email && (
+            <div className="detail-item">
+              <dt>Email</dt>
+              <dd><a href={`mailto:${location.email}`}>{location.email}</a></dd>
+            </div>
+          )}
+          {location.summary && (
+            <div className="detail-item">
+              <dt>About</dt>
+              <dd>{location.summary}</dd>
+            </div>
+          )}
+        </dl>
       </section>
 
       <section aria-labelledby="services-heading" className="content-section">

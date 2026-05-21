@@ -4,6 +4,8 @@ export interface ServiceLocation {
   name: string
   address: string
   hours: string
+  phone: string
+  email: string
   summary: string
   services: string[]
   appointmentsEnabledInd: 0 | 1
@@ -23,6 +25,9 @@ export interface OfficeApiModel {
   office_appointment_message?: string | null
   online_status?: string | null
   appointments_enabled_ind?: number | null
+  telephone?: string | null
+  office_hours?: string | null
+  office_contact_email?: string | null
   quick_list?: OfficeApiService[]
   back_office_list?: OfficeApiService[]
 }
@@ -32,8 +37,10 @@ const serviceLocations: ServiceLocation[] = [
     officeId: 94,
     slug: 'victoria-courthouse',
     name: 'Service BC - Victoria Courthouse',
-    address: '800 Fort St, Victoria, BC',
-    hours: 'Monday to Friday, 8:30 a.m. to 4:30 p.m.',
+    address: '403-771 Vernon Ave, Victoria, BC V8W 9V1',
+    hours: 'Monday to Friday, 9 am to 4:30 pm',
+    phone: '250-387-6121',
+    email: 'ServiceBC.Victoria@gov.bc.ca',
     summary: 'Central downtown location serving residents and visitors across greater Victoria.',
     services: ['BCID services', 'Driver licensing support', 'Housing and tenancy information'],
     appointmentsEnabledInd: 1,
@@ -42,9 +49,11 @@ const serviceLocations: ServiceLocation[] = [
     officeId: 95,
     slug: 'nanaimo-service-centre',
     name: 'Service BC - Nanaimo Service Centre',
-    address: '4601 Rutherford Rd, Nanaimo, BC',
-    hours: 'Monday to Friday, 8:30 a.m. to 4:30 p.m.',
-    summary: 'A regional office supporting mid-Island service needs and public counter visits.',
+    address: '460 Selby St, Nanaimo, BC V9R 2R7',
+    hours: 'Monday to Friday, 9 am to 4:30 pm',
+    phone: '250-741-3636',
+    email: 'ServiceBC.Nanaimo@gov.bc.ca',
+    summary: 'Serving mid-Island residents and visitors.',
     services: ['Property tax support', 'Income assistance', 'Identity document assistance'],
     appointmentsEnabledInd: 1,
   },
@@ -52,9 +61,11 @@ const serviceLocations: ServiceLocation[] = [
     officeId: 96,
     slug: 'kelowna-civic-centre',
     name: 'Service BC - Kelowna Civic Centre',
-    address: '1435 Water St, Kelowna, BC',
-    hours: 'Monday to Friday, 8:30 a.m. to 4:30 p.m.',
-    summary: 'An Okanagan location with general counter services for the public.',
+    address: '305-478 Bernard Ave, Kelowna, BC V1Y 6N7',
+    hours: 'Monday to Friday, 9 am to 4:30 pm',
+    phone: '250-861-7500',
+    email: 'ServiceBC.Kelowna@gov.bc.ca',
+    summary: 'Okanagan location with general counter services for the public.',
     services: ['Accessible parking information', 'General office services', 'Public information support'],
     appointmentsEnabledInd: 1,
   },
@@ -97,8 +108,10 @@ export function mapApiOfficeToServiceLocation(office: OfficeApiModel): ServiceLo
     officeId: office.office_id,
     slug: `${slugifyOfficeName(office.office_name)}-${office.office_id}`,
     name: normalizedName,
-    address: office.civic_address || 'Address information unavailable',
-    hours: 'Hours not published online for this office.',
+    address: office.civic_address || 'Address not available',
+    hours: office.office_hours || 'Hours not published online for this office.',
+    phone: office.telephone || '',
+    email: office.office_contact_email || '',
     summary: office.office_appointment_message || 'Visit this office for in-person services and support.',
     services: toOfficeServices(office),
     appointmentsEnabledInd: normalizeAppointmentsEnabled(office.appointments_enabled_ind),
