@@ -46,8 +46,8 @@ function renderServiceTags(location: ServiceLocation) {
 
 function renderDirectoryPage(locations: ServiceLocation[]) {
   return (
-    <Page title="Service BC Locations">
-      <p className="intro-paragraph">
+    <Page title="Service BC Locations Directory">
+      <p className="intro-paragraph directory-intro-paragraph">
         Browse Service BC locations, hours of operation, and the services available at each office.
       </p>
 
@@ -111,10 +111,14 @@ function renderDirectoryPage(locations: ServiceLocation[]) {
                     >
                       Get directions
                     </a>
-                    <span className="action-sep" aria-hidden="true">·</span>
-                    <Button variant="primary" size="small" onClick={() => navigateTo('/book-an-appointment')}>
-                      Book an appointment
-                    </Button>
+                    {location.appointmentsEnabledInd === 1 && (
+                      <>
+                        <span className="action-sep" aria-hidden="true">·</span>
+                        <Button variant="primary" size="small" onClick={() => navigateTo('/book-an-appointment')}>
+                          Book an appointment
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="location-col location-col-hours">
@@ -136,19 +140,6 @@ function renderDirectoryPage(locations: ServiceLocation[]) {
         </ul>
       </section>
 
-      <section aria-labelledby="book-appointment-heading" className="content-section">
-        <Callout title="Book an appointment" variant="lightBlue">
-          <p>
-            Start from a service selection when you are ready to book. The location directory is
-            available separately for people who only need office information.
-          </p>
-          <p className="cta-paragraph">
-            <Button variant="primary" onClick={() => navigateTo('/book-an-appointment')}>
-              Continue to the appointment booking flow
-            </Button>
-          </p>
-        </Callout>
-      </section>
     </Page>
   )
 }
@@ -193,28 +184,6 @@ function renderLocationDetailPage(location: ServiceLocation) {
       <section aria-labelledby="services-heading" className="content-section">
         <Heading id="services-heading" level={2}>Services at this location</Heading>
         {renderServiceTags(location)}
-      </section>
-
-      <section aria-labelledby="booking-cta-heading" className="content-section">
-        {location.appointmentsEnabledInd === 1 ? (
-          <Callout title="Ready to book?" variant="lightBlue">
-            <p>
-              Booking starts with choosing a service, then choosing an eligible location, then a date
-              and time.
-            </p>
-            <p className="cta-paragraph">
-              <Button variant="primary" onClick={() => navigateTo('/book-an-appointment')}>
-                Start booking an appointment
-              </Button>
-            </p>
-          </Callout>
-        ) : (
-          <Callout title="Booking unavailable" variant="lightBlue">
-            <p>
-              Online appointment booking is currently unavailable for this office.
-            </p>
-          </Callout>
-        )}
       </section>
     </Page>
   )

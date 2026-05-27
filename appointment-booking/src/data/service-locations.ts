@@ -69,6 +69,18 @@ const serviceLocations: ServiceLocation[] = [
     services: ['Accessible parking information', 'General office services', 'Public information support'],
     appointmentsEnabledInd: 1,
   },
+  {
+    officeId: 999,
+    slug: 'test-office',
+    name: 'Service BC - Test Office',
+    address: '123 Test St, Victoria, BC V8V 1A1',
+    hours: 'Monday to Friday, 9 am to 4:30 pm',
+    phone: '250-000-0000',
+    email: 'ServiceBC.TestOffice@gov.bc.ca',
+    summary: 'Test office for verifying non-bookable location behavior.',
+    services: ['General information'],
+    appointmentsEnabledInd: 0,
+  },
 ]
 
 function slugifyOfficeName(name: string) {
@@ -108,11 +120,11 @@ export function mapApiOfficeToServiceLocation(office: OfficeApiModel): ServiceLo
     officeId: office.office_id,
     slug: `${slugifyOfficeName(office.office_name)}-${office.office_id}`,
     name: normalizedName,
-    address: office.civic_address || 'Address not available',
-    hours: office.office_hours || 'Hours not published online for this office.',
-    phone: office.telephone || '',
-    email: office.office_contact_email || '',
-    summary: office.office_appointment_message || 'Visit this office for in-person services and support.',
+    address: office.civic_address || 'TODO - Data not available from API',
+    hours: office.office_hours || 'TODO - Data not available from API',
+    phone: office.telephone || 'TODO - Data not available from API',
+    email: office.office_contact_email || 'TODO - Data not available from API',
+    summary: office.office_appointment_message || 'TODO - Data not available from API',
     services: toOfficeServices(office),
     appointmentsEnabledInd: normalizeAppointmentsEnabled(office.appointments_enabled_ind),
   }

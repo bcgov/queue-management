@@ -9,6 +9,10 @@
   margin-bottom: 1.5rem;
 }
 
+.directory-intro-paragraph {
+  max-width: none;
+}
+
 .content-section + .content-section {
   margin-top: 2.5rem;
 }
