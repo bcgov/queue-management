@@ -1,8 +1,8 @@
-import React from 'react'
+import type { ReactNode } from 'react'
 
 interface PageProps {
   title: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function Page({ title, children }: PageProps) {

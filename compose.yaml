@@ -42,10 +42,12 @@ services:
       timeout: 5s
       retries: 10
       start_period: 5s
-    image: postgres:16.2
+    image: postgres:16
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   x11:
     environment:
@@ -85,6 +87,15 @@ services:
       - "8085:8080"
     volumes:
       - ./keycloak-local:/opt/keycloak/data/import:ro
+
+  appointment-booking:
+    build:
+      context: ./appointment-booking
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      API_BASE_URL: http://localhost:5000/api/v1
 
   api:
     profiles:
