@@ -1,8 +1,8 @@
 import { Footer, Header } from '@bcgov/design-system-react-components'
-import React from 'react'
+import type { ReactNode } from 'react'
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function Layout({ children }: LayoutProps) {

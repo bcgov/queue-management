@@ -27,6 +27,10 @@ The internal staff-facing Vue 2 application. Staff use it for queue management, 
 
 The public-facing Vue 2 application for booking appointments, viewing booked appointments, managing account settings, handling sign-in flows, and viewing walk-in queue status.
 
+### `appointment-booking`
+
+The new under developement public-facing React 19 + TypeScript application for booking appointments at Service BC locations. It will eventually replace `appointment-frontend`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for setup instructions.
+
 ### `notifications-api`
 
 A separate Flask service for outbound notifications. It exposes authenticated `POST /api/v1/notifications/sms` and `POST /api/v1/notifications/email` endpoints and supports pluggable delivery providers, including GC Notify, CHES, and logging/custom implementations.
@@ -41,7 +45,7 @@ This legacy Flask service accepts feedback submissions and forwards them to the 
 ## Technology Stack
 
 - Backend: Python, Flask, Flask-RESTX, SQLAlchemy, Flask-Migrate, Flask-SocketIO, Marshmallow, Gunicorn, and Gevent.
-- Frontend: Vue 2, TypeScript, Vue Router, Vuex, Vuetify, BootstrapVue, Buefy, and Axios.
+- Frontend: Vue 2 , React 19 + TypeScript + Vite , Vue Router, Vuex, Vuetify, BootstrapVue, Buefy, and Axios.
 - Data and integrations: PostgreSQL, Redis-backed real-time/message queue usage, MinIO for object storage, Keycloak/OIDC authentication, optional Snowplow analytics, and GC Notify/CHES/custom notification providers.
 - Serving/runtime: Nginx serves built frontend assets in containerized deployments.
 
@@ -77,6 +81,7 @@ It also provisions project-local Python environments for both `api` and `notific
 
 - `5000`: queue management API
 - `5002`: notifications API
+- `5173`: appointment booking frontend (React)
 - `8080`: staff frontend
 - `8081`: appointment frontend
 - `8085`: Keycloak auth server
@@ -111,6 +116,9 @@ The devcontainer installs dependencies automatically for `api`, `notifications-a
    npm install
 
    cd ./appointment-frontend
+   npm install
+
+   cd ./appointment-booking
    npm install
    ```
 
@@ -187,6 +195,15 @@ Appointment frontend:
 cd ./appointment-frontend
 npm run serve -- --port 8081
 ```
+
+Appointment booking frontend (React):
+
+```bash
+cd ./appointment-booking
+npm run dev
+```
+
+Opens at `http://localhost:5173`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for Docker and environment variable details.
 
 #### Local Config Files
 
