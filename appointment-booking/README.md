@@ -58,40 +58,31 @@ npm run build
 From the repository root:
 
 ```bash
-docker compose up appointment-booking
+docker compose --profile api up --build
 ```
 
-Open `http://localhost:5173`.
+Starts the frontend, API, database, and Keycloak. Open `http://localhost:5173`.
 
-> The frontend requires the backend API and supporting services (database, Keycloak) to be running. See the [root README](../README.md) for instructions.
+> Note: running Docker compose will occupy port 5173. If you then run `npm run dev`, Vite will fall back to port 5174.
 
 ### Build and run manually
 
 ```bash
 docker build -t appointment-booking .
-
-docker run -p 5173:5173 \
-  -e API_BASE_URL=http://localhost:5000/api/v1 \
-  appointment-booking
+docker run -p 5173:8080 appointment-booking
 ```
 
 ---
 
-## Environment Variables
+## Runtime Config
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `PORT` | `5173` | Server listen port |
-| `API_BASE_URL` | `/api/v1` | API base URL sent to the browser via runtime config |
-| `REQUEST_TIMEOUT_MS` | `10000` | API request timeout in milliseconds |
+The app fetches `/config/runtime-config.json` on startup to get its configuration. The default file is at [`public/config/runtime-config.json`](./public/config/runtime-config.json) and is served as a static file by nginx.
 
-### Runtime Config
-
-`server.js` exposes `/config/runtime-config.json` at startup, which the React app fetches to get its configuration. This allows the same Docker image to be deployed to different environments without rebuilding.
+In OpenShift, a ConfigMap mounts over this file to provide environment-specific values without rebuilding the image.
 
 ```json
 {
-  "apiBaseUrl": "/api/v1",
+  "apiBaseUrl": "http://localhost:5000/api/v1",
   "requestTimeoutMs": 10000
 }
 ```

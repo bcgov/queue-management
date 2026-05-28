@@ -93,9 +93,7 @@ services:
       context: ./appointment-booking
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"
-    environment:
-      API_BASE_URL: http://localhost:5000/api/v1
+      - "5173:8080"
 
   api:
     profiles:

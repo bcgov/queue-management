@@ -29,7 +29,7 @@ The public-facing Vue 2 application for booking appointments, viewing booked app
 
 ### `appointment-booking`
 
-The new under developement public-facing React 19 + TypeScript application for booking appointments at Service BC locations. It will eventually replace `appointment-frontend`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for setup instructions.
+The new under development public-facing React 19 + TypeScript application for booking appointments at Service BC locations. It will eventually replace `appointment-frontend`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for setup instructions.
 
 ### `notifications-api`
 

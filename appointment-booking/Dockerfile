@@ -10,17 +10,11 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:22-alpine
+FROM nginx:1.25.3
 
-WORKDIR /app
+COPY nginx.conf /etc/nginx/nginx.conf
+RUN mkdir /app
+COPY --from=builder /app/dist /app
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/server.js ./server.js
-COPY --from=builder /app/public ./public
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5173/config/runtime-config.json', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
-
-EXPOSE 5173
-ENV NODE_ENV=production
-CMD ["node", "server.js"]
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]
