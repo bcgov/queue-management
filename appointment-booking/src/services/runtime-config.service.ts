@@ -1,7 +1,7 @@
 import type { RuntimeConfig } from '@/models/runtime-config'
 
 const DEFAULT_TIMEOUT_MS = 10000
-const RUNTIME_CONFIG_URL = '/config/runtime-config.json'
+const RUNTIME_CONFIG_URL = '/config/appointment-configuration.json'
 
 function fromEnvironment(): RuntimeConfig {
   return {

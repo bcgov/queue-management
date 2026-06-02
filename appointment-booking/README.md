@@ -76,7 +76,7 @@ docker run -p 5173:8080 appointment-booking
 
 ## Runtime Config
 
-The app fetches `/config/runtime-config.json` on startup to get its configuration. The default file is at [`public/config/runtime-config.json`](./public/config/runtime-config.json) and is served as a static file by nginx.
+The app fetches `/config/appointment-configuration.json` on startup to get its configuration. The default file is at [`public/config/appointment-configuration.json`](./public/config/appointment-configuration.json) and is served as a static file by nginx.
 
 In OpenShift, a ConfigMap mounts over this file to provide environment-specific values without rebuilding the image.
 
