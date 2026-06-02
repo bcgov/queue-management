@@ -1,7 +1,7 @@
 import type { RuntimeConfig } from '@/models/runtime-config'
 
 const DEFAULT_TIMEOUT_MS = 10000
-const RUNTIME_CONFIG_URL = '/config/appointment-configuration.json'
+const RUNTIME_CONFIG_URL = '/config/configuration.json'
 
 function fromEnvironment(): RuntimeConfig {
   return {
@@ -17,11 +17,11 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
       return fromEnvironment()
     }
 
-    const json = (await response.json()) as Partial<RuntimeConfig>
+    const json = (await response.json()) as Partial<RuntimeConfig> & { VUE_APP_ROOT_API?: string }
     const fallback = fromEnvironment()
 
     return {
-      apiBaseUrl: json.apiBaseUrl || fallback.apiBaseUrl,
+      apiBaseUrl: json.VUE_APP_ROOT_API ?? fallback.apiBaseUrl,
       requestTimeoutMs: Number(json.requestTimeoutMs || fallback.requestTimeoutMs),
     }
   } catch {
