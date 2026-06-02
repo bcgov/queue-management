@@ -1,0 +1,4 @@
+{
+  "apiBaseUrl": "http://localhost:5000/api/v1",
+  "requestTimeoutMs": 10000
+}
