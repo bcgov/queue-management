@@ -37,7 +37,7 @@ function App() {
   return (
     <Layout>
       <Page title="Appointment Booking">
-        <p>Runtime settings and booking API groundwork are active.</p>
+        <p>Check below if the API is working</p>
         <p>{config ? `API base URL: ${config.apiBaseUrl}` : 'API base URL: loading...'}</p>
         <p>{apiStatus}</p>
         {configError ? <p role="alert">{configError}</p> : null}
