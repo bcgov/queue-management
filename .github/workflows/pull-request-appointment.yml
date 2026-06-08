@@ -67,24 +67,6 @@ jobs:
         echo "ref=$REF" >> $GITHUB_OUTPUT
     
 
-  ##### TEST ###################################################################
-
-  appointment-frontend-cypress:
-    name: Appointment Frontend Cypress
-    needs: parse-inputs
-    uses: ./.github/workflows/tyu-reusable-appointment-frontend-cypress.yaml
-    secrets:
-      bceid-endpoint: ${{ secrets.CYPRESS_BCEID_ENDPOINT }}
-      bceid-password: ${{ secrets.CYPRESS_BCEID_PASSWORD }}
-      bceid-username: ${{ secrets.CYPRESS_BCEID_USERNAME }}
-      cypress-project-id: ${{ secrets.CYPRESS_PROJECT_ID }}
-      cypress-record-key: ${{ secrets.CYPRESS_RECORD_KEY }}
-      keycloak-auth-url: ${{ secrets.KEYCLOAK_AUTH_URL_DEV }}/auth/
-      keycloak-client: ${{ secrets.KEYCLOAK_APPOINTMENTS_FRONTEND_CLIENT }}
-      keycloak-realm: ${{ secrets.KEYCLOAK_REALM }}
-    with:
-      ref: ${{ needs.parse-inputs.outputs.ref }}
-
   ##### BUILD ##################################################################
 
   appointment-frontend:
