@@ -32,19 +32,19 @@ jobs:
     - name: Wait for Rollouts
       run: |
         #
-        # Parameters: namespace deployment-config
+        # Parameters: namespace deployment
         #
         wait_for_rollout () {
           NAMESPACE_DEPLOY=$1
-          DEPLOYMENT_CONFIG=$2
+          DEPLOYMENT=$2
 
           STATUS=
           while [ "$STATUS" != "Complete" ]; do
-            VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
-            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
-            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
+            VERSION=$(oc -n $NAMESPACE_DEPLOY get deployment $DEPLOYMENT -o json | jq '.status.latestVersion')
+            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout status deployment/$DEPLOYMENT | grep ^$VERSION | awk '{ print $2 }')
+            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT-$VERSION --no-headers | awk '{ print $5 }')
 
-            echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
+            echo "Rollout #$VERSION of $DEPLOYMENT is \"$STATUS\" $WHEN ago"
             sleep 1
           done
         }
