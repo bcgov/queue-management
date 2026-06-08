@@ -1,8 +1,5 @@
 name: Pull Request Deploy API
-
 on:
-  # Manual execution remains available once this workflow also exists
-  # on the repository's default branch.
   workflow_dispatch:
     inputs:
       pr-number:
@@ -17,13 +14,6 @@ on:
           - The Q Dev
           - QMS Dev
           - The Q Test
-
-  # Allows this new workflow to run before it is merged into main.
-  # Every push to develop will deploy that pushed commit to The Q Dev.
-  push:
-    branches:
-      - develop
-
 jobs:
   ##### SETUP ##################################################################
 
