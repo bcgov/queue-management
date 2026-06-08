@@ -111,39 +111,15 @@ jobs:
       tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
       tag-to: ${{ needs.parse-inputs.outputs.environment }}
 
-  ##### TEST ###################################################################
-
-  # Only run Newman for The Q dev - other environments will fail due to data.
-  newman-theq-dev:
-    name: Newman Tests
-    if: github.event.inputs.namespace == 'The Q Dev'
-    needs: [parse-inputs,tag]
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check out
-      uses: actions/checkout@v2
-
-    - name: NPM Install
-      run: |
-        cd api/postman
-        npm install newman
-
-    - name: Run Newman Tests
-      run: |
-        cd api/postman
-        node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json \
-          -e postman_env.json \
-          --delay-request 250 \
-          --global-var 'auth_url=${{ vars.POSTMAN_AUTH_URL_DEV }}' \
-          --global-var 'client_secret=${{ secrets.POSTMAN_CLIENT_SECRET_DEV }}' \
-          --global-var 'clientid=${{ vars.POSTMAN_CLIENTID_DEV }}' \
-          --global-var 'password=${{ secrets.POSTMAN_PASSWORD }}' \
-          --global-var 'password_nonqtxn=${{ secrets.POSTMAN_PASSWORD_NONQTXN }}' \
-          --global-var 'public_url=${{ vars.POSTMAN_PUBLIC_API_URL_THEQ_DEV }}' \
-          --global-var 'public_user_id=${{ vars.POSTMAN_PUBLIC_USERID }}' \
-          --global-var 'public_user_password=${{ secrets.POSTMAN_PASSWORD_PUBLIC_USER }}' \
-          --global-var 'realm=${{ vars.POSTMAN_REALM }}' \
-          --global-var 'url=${{ vars.POSTMAN_API_URL_THEQ_DEV }}' \
-          --global-var 'userid=${{ vars.POSTMAN_USERID }}' \
-          --global-var 'userid_nonqtxn=${{ vars.POSTMAN_USERID_NONQTXN }}'
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
+    needs: [parse-inputs, tag]
+    uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || ( needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST ) }}
+    with:
+      image-names: appointment-nginx-frontend-${{ needs.parse-inputs.outputs.environment }}
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
