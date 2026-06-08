@@ -9,6 +9,9 @@ export interface ServiceLocation {
   summary: string
   services: string[]
   appointmentsEnabledInd: 0 | 1
+  latitude?: number | null
+  longitude?: number | null
+  externalMapLink?: string | null
 }
 
 type OfficeApiService = {
@@ -28,60 +31,14 @@ export interface OfficeApiModel {
   telephone?: string | null
   office_hours?: string | null
   office_contact_email?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  external_map_link?: string | null
   quick_list?: OfficeApiService[]
   back_office_list?: OfficeApiService[]
 }
 
-const serviceLocations: ServiceLocation[] = [
-  {
-    officeId: 94,
-    slug: 'victoria-courthouse',
-    name: 'Service BC - Victoria Courthouse',
-    address: '403-771 Vernon Ave, Victoria, BC V8W 9V1',
-    hours: 'Monday to Friday, 9 am to 4:30 pm',
-    phone: '250-387-6121',
-    email: 'ServiceBC.Victoria@gov.bc.ca',
-    summary: 'Central downtown location serving residents and visitors across greater Victoria.',
-    services: ['BCID services', 'Driver licensing support', 'Housing and tenancy information'],
-    appointmentsEnabledInd: 1,
-  },
-  {
-    officeId: 95,
-    slug: 'nanaimo-service-centre',
-    name: 'Service BC - Nanaimo Service Centre',
-    address: '460 Selby St, Nanaimo, BC V9R 2R7',
-    hours: 'Monday to Friday, 9 am to 4:30 pm',
-    phone: '250-741-3636',
-    email: 'ServiceBC.Nanaimo@gov.bc.ca',
-    summary: 'Serving mid-Island residents and visitors.',
-    services: ['Property tax support', 'Income assistance', 'Identity document assistance'],
-    appointmentsEnabledInd: 1,
-  },
-  {
-    officeId: 96,
-    slug: 'kelowna-civic-centre',
-    name: 'Service BC - Kelowna Civic Centre',
-    address: '305-478 Bernard Ave, Kelowna, BC V1Y 6N7',
-    hours: 'Monday to Friday, 9 am to 4:30 pm',
-    phone: '250-861-7500',
-    email: 'ServiceBC.Kelowna@gov.bc.ca',
-    summary: 'Okanagan location with general counter services for the public.',
-    services: ['Accessible parking information', 'General office services', 'Public information support'],
-    appointmentsEnabledInd: 1,
-  },
-  {
-    officeId: 999,
-    slug: 'test-office',
-    name: 'Service BC - Test Office',
-    address: '123 Test St, Victoria, BC V8V 1A1',
-    hours: 'Monday to Friday, 9 am to 4:30 pm',
-    phone: '250-000-0000',
-    email: 'ServiceBC.TestOffice@gov.bc.ca',
-    summary: 'Test office for verifying non-bookable location behavior.',
-    services: ['General information'],
-    appointmentsEnabledInd: 0,
-  },
-]
+const serviceLocations: ServiceLocation[] = []
 
 function slugifyOfficeName(name: string) {
   return name
@@ -111,6 +68,11 @@ function normalizeAppointmentsEnabled(value: number | null | undefined): 0 | 1 {
   return value === 1 ? 1 : 0
 }
 
+function isOfficeVisible(office: OfficeApiModel): boolean {
+  const onlineStatus = (office.online_status || '').trim().toUpperCase()
+  return !onlineStatus.endsWith('HIDE')
+}
+
 export function mapApiOfficeToServiceLocation(office: OfficeApiModel): ServiceLocation {
   const normalizedName = office.office_name.startsWith('Service BC - ')
     ? office.office_name
@@ -127,12 +89,15 @@ export function mapApiOfficeToServiceLocation(office: OfficeApiModel): ServiceLo
     summary: office.office_appointment_message || 'TODO - Data not available from API',
     services: toOfficeServices(office),
     appointmentsEnabledInd: normalizeAppointmentsEnabled(office.appointments_enabled_ind),
+    latitude: office.latitude,
+    longitude: office.longitude,
+    externalMapLink: office.external_map_link,
   }
 }
 
 export function mapApiOfficesToVisibleLocations(offices: OfficeApiModel[]): ServiceLocation[] {
   return offices
-    .filter((office) => office.online_status === 'Status.SHOW')
+    .filter(isOfficeVisible)
     .map(mapApiOfficeToServiceLocation)
     .sort((a, b) => a.name.localeCompare(b.name))
 }
@@ -141,6 +106,9 @@ export function getServiceLocations() {
   return serviceLocations
 }
 
-export function getServiceLocationBySlug(slug: string, locations: ServiceLocation[] = serviceLocations) {
+export function getServiceLocationBySlug(
+  slug: string,
+  locations: ServiceLocation[] = serviceLocations,
+) {
   return locations.find((location) => location.slug === slug) ?? null
 }

@@ -503,7 +503,7 @@ def bootstrap():
         sb_id=smartboard_call_ticket.sb_id,
         exams_enabled_ind=1,
         timezone_id=timezone_one.timezone_id,
-        appointments_enabled_ind=1,
+        appointments_enabled_ind=0,
         latitude=48.458359,
         longitude=-123.377106,
         office_appointment_message='Test Message',
@@ -773,7 +773,45 @@ def bootstrap():
     office_100.services.append(service_ptax4)
     office_100.services.append(service_ptax5)
     office_100.services.append(service_dlkt)
+
+    # Seed quick and back-office service lists used by the public locations directory.
+    office_test.quick_list.extend([
+        service_msp1,
+        service_msp2,
+        service_msp6,
+        service_ptax1,
+        service_dlkt,
+    ])
+    office_test.back_office_list.extend([
+        service_bo1,
+        service_bo2,
+    ])
+
+    office_victoria.quick_list.extend([
+        service_msp1,
+        service_msp2,
+        service_msp6,
+        service_dlkt,
+    ])
+    office_victoria.back_office_list.extend([
+        service_bo1,
+        service_bo2,
+    ])
+
+    office_100.quick_list.extend([
+        service_ptax1,
+        service_ptax2,
+        service_ptax4,
+        service_ptax5,
+        service_dlkt,
+    ])
+    office_100.back_office_list.extend([
+        service_bo1,
+        service_bo2,
+    ])
+
     db.session.commit()
+    theq.Office.clear_offices_cache()
 
     # -- Booking / Rooms -------------------------------------------
     logging.info('--> Booking: Rooms')

@@ -20,8 +20,11 @@
   "dependencies": {
     "@bcgov/design-system-react-components": "^0.7.0",
     "@bcgov/design-tokens": "^4.0.0",
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

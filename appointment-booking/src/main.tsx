@@ -4,25 +4,37 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import type { ServiceLocation } from './data/service-locations'
+import { getServiceLocations, mapApiOfficesToVisibleLocations } from './data/service-locations'
+import { ApiClient } from './services/api-client.service'
+import { getOffices } from './services/booking-api.service'
+import { loadRuntimeConfig } from './services/runtime-config.service'
 
-type InitialRenderData = {
-  locations?: ServiceLocation[]
+const container = document.getElementById('app')!
+const initialPath = `${window.location.pathname}${window.location.search}${window.location.hash}`
+
+const root = createRoot(container)
+
+function renderApp(locations = getServiceLocations()) {
+  root.render(
+    <StrictMode>
+      <App initialPath={initialPath} locations={locations} />
+    </StrictMode>,
+  )
 }
 
-declare global {
-  interface Window {
-    __APPOINTMENT_BOOKING_INITIAL_DATA__?: InitialRenderData
-  }
-}
+renderApp()
 
-const initialData = window.__APPOINTMENT_BOOKING_INITIAL_DATA__
-
-createRoot(document.getElementById('app')!).render(
-  <StrictMode>
-    <App
-      initialPath={`${window.location.pathname}${window.location.search}${window.location.hash}`}
-      locations={initialData?.locations}
-    />
-  </StrictMode>,
-)
+loadRuntimeConfig()
+  .then((config) => {
+    const client = new ApiClient(config)
+    return getOffices(client)
+  })
+  .then((result) => {
+    const apiLocations = mapApiOfficesToVisibleLocations(result.offices)
+    if (apiLocations.length > 0) {
+      renderApp(apiLocations)
+    }
+  })
+  .catch(() => {
+    // API unreachable — fixtures already showing, nothing to do.
+  })
