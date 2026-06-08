@@ -1,0 +1,151 @@
+name: Pull Request Deploy API
+
+on:
+  # Manual execution remains available once this workflow also exists
+  # on the repository's default branch.
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: "Pull Request Number:"
+        type: string
+        required: true
+      namespace:
+        description: "Deploy To:"
+        type: choice
+        required: true
+        options:
+          - The Q Dev
+          - QMS Dev
+          - The Q Test
+
+  # Allows this new workflow to run before it is merged into main.
+  # Every push to develop will deploy that pushed commit to The Q Dev.
+  push:
+    branches:
+      - develop
+
+jobs:
+  ##### SETUP ##################################################################
+
+  parse-inputs:
+    name: Prepare deployment inputs
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.parse.outputs.environment }}
+      image-tag: ${{ steps.parse.outputs.image-tag }}
+      push-qms: ${{ steps.parse.outputs.push-qms }}
+      push-theq: ${{ steps.parse.outputs.push-theq }}
+      ref: ${{ steps.parse.outputs.ref }}
+
+    steps:
+      - name: Parse Inputs
+        id: parse
+        shell: bash
+        env:
+          DISPATCH_PR_NUMBER: ${{ inputs['pr-number'] }}
+          DISPATCH_NAMESPACE: ${{ inputs.namespace }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            TARGET_NAMESPACE="${DISPATCH_NAMESPACE}"
+            REF="refs/pull/${DISPATCH_PR_NUMBER}/head"
+            IMAGE_TAG="pr${DISPATCH_PR_NUMBER}"
+          else
+            # A push to develop deploys the exact commit that triggered the run.
+            TARGET_NAMESPACE="The Q Dev"
+            REF="${GITHUB_SHA}"
+            IMAGE_TAG="develop-${GITHUB_RUN_NUMBER}"
+          fi
+
+          ENVIRONMENT=$(
+            echo "${TARGET_NAMESPACE}" |
+              awk -F' ' '{print $NF}' |
+              tr '[:upper:]' '[:lower:]'
+          )
+
+          if [[ "${GITHUB_REPOSITORY_OWNER}" != "bcgov" ]]; then
+            # Never push from forks.
+            PUSH_QMS=false
+            PUSH_THEQ=false
+          elif [[ "${TARGET_NAMESPACE}" == QMS* ]]; then
+            PUSH_QMS=true
+            PUSH_THEQ=false
+          else
+            PUSH_QMS=false
+            PUSH_THEQ=true
+          fi
+
+          echo "Event: ${GITHUB_EVENT_NAME}"
+          echo "Target namespace: ${TARGET_NAMESPACE}"
+          echo "Environment: ${ENVIRONMENT}"
+          echo "Image tag: ${IMAGE_TAG}"
+          echo "Git ref: ${REF}"
+          echo "Push QMS: ${PUSH_QMS}"
+          echo "Push The Q: ${PUSH_THEQ}"
+
+          echo "environment=${ENVIRONMENT}" >> "${GITHUB_OUTPUT}"
+          echo "image-tag=${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "push-qms=${PUSH_QMS}" >> "${GITHUB_OUTPUT}"
+          echo "push-theq=${PUSH_THEQ}" >> "${GITHUB_OUTPUT}"
+          echo "ref=${REF}" >> "${GITHUB_OUTPUT}"
+
+  ##### BUILD ##################################################################
+
+  queue-management-api:
+    name: queue-management-api
+    needs:
+      - parse-inputs
+    uses: ./.github/workflows/reusable-build-dockerfile.yaml
+    secrets:
+      artifactory-password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      artifactory-registry: ${{ secrets.ARTIFACTORY_REGISTRY }}
+      artifactory-username: ${{ secrets.ARTIFACTORY_USERNAME }}
+      namespace-theq: ${{ secrets.LICENCE_PLATE_THEQ }}-tools
+      namespace-theq-password: ${{ secrets.SA_PASSWORD_THEQ_TOOLS }}
+      namespace-theq-username: ${{ secrets.SA_USERNAME }}
+      namespace-qms: ${{ secrets.LICENCE_PLATE_QMS }}-tools
+      namespace-qms-password: ${{ secrets.SA_PASSWORD_QMS_TOOLS }}
+      namespace-qms-username: ${{ secrets.SA_USERNAME }}
+      openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
+    with:
+      ref: ${{ needs.parse-inputs.outputs.ref }}
+      directory: api
+      image-name: queue-management-api
+      image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
+      push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
+      push-theq: ${{ needs.parse-inputs.outputs.push-theq == 'true' }}
+
+  ##### DEPLOY #################################################################
+
+  tag:
+    name: Tag
+    if: github.repository_owner == 'bcgov'
+    needs:
+      - parse-inputs
+      - queue-management-api
+    uses: ./.github/workflows/reusable-tag-image.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_TOOLS || secrets.SA_PASSWORD_THEQ_TOOLS }}
+    with:
+      image-names: queue-management-api
+      tag-from: ${{ needs.parse-inputs.outputs.image-tag }}
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
+
+  wait-for-rollouts:
+    name: Wait for Rollouts
+    if: github.repository_owner == 'bcgov'
+    needs:
+      - parse-inputs
+      - tag
+    uses: ./.github/workflows/reusable-wait-for-rollouts.yaml
+    secrets:
+      licence-plate: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.LICENCE_PLATE_QMS || secrets.LICENCE_PLATE_THEQ }}
+      openshift-api: ${{ secrets.OPENSHIFT_API }}
+      token: ${{ needs.parse-inputs.outputs.push-qms == 'true' && secrets.SA_PASSWORD_QMS_DEV || (needs.parse-inputs.outputs.environment == 'dev' && secrets.SA_PASSWORD_THEQ_DEV || secrets.SA_PASSWORD_THEQ_TEST) }}
+    with:
+      # Kubernetes Deployment name; do not append "-dev" or "-test".
+      image-names: queue-management-api
+      tag-to: ${{ needs.parse-inputs.outputs.environment }}
