@@ -86,7 +86,7 @@ jobs:
       openshift-registry: ${{ secrets.OPENSHIFT_REGISTRY }}
     with:
       ref: ${{ needs.parse-inputs.outputs.ref }}
-      directory: appointment-frontend
+      directory: appointment-booking
       image-name: appointment-nginx-frontend
       image-tags: ${{ needs.parse-inputs.outputs.image-tag }}
       push-qms: ${{ needs.parse-inputs.outputs.push-qms == 'true' }}
