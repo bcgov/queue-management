@@ -7,6 +7,7 @@ import type { ServiceLocation } from './data/service-locations'
 type MockBaseProps = {
   children?: ReactNode
   [key: string]: ReactNode
+}
 
 type MockHeadingProps = MockBaseProps & {
   level: 1 | 2 | 3 | 4 | 5 | 6
