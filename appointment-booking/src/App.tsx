@@ -294,11 +294,7 @@ function renderDirectoryPage(
                   </div>
                   {location.appointmentsEnabledInd === 1 && (
                     <div className="location-row-actions location-row-actions-hours">
-                      <Button
-                        variant="primary"
-                        size="small"
-                        onClick={() => navigateTo('/')}
-                      >
+                      <Button variant="primary" size="small" onClick={() => navigateTo('/')}>
                         Book an appointment
                       </Button>
                     </div>
@@ -387,11 +383,7 @@ function LocationDetailPage({ location }: { location: ServiceLocation }) {
             </dl>
             {location.appointmentsEnabledInd === 1 && (
               <p className="detail-book-cta">
-                <Button
-                  variant="primary"
-                  size="small"
-                  onClick={() => navigateTo('/')}
-                >
+                <Button variant="primary" size="small" onClick={() => navigateTo('/')}>
                   Book an appointment
                 </Button>
               </p>
