@@ -49,10 +49,8 @@ vi.mock('@bcgov/design-system-react-components', () => ({
     if (level === 5) return <h5 {...props}>{children}</h5>
     return <h6 {...props}>{children}</h6>
   },
-  Link: ({ children, href, ...props }: MockBaseProps) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
+  Link: ({ children, href }: { children?: ReactNode; href?: string }) => (
+    <a href={href}>{children}</a>
   ),
   TagGroup: ({ children, ...props }: MockBaseProps) => <div {...props}>{children}</div>,
   TagList: ({ children, items = [], ...props }: MockTagListProps) => (
