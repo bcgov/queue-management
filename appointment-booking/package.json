@@ -14,7 +14,7 @@
     "format:check": "prettier --check src",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0;@bcgov/bc-sans@2.1.0\"",
+    "license-check": "license-checker --production --onlyAllow \"MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD\" --excludePackages \"appointment-booking@0.0.0;@bcgov/bc-sans@2.1.0;@react-leaflet/core@3.0.0;react-leaflet@5.0.0\"",
     "ci:check": "npm run lint && npm run type-check && npm run test && npm run build && npm run license-check"
   },
   "dependencies": {
