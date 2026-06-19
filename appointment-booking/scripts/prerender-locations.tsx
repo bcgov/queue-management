@@ -1,3 +1,10 @@
+/**
+ * Builds the static /locations page at compile time.
+ *
+ * Runs via `npm run prerender:locations` (also part of `npm run build`).
+ * Output goes to public/locations/index.html — no React/JS on that route,
+ * so crawlers get the full page in the first HTML response.
+ */
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -10,13 +17,17 @@ const publicCssDir = path.join(root, 'public/css')
 const publicFontsDir = path.join(root, 'public/fonts')
 const outputPath = path.join(root, 'public/locations/index.html')
 
+// SEO meta — not shown on the page, only in <head>
 const PAGE_DESCRIPTION =
   'Find Service BC office locations in British Columbia. View addresses, contact details,hours of operation and book an appointment.'
 
+// BC design system ships CSS as escaped strings inside its JS bundle — undo that
 function decodeCssString(value: string) {
   return value.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\')
 }
 
+// The locations page has no JS, so it can't import styles like the SPA does.
+// Copy tokens, fonts, and the header/footer/link CSS into public/ for plain <link> tags.
 function syncPublicStyles() {
   fs.mkdirSync(publicCssDir, { recursive: true })
   fs.mkdirSync(publicFontsDir, { recursive: true })
@@ -44,6 +55,7 @@ function syncPublicStyles() {
     'utf8',
   )
 
+  // Pull only the CSS chunks we need out of the design-system bundle (header, footer, logo, link, search field)
   const shellCss = [...designSystemBundle.matchAll(/var css_[^=]+ = "((?:\\.|[^"\\])*)"/g)]
     .map((match) => decodeCssString(match[1]))
     .filter(
@@ -60,9 +72,9 @@ function syncPublicStyles() {
   fs.copyFileSync(path.join(root, 'src/index.css'), path.join(publicCssDir, 'app.css'))
 }
 
+// Makes the generated HTML readable in the editor — doesn't affect how the page looks
 function formatPrerenderedHtml(html: string) {
-  const blockTags =
-    'header|footer|main|div|p|ul|table|thead|tbody|tr|th|td|figure|figcaption|hr'
+  const blockTags = 'header|footer|main|div|p|ul|table|thead|tbody|tr|th|td|figure|figcaption|hr'
 
   return html
     .replace(/></g, '>\n<')
@@ -71,6 +83,7 @@ function formatPrerenderedHtml(html: string) {
     .trim()
 }
 
+// Wrap body in #root so header/main/footer stack vertically — index.css sets body { display: flex }
 function buildHtmlDocument(body: string) {
   return `<!doctype html>
 <html lang="en">
@@ -107,6 +120,8 @@ const LOGO_STYLES = `<style>
 const LOGO_IMG =
   '<img src="/bc-gov-logo.svg" alt="Government of British Columbia" class="bc-gov-logo" />'
 
+// Header/Footer inline the full BC logo SVG (huge path data). Write it once to bc-gov-logo.svg
+// and swap both spots for a simple <img> so index.html stays small.
 function externalizeLogos(body: string) {
   const logoMatch = body.match(/<svg id="bcgov-logo-header"[\s\S]*?<\/svg>/)
   if (!logoMatch) {
@@ -123,6 +138,70 @@ function externalizeLogos(body: string) {
     .replace(/<svg id="bcgov-logo-footer"[\s\S]*?<\/svg>/g, LOGO_IMG)
 }
 
+interface OfficeService {
+  label: string
+  href: string
+}
+
+interface Office {
+  name: string
+  physicalAddress: string
+  physicalAddressHref: string
+  mailingAddress: string
+  phone: string
+  fax: string
+  email: string
+  hours: string[][]
+  availableServices: OfficeService[]
+  unavailableServices?: OfficeService[]
+}
+
+// Few offices for now — will replace with full list when design finalized
+const OFFICES: Office[] = [
+  {
+    name: 'Victoria',
+    physicalAddress: '847 Fort Street, Victoria',
+    physicalAddressHref: '#',
+    mailingAddress: 'PO Box 9422, Victoria, BC V8W 9V1',
+    phone: '250-387-6121',
+    fax: '250-387-6040',
+    email: 'ServiceBC.Victoria@gov.bc.ca',
+    hours: [
+      ['Monday to Friday', '9 am to 4:30 pm'],
+      ['Closed from', '12 pm to 1 pm'],
+    ],
+    availableServices: [{ label: 'Popular services', href: '#' }],
+    unavailableServices: [{ label: 'ICBC Driver Licensing', href: '#' }],
+  },
+  {
+    name: 'Vancouver',
+    physicalAddress: '1181 Melville Street, Vancouver',
+    physicalAddressHref: '#',
+    mailingAddress: 'PO Box 9439, Vancouver, BC V6Z 2H7',
+    phone: '604-660-2421',
+    fax: '604-660-2411',
+    email: 'ServiceBC.Vancouver@gov.bc.ca',
+    hours: [['Monday to Friday', '9 am to 4:30 pm']],
+    availableServices: [{ label: 'Popular services', href: '#' }],
+  },
+  {
+    name: 'Duncan',
+    physicalAddress: '1040 Duncan Street, Duncan',
+    physicalAddressHref: '#',
+    mailingAddress: 'PO Box 1000, Duncan, BC V9L 3W4',
+    phone: '250-746-1316',
+    fax: '250-746-1317',
+    email: 'ServiceBC.Duncan@gov.bc.ca',
+    hours: [
+      ['Monday to Friday', '9 am to 4:30 pm'],
+      ['Closed from', '12 pm to 1 pm'],
+    ],
+    availableServices: [{ label: 'Popular services', href: '#' }],
+    unavailableServices: [{ label: 'ICBC Driver Licensing', href: '#' }],
+  },
+]
+
+// Same markup/classes as BC TextField — static page has no JS so we can't use the React component
 function OfficeSearchField() {
   return (
     <div className="bcds-react-aria-TextField locations-search">
@@ -140,6 +219,80 @@ function OfficeSearchField() {
         />
       </div>
     </div>
+  )
+}
+
+function OfficeHours({ blocks }: { blocks: string[][] }) {
+  return (
+    <>
+      {blocks.map((lines) => (
+        <p key={lines.join('-')}>
+          {lines.map((line, index) => (
+            <span key={line}>
+              {index > 0 ? <br /> : null}
+              {line}
+            </span>
+          ))}
+        </p>
+      ))}
+    </>
+  )
+}
+
+function OfficeServices({ title, services }: { title: string; services: OfficeService[] }) {
+  return (
+    <>
+      <p>{title}</p>
+      <ul>
+        {services.map((service) => (
+          <li key={service.label}>
+            <Link href={service.href}>{service.label}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+function OfficeRow({ office }: { office: Office }) {
+  return (
+    <tr>
+      <th scope="row">{office.name}</th>
+      <td>
+        <p>
+          <strong>Physical address</strong>
+          <br />
+          <Link href={office.physicalAddressHref}>{office.physicalAddress}</Link>
+        </p>
+        <p>
+          <strong>Mailing address</strong>
+          <br />
+          {office.mailingAddress}
+        </p>
+        <p>
+          <strong>Phone:</strong> {office.phone}
+          <br />
+          <strong>Fax:</strong> {office.fax}
+          <br />
+          <Link href={`mailto:${office.email}`}>{office.email}</Link>
+        </p>
+      </td>
+      <td>
+        <OfficeHours blocks={office.hours} />
+      </td>
+      <td>
+        <OfficeServices
+          title="This office offers the following services:"
+          services={office.availableServices}
+        />
+        {office.unavailableServices ? (
+          <OfficeServices
+            title="Not available at this location:"
+            services={office.unavailableServices}
+          />
+        ) : null}
+      </td>
+    </tr>
   )
 }
 
@@ -177,142 +330,9 @@ function LocationsContent() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">Victoria</th>
-              <td>
-                <p>
-                  <strong>Physical address</strong>
-                  <br />
-                  <Link href="#">847 Fort Street, Victoria</Link>
-                </p>
-                <p>
-                  <strong>Mailing address</strong>
-                  <br />
-                  PO Box 9422, Victoria, BC V8W 9V1
-                </p>
-                <p>
-                  <strong>Phone:</strong> 250-387-6121
-                  <br />
-                  <strong>Fax:</strong> 250-387-6040
-                  <br />
-                  <Link href="mailto:ServiceBC.Victoria@gov.bc.ca">
-                    ServiceBC.Victoria@gov.bc.ca
-                  </Link>
-                </p>
-              </td>
-              <td>
-                <p>
-                  Monday to Friday
-                  <br />9 am to 4:30 pm
-                </p>
-                <p>
-                  Closed from
-                  <br />
-                  12 pm to 1 pm
-                </p>
-              </td>
-              <td>
-                <p>This office offers the following services:</p>
-                <ul>
-                  <li>
-                    <Link href="#">Popular services</Link>
-                  </li>
-                </ul>
-                <p>Not available at this location:</p>
-                <ul>
-                  <li>
-                    <Link href="#">ICBC Driver Licensing</Link>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">Vancouver</th>
-              <td>
-                <p>
-                  <strong>Physical address</strong>
-                  <br />
-                  <Link href="#">1181 Melville Street, Vancouver</Link>
-                </p>
-                <p>
-                  <strong>Mailing address</strong>
-                  <br />
-                  PO Box 9439, Vancouver, BC V6Z 2H7
-                </p>
-                <p>
-                  <strong>Phone:</strong> 604-660-2421
-                  <br />
-                  <strong>Fax:</strong> 604-660-2411
-                  <br />
-                  <Link href="mailto:ServiceBC.Vancouver@gov.bc.ca">
-                    ServiceBC.Vancouver@gov.bc.ca
-                  </Link>
-                </p>
-              </td>
-              <td>
-                <p>
-                  Monday to Friday
-                  <br />9 am to 4:30 pm
-                </p>
-              </td>
-              <td>
-                <p>This office offers the following services:</p>
-                <ul>
-                  <li>
-                    <Link href="#">Popular services</Link>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">Duncan</th>
-              <td>
-                <p>
-                  <strong>Physical address</strong>
-                  <br />
-                  <Link href="#">1040 Duncan Street, Duncan</Link>
-                </p>
-                <p>
-                  <strong>Mailing address</strong>
-                  <br />
-                  PO Box 1000, Duncan, BC V9L 3W4
-                </p>
-                <p>
-                  <strong>Phone:</strong> 250-746-1316
-                  <br />
-                  <strong>Fax:</strong> 250-746-1317
-                  <br />
-                  <Link href="mailto:ServiceBC.Duncan@gov.bc.ca">
-                    ServiceBC.Duncan@gov.bc.ca
-                  </Link>
-                </p>
-              </td>
-              <td>
-                <p>
-                  Monday to Friday
-                  <br />9 am to 4:30 pm
-                </p>
-                <p>
-                  Closed from
-                  <br />
-                  12 pm to 1 pm
-                </p>
-              </td>
-              <td>
-                <p>This office offers the following services:</p>
-                <ul>
-                  <li>
-                    <Link href="#">Popular services</Link>
-                  </li>
-                </ul>
-                <p>Not available at this location:</p>
-                <ul>
-                  <li>
-                    <Link href="#">ICBC Driver Licensing</Link>
-                  </li>
-                </ul>
-              </td>
-            </tr>
+            {OFFICES.map((office) => (
+              <OfficeRow key={office.name} office={office} />
+            ))}
           </tbody>
         </table>
       </div>
@@ -337,4 +357,5 @@ function prerenderLocationsPage() {
   fs.writeFileSync(outputPath, buildHtmlDocument(body))
 }
 
+// Run when executed directly (`vite-node scripts/prerender-locations.tsx`)
 prerenderLocationsPage()
