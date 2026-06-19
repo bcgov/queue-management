@@ -1,9 +1,7 @@
 :root {
-  font-family: var(--typography-font-families-bc-sans, 'BC Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-  line-height: 1.5;
-  font-weight: 400;
-  color: var(--typography-color-primary, #2d2d2d);
-  background-color: #f5f5f5;
+  font: var(--typography-regular-body);
+  color: var(--typography-color-primary);
+  background-color: var(--surface-color-background-light-gray);
 }
 
 body {
@@ -18,19 +16,90 @@ body {
 }
 
 h1 {
-  margin: 0.5rem 0;
-  font-size: var(--typography-font-size-h1, 2.25rem);
-  font-weight: 700;
+  margin: var(--layout-margin-small) 0;
+  font: var(--typography-bold-h1);
 }
 
 p {
-  margin: 1rem 0;
+  margin: var(--layout-margin-medium) 0;
 }
 
 .layout-main {
   flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
+  padding: var(--layout-padding-xlarge);
+  max-width: 1100px;
   margin: 0 auto;
   width: 100%;
+}
+
+.locations-search {
+  margin-bottom: var(--layout-padding-xlarge);
+  max-width: 32rem;
+}
+
+.locations-table-wrapper {
+  overflow-x: auto;
+}
+
+.locations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.locations-table th,
+.locations-table td {
+  padding: var(--layout-padding-medium);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: var(--layout-border-width-small) solid var(--surface-color-border-default);
+}
+
+.locations-table thead th {
+  font: var(--typography-bold-body);
+  background: var(--surface-color-background-white);
+}
+
+.locations-table tbody tr:nth-child(even) {
+  background: var(--surface-color-background-light-gray);
+}
+
+.locations-table tbody tr:nth-child(odd) {
+  background: var(--surface-color-background-white);
+}
+
+.locations-table tbody th[scope='row'] {
+  font: var(--typography-bold-body);
+}
+
+.locations-table tbody th[scope='row'] p {
+  margin: 0;
+}
+
+.locations-table p {
+  margin: 0 0 var(--layout-padding-small);
+}
+
+.locations-table p:last-child {
+  margin-bottom: 0;
+}
+
+.locations-table ul {
+  margin: var(--layout-padding-xsmall) 0 var(--layout-padding-small);
+  padding-left: var(--layout-padding-large);
+}
+
+.locations-table ul:last-child {
+  margin-bottom: 0;
+}
+
+.bcds-header--container .bc-gov-logo {
+  width: 129px;
+  min-width: 129px;
+  height: auto;
+}
+
+.bcds-footer--logo .bc-gov-logo {
+  width: 146px;
+  min-width: 146px;
+  height: auto;
 }
