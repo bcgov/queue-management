@@ -6,13 +6,14 @@
 
 body {
   margin: 0;
-  display: flex;
   min-width: 320px;
   min-height: 100vh;
 }
 
-#root {
-  width: 100%;
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 h1 {
@@ -90,16 +91,4 @@ p {
 
 .locations-table ul:last-child {
   margin-bottom: 0;
-}
-
-.bcds-header--container .bc-gov-logo {
-  width: 129px;
-  min-width: 129px;
-  height: auto;
-}
-
-.bcds-footer--logo .bc-gov-logo {
-  width: 146px;
-  min-width: 146px;
-  height: auto;
 }
