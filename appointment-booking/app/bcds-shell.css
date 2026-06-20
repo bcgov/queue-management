@@ -1,0 +1,610 @@
+.bcds-bc-logo--whiteFill {
+  fill: #ffffff;
+  stroke-width: 0px;
+}
+
+.bcds-bc-logo--blueFill {
+  fill: #234075;
+  stroke-width: 0px;
+}
+
+.bcds-bc-logo--goldFill {
+  fill: #e3a82b;
+  stroke-width: 0px;
+}
+
+.bcds-bc-logo--noFill {
+  fill: none;
+  stroke-width: 0px;
+}
+
+
+.bcds-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.bcds-footer > .bcds-footer--acknowledgement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border-top: var(--layout-border-width-large) solid var(--theme-gold-60);
+  border-bottom: var(--layout-border-width-large) solid var(--theme-gold-60);
+  background-color: var(--theme-gray-110);
+  padding: var(--layout-padding-xlarge);
+}
+
+.bcds-footer
+  > .bcds-footer--acknowledgement
+  > .bcds-footer--acknowledgement-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  color: var(--typography-color-primary-invert);
+  font: var(--typography-regular-small-body);
+  max-width: 1100px;
+  width: 100%;
+}
+
+.bcds-footer
+  > .bcds-footer--acknowledgement
+  > .bcds-footer--acknowledgement-text
+  > p {
+  margin: var(--layout-margin-none);
+}
+
+.bcds-footer > .bcds-footer--container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--surface-color-background-light-gray);
+  padding: var(--layout-padding-xlarge);
+}
+
+.bcds-footer > .bcds-footer--container > .bcds-footer--container-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--layout-padding-xlarge);
+  max-width: 1100px;
+  width: 100%;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  column-gap: var(--layout-padding-xlarge);
+  row-gap: var(--layout-padding-medium);
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* `horizontal` class is the default, when no `children` prop is passed */
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links.horizontal {
+  flex-direction: row;
+}
+
+/* `vertical` class is used when a `children` prop is passed */
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links.vertical {
+  flex-direction: column;
+  align-items: stretch;
+  row-gap: var(--layout-padding-xlarge);
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--logo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-large);
+  min-width: 324px;
+  width: 576px;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--logo
+  > #bcgov-logo-footer {
+  width: 146px;
+  min-width: 146px;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--logo
+  > p {
+  font: var(--typography-regular-small-body);
+  margin: var(--layout-margin-none);
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--logo
+  > p
+  > a {
+  color: var(--typography-color-secondary);
+  font: var(--typography-regular-small-body);
+  text-decoration: underline;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--logo
+  > p
+  > a:hover {
+  text-decoration: none;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links {
+  margin: var(--layout-margin-none);
+}
+
+/*
+  When Footer hasn't been passed `children`, expand the links container to take
+  up 320px, as the default links are narrower.
+*/
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links.horizontal
+  > .bcds-footer--links {
+  min-width: 320px;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links
+  > .bcds-footer--links-title {
+  display: block;
+  font: var(--typography-bold-small-body);
+  margin-bottom: var(--layout-padding-medium);
+  text-transform: uppercase;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links
+  > ul {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto;
+  grid-column-gap: var(--layout-padding-xlarge);
+  grid-row-gap: var(--layout-padding-small);
+  list-style: none;
+  margin: var(--layout-margin-none);
+  padding: var(--layout-padding-none);
+}
+
+/*
+  When a Footer has been passed `children`, the logo-links container fills the
+  full width of the container, so there's room for 4 columns of links.
+*/
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links.vertical
+  > .bcds-footer--links
+  > ul {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links
+  > ul
+  > li {
+  font: var(--typography-regular-small-body);
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links
+  > ul
+  > li
+  > a {
+  color: var(--typography-color-primary);
+  text-decoration: none;
+}
+
+.bcds-footer
+  > .bcds-footer--container
+  > .bcds-footer--container-content
+  > .bcds-footer--logo-links
+  > .bcds-footer--links
+  > ul
+  > li
+  > a:hover {
+  text-decoration: underline;
+}
+
+.bcds-footer > .bcds-footer--container > .bcds-footer--container-content > hr {
+  background-color: var(--surface-color-border-dark);
+  border: var(--layout-border-width-none);
+  height: var(--layout-border-width-small);
+  margin: var(--layout-margin-none);
+  width: 100%;
+}
+
+p.bcds-footer--copyright {
+  color: var(--typography-color-secondary);
+  font: var(--typography-regular-body);
+  margin: var(--layout-margin-none);
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+  /* Links drop beneath logo in the default configuration */
+  .bcds-footer
+    > .bcds-footer--container
+    > .bcds-footer--container-content
+    > .bcds-footer--logo-links {
+    flex-wrap: wrap;
+  }
+
+  .bcds-footer
+    > .bcds-footer--container
+    > .bcds-footer--container-content
+    > .bcds-footer--logo-links
+    > .bcds-footer--logo {
+    max-width: 324px;
+  }
+
+  /*
+    When the `children` prop is used with multiple FooterLinks components,
+    only two columns of links appear on screen at once.
+  */
+  .bcds-footer
+    > .bcds-footer--container
+    > .bcds-footer--container-content
+    > .bcds-footer--logo-links.vertical
+    > .bcds-footer--links
+    > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 575px) {
+  .bcds-footer > .bcds-footer--acknowledgement {
+    padding: var(--layout-padding-xlarge) var(--layout-padding-medium);
+  }
+
+  .bcds-footer > .bcds-footer--container {
+    padding: var(--layout-padding-medium);
+  }
+
+  .bcds-footer > .bcds-footer--container > .bcds-footer--container-content {
+    gap: var(--layout-padding-medium);
+  }
+
+  .bcds-footer
+    > .bcds-footer--container
+    > .bcds-footer--container-content
+    > .bcds-footer--logo-links
+    > .bcds-footer--logo {
+    gap: var(--layout-padding-medium);
+  }
+
+  /*
+    When the `children` prop is used with multiple FooterLinks components,
+    only one column of links appear on screen at once.
+  */
+  .bcds-footer
+    > .bcds-footer--container
+    > .bcds-footer--container-content
+    > .bcds-footer--logo-links.vertical
+    > .bcds-footer--links
+    > ul {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+
+.bcds-header {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--surface-color-forms-default);
+  border-bottom-color: var(--surface-color-border-default);
+  border-bottom-style: solid;
+  border-bottom-width: var(--layout-border-width-small);
+  min-height: 65px;
+  padding: var(--layout-padding-none) var(--layout-padding-medium);
+  width: 100%;
+}
+
+.bcds-header > .bcds-header--container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--layout-padding-medium);
+  max-width: 1100px;
+}
+
+.bcds-header > .bcds-header--container > .bcds-header--title {
+  flex-grow: 1;
+  font: var(--typography-bold-h4);
+  color: var(--typography-color-primary);
+}
+
+.bcds-header > .bcds-header--container > ul.bcds-header--skiplinks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
+.bcds-header > .bcds-header--container > ul.bcds-header--skiplinks li a,
+.bcds-header > .bcds-header--container > ul.bcds-header--skiplinks li button {
+  background-color: var(--surface-color-forms-default);
+  box-sizing: border-box;
+  color: var(--typography-color-link);
+  font: var(--typography-regular-body);
+  margin-top: -17.5px; /* Center the link visually in a single line-height header */
+  padding: var(--layout-padding-xsmall) var(--layout-padding-medium);
+  position: absolute;
+  margin-left: -100000px;
+}
+
+.bcds-header > .bcds-header--container > ul.bcds-header--skiplinks li a:focus,
+.bcds-header
+  > .bcds-header--container
+  > ul.bcds-header--skiplinks
+  li
+  button:focus {
+  margin-left: 0; /* Line up left edge with left edge of logo image */
+  text-wrap: nowrap;
+}
+
+.bcds-header > .bcds-header--container > .bcds-header--line {
+  background-color: var(--surface-color-border-default);
+  width: 1px;
+  height: 32px;
+}
+
+.bcds-header > .bcds-header--container svg#bcgov-logo-header {
+  min-width: 129px;
+  width: 129px;
+}
+
+
+.bcds-react-aria-Link {
+  color: var(--typography-color-link);
+  text-decoration: underline;
+  text-underline-offset: var(--layout-padding-hair);
+  cursor: pointer;
+}
+
+/* Icon slots */
+.bcds-react-aria-Link--Icon {
+  display: inline-flex;
+  flex-direction: row;
+  vertical-align: text-bottom;
+  margin: var(--layout-margin-none) var(--layout-margin-xsmall);
+}
+
+/* Sizing */
+.bcds-react-aria-Link.small {
+  font: var(--typography-regular-small-body);
+}
+
+.bcds-react-aria-Link.medium {
+  font: var(--typography-regular-body);
+}
+
+.bcds-react-aria-Link.large {
+  font: var(--typography-regular-large-body);
+}
+
+/* Placeholder large button style */
+.bcds-react-aria-Button.large {
+  min-height: 40px;
+}
+
+/* Hover */
+.bcds-react-aria-Link[data-hovered] {
+  color: var(--surface-color-border-active);
+}
+
+.bcds-react-aria-Link[data-hovered].danger {
+  color: var(--surface-color-primary-danger-button-hover);
+}
+
+/* Selected */
+.bcds-react-aria-Link[data-current] {
+  color: var(--surface-color-border-active);
+}
+
+/* Focus */
+.bcds-react-aria-Link[data-focus-visible] {
+  outline: solid var(--layout-border-width-medium)
+    var(--surface-color-border-active);
+  outline-offset: var(--layout-margin-hair);
+  border-radius: var(--layout-border-radius-small);
+}
+
+/* Disabled */
+.bcds-react-aria-Link[data-disabled],
+.bcds-react-aria-Link[data-disabled].danger {
+  color: var(--typography-color-disabled);
+  cursor: not-allowed;
+}
+
+/* Danger */
+.bcds-react-aria-Link.danger {
+  color: var(--typography-color-danger);
+}
+
+
+.bcds-react-aria-TextField {
+  display: inline-flex;
+  flex-direction: column;
+  /* Hacks for `stretch`: https://caniuse.com/mdn-css_properties_max-width_stretch */
+  align-self: stretch;
+  max-width: -moz-available;
+  max-width: -webkit-fill-available;
+}
+
+/* Styles for the text label above the input field */
+.bcds-react-aria-TextField--Label {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-primary);
+  padding: var(--layout-padding-xsmall) var(--layout-padding-none);
+}
+
+.bcds-react-aria-TextField--Label .required {
+  color: var(--typography-color-secondary);
+  padding: var(--layout-padding-none) var(--layout-padding-xsmall);
+}
+
+/* Styles for the text description below the input field */
+.bcds-react-aria-TextField--Description {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+  padding: var(--layout-padding-xsmall) var(--layout-padding-none);
+}
+
+/* Styles for the input field container */
+.bcds-react-aria-TextField--container {
+  color: var(--typography-color-primary);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--layout-margin-small);
+  background: var(--surface-color-forms-default);
+  box-sizing: border-box;
+  border: var(--layout-border-width-small) solid
+    var(--surface-color-border-default);
+  border-radius: var(--layout-border-radius-medium);
+  padding: var(--layout-padding-small) 12px;
+}
+
+/* Sizes */
+.bcds-react-aria-TextField--container.small {
+  height: var(--layout-margin-xlarge);
+  min-height: var(--layout-margin-xlarge);
+}
+
+.bcds-react-aria-TextField--container.medium {
+  height: var(--layout-margin-xxlarge);
+  min-height: var(--layout-margin-xxlarge);
+}
+
+/* Text input field */
+.bcds-react-aria-TextField--Input {
+  font: var(--typography-regular-body);
+  padding: var(--layout-padding-none);
+  color: var(--typography-color-primary);
+  border: none;
+  flex-grow: 1;
+}
+
+.bcds-react-aria-TextField--Input::placeholder {
+  color: var(--typography-color-placeholder);
+}
+
+/* Hover and focus states */
+
+.bcds-react-aria-TextField--container
+  > .bcds-react-aria-TextField--Input[data-focused] {
+  outline: none;
+}
+
+.bcds-react-aria-TextField--container:focus-within {
+  border-radius: var(--layout-border-radius-large);
+  border: var(--layout-border-width-small) solid
+    var(--surface-color-border-active);
+  outline: solid var(--layout-border-width-medium)
+    var(--surface-color-border-active);
+  outline-offset: var(--layout-margin-hair);
+}
+
+.bcds-react-aria-TextField--container:hover {
+  border-color: var(--surface-color-border-dark);
+}
+
+/* Disabled and invalid states */
+
+.bcds-react-aria-TextField[data-disabled]
+  > .bcds-react-aria-TextField--container,
+.bcds-react-aria-TextField[data-disabled] .bcds-react-aria-TextField--Input {
+  background: var(--surface-color-forms-disabled);
+  color: var(--typography-color-placeholder);
+  cursor: not-allowed;
+}
+
+.bcds-react-aria-TextField[data-invalid]
+  > .bcds-react-aria-TextField--container {
+  border-radius: var(--layout-border-radius-medium);
+  border: var(--layout-border-width-small) solid
+    var(--support-border-color-danger);
+  background: var(--surface-color-forms-default);
+}
+
+.bcds-react-aria-TextField[data-readonly]
+  > .bcds-react-aria-TextField--container,
+.bcds-react-aria-TextField[data-readonly] .bcds-react-aria-TextField--Input {
+  background: var(--surface-color-forms-disabled);
+}
+
+.bcds-react-aria-TextField[data-readonly]
+  > .bcds-react-aria-TextField--container
+  > .bcds-react-aria-TextField--Input {
+  background: var(--surface-color-forms-disabled);
+}
+
+/* Styles for the error message slot */
+.bcds-react-aria-TextField--Error {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-danger);
+}
+
+.bcds-react-aria-TextField[data-invalid]
+  > .bcds-react-aria-TextField--container
+  > svg#exclamation-icon {
+  color: var(--icons-color-danger);
+  min-width: var(--icons-size-medium);
+  height: var(--icons-size-medium);
+}
+

@@ -1,20 +1,24 @@
-# Stage 1: Builder
-FROM node:22-alpine AS builder
-
+FROM node:24-alpine AS development-dependencies-env
+COPY . /app
 WORKDIR /app
-
-COPY package*.json ./
 RUN npm ci
 
-COPY . .
+FROM node:24-alpine AS production-dependencies-env
+COPY ./package.json package-lock.json /app/
+WORKDIR /app
+RUN npm ci --omit=dev
+
+FROM node:24-alpine AS build-env
+COPY . /app/
+COPY --from=development-dependencies-env /app/node_modules /app/node_modules
+WORKDIR /app
 RUN npm run build
 
-# Stage 2: Runtime
-FROM nginx:1.25.3
-
-COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir /app
-COPY --from=builder /app/dist /app
-
+FROM node:24-alpine
+ENV PORT=8080
+COPY ./package.json package-lock.json /app/
+COPY --from=production-dependencies-env /app/node_modules /app/node_modules
+COPY --from=build-env /app/build /app/build
+WORKDIR /app
 EXPOSE 8080
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "run", "start"]

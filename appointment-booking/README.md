@@ -1,90 +1,52 @@
 # Appointment Booking App
 
-A React 19 + TypeScript appointment booking interface built for BC Gov.
+A React 19 + TypeScript app for Service BC, using React Router v8 with SSR and static prerendering for the locations page.
 
 ## Prerequisites
 
 - Node.js 22+
 - npm 10+
 
-For database and backend setup, follow the instructions in the [root README](../README.md).
-
 ## Local Development
-
-### Install dependencies
 
 ```bash
 cd appointment-booking
 npm install
-```
-
-### Start the frontend
-
-```bash
-# Proxies /api/v1 to http://localhost:5000 (default)
 npm run dev
-
-# If your local API runs on port 5100
-npm run dev:local
 ```
 
-Open `http://localhost:5173`. The frontend starts without a running backend — API calls will fail gracefully until the backend is running.
+Open `http://localhost:5173/locations` (or `/` which redirects there).
 
 ### Run Checks
 
 ```bash
-# Run everything at once (lint + type-check + test + build + license)
 npm run ci:check
-
-# Individually
-npm run test
-npm run lint
-npm run type-check
 ```
 
 ### Build for Production
 
 ```bash
 npm run build
-# Output in ./dist/
+npm run start
 ```
+
+The `/locations` route is prerendered at build time for SEO.
 
 ---
 
 ## Docker
 
-### Run with Docker Compose (recommended)
-
 From the repository root:
 
 ```bash
-docker compose --profile api up --build
+docker compose up --build appointment-booking
 ```
 
-Starts the frontend, API, database, and Keycloak. Open `http://localhost:5173`.
-
-> Note: running Docker compose will occupy port 5173. If you then run `npm run dev`, Vite will fall back to port 5174.
-
-### Build and run manually
+Or manually:
 
 ```bash
 docker build -t appointment-booking .
 docker run -p 5173:8080 appointment-booking
-```
-
----
-
-## Runtime Config
-
-The app fetches `/config/configuration.json` on startup to get its configuration. The default file is at [`public/config/configuration.json`](./public/config/configuration.json) and is served as a static file by nginx.
-
-In OpenShift, a ConfigMap mounts over this file to provide environment-specific values without rebuilding the image.
-
-```json
-{
-  "apiBaseUrl": "http://localhost:5000/api/v1",
-  "requestTimeoutMs": 10000
-}
 ```
 
 ---
