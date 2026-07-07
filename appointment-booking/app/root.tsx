@@ -4,7 +4,6 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration }
 import type { Route } from './+types/root'
 import '@bcgov/design-tokens/css/variables.css'
 import '@bcgov/bc-sans/css/BC_Sans.css'
-import './bcds-shell.css'
 import './app.css'
 
 export function Layout({ children }: { children: React.ReactNode }) {
