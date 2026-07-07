@@ -1,6 +1,6 @@
 # Appointment Booking App
 
-A React 19 + TypeScript app for Service BC, using React Router v8 with SSR and static prerendering for the locations page.
+A React 19 + TypeScript app for Service BC, using React Router v8 with SSR and prerendering for the locations page.
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ npm run build
 npm run start
 ```
 
-The `/locations` route is prerendered at build time for SEO.
+The `/locations` route is prerendered at build time for SEO. The app runs on a Node server for SSR.
 
 ---
 
@@ -48,6 +48,8 @@ Or manually:
 docker build -t appointment-booking .
 docker run -p 5173:8080 appointment-booking
 ```
+
+The image builds the app and runs `react-router-serve` on port 8080.
 
 ---
 
