@@ -1,10 +1,13 @@
 import { Footer, Header } from '@bcgov/design-system-react-components'
+import { config } from '@fortawesome/fontawesome-svg-core'
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 import type { Route } from './+types/root'
 import '@bcgov/design-tokens/css/variables.css'
 import '@bcgov/bc-sans/css/BC_Sans.css'
 import './app.css'
+
+config.autoAddCss = false
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
