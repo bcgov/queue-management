@@ -33,6 +33,7 @@ p {
   width: 100%;
 }
 
+/* Locations directory table — BC DS has no Table component, so we style our own */
 .locations-search {
   margin-bottom: var(--layout-padding-xlarge);
   max-width: 32rem;
@@ -40,6 +41,9 @@ p {
 
 .locations-table-wrapper {
   overflow-x: auto;
+  background: var(--surface-color-background-white);
+  border: var(--layout-border-width-small) solid var(--surface-color-border-default);
+  border-radius: var(--layout-border-radius-medium);
 }
 
 .locations-table {
@@ -58,6 +62,49 @@ p {
 .locations-table thead th {
   font: var(--typography-bold-body);
   background: var(--surface-color-background-white);
+}
+
+.locations-sort-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--layout-margin-small);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.locations-sort-icons {
+  display: inline-flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.locations-sort-icons svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--typography-color-secondary);
+  opacity: 0.45;
+}
+
+.locations-sort-icons .is-active svg {
+  color: var(--typography-color-primary);
+  opacity: 1;
+}
+
+.locations-sort-button:hover {
+  color: var(--typography-color-link);
+}
+
+.locations-sort-button:focus-visible {
+  outline: solid var(--layout-border-width-medium) var(--surface-color-border-active);
+  outline-offset: var(--layout-margin-hair);
 }
 
 .locations-table tbody tr:nth-child(even) {
@@ -91,4 +138,17 @@ p {
 
 .locations-table ul:last-child {
   margin-bottom: 0;
+}
+
+.locations-hours-cell {
+  position: relative;
+  vertical-align: top;
+  padding-bottom: calc(var(--layout-padding-medium) + 2.75rem);
+}
+
+.locations-book-appointment {
+  position: absolute;
+  bottom: var(--layout-padding-medium);
+  left: var(--layout-padding-medium);
+  margin: 0;
 }
