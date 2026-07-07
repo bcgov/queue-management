@@ -1824,7 +1824,9 @@ export default function Locations() {
           iconRight={
             <TooltipTrigger>
               <Button
-                className={nearestSort ? 'locations-nearest-button is-active' : 'locations-nearest-button'}
+                className={
+                  nearestSort ? 'locations-nearest-button is-active' : 'locations-nearest-button'
+                }
                 variant={nearestSort ? 'primary' : 'secondary'}
                 size="medium"
                 isIconButton
