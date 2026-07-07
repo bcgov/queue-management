@@ -1,4 +1,4 @@
-import { Link } from '@bcgov/design-system-react-components'
+import { Link, TextField } from '@bcgov/design-system-react-components'
 
 const PAGE_DESCRIPTION =
   'Find Service BC office locations in British Columbia. View addresses, contact details, hours of operation and book an appointment.'
@@ -71,21 +71,12 @@ export default function Locations() {
 
       <p>Use the search bar below to find an office in your area.</p>
 
-      <div className="bcds-react-aria-TextField locations-search">
-        <label className="bcds-react-aria-TextField--Label" htmlFor="office-search">
-          Search for an office
-        </label>
-        <div className="bcds-react-aria-TextField--container medium">
-          <input
-            id="office-search"
-            name="office-search"
-            type="search"
-            className="bcds-react-aria-TextField--Input"
-            placeholder="Search by city or office name"
-            autoComplete="off"
-          />
-        </div>
-      </div>
+      <TextField
+        className="locations-search"
+        label="Search for an office"
+        name="office-search"
+        description="Search by city or office name"
+      />
 
       <div className="locations-table-wrapper">
         <table className="locations-table">
