@@ -34,9 +34,38 @@ p {
 }
 
 /* Locations directory table — BC DS has no Table component, so we style our own */
-.locations-search {
+.locations-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--layout-padding-medium);
   margin-bottom: var(--layout-padding-xlarge);
+}
+
+.locations-search {
+  flex: 1 1 16rem;
   max-width: 32rem;
+  margin-bottom: 0;
+}
+
+.locations-nearest-button.is-active {
+  box-shadow: 0 0 0 var(--layout-border-width-medium) var(--surface-color-border-active);
+}
+
+.locations-pin-icon {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.locations-nearest-label {
+  align-self: center;
+  font: var(--typography-bold-small-body);
+  color: var(--typography-color-link);
+}
+
+.locations-distance {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
 }
 
 .locations-table-wrapper {

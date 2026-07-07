@@ -1,10 +1,16 @@
 import { useMemo, useState } from 'react'
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getDistance } from 'geolib'
 import {
   Button,
+  InlineAlert,
   Link,
   SvgChevronDownIcon,
   SvgChevronUpIcon,
   TextField,
+  Tooltip,
+  TooltipTrigger,
 } from '@bcgov/design-system-react-components'
 
 const PAGE_DESCRIPTION =
@@ -1505,6 +1511,79 @@ const OFFICES = [
   },
 ]
 
+// Approximate coordinates for distance sorting (from map links or geocoding).
+const OFFICE_COORDINATES: Record<string, { latitude: number; longitude: number }> = {
+  '100 Mile House': { latitude: 51.6443, longitude: -121.295 },
+  Ashcroft: { latitude: 50.7233786, longitude: -121.2794363 },
+  Atlin: { latitude: 59.5737365, longitude: -133.7014399 },
+  'Bella Coola': { latitude: 52.3721976, longitude: -126.7538301 },
+  Burnaby: { latitude: 49.2266, longitude: -122.9989 },
+  'Burns Lake': { latitude: 54.2249261, longitude: -125.7555949 },
+  'Campbell River': { latitude: 50.0263673, longitude: -125.25539 },
+  Chetwynd: { latitude: 55.6980781, longitude: -121.6332855 },
+  Chilliwack: { latitude: 49.1481939, longitude: -121.9652165 },
+  Clinton: { latitude: 51.091681, longitude: -121.586565 },
+  Courtenay: { latitude: 49.6763274, longitude: -124.9823423 },
+  Cranbrook: { latitude: 49.5137455, longitude: -115.7662317 },
+  Creston: { latitude: 49.0956906, longitude: -116.5093889 },
+  'Daajing Giids (formerly Village of Queen Charlotte)': {
+    latitude: 53.254532,
+    longitude: -132.082496,
+  },
+  'Dawson Creek': { latitude: 55.7587205, longitude: -120.235705 },
+  'Dease Lake': { latitude: 58.434635, longitude: -129.9860526 },
+  Duncan: { latitude: 48.7807655, longitude: -123.706932 },
+  Fernie: { latitude: 49.5019709, longitude: -115.0630816 },
+  'Fort Nelson': { latitude: 58.8042998, longitude: -122.7064543 },
+  'Fort St. James': { latitude: 54.444893, longitude: -124.2580136 },
+  'Fort St. John': { latitude: 56.2521868, longitude: -120.8482391 },
+  Ganges: { latitude: 48.8602017, longitude: -123.5090627 },
+  Golden: { latitude: 51.2965698, longitude: -116.9659576 },
+  'Grand Forks': { latitude: 49.032616, longitude: -118.436794 },
+  Hazelton: { latitude: 55.257374, longitude: -127.659367 },
+  Houston: { latitude: 54.398616, longitude: -126.64682 },
+  Invermere: { latitude: 50.509419, longitude: -116.028582 },
+  Kamloops: { latitude: 50.6704457, longitude: -120.3308755 },
+  Kaslo: { latitude: 49.9106913, longitude: -116.9048818 },
+  Kelowna: { latitude: 49.8865197, longitude: -119.4939689 },
+  Kitimat: { latitude: 54.0519485, longitude: -128.6560057 },
+  Lillooet: { latitude: 50.6931798, longitude: -121.9347505 },
+  Mackenzie: { latitude: 55.338544, longitude: -123.096208 },
+  'Maple Ridge': { latitude: 49.2199139, longitude: -122.5996999 },
+  Masset: { latitude: 54.0128251, longitude: -132.146886 },
+  Merritt: { latitude: 50.108281, longitude: -120.785327 },
+  'Mission (temporary location)': { latitude: 49.134, longitude: -122.308 },
+  Nakusp: { latitude: 50.2415686, longitude: -117.8051952 },
+  Nanaimo: { latitude: 49.1621643, longitude: -123.9396416 },
+  Nelson: { latitude: 49.493205, longitude: -117.2957808 },
+  Oliver: { latitude: 49.1779746, longitude: -119.5498674 },
+  Penticton: { latitude: 49.4854821, longitude: -119.5874404 },
+  'Port Alberni': { latitude: 49.2500353, longitude: -124.8010027 },
+  'Port Hardy': { latitude: 50.719702, longitude: -127.4944261 },
+  'Powell River': { latitude: 49.8447831, longitude: -124.5229643 },
+  'Prince George': { latitude: 53.9145489, longitude: -122.7426791 },
+  'Prince Rupert': { latitude: 54.3141403, longitude: -130.3220209 },
+  Princeton: { latitude: 49.4581604, longitude: -120.5067139 },
+  Quesnel: { latitude: 52.9771859, longitude: -122.4943769 },
+  Revelstoke: { latitude: 50.9979, longitude: -118.1963 },
+  'Salmon Arm': { latitude: 50.705534, longitude: -119.268328 },
+  Sechelt: { latitude: 49.4717791, longitude: -123.7545233 },
+  Smithers: { latitude: 54.7774081, longitude: -127.1740762 },
+  Sparwood: { latitude: 49.7324523, longitude: -114.8848853 },
+  Squamish: { latitude: 49.7014889, longitude: -123.1522692 },
+  Stewart: { latitude: 55.936, longitude: -129.991 },
+  Surrey: { latitude: 49.1927423, longitude: -122.800336 },
+  Terrace: { latitude: 54.518105, longitude: -128.59795 },
+  Trail: { latitude: 49.0946429, longitude: -117.7064578 },
+  Ucluelet: { latitude: 48.9417194, longitude: -125.5475558 },
+  Valemount: { latitude: 52.83305, longitude: -119.267455 },
+  Vancouver: { latitude: 49.2818669, longitude: -123.1232689 },
+  Vanderhoof: { latitude: 54.0161568, longitude: -124.0068665 },
+  Vernon: { latitude: 50.2655979, longitude: -119.2704594 },
+  Victoria: { latitude: 48.4583433, longitude: -123.3768363 },
+  'Williams Lake': { latitude: 52.1302168, longitude: -122.1380106 },
+}
+
 type Office = (typeof OFFICES)[number]
 type SortColumn = 'location' | 'address' | 'hours' | 'services'
 type SortDirection = 'asc' | 'desc'
@@ -1533,6 +1612,26 @@ function officeAppointmentsAvailable(office: Office) {
   )
 }
 
+type Coordinates = { latitude: number; longitude: number }
+
+function kmFromUser(user: Coordinates, officeName: string) {
+  const office = OFFICE_COORDINATES[officeName]
+  if (!office) {
+    return null
+  }
+
+  // geolib returns meters; convert to kilometres.
+  return getDistance(user, office) / 1000
+}
+
+function formatKm(km: number) {
+  if (km < 10) {
+    return `${km.toFixed(1)} km`
+  }
+
+  return `${Math.round(km)} km`
+}
+
 function sortValue(office: Office, column: SortColumn) {
   switch (column) {
     case 'location':
@@ -1557,16 +1656,61 @@ export function meta() {
   return [{ title: 'Service BC Locations' }, { name: 'description', content: PAGE_DESCRIPTION }]
 }
 
+function nearestTooltipText(
+  nearestSort: boolean,
+  locationStatus: 'idle' | 'loading' | 'active' | 'error',
+) {
+  if (locationStatus === 'loading') {
+    return 'Finding your location...'
+  }
+
+  if (nearestSort) {
+    return 'Nearest sort is on. Click to turn off.'
+  }
+
+  return 'Use your location to sort offices by distance.'
+}
+
 export default function Locations() {
   const [search, setSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<SortColumn>('location')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [nearestSort, setNearestSort] = useState(false)
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'active' | 'error'>(
+    'idle',
+  )
+  const [userLocation, setUserLocation] = useState<Coordinates | null>(null)
+  const [locationError, setLocationError] = useState<string | null>(null)
+
+  const officeDistances = useMemo(() => {
+    if (!userLocation) {
+      return new Map<string, number>()
+    }
+
+    const distances = new Map<string, number>()
+    for (const office of OFFICES) {
+      const km = kmFromUser(userLocation, office.name)
+      if (km !== null) {
+        distances.set(office.name, km)
+      }
+    }
+    return distances
+  }, [userLocation])
 
   const visibleOffices = useMemo(() => {
     const query = search.trim().toLowerCase()
     const results = query
       ? OFFICES.filter((office) => officeSearchText(office).includes(query))
       : [...OFFICES]
+
+    if (nearestSort && userLocation) {
+      results.sort((a, b) => {
+        const distanceA = officeDistances.get(a.name) ?? Number.POSITIVE_INFINITY
+        const distanceB = officeDistances.get(b.name) ?? Number.POSITIVE_INFINITY
+        return distanceA - distanceB
+      })
+      return results
+    }
 
     results.sort((a, b) => {
       const comparison = sortValue(a, sortColumn).localeCompare(
@@ -1580,9 +1724,14 @@ export default function Locations() {
     })
 
     return results
-  }, [search, sortColumn, sortDirection])
+  }, [search, sortColumn, sortDirection, nearestSort, userLocation, officeDistances])
 
   function toggleSort(column: SortColumn) {
+    setNearestSort(false)
+    setLocationStatus('idle')
+    setUserLocation(null)
+    setLocationError(null)
+
     if (sortColumn === column) {
       setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
       return
@@ -1590,6 +1739,55 @@ export default function Locations() {
 
     setSortColumn(column)
     setSortDirection('asc')
+  }
+
+  function toggleNearestSort() {
+    if (nearestSort) {
+      setNearestSort(false)
+      setLocationStatus('idle')
+      setUserLocation(null)
+      setLocationError(null)
+      return
+    }
+
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocationStatus('error')
+      setLocationError('Your browser does not support location services.')
+      return
+    }
+
+    setLocationStatus('loading')
+    setLocationError(null)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+        setNearestSort(true)
+        setLocationStatus('active')
+      },
+      (error) => {
+        setLocationStatus('error')
+        setNearestSort(false)
+        setUserLocation(null)
+
+        if (error.code === error.PERMISSION_DENIED) {
+          setLocationError(
+            'Location access was denied. Allow location in your browser to sort by nearest office.',
+          )
+          return
+        }
+
+        setLocationError('Unable to determine your location. Please try again.')
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000,
+      },
+    )
   }
 
   return (
@@ -1612,14 +1810,49 @@ export default function Locations() {
         <li>Confirm details such as eligibility, what to bring and cost</li>
       </ul>
 
-      <p>Use the search bar below to find an office in your area.</p>
+      <p>
+        Use the search bar below to find an office in your area, or select the location pin to sort
+        offices by distance from you.
+      </p>
 
-      <TextField
-        className="locations-search"
-        name="office-search"
-        value={search}
-        onChange={setSearch}
-      />
+      <div className="locations-search-row">
+        <TextField
+          className="locations-search"
+          name="office-search"
+          value={search}
+          onChange={setSearch}
+          iconRight={
+            <TooltipTrigger>
+              <Button
+                className={nearestSort ? 'locations-nearest-button is-active' : 'locations-nearest-button'}
+                variant={nearestSort ? 'primary' : 'secondary'}
+                size="medium"
+                isIconButton
+                onPress={toggleNearestSort}
+                isDisabled={locationStatus === 'loading'}
+                aria-pressed={nearestSort}
+                aria-label={
+                  locationStatus === 'loading'
+                    ? 'Finding your location'
+                    : nearestSort
+                      ? 'Clear nearest sort'
+                      : 'Sort offices by nearest to you'
+                }
+              >
+                <LocationIcon />
+              </Button>
+              <Tooltip>{nearestTooltipText(nearestSort, locationStatus)}</Tooltip>
+            </TooltipTrigger>
+          }
+        />
+        {nearestSort ? <span className="locations-nearest-label">Nearest first</span> : null}
+      </div>
+
+      {locationError ? (
+        <InlineAlert variant="danger" title="Location unavailable">
+          {locationError}
+        </InlineAlert>
+      ) : null}
 
       <div className="locations-table-wrapper">
         <table className="locations-table">
@@ -1671,7 +1904,17 @@ export default function Locations() {
             ) : (
               visibleOffices.map((office) => (
                 <tr key={office.name}>
-                  <th scope="row">{office.name}</th>
+                  <th scope="row">
+                    {office.name}
+                    {nearestSort && officeDistances.has(office.name) ? (
+                      <>
+                        <br />
+                        <span className="locations-distance">
+                          {formatKm(officeDistances.get(office.name)!)}
+                        </span>
+                      </>
+                    ) : null}
+                  </th>
                   <td>
                     <p>
                       <strong>Physical address</strong>
@@ -1747,6 +1990,10 @@ export default function Locations() {
       </div>
     </>
   )
+}
+
+function LocationIcon() {
+  return <FontAwesomeIcon icon={faLocationDot} className="locations-pin-icon" />
 }
 
 function ColumnSortButton({
