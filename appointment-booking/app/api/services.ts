@@ -73,7 +73,7 @@ function keepForPublicList(row: ApiService): OnlineAvailability | null {
 
 function mapRow(row: ApiService, availability: OnlineAvailability): Service {
   // Frontend label: external_service_name, or service_name as fallback.
-  const name = row.external_service_name?.trim() || row.service_name
+  const name = row.external_service_name?.trim() || row.service_name.trim()
 
   return {
     id: row.service_id,
