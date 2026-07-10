@@ -21,7 +21,6 @@ type ApiService = {
 
 type ApiServicesResponse = {
   services: ApiService[]
-  errors: Record<string, unknown>
 }
 
 function apiBaseUrl() {
@@ -69,11 +68,7 @@ function keepForPublicList(row: ApiService): OnlineAvailability | null {
   }
 
   const availability = readAvailability(row.online_availability)
-  if (availability === 'SHOW' || availability === 'DISABLE') {
-    return availability
-  }
-
-  return null
+  return availability
 }
 
 function mapRow(row: ApiService, availability: OnlineAvailability): Service {
