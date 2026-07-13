@@ -30,8 +30,6 @@
     "react-router": "8.0.0"
   },
   "devDependencies": {
-    "@emnapi/core": "1.11.2",
-    "@emnapi/runtime": "1.11.2",
     "@eslint/js": "^10.0.1",
     "@react-router/dev": "8.0.0",
     "@types/node": "^24.12.3",
