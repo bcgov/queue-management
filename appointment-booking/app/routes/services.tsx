@@ -109,7 +109,9 @@ export default function ServicesPage() {
                       <tr
                         key={service.id}
                         className={getRowClassName(service, selectedId)}
-                        onClick={() => { if (service.isOnlineBookable) setSelectedId(id) }}
+                        onClick={() => {
+                          if (service.isOnlineBookable) setSelectedId(id)
+                        }}
                         onKeyDown={handleRowKeyDown}
                         role="radio"
                         aria-checked={selectedId === id}
