@@ -84,15 +84,21 @@ function mapRow(row: ApiService, availability: OnlineAvailability): Service {
 }
 
 // Fetch from the API and filter here, not in the UI.
+// Throws on fetch/HTTP/parse failure so the page can tell error apart from empty [].
 export async function getPublicServices(): Promise<Service[]> {
   const url = `${apiBaseUrl()}/services/`
-  const response = await fetch(url)
 
-  if (!response.ok) {
-    throw new Error(`Could not load services (${response.status})`)
+  let body: ApiServicesResponse
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error('Failed to load services')
+    }
+    body = (await response.json()) as ApiServicesResponse
+  } catch {
+    throw new Error('Failed to load services')
   }
 
-  const body = (await response.json()) as ApiServicesResponse
   const rows = body.services ?? []
   const services: Service[] = []
 
