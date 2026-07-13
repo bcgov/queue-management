@@ -1,5 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Button, InlineAlert, ProgressBar, SvgChevronDownIcon, SvgChevronUpIcon, TextField } from '@bcgov/design-system-react-components'
+import {
+  Button,
+  InlineAlert,
+  ProgressBar,
+  SvgChevronDownIcon,
+  SvgChevronUpIcon,
+  TextField,
+} from '@bcgov/design-system-react-components'
 import { getPublicServices, type Service } from '../api/services'
 
 const BOOKING_STEP = 1
@@ -143,18 +150,15 @@ export default function ServicesPage() {
               <thead>
                 <tr>
                   <th scope="col" className="services-table-select-heading" aria-label="Select" />
-                  <th
-                    scope="col"
-                    aria-sort={sortDirection === 'asc' ? 'ascending' : 'descending'}
-                  >
+                  <th scope="col" aria-sort={sortDirection === 'asc' ? 'ascending' : 'descending'}>
                     <button
                       type="button"
                       className="services-sort-button"
-                      onClick={() => setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))}
+                      onClick={() =>
+                        setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
+                      }
                       aria-label={
-                        sortDirection === 'asc'
-                          ? 'Sort services Z to A'
-                          : 'Sort services A to Z'
+                        sortDirection === 'asc' ? 'Sort services Z to A' : 'Sort services A to Z'
                       }
                     >
                       <span>Services</span>
@@ -178,8 +182,8 @@ export default function ServicesPage() {
                 ) : showNoResults ? (
                   <tr>
                     <td colSpan={2}>
-                      No services match your search. Try different keywords or clear the
-                      search to see all services.
+                      No services match your search. Try different keywords or clear the search to
+                      see all services.
                     </td>
                   </tr>
                 ) : (
