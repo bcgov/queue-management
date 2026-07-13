@@ -198,6 +198,61 @@ p {
   font: var(--typography-bold-body);
 }
 
+.services-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--layout-padding-medium);
+  margin-bottom: var(--layout-padding-xlarge);
+}
+
+.services-search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+  margin-bottom: 0;
+}
+
+.services-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--layout-margin-small);
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.services-sort-icons {
+  display: inline-flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.services-sort-icons svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--typography-color-secondary);
+  opacity: 0.45;
+}
+
+.services-sort-icons .is-active svg {
+  color: var(--typography-color-primary);
+  opacity: 1;
+}
+
+.services-sort-button:hover {
+  color: var(--typography-color-link);
+}
+
+.services-sort-button:focus-visible {
+  outline: var(--layout-border-width-medium) solid var(--surface-color-border-active);
+  outline-offset: var(--layout-padding-xsmall);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -270,7 +325,12 @@ p {
 }
 
 .services-table tbody tr.is-unavailable {
-  color: var(--typography-color-secondary);
+  color: var(--typography-color-disabled);
+  cursor: not-allowed;
+}
+
+.services-table tbody tr.is-unavailable .services-table-radio:disabled {
+  opacity: 0.45;
 }
 
 .services-table-select-cell {
@@ -305,7 +365,23 @@ p {
   color: var(--typography-color-secondary);
 }
 
+.booking-continue-row {
+  margin-top: var(--layout-padding-large);
+  margin-left: auto;
+  width: fit-content;
+}
+
 @media (max-width: 48rem) {
+  .services-search-row {
+    width: 100%;
+  }
+
+  .services-search {
+    flex: 1 1 100%;
+    max-width: none;
+    width: 100%;
+  }
+
   .services-table-wrapper {
     overflow-x: hidden;
   }
