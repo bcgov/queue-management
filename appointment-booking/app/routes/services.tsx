@@ -7,7 +7,6 @@ const BOOKING_STEP = 1
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING =
   'Select the service you need to book an appointment at a Service BC location.'
-const NEXT_STEP_LABEL = 'Location'
 
 export function meta() {
   return [{ title: 'Services' }]
@@ -26,8 +25,6 @@ function getRowClassName(service: Service, selectedId: string) {
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  // Set when getPublicServices() throws; empty [] without an error is a real empty result.
-  const [hasError, setHasError] = useState(false)
   const [selectedId, setSelectedId] = useState('')
 
   useEffect(() => {
@@ -39,9 +36,7 @@ export default function ServicesPage() {
         }
       })
       .catch(() => {
-        if (!cancelled) {
-          setHasError(true)
-        }
+        // Silently fail — empty list shows unavailable message
       })
       .finally(() => {
         if (!cancelled) {
@@ -53,11 +48,24 @@ export default function ServicesPage() {
     }
   }, [])
 
+  // Navigate between bookable services using arrow keys
+  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
+
+    const bookable = services.filter((s) => s.isOnlineBookable)
+    const idx = bookable.findIndex((s) => String(s.id) === selectedId)
+    const nextIdx = e.key === 'ArrowDown' ? idx + 1 : idx - 1
+
+    if (nextIdx >= 0 && nextIdx < bookable.length) {
+      e.preventDefault()
+      setSelectedId(String(bookable[nextIdx].id))
+    }
+  }
+
   const selectedService = services.find((service) => String(service.id) === selectedId)
-  const canContinue = Boolean(selectedService?.isOnlineBookable)
+  const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
-  // Fetch failure and empty list show the same unavailable message.
-  const showUnavailable = !isLoading && (hasError || services.length === 0)
+  const showUnavailable = !isLoading && services.length === 0
 
   return (
     <>
@@ -98,7 +106,15 @@ export default function ServicesPage() {
                     const id = String(service.id)
 
                     return (
-                      <tr key={service.id} className={getRowClassName(service, selectedId)}>
+                      <tr
+                        key={service.id}
+                        className={getRowClassName(service, selectedId)}
+                        onClick={() => { if (service.isOnlineBookable) setSelectedId(id) }}
+                        onKeyDown={handleRowKeyDown}
+                        role="radio"
+                        aria-checked={selectedId === id}
+                        tabIndex={selectedId === id ? 0 : -1}
+                      >
                         <td className="services-table-select-cell">
                           <input
                             type="radio"
@@ -107,7 +123,7 @@ export default function ServicesPage() {
                             value={id}
                             checked={selectedId === id}
                             disabled={!service.isOnlineBookable}
-                            onChange={() => setSelectedId(id)}
+                            readOnly
                             aria-label={service.name}
                           />
                         </td>
@@ -128,14 +144,9 @@ export default function ServicesPage() {
         </>
       )}
 
-      <div className="services-action-bar">
-        <p className="services-action-text">
-          Step {BOOKING_STEP + 1}: {NEXT_STEP_LABEL}
-        </p>
-        <Button variant="primary" size="medium" isDisabled={!canContinue}>
-          Continue
-        </Button>
-      </div>
+      <Button variant="primary" size="medium" isDisabled={!canContinue}>
+        Continue
+      </Button>
     </>
   )
 }
