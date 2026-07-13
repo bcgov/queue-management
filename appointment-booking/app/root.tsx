@@ -3,6 +3,7 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 import type { Route } from './+types/root'
+import { BookingProvider } from './booking/booking-context'
 import '@bcgov/design-tokens/css/variables.css'
 import '@bcgov/bc-sans/css/BC_Sans.css'
 import './bcds-shell.css'
@@ -41,7 +42,10 @@ export default function App() {
         ]}
       />
       <main id="main-content" className="layout-main">
-        <Outlet />
+        {/* Keeps booking selection alive while navigating between booking steps. */}
+        <BookingProvider>
+          <Outlet />
+        </BookingProvider>
       </main>
       <Footer />
     </>

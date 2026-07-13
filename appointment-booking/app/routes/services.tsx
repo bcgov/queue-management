@@ -8,6 +8,7 @@ import {
   TextField,
 } from '@bcgov/design-system-react-components'
 import { getPublicServices, type Service } from '../api/services'
+import { useBooking } from '../booking/booking-context'
 
 const BOOKING_STEP = 1
 const BOOKING_STEP_COUNT = 5
@@ -31,10 +32,13 @@ function getRowClassName(service: Service, selectedId: string) {
 }
 
 export default function ServicesPage() {
+  // Selection lives in booking context so later steps can reuse it.
+  const { selectedService, setSelectedService } = useBooking()
+  const selectedId = selectedService ? String(selectedService.id) : ''
+
   const [services, setServices] = useState<Service[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [selectedId, setSelectedId] = useState('')
   const [search, setSearch] = useState('')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -91,11 +95,10 @@ export default function ServicesPage() {
 
     if (nextIdx >= 0 && nextIdx < bookable.length) {
       e.preventDefault()
-      setSelectedId(String(bookable[nextIdx].id))
+      setSelectedService(bookable[nextIdx])
     }
   }
 
-  const selectedService = services.find((service) => String(service.id) === selectedId)
   const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
   const showLoadError = !isLoading && loadError
@@ -195,7 +198,7 @@ export default function ServicesPage() {
                         key={service.id}
                         className={getRowClassName(service, selectedId)}
                         onClick={() => {
-                          if (service.isOnlineBookable) setSelectedId(id)
+                          if (service.isOnlineBookable) setSelectedService(service)
                         }}
                         onKeyDown={handleRowKeyDown}
                         role="radio"
