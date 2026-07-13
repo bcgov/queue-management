@@ -29,7 +29,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['app/routes/**/*.{ts,tsx}', 'app/root.tsx'],
+    files: ['app/routes/**/*.{ts,tsx}', 'app/root.tsx', 'app/booking/**/*.{ts,tsx}'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
