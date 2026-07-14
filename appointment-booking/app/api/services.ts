@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '../env-config'
+import { getApiBaseUrl } from '../runtime-config'
 
 // Service type used by the frontend after mapping from the API.
 export type OnlineAvailability = 'SHOW' | 'DISABLE'
