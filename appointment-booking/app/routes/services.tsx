@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  Button,
-  InlineAlert,
-  ProgressBar,
-  SvgChevronDownIcon,
-  SvgChevronUpIcon,
-  TextField,
-} from '@bcgov/design-system-react-components'
+import { InlineAlert } from '@bcgov/design-system-react-components'
 import { getPublicServices, type Service } from '../api/services'
 import { useBooking } from '../booking/booking-context'
+import { BookingContinueRow } from '../components/BookingContinueRow'
+import { BookingStepProgress } from '../components/BookingStepProgress'
+import { ServicesSearch } from '../components/ServicesSearch'
+import { ServicesTable } from '../components/ServicesTable'
 
 const BOOKING_STEP = 1
 const BOOKING_STEP_COUNT = 5
@@ -19,16 +16,6 @@ type SortDirection = 'asc' | 'desc'
 
 export function meta() {
   return [{ title: 'Services' }]
-}
-
-function getRowClassName(service: Service, selectedId: string) {
-  if (!service.isOnlineBookable) {
-    return 'is-unavailable'
-  }
-  if (String(service.id) === selectedId) {
-    return 'is-selected'
-  }
-  return ''
 }
 
 export default function ServicesPage() {
@@ -99,6 +86,7 @@ export default function ServicesPage() {
     }
   }
 
+  // Page owns Continue enablement; only a bookable selection unlocks the next step.
   const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
   const showLoadError = !isLoading && loadError
@@ -109,16 +97,11 @@ export default function ServicesPage() {
     <>
       <h1 className="sr-only">Services</h1>
 
-      <div className="services-booking-progress">
-        <p className="services-booking-step-count">
-          Step {BOOKING_STEP} of {BOOKING_STEP_COUNT}
-        </p>
-        <p className="services-booking-step">{BOOKING_STEP_HEADING}</p>
-        <ProgressBar
-          value={(BOOKING_STEP / BOOKING_STEP_COUNT) * 100}
-          aria-label={`Step ${BOOKING_STEP} of ${BOOKING_STEP_COUNT}. ${BOOKING_STEP_HEADING}`}
-        />
-      </div>
+      <BookingStepProgress
+        step={BOOKING_STEP}
+        stepCount={BOOKING_STEP_COUNT}
+        heading={BOOKING_STEP_HEADING}
+      />
 
       {showLoadError ? (
         <InlineAlert variant="danger" title="Unable to load services">
@@ -131,100 +114,21 @@ export default function ServicesPage() {
       ) : (
         <>
           {!isLoading && (
-            <div className="services-search-row">
-              <TextField
-                className="services-search"
-                name="service-search"
-                value={search}
-                onChange={setSearch}
-                // @ts-expect-error placeholder is supported by underlying react-aria TextField
-                placeholder="Search services"
-              />
-              {search.trim() ? (
-                <Button variant="secondary" size="medium" onPress={() => setSearch('')}>
-                  Clear search
-                </Button>
-              ) : null}
-            </div>
+            <ServicesSearch value={search} onChange={setSearch} onClear={() => setSearch('')} />
           )}
 
-          <div className="services-table-wrapper">
-            <table className="services-table">
-              <thead>
-                <tr>
-                  <th scope="col" className="services-table-select-heading" aria-label="Select" />
-                  <th scope="col" aria-sort={sortDirection === 'asc' ? 'ascending' : 'descending'}>
-                    <button
-                      type="button"
-                      className="services-sort-button"
-                      onClick={() =>
-                        setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
-                      }
-                      aria-label={
-                        sortDirection === 'asc' ? 'Sort services Z to A' : 'Sort services A to Z'
-                      }
-                    >
-                      <span>Services</span>
-                      <span className="services-sort-icons" aria-hidden="true">
-                        <span className={sortDirection === 'asc' ? 'is-active' : undefined}>
-                          <SvgChevronUpIcon />
-                        </span>
-                        <span className={sortDirection === 'desc' ? 'is-active' : undefined}>
-                          <SvgChevronDownIcon />
-                        </span>
-                      </span>
-                    </button>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={2}>Loading services...</td>
-                  </tr>
-                ) : showNoResults ? (
-                  <tr>
-                    <td colSpan={2}>
-                      No services match your search. Try different keywords or clear the search to
-                      see all services.
-                    </td>
-                  </tr>
-                ) : (
-                  visibleServices.map((service) => {
-                    const id = String(service.id)
-
-                    return (
-                      <tr
-                        key={service.id}
-                        className={getRowClassName(service, selectedId)}
-                        onClick={() => {
-                          if (service.isOnlineBookable) setSelectedService(service)
-                        }}
-                        onKeyDown={handleRowKeyDown}
-                        role="radio"
-                        aria-checked={selectedId === id}
-                        tabIndex={selectedId === id ? 0 : -1}
-                      >
-                        <td className="services-table-select-cell">
-                          <input
-                            type="radio"
-                            name="service"
-                            className="services-table-radio"
-                            value={id}
-                            checked={selectedId === id}
-                            disabled={!service.isOnlineBookable}
-                            readOnly
-                            aria-label={service.name}
-                          />
-                        </td>
-                        <td>{service.name}</td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+          <ServicesTable
+            services={visibleServices}
+            isLoading={isLoading}
+            showNoResults={showNoResults}
+            sortDirection={sortDirection}
+            onToggleSort={() =>
+              setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
+            }
+            selectedId={selectedId}
+            onSelect={setSelectedService}
+            onRowKeyDown={handleRowKeyDown}
+          />
 
           {!isLoading && hasUnavailableServices && (
             <p className="services-table-note">
@@ -234,11 +138,7 @@ export default function ServicesPage() {
         </>
       )}
 
-      <div className="booking-continue-row">
-        <Button variant="primary" size="medium" isDisabled={!canContinue}>
-          Continue
-        </Button>
-      </div>
+      <BookingContinueRow isDisabled={!canContinue} />
     </>
   )
 }

@@ -1821,6 +1821,7 @@ export default function Locations() {
           name="office-search"
           value={search}
           onChange={setSearch}
+          aria-label="Search offices"
           iconRight={
             <TooltipTrigger>
               <Button

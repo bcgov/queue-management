@@ -183,17 +183,17 @@ p {
   margin: 0;
 }
 
-.services-booking-progress {
+.booking-step-progress {
   margin-bottom: var(--layout-padding-xlarge);
 }
 
-.services-booking-step-count {
+.booking-step-count {
   margin: 0 0 var(--layout-padding-xsmall);
   font: var(--typography-bold-small-body);
   color: var(--typography-color-secondary);
 }
 
-.services-booking-step {
+.booking-step-heading {
   margin: 0 0 var(--layout-padding-small);
   font: var(--typography-bold-body);
 }

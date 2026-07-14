@@ -38,9 +38,7 @@
   padding: var(--layout-padding-xlarge);
 }
 
-.bcds-footer
-  > .bcds-footer--acknowledgement
-  > .bcds-footer--acknowledgement-text {
+.bcds-footer > .bcds-footer--acknowledgement > .bcds-footer--acknowledgement-text {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,10 +49,7 @@
   width: 100%;
 }
 
-.bcds-footer
-  > .bcds-footer--acknowledgement
-  > .bcds-footer--acknowledgement-text
-  > p {
+.bcds-footer > .bcds-footer--acknowledgement > .bcds-footer--acknowledgement-text > p {
   margin: var(--layout-margin-none);
 }
 
@@ -388,11 +383,7 @@ p.bcds-footer--copyright {
 }
 
 .bcds-header > .bcds-header--container > ul.bcds-header--skiplinks li a:focus,
-.bcds-header
-  > .bcds-header--container
-  > ul.bcds-header--skiplinks
-  li
-  button:focus {
+.bcds-header > .bcds-header--container > ul.bcds-header--skiplinks li button:focus {
   margin-left: 0; /* Line up left edge with left edge of logo image */
   text-wrap: nowrap;
 }
