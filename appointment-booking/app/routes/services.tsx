@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { InlineAlert } from '@bcgov/design-system-react-components'
+import { useNavigate } from 'react-router'
 import { getPublicServices, type Service } from '../api/services'
 import { useBooking } from '../booking/booking-context'
 import { BookingContinueRow } from '../components/BookingContinueRow'
@@ -19,6 +20,7 @@ export function meta() {
 }
 
 export default function ServicesPage() {
+  const navigate = useNavigate()
   // Selection lives in booking context so later steps can reuse it.
   const { selectedService, setSelectedService } = useBooking()
   const selectedId = selectedService ? String(selectedService.id) : ''
@@ -138,7 +140,10 @@ export default function ServicesPage() {
         </>
       )}
 
-      <BookingContinueRow isDisabled={!canContinue} />
+      <BookingContinueRow
+        isDisabled={!canContinue}
+        onContinue={() => navigate('/service-locations')}
+      />
     </>
   )
 }

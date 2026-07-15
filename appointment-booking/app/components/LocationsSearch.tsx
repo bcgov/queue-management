@@ -1,14 +1,18 @@
+import { useState } from 'react'
 import { Button, TextField, Tooltip, TooltipTrigger } from '@bcgov/design-system-react-components'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+// Hook + search UI are one locations-search module (directory + booking step 2).
+/* eslint-disable react-refresh/only-export-components */
 export type NearestLocationStatus = 'idle' | 'loading' | 'active' | 'error'
+export type Coordinates = { latitude: number; longitude: number }
 
 type LocationsSearchProps = {
   value: string
   onChange: (value: string) => void
   onClear: () => void
-  // Page owns geolocation; this component only renders pin state and click.
+  // From useNearestSort — this component only renders pin state and click.
   nearestSort: boolean
   nearestStatus: NearestLocationStatus
   onNearestSortPress: () => void
@@ -26,6 +30,70 @@ function nearestSortTooltipText(isActive: boolean, status: NearestLocationStatus
   }
 
   return 'Use your location to sort offices by distance.'
+}
+
+// Shared geolocation + nearest-sort state for the directory and booking locations step.
+// LocationsSearch only renders the pin; pages use userLocation to sort their lists.
+export function useNearestSort() {
+  const [nearestSort, setNearestSort] = useState(false)
+  const [status, setStatus] = useState<NearestLocationStatus>('idle')
+  const [userLocation, setUserLocation] = useState<Coordinates | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  function clearNearestSort() {
+    setNearestSort(false)
+    setStatus('idle')
+    setUserLocation(null)
+    setError(null)
+  }
+
+  function toggleNearestSort() {
+    if (nearestSort) {
+      clearNearestSort()
+      return
+    }
+
+    // Guard for SSR / browsers without geolocation — pin must not throw.
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setStatus('error')
+      setError('Your browser does not support location services.')
+      return
+    }
+
+    setStatus('loading')
+    setError(null)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+        setNearestSort(true)
+        setStatus('active')
+      },
+      (geoError) => {
+        setStatus('error')
+        setNearestSort(false)
+        setUserLocation(null)
+        setError(
+          geoError.code === geoError.PERMISSION_DENIED
+            ? 'Location access was denied. Allow location in your browser to sort by nearest office.'
+            : 'Unable to determine your location. Please try again.',
+        )
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+    )
+  }
+
+  return {
+    nearestSort,
+    status,
+    userLocation,
+    error,
+    clearNearestSort,
+    toggleNearestSort,
+  }
 }
 
 // Shared location search bar (directory + booking step 2): search, clear, nearest pin.

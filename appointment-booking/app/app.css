@@ -365,10 +365,47 @@ p {
   color: var(--typography-color-secondary);
 }
 
+.booking-selected-service {
+  margin: 0 0 var(--layout-padding-xlarge);
+  padding: var(--layout-padding-medium) var(--layout-padding-large);
+  font: var(--typography-regular-body);
+  color: var(--typography-color-primary);
+  background: var(--theme-blue-10);
+  border-left: var(--layout-border-width-medium) solid var(--theme-blue-80);
+  border-radius: var(--layout-border-radius-medium);
+}
+
+.booking-selected-service strong {
+  font: var(--typography-bold-body);
+}
+
+.services-table-name-cell,
+.services-table-address-cell {
+  word-break: break-word;
+  vertical-align: top;
+}
+
+.services-table-name-cell {
+  width: 42%;
+}
+
+.booking-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--layout-padding-medium);
+  margin-top: var(--layout-padding-large);
+}
+
 .booking-continue-row {
   margin-top: var(--layout-padding-large);
   margin-left: auto;
   width: fit-content;
+}
+
+.booking-nav-row .booking-continue-row {
+  margin-top: 0;
+  margin-left: 0;
 }
 
 @media (max-width: 48rem) {
@@ -433,6 +470,8 @@ p {
     text-align: center;
   }
 
+  .services-table-name-cell,
+  .services-table-address-cell,
   .services-table td:last-child {
     flex: 1;
     min-width: 0;
