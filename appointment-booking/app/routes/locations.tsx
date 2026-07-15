@@ -1,6 +1,4 @@
 import { useMemo, useState } from 'react'
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getDistance } from 'geolib'
 import {
   Button,
@@ -8,10 +6,8 @@ import {
   Link,
   SvgChevronDownIcon,
   SvgChevronUpIcon,
-  TextField,
-  Tooltip,
-  TooltipTrigger,
 } from '@bcgov/design-system-react-components'
+import { LocationsSearch } from '../components/LocationsSearch'
 
 const PAGE_DESCRIPTION =
   'Find Service BC office locations in British Columbia. View addresses, contact details, hours of operation and book an appointment.'
@@ -1656,21 +1652,6 @@ export function meta() {
   return [{ title: 'Service BC Locations' }, { name: 'description', content: PAGE_DESCRIPTION }]
 }
 
-function nearestTooltipText(
-  nearestSort: boolean,
-  locationStatus: 'idle' | 'loading' | 'active' | 'error',
-) {
-  if (locationStatus === 'loading') {
-    return 'Finding your location...'
-  }
-
-  if (nearestSort) {
-    return 'Nearest sort is on. Click to turn off.'
-  }
-
-  return 'Use your location to sort offices by distance.'
-}
-
 export default function Locations() {
   const [search, setSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<SortColumn>('location')
@@ -1815,40 +1796,16 @@ export default function Locations() {
         offices by distance from you.
       </p>
 
-      <div className="locations-search-row">
-        <TextField
-          className="locations-search"
-          name="office-search"
-          value={search}
-          onChange={setSearch}
-          iconRight={
-            <TooltipTrigger>
-              <Button
-                className={
-                  nearestSort ? 'locations-nearest-button is-active' : 'locations-nearest-button'
-                }
-                variant={nearestSort ? 'primary' : 'secondary'}
-                size="medium"
-                isIconButton
-                onPress={toggleNearestSort}
-                isDisabled={locationStatus === 'loading'}
-                aria-pressed={nearestSort}
-                aria-label={
-                  locationStatus === 'loading'
-                    ? 'Finding your location'
-                    : nearestSort
-                      ? 'Clear nearest sort'
-                      : 'Sort offices by nearest to you'
-                }
-              >
-                <LocationIcon />
-              </Button>
-              <Tooltip>{nearestTooltipText(nearestSort, locationStatus)}</Tooltip>
-            </TooltipTrigger>
-          }
-        />
-        {nearestSort ? <span className="locations-nearest-label">Nearest first</span> : null}
-      </div>
+      <LocationsSearch
+        value={search}
+        onChange={setSearch}
+        onClear={() => setSearch('')}
+        nearestSort={nearestSort}
+        nearestStatus={locationStatus}
+        onNearestSortPress={toggleNearestSort}
+        ariaLabel="Search offices"
+        placeholder="Search offices"
+      />
 
       {locationError ? (
         <InlineAlert variant="danger" title="Location unavailable">
@@ -1992,10 +1949,6 @@ export default function Locations() {
       </div>
     </>
   )
-}
-
-function LocationIcon() {
-  return <FontAwesomeIcon icon={faLocationDot} className="locations-pin-icon" />
 }
 
 function ColumnSortButton({
