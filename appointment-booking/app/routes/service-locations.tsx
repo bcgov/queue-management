@@ -15,6 +15,7 @@ const BOOKING_STEP = 2
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING = 'Select a Service BC location for your appointment.'
 
+// Selection summary; nested InlineAlert shows the office online appointment message when set.
 function BookingDetailCallout({
   selectedService,
   selectedLocation,
@@ -24,32 +25,37 @@ function BookingDetailCallout({
 }) {
   return (
     <Callout variant="lightBlue">
-      <Text>
-        {selectedService ? (
-          <>
-            Selected service - <strong>{selectedService.name}</strong>
-            <br />
-          </>
-        ) : (
-          <>Please go back to choose a service before selecting a location.</>
-        )}
-        {selectedLocation ? (
-          <>
-            {!selectedService ? <br /> : null}
-            Appointment Location - <strong>{selectedLocation.name}</strong>
-            {selectedLocation.address ? (
-              <>
-                <br />
-                Address - <strong>{selectedLocation.address}</strong>
-              </>
-            ) : null}
-            <br />
-            Map and Specific Callouts/Announcements will appear here.
-          </>
-        ) : selectedService ? (
-          <>Select a location from the list to view details.</>
+      <div className="booking-detail-callout-content">
+        <Text>
+          {selectedService ? (
+            <>
+              Selected service - <strong>{selectedService.name}</strong>
+              <br />
+            </>
+          ) : (
+            <>Please go back to choose a service before selecting a location.</>
+          )}
+          {selectedLocation ? (
+            <>
+              {!selectedService ? <br /> : null}
+              Appointment Location - <strong>{selectedLocation.name}</strong>
+              {selectedLocation.address ? (
+                <>
+                  <br />
+                  Address - <strong>{selectedLocation.address}</strong>
+                </>
+              ) : null}
+            </>
+          ) : selectedService ? (
+            <>Select a location from the list to view details.</>
+          ) : null}
+        </Text>
+        {selectedLocation?.appointmentMessage ? (
+          <InlineAlert variant="info" title="Location notice">
+            {selectedLocation.appointmentMessage}
+          </InlineAlert>
         ) : null}
-      </Text>
+      </div>
     </Callout>
   )
 }
