@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { InlineAlert } from '@bcgov/design-system-react-components'
+import { Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { getDistance } from 'geolib'
 import { useNavigate } from 'react-router'
 import { getBookingLocations, type Location } from '../api/locations'
+import type { Service } from '../api/services'
 import { useBooking } from '../booking/booking-context'
 import { BookingBackRow } from '../components/BookingBackRow'
 import { BookingContinueRow } from '../components/BookingContinueRow'
@@ -13,6 +14,45 @@ import { LocationsTable } from '../components/LocationsTable'
 const BOOKING_STEP = 2
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING = 'Select a Service BC location for your appointment.'
+
+function BookingDetailCallout({
+  selectedService,
+  selectedLocation,
+}: {
+  selectedService: Service | null
+  selectedLocation: Location | null
+}) {
+  return (
+    <Callout variant="lightBlue">
+      <Text>
+        {selectedService ? (
+          <>
+            Selected service - <strong>{selectedService.name}</strong>
+            <br />
+          </>
+        ) : (
+          <>Please go back to choose a service before selecting a location.</>
+        )}
+        {selectedLocation ? (
+          <>
+            {!selectedService ? <br /> : null}
+            Appointment Location - <strong>{selectedLocation.name}</strong>
+            {selectedLocation.address ? (
+              <>
+                <br />
+                Address - <strong>{selectedLocation.address}</strong>
+              </>
+            ) : null}
+            <br />
+            Map and Specific Callouts/Announcements will appear here.
+          </>
+        ) : selectedService ? (
+          <>Select a location from the list to view details.</>
+        ) : null}
+      </Text>
+    </Callout>
+  )
+}
 
 type SortDirection = 'asc' | 'desc'
 
@@ -94,18 +134,6 @@ export default function ServiceLocationsPage() {
     return results
   }, [locations, search, sortDirection, nearestSort, userLocation])
 
-  // Arrow keys move selection among visible rows (same pattern as the services step).
-  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
-
-    const idx = visibleLocations.findIndex((location) => String(location.id) === selectedId)
-    const nextIdx = e.key === 'ArrowDown' ? idx + 1 : idx - 1
-    if (nextIdx >= 0 && nextIdx < visibleLocations.length) {
-      e.preventDefault()
-      setSelectedLocation(visibleLocations[nextIdx])
-    }
-  }
-
   const canContinue = !!selectedService && !!selectedLocation
   const showLoadError = !isLoading && loadError
   const showUnavailable = !isLoading && !loadError && locations.length === 0
@@ -121,16 +149,6 @@ export default function ServiceLocationsPage() {
         heading={BOOKING_STEP_HEADING}
       />
 
-      <p className="booking-selected-service" role="status">
-        {selectedService ? (
-          <>
-            Selected service: <strong>{selectedService.name}</strong>
-          </>
-        ) : (
-          <>Please go back to choose a service before selecting a location.</>
-        )}
-      </p>
-
       {showLoadError ? (
         <InlineAlert variant="danger" title="Unable to load locations">
           Please try again.
@@ -140,7 +158,7 @@ export default function ServiceLocationsPage() {
           Please try again.
         </InlineAlert>
       ) : (
-        <>
+        <div className="booking-locations-layout">
           {!isLoading && (
             <LocationsSearch
               value={search}
@@ -158,21 +176,33 @@ export default function ServiceLocationsPage() {
             </InlineAlert>
           ) : null}
 
-          <LocationsTable
-            locations={visibleLocations}
-            isLoading={isLoading}
-            showNoResults={showNoResults}
-            sortDirection={sortDirection}
-            onToggleSort={() => {
-              // Name sort and nearest sort are mutually exclusive.
-              clearNearestSort()
-              setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
-            }}
-            selectedId={selectedId}
-            onSelect={setSelectedLocation}
-            onRowKeyDown={handleRowKeyDown}
-          />
-        </>
+          <div className="booking-locations-body">
+            <LocationsTable
+              locations={visibleLocations}
+              isLoading={isLoading}
+              showNoResults={showNoResults}
+              sortDirection={sortDirection}
+              onToggleSort={() => {
+                // Name sort and nearest sort are mutually exclusive.
+                clearNearestSort()
+                setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
+              }}
+              selectedId={selectedId}
+              onSelect={setSelectedLocation}
+            />
+
+            <aside
+              className="booking-locations-detail"
+              aria-label="Booking selection details"
+              role="status"
+            >
+              <BookingDetailCallout
+                selectedService={selectedService}
+                selectedLocation={selectedLocation}
+              />
+            </aside>
+          </div>
+        </div>
       )}
 
       <div className="booking-nav-row">

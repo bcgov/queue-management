@@ -35,7 +35,8 @@ p {
 }
 
 /* Locations directory table — BC DS has no Table component, so we style our own */
-.locations-search-row {
+.locations-search-row,
+.services-search-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -46,6 +47,12 @@ p {
 .locations-search {
   flex: 1 1 16rem;
   max-width: 32rem;
+  margin-bottom: 0;
+}
+
+.services-search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
   margin-bottom: 0;
 }
 
@@ -94,12 +101,11 @@ p {
   background: var(--surface-color-background-white);
 }
 
-.locations-sort-button {
+.locations-sort-button,
+.services-sort-button {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--layout-margin-small);
-  width: 100%;
   padding: 0;
   border: none;
   background: none;
@@ -109,32 +115,42 @@ p {
   cursor: pointer;
 }
 
-.locations-sort-icons {
+.locations-sort-button {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.locations-sort-icons,
+.services-sort-icons {
   display: inline-flex;
   flex-direction: column;
   flex-shrink: 0;
   line-height: 0;
 }
 
-.locations-sort-icons svg {
+.locations-sort-icons svg,
+.services-sort-icons svg {
   width: 0.75rem;
   height: 0.75rem;
   color: var(--typography-color-secondary);
   opacity: 0.45;
 }
 
-.locations-sort-icons .is-active svg {
+.locations-sort-icons .is-active svg,
+.services-sort-icons .is-active svg {
   color: var(--typography-color-primary);
   opacity: 1;
 }
 
-.locations-sort-button:hover {
+.locations-sort-button:hover,
+.services-sort-button:hover {
   color: var(--typography-color-link);
 }
 
-.locations-sort-button:focus-visible {
-  outline: solid var(--layout-border-width-medium) var(--surface-color-border-active);
-  outline-offset: var(--layout-margin-hair);
+.locations-sort-button:focus-visible,
+.services-sort-button:focus-visible {
+  outline: var(--layout-border-width-medium) solid var(--surface-color-border-active);
+  outline-offset: var(--layout-padding-xsmall);
 }
 
 .locations-table tbody tr:nth-child(even) {
@@ -198,61 +214,6 @@ p {
   font: var(--typography-bold-body);
 }
 
-.services-search-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--layout-padding-medium);
-  margin-bottom: var(--layout-padding-xlarge);
-}
-
-.services-search {
-  flex: 1 1 16rem;
-  max-width: 24rem;
-  margin-bottom: 0;
-}
-
-.services-sort-button {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--layout-margin-small);
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.services-sort-icons {
-  display: inline-flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  line-height: 0;
-}
-
-.services-sort-icons svg {
-  width: 0.75rem;
-  height: 0.75rem;
-  color: var(--typography-color-secondary);
-  opacity: 0.45;
-}
-
-.services-sort-icons .is-active svg {
-  color: var(--typography-color-primary);
-  opacity: 1;
-}
-
-.services-sort-button:hover {
-  color: var(--typography-color-link);
-}
-
-.services-sort-button:focus-visible {
-  outline: var(--layout-border-width-medium) solid var(--surface-color-border-active);
-  outline-offset: var(--layout-padding-xsmall);
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -263,6 +224,13 @@ p {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.services-table-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }
 
 .services-table-wrapper {
@@ -315,22 +283,18 @@ p {
   background: var(--surface-color-background-white);
 }
 
-.services-table tbody tr:not(.is-unavailable) {
-  cursor: pointer;
-}
-
-.services-table tbody tr.is-selected {
+.services-table tbody tr:has(input[type='radio']:checked:not(:disabled)) {
   background: var(--theme-blue-10);
   box-shadow: inset var(--layout-border-width-medium) 0 0 0 var(--theme-blue-80);
 }
 
 .services-table tbody tr.is-unavailable {
   color: var(--typography-color-disabled);
-  cursor: not-allowed;
 }
 
-.services-table tbody tr.is-unavailable .services-table-radio:disabled {
+.services-table tbody tr.is-unavailable input[type='radio']:disabled {
   opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .services-table-select-cell {
@@ -340,18 +304,16 @@ p {
   padding-top: calc(var(--layout-padding-medium) + 0.125rem);
 }
 
-.services-table-radio {
-  width: 1.25rem;
-  height: 1.25rem;
+.services-table-select-cell input[type='radio'] {
   margin: 0;
   accent-color: var(--theme-blue-80);
   cursor: pointer;
-  display: block;
-  margin-inline: auto;
 }
 
-.services-table-radio:disabled {
-  cursor: not-allowed;
+.services-table label {
+  display: block;
+  margin: 0;
+  cursor: pointer;
 }
 
 .services-table td:last-child {
@@ -363,30 +325,6 @@ p {
   margin: var(--layout-padding-medium) 0 0;
   font: var(--typography-regular-small-body);
   color: var(--typography-color-secondary);
-}
-
-.booking-selected-service {
-  margin: 0 0 var(--layout-padding-xlarge);
-  padding: var(--layout-padding-medium) var(--layout-padding-large);
-  font: var(--typography-regular-body);
-  color: var(--typography-color-primary);
-  background: var(--theme-blue-10);
-  border-left: var(--layout-border-width-medium) solid var(--theme-blue-80);
-  border-radius: var(--layout-border-radius-medium);
-}
-
-.booking-selected-service strong {
-  font: var(--typography-bold-body);
-}
-
-.services-table-name-cell,
-.services-table-address-cell {
-  word-break: break-word;
-  vertical-align: top;
-}
-
-.services-table-name-cell {
-  width: 42%;
 }
 
 .booking-nav-row {
@@ -406,6 +344,64 @@ p {
 .booking-nav-row .booking-continue-row {
   margin-top: 0;
   margin-left: 0;
+}
+
+.booking-locations-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-xlarge);
+}
+
+.booking-locations-layout .locations-search-row {
+  margin-bottom: 0;
+}
+
+.booking-locations-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-xlarge);
+  min-width: 0;
+}
+
+.booking-locations-layout .locations-search {
+  flex: 1 1 100%;
+  max-width: none;
+  width: 100%;
+}
+
+.booking-locations-detail {
+  min-width: 0;
+  order: 1;
+}
+
+.booking-locations-body > .services-table-fieldset {
+  min-width: 0;
+  order: 2;
+}
+
+@media (min-width: 48rem) {
+  .booking-locations-layout > .locations-search-row {
+    width: calc((100% - var(--layout-padding-xlarge)) / 2);
+  }
+
+  .booking-locations-body {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .booking-locations-body > .services-table-fieldset,
+  .booking-locations-detail {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .booking-locations-detail {
+    order: 2;
+  }
+
+  .booking-locations-body > .services-table-fieldset {
+    order: 1;
+  }
 }
 
 @media (max-width: 48rem) {
@@ -470,8 +466,6 @@ p {
     text-align: center;
   }
 
-  .services-table-name-cell,
-  .services-table-address-cell,
   .services-table td:last-child {
     flex: 1;
     min-width: 0;
