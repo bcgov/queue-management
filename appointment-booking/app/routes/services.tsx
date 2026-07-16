@@ -74,20 +74,6 @@ export default function ServicesPage() {
     return results
   }, [services, search, sortDirection])
 
-  // Navigate between bookable services using arrow keys
-  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
-
-    const bookable = visibleServices.filter((s) => s.isOnlineBookable)
-    const idx = bookable.findIndex((s) => String(s.id) === selectedId)
-    const nextIdx = e.key === 'ArrowDown' ? idx + 1 : idx - 1
-
-    if (nextIdx >= 0 && nextIdx < bookable.length) {
-      e.preventDefault()
-      setSelectedService(bookable[nextIdx])
-    }
-  }
-
   // Page owns Continue enablement; only a bookable selection unlocks the next step.
   const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
@@ -129,7 +115,6 @@ export default function ServicesPage() {
             }
             selectedId={selectedId}
             onSelect={setSelectedService}
-            onRowKeyDown={handleRowKeyDown}
           />
 
           {!isLoading && hasUnavailableServices && (
