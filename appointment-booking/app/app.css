@@ -374,6 +374,15 @@ p {
   order: 1;
 }
 
+/* Full-width stack so the nested location notice sits below the selection text. */
+.booking-detail-callout-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-medium);
+  min-width: 0;
+  width: 100%;
+}
+
 .booking-locations-body > .services-table-fieldset {
   min-width: 0;
   order: 2;

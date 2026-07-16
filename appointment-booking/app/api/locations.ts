@@ -7,6 +7,7 @@ export type Location = {
   address: string
   latitude: number | null
   longitude: number | null
+  appointmentMessage: string
 }
 
 // API response row from GET /api/v1/offices/.
@@ -19,6 +20,7 @@ type ApiOffice = {
   appointments_enabled_ind: number
   online_status: string | null
   deleted: string | null
+  office_appointment_message: string | null
 }
 
 type ApiOfficesResponse = {
@@ -56,6 +58,7 @@ export async function getBookingLocations(): Promise<Location[]> {
       address: row.civic_address?.trim() || '',
       latitude: row.latitude,
       longitude: row.longitude,
+      appointmentMessage: row.office_appointment_message?.trim() || '',
     })
   }
 
