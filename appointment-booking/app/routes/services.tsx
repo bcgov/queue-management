@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { InlineAlert } from '@bcgov/design-system-react-components'
+import { useNavigate } from 'react-router'
 import { getPublicServices, type Service } from '../api/services'
 import { useBooking } from '../booking/booking-context'
 import { BookingContinueRow } from '../components/BookingContinueRow'
@@ -19,6 +20,7 @@ export function meta() {
 }
 
 export default function ServicesPage() {
+  const navigate = useNavigate()
   // Selection lives in booking context so later steps can reuse it.
   const { selectedService, setSelectedService } = useBooking()
   const selectedId = selectedService ? String(selectedService.id) : ''
@@ -72,20 +74,6 @@ export default function ServicesPage() {
     return results
   }, [services, search, sortDirection])
 
-  // Navigate between bookable services using arrow keys
-  const handleRowKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
-
-    const bookable = visibleServices.filter((s) => s.isOnlineBookable)
-    const idx = bookable.findIndex((s) => String(s.id) === selectedId)
-    const nextIdx = e.key === 'ArrowDown' ? idx + 1 : idx - 1
-
-    if (nextIdx >= 0 && nextIdx < bookable.length) {
-      e.preventDefault()
-      setSelectedService(bookable[nextIdx])
-    }
-  }
-
   // Page owns Continue enablement; only a bookable selection unlocks the next step.
   const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
@@ -127,7 +115,6 @@ export default function ServicesPage() {
             }
             selectedId={selectedId}
             onSelect={setSelectedService}
-            onRowKeyDown={handleRowKeyDown}
           />
 
           {!isLoading && hasUnavailableServices && (
@@ -138,7 +125,10 @@ export default function ServicesPage() {
         </>
       )}
 
-      <BookingContinueRow isDisabled={!canContinue} />
+      <BookingContinueRow
+        isDisabled={!canContinue}
+        onContinue={() => navigate('/service-locations')}
+      />
     </>
   )
 }

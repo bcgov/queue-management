@@ -1,34 +1,30 @@
 import { SvgChevronDownIcon, SvgChevronUpIcon } from '@bcgov/design-system-react-components'
-import type { Service } from '../api/services'
+import type { Location } from '../api/locations'
 
 type SortDirection = 'asc' | 'desc'
 
-type ServicesTableProps = {
-  services: Service[]
+type LocationsTableProps = {
+  locations: Location[]
   isLoading: boolean
   showNoResults: boolean
   sortDirection: SortDirection
   onToggleSort: () => void
   selectedId: string
-  onSelect: (service: Service) => void
+  onSelect: (location: Location) => void
 }
 
-function getRowClassName(service: Service) {
-  return service.isOnlineBookable ? undefined : 'is-unavailable'
-}
-
-export function ServicesTable({
-  services,
+export function LocationsTable({
+  locations,
   isLoading,
   showNoResults,
   sortDirection,
   onToggleSort,
   selectedId,
   onSelect,
-}: ServicesTableProps) {
+}: LocationsTableProps) {
   return (
     <fieldset className="services-table-fieldset">
-      <legend className="sr-only">Select a service</legend>
+      <legend className="sr-only">Select a location</legend>
       <div className="services-table-wrapper">
         <table className="services-table">
           <thead>
@@ -40,10 +36,10 @@ export function ServicesTable({
                   className="services-sort-button"
                   onClick={onToggleSort}
                   aria-label={
-                    sortDirection === 'asc' ? 'Sort services Z to A' : 'Sort services A to Z'
+                    sortDirection === 'asc' ? 'Sort locations Z to A' : 'Sort locations A to Z'
                   }
                 >
-                  <span>Services</span>
+                  <span>Location</span>
                   <span className="services-sort-icons" aria-hidden="true">
                     <span className={sortDirection === 'asc' ? 'is-active' : undefined}>
                       <SvgChevronUpIcon />
@@ -59,37 +55,36 @@ export function ServicesTable({
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={2}>Loading services...</td>
+                <td colSpan={2}>Loading locations...</td>
               </tr>
             ) : showNoResults ? (
               <tr>
                 <td colSpan={2}>
-                  No services match your search. Try different keywords or clear the search to see
-                  all services.
+                  No locations match your search. Try different keywords or clear the search to see
+                  all locations.
                 </td>
               </tr>
             ) : (
-              services.map((service) => {
-                const inputId = `service-${service.id}`
+              locations.map((location) => {
+                const inputId = `location-${location.id}`
+                const address = location.address || '—'
 
                 return (
-                  <tr key={service.id} className={getRowClassName(service)}>
+                  <tr key={location.id}>
                     <td className="services-table-select-cell">
                       <input
                         type="radio"
                         id={inputId}
-                        name="service"
-                        checked={selectedId === String(service.id)}
-                        disabled={!service.isOnlineBookable}
-                        onChange={() => onSelect(service)}
+                        name="location"
+                        checked={selectedId === String(location.id)}
+                        onChange={() => onSelect(location)}
                       />
                     </td>
                     <td>
-                      {service.isOnlineBookable ? (
-                        <label htmlFor={inputId}>{service.name}</label>
-                      ) : (
-                        service.name
-                      )}
+                      <label htmlFor={inputId}>
+                        {location.name}
+                        <span className="sr-only">, {address}</span>
+                      </label>
                     </td>
                   </tr>
                 )

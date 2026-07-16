@@ -7,7 +7,7 @@ import {
   SvgChevronDownIcon,
   SvgChevronUpIcon,
 } from '@bcgov/design-system-react-components'
-import { LocationsSearch } from '../components/LocationsSearch'
+import { LocationsSearch, useNearestSort } from '../components/LocationsSearch'
 
 const PAGE_DESCRIPTION =
   'Find Service BC office locations in British Columbia. View addresses, contact details, hours of operation and book an appointment.'
@@ -1656,12 +1656,14 @@ export default function Locations() {
   const [search, setSearch] = useState('')
   const [sortColumn, setSortColumn] = useState<SortColumn>('location')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [nearestSort, setNearestSort] = useState(false)
-  const [locationStatus, setLocationStatus] = useState<'idle' | 'loading' | 'active' | 'error'>(
-    'idle',
-  )
-  const [userLocation, setUserLocation] = useState<Coordinates | null>(null)
-  const [locationError, setLocationError] = useState<string | null>(null)
+  const {
+    nearestSort,
+    status: locationStatus,
+    userLocation,
+    error: locationError,
+    clearNearestSort,
+    toggleNearestSort,
+  } = useNearestSort()
 
   const officeDistances = useMemo(() => {
     if (!userLocation) {
@@ -1708,10 +1710,7 @@ export default function Locations() {
   }, [search, sortColumn, sortDirection, nearestSort, userLocation, officeDistances])
 
   function toggleSort(column: SortColumn) {
-    setNearestSort(false)
-    setLocationStatus('idle')
-    setUserLocation(null)
-    setLocationError(null)
+    clearNearestSort()
 
     if (sortColumn === column) {
       setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
@@ -1720,55 +1719,6 @@ export default function Locations() {
 
     setSortColumn(column)
     setSortDirection('asc')
-  }
-
-  function toggleNearestSort() {
-    if (nearestSort) {
-      setNearestSort(false)
-      setLocationStatus('idle')
-      setUserLocation(null)
-      setLocationError(null)
-      return
-    }
-
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      setLocationStatus('error')
-      setLocationError('Your browser does not support location services.')
-      return
-    }
-
-    setLocationStatus('loading')
-    setLocationError(null)
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
-        setNearestSort(true)
-        setLocationStatus('active')
-      },
-      (error) => {
-        setLocationStatus('error')
-        setNearestSort(false)
-        setUserLocation(null)
-
-        if (error.code === error.PERMISSION_DENIED) {
-          setLocationError(
-            'Location access was denied. Allow location in your browser to sort by nearest office.',
-          )
-          return
-        }
-
-        setLocationError('Unable to determine your location. Please try again.')
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 10000,
-        maximumAge: 300000,
-      },
-    )
   }
 
   return (
