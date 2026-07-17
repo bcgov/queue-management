@@ -1,5 +1,5 @@
 // Holds the signed-in user for the whole app (header + booking steps).
-import { useContext, useEffect, useState, type ReactNode } from 'react'
+import { useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 
 import {
   clearStoredAuthSession,
@@ -24,8 +24,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(id)
   }, [])
 
-  // Keep React state and sessionStorage in sync.
-  function setSession(next: AuthSession | null) {
+  // Stable callbacks — /signin effect depends on setSession and must not re-run mid-login.
+  const setSession = useCallback((next: AuthSession | null) => {
     if (next) {
       writeAuthSession(next)
     } else {
@@ -33,16 +33,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setSessionState(next)
     setIsReady(true)
-  }
+  }, [])
 
-  async function logout() {
+  const logout = useCallback(async () => {
     const logoutPromise = logoutKeycloak(`${window.location.origin}/services`)
     // Logout ends the booking attempt too — do not leave service/location for the next user.
     clearStoredAuthSession()
     clearStoredBookingSession()
     setSessionState(null)
     await logoutPromise
-  }
+  }, [])
 
   return (
     <AuthContext.Provider

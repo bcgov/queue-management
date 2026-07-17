@@ -61,7 +61,8 @@ export default function SigninCallbackPage() {
     return () => {
       cancelled = true
     }
-  }, [idpHint, navigate, setSession])
+    // Only re-run when the IdP changes. setSession/navigate are stable enough for this page.
+  }, [idpHint]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error) {
     return (
