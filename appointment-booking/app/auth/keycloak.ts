@@ -44,6 +44,10 @@ export class WrongIdpError extends Error {
 // Reused on logout so we can call Keycloak logout with the current tokens.
 let kcInstance: Keycloak | undefined
 
+// Prevents a second /signin mount from starting a new login while one is in progress
+// (would burn the OAuth code and loop on "Signing you in…").
+let loginInFlight: Promise<AuthSession | null> | null = null
+
 // Removes auth tokens/profile from sessionStorage. Does not touch booking selections.
 export function clearStoredAuthSession(): void {
   for (const key of AUTH_SESSION_KEYS) {
@@ -159,43 +163,51 @@ function appSigninCallbackUri(idpHint: string): string {
 // Second call (after return to /signin/:idpHint): finish login and return the session.
 // Rejects any IdP other than BCSC.
 export async function initKeycloakLogin(idpHint: string): Promise<AuthSession | null> {
-  clearStoredAuthSession()
+  if (loginInFlight) return loginInFlight
 
-  const keycloakConfigUrl = await getKeycloakConfigUrl()
-  const kc = new Keycloak(keycloakConfigUrl)
-  kcInstance = kc
+  loginInFlight = (async () => {
+    clearStoredAuthSession()
 
-  // OAuth callback must return to this page so keycloak-js can finish the code exchange.
-  const callbackUri = appSigninCallbackUri(idpHint)
+    const keycloakConfigUrl = await getKeycloakConfigUrl()
+    const kc = new Keycloak(keycloakConfigUrl)
+    kcInstance = kc
 
-  // Force the chosen IdP (bcsc) and our callback URL on every Keycloak login redirect.
-  const originalLogin = kc.login.bind(kc)
-  kc.login = (options?: KeycloakLoginOptions) => {
-    const next = options
-      ? { ...options, idpHint, redirectUri: options.redirectUri || callbackUri }
-      : { idpHint, redirectUri: callbackUri }
-    return originalLogin(next)
-  }
+    // OAuth callback must return to this page so keycloak-js can finish the code exchange.
+    const callbackUri = appSigninCallbackUri(idpHint)
 
-  const authenticated = await kc.init({
-    onLoad: 'login-required',
-    checkLoginIframe: false,
-    pkceMethod: 'S256',
-    redirectUri: callbackUri,
+    // Force the chosen IdP (bcsc) and our callback URL on every Keycloak login redirect.
+    const originalLogin = kc.login.bind(kc)
+    kc.login = (options?: KeycloakLoginOptions) => {
+      const next = options
+        ? { ...options, idpHint, redirectUri: options.redirectUri || callbackUri }
+        : { idpHint, redirectUri: callbackUri }
+      return originalLogin(next)
+    }
+
+    const authenticated = await kc.init({
+      onLoad: 'login-required',
+      checkLoginIframe: false,
+      pkceMethod: 'S256',
+      redirectUri: callbackUri,
+    })
+
+    if (!authenticated || !kc.token) {
+      return null
+    }
+
+    const session = buildSessionFromKeycloak(kc)
+    if (!isAllowedBookingIdp(session.loginSource)) {
+      // End the Keycloak SSO session so the next attempt can use BCSC.
+      await kc.logout({ redirectUri: `${appLoginRedirectUri()}?error=idp` })
+      throw new WrongIdpError(session.loginSource || 'unknown')
+    }
+
+    return session
+  })().finally(() => {
+    loginInFlight = null
   })
 
-  if (!authenticated || !kc.token) {
-    return null
-  }
-
-  const session = buildSessionFromKeycloak(kc)
-  if (!isAllowedBookingIdp(session.loginSource)) {
-    // End the Keycloak SSO session so the next attempt can use BCSC.
-    await kc.logout({ redirectUri: `${appLoginRedirectUri()}?error=idp` })
-    throw new WrongIdpError(session.loginSource || 'unknown')
-  }
-
-  return session
+  return loginInFlight
 }
 
 export async function logoutKeycloak(redirectUri: string): Promise<void> {
