@@ -176,13 +176,15 @@
       "rootUrl": "http://localhost:8081",
       "baseUrl": "/",
       "redirectUris": [
-        "http://localhost:8081/*"
+        "http://localhost:8081/*",
+        "http://localhost:5173/*"
       ],
       "webOrigins": [
-        "http://localhost:8081"
+        "http://localhost:8081",
+        "http://localhost:5173"
       ],
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:8081/*",
+        "post.logout.redirect.uris": "http://localhost:8081/*##http://localhost:5173/*",
         "pkce.code.challenge.method": "S256"
       },
       "protocolMappers": [
@@ -614,6 +616,76 @@
         ],
         "name": [
           "Test2 Citizen2"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    },
+    {
+      "username": "citizen@bcsc",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "BCSC",
+      "lastName": "Citizen",
+      "email": "citizen.bcsc@example.com",
+      "attributes": {
+        "theq_username": [
+          "citizen-bcsc"
+        ],
+        "identity_provider": [
+          "bcsc"
+        ],
+        "display_name": [
+          "BCSC Citizen"
+        ],
+        "userid": [
+          "CITIZEN-BCSC"
+        ],
+        "name": [
+          "BCSC Citizen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    },
+    {
+      "username": "citizen2@bcsc",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "BCSC2",
+      "lastName": "Citizen2",
+      "email": "citizen2.bcsc@example.com",
+      "attributes": {
+        "theq_username": [
+          "citizen2-bcsc"
+        ],
+        "identity_provider": [
+          "bcsc"
+        ],
+        "display_name": [
+          "BCSC2 Citizen2"
+        ],
+        "userid": [
+          "CITIZEN2-BCSC"
+        ],
+        "name": [
+          "BCSC2 Citizen2"
         ]
       },
       "credentials": [

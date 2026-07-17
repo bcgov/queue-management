@@ -1,36 +1,61 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+// Shared service + location selection across booking steps.
+// Also saved to sessionStorage so selections survive the BCSC redirect.
+import { useContext, useEffect, useState, type ReactNode } from 'react'
 
 import type { Location } from '../api/locations'
 import type { Service } from '../api/services'
+import { addJsonToSession, getJsonFromSession, removeFromSession } from '../auth/session'
+import { SessionKeys } from '../auth/session-keys'
+import { BookingContext } from './booking-store'
 
-// Booking-flow state shared across steps (in-memory; not page-refresh persistent).
-// Mounted once in root so selection survives navigation between booking steps.
-type BookingContextValue = {
-  // Full service object so later steps can use id/name/bookable without re-fetching.
-  selectedService: Service | null
-  setSelectedService: (service: Service | null) => void
-  // Full location object so later steps can use id/name/address without re-fetching.
-  selectedLocation: Location | null
-  setSelectedLocation: (location: Location | null) => void
-}
-
-const BookingContext = createContext<BookingContextValue | null>(null)
-
-// Owns booking selections for the SPA session. Step pages remount; this provider does not.
 export function BookingProvider({ children }: { children: ReactNode }) {
-  const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [isReady, setIsReady] = useState(false)
+  const [selectedService, setSelectedServiceState] = useState<Service | null>(null)
+  const [selectedLocation, setSelectedLocationState] = useState<Location | null>(null)
+
+  useEffect(() => {
+    // sessionStorage is browser-only, so restore it after the initial render.
+    const id = window.setTimeout(() => {
+      setSelectedServiceState(getJsonFromSession<Service>(SessionKeys.BookingSelectedService))
+      setSelectedLocationState(getJsonFromSession<Location>(SessionKeys.BookingSelectedLocation))
+      setIsReady(true)
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [])
+
+  function setSelectedService(service: Service | null) {
+    setSelectedServiceState(service)
+    if (service) {
+      addJsonToSession(SessionKeys.BookingSelectedService, service)
+    } else {
+      removeFromSession(SessionKeys.BookingSelectedService)
+    }
+  }
+
+  function setSelectedLocation(location: Location | null) {
+    setSelectedLocationState(location)
+    if (location) {
+      addJsonToSession(SessionKeys.BookingSelectedLocation, location)
+    } else {
+      removeFromSession(SessionKeys.BookingSelectedLocation)
+    }
+  }
 
   return (
     <BookingContext.Provider
-      value={{ selectedService, setSelectedService, selectedLocation, setSelectedLocation }}
+      value={{
+        isReady,
+        selectedService,
+        setSelectedService,
+        selectedLocation,
+        setSelectedLocation,
+      }}
     >
       {children}
     </BookingContext.Provider>
   )
 }
 
-// Used by booking step pages (services, locations; time/etc. later).
 export function useBooking() {
   const value = useContext(BookingContext)
   if (!value) {

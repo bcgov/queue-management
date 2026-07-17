@@ -4,7 +4,7 @@ import { getDistance } from 'geolib'
 import { useNavigate } from 'react-router'
 import { getBookingLocations, type Location } from '../api/locations'
 import type { Service } from '../api/services'
-import { useBooking } from '../booking/booking-context'
+import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '../components/BookingBackRow'
 import { BookingContinueRow } from '../components/BookingContinueRow'
 import { BookingStepProgress } from '../components/BookingStepProgress'
@@ -213,7 +213,12 @@ export default function ServiceLocationsPage() {
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/services')} />
-        <BookingContinueRow isDisabled={!canContinue} />
+        <BookingContinueRow
+          isDisabled={!canContinue}
+          onContinue={() => {
+            navigate('/login')
+          }}
+        />
       </div>
     </>
   )

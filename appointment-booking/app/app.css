@@ -481,3 +481,43 @@ p {
     padding-top: 0;
   }
 }
+
+.sign-in-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-large);
+  margin: var(--layout-margin-large) 0;
+  max-width: 32rem;
+}
+
+.sign-in-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--layout-padding-medium);
+}
+
+.sign-in-learn-more {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-link);
+}
+
+.login-next-copy {
+  margin: var(--layout-margin-large) 0;
+}
+
+.login-alert {
+  margin-bottom: var(--layout-margin-large);
+}
+
+.header-account {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--layout-padding-medium);
+  /* Header background is light — use primary text, not invert. */
+  color: var(--typography-color-primary);
+  font: var(--typography-regular-small-body);
+  text-align: right;
+}
