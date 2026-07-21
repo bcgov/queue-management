@@ -1,4 +1,4 @@
-name: Pull Request Deploy frontend
+name: Pull Request Deploy staff frontend
 on:
   workflow_dispatch:
     inputs:
