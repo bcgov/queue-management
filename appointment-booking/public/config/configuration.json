@@ -1,5 +1,5 @@
 {
   "VUE_APP_ROOT_API": "http://localhost:5000/api/v1",
   "KEYCLOAK_CONFIG_URL": "/config/kc/keycloak-public.json",
-  "BCServicesCardUrl": "https://www2.gov.bc.ca/gov/content?id=B2B3A21E797A421A8FD39EEA86E245D6"
+  "BC_SERVICES_CARD_URL": "https://www2.gov.bc.ca/gov/content?id=B2B3A21E797A421A8FD39EEA86E245D6"
 }

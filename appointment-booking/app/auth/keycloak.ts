@@ -18,12 +18,7 @@ export type AuthSession = {
 }
 
 type TokenClaims = {
-  lastname?: string
-  firstname?: string
-  given_name?: string
-  family_name?: string
-  name?: string
-  preferred_username?: string
+  email?: string
   sub?: string
   loginSource?: string
   identity_provider?: string
@@ -74,16 +69,9 @@ function resolveIdentityProvider(claims: TokenClaims): string {
   return (claims.identity_provider || claims.loginSource || '').trim().toLowerCase()
 }
 
+// Prefer display_name; then email; then "Appointment User".
 function resolveFullName(claims: TokenClaims): string {
-  const firstName = claims.firstname || claims.given_name || ''
-  const lastName = claims.lastname || claims.family_name || ''
-  return (
-    `${firstName} ${lastName}`.trim() ||
-    claims.display_name ||
-    claims.name ||
-    claims.preferred_username ||
-    ''
-  )
+  return claims.display_name?.trim() || claims.email?.trim() || 'Appointment User'
 }
 
 // Rebuilds the auth session after a refresh/redirect. Drops non-BCSC sessions.
