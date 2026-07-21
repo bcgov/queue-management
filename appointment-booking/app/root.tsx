@@ -59,7 +59,7 @@ function AppShell() {
         {isAuthenticated ? (
           <div className="header-account">
             <span className="header-account-name">
-              Signed in as {session?.userFullName?.trim() || 'BC Services Card user'}
+              Signed in as {session?.userFullName?.trim() || 'Appointment User'}
             </span>
             <Button size="small" onPress={() => void logout()}>
               Log out

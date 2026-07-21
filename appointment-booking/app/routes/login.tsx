@@ -6,10 +6,10 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { useAuth } from '~/auth/auth-context'
 import { IdpHint } from '~/auth/session-keys'
 import { useBooking } from '~/booking/booking-context'
-import { BookingBackRow } from '../components/BookingBackRow'
-import { BookingContinueRow } from '../components/BookingContinueRow'
-import { BookingStepProgress } from '../components/BookingStepProgress'
-import { getBCServicesCardUrl } from '../runtime-config'
+import { BookingBackRow } from '~/components/BookingBackRow'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingStepProgress } from '~/components/BookingStepProgress'
+import { getBCServicesCardUrl } from '~/runtime-config'
 
 const BOOKING_STEP = 3
 const BOOKING_STEP_COUNT = 5
@@ -43,7 +43,7 @@ export default function LoginPage() {
   const heading = isAuthenticated
     ? 'You have successfully signed in.'
     : 'Sign in to continue your booking.'
-  const signedInAs = session?.userFullName?.trim() || 'BC Services Card user'
+  const signedInAs = session?.userFullName?.trim() || 'Appointment User'
 
   if (!hasSelections) {
     return (

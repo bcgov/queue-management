@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { useNavigate, useParams } from 'react-router'
 
-import { createUser } from '../api/users'
+import { createUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
 import { initKeycloakLogin, WrongIdpError } from '~/auth/keycloak'
 import { isAllowedBookingIdp } from '~/auth/session-keys'
