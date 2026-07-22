@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { getDistance } from 'geolib'
 import { useNavigate } from 'react-router'
-import { getBookingLocations, type Location } from '../api/locations'
-import type { Service } from '../api/services'
-import { useBooking } from '../booking/booking-context'
-import { BookingBackRow } from '../components/BookingBackRow'
-import { BookingContinueRow } from '../components/BookingContinueRow'
-import { BookingStepProgress } from '../components/BookingStepProgress'
-import { LocationsSearch, useNearestSort, type Coordinates } from '../components/LocationsSearch'
-import { LocationsTable } from '../components/LocationsTable'
+import { getBookingLocations, type Location } from '~/api/locations'
+import type { Service } from '~/api/services'
+import { useBooking } from '~/booking/booking-context'
+import { BookingBackRow } from '~/components/BookingBackRow'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingStepProgress } from '~/components/BookingStepProgress'
+import { LocationsSearch, useNearestSort, type Coordinates } from '~/components/LocationsSearch'
+import { LocationsTable } from '~/components/LocationsTable'
 
 const BOOKING_STEP = 2
 const BOOKING_STEP_COUNT = 5
@@ -213,7 +213,12 @@ export default function ServiceLocationsPage() {
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/services')} />
-        <BookingContinueRow isDisabled={!canContinue} />
+        <BookingContinueRow
+          isDisabled={!canContinue}
+          onContinue={() => {
+            navigate('/login')
+          }}
+        />
       </div>
     </>
   )

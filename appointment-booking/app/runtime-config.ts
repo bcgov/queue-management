@@ -2,43 +2,62 @@
 // Each environment has its own ConfigMap with the same filename but different values.
 
 type RuntimeConfig = {
-  // Shared with existing appointment-frontend ConfigMaps (legacy Vue env key name).
   VUE_APP_ROOT_API?: string
+  KEYCLOAK_CONFIG_URL?: string
+  BC_SERVICES_CARD_URL?: string
 }
 
 const DEFAULT_API_BASE_URL = '/api/v1'
+const DEFAULT_KEYCLOAK_CONFIG_URL = '/config/kc/keycloak-public.json'
 
+let cachedConfig: RuntimeConfig | null = null
+let inFlightConfig: Promise<RuntimeConfig> | null = null
 let cachedApiBaseUrl: string | null = null
-let inFlightApiBaseUrl: Promise<string> | null = null
 
 function normalizeApiBaseUrl(value: string | undefined): string {
   return value?.trim().replace(/\/$/, '') || DEFAULT_API_BASE_URL
 }
 
-export async function getApiBaseUrl(): Promise<string> {
-  if (cachedApiBaseUrl !== null) return cachedApiBaseUrl
-  if (inFlightApiBaseUrl) return inFlightApiBaseUrl
+async function loadRuntimeConfig(): Promise<RuntimeConfig> {
+  if (cachedConfig !== null) return cachedConfig
+  if (inFlightConfig) return inFlightConfig
 
-  inFlightApiBaseUrl = (async () => {
+  inFlightConfig = (async () => {
     // Only fetch from the browser — relative URLs have no base on the server.
     if (typeof window !== 'undefined') {
       try {
         const res = await fetch('/config/configuration.json', { cache: 'no-store' })
         if (res.ok) {
-          const config = (await res.json()) as RuntimeConfig
-          cachedApiBaseUrl = normalizeApiBaseUrl(config.VUE_APP_ROOT_API)
-          return cachedApiBaseUrl
+          cachedConfig = (await res.json()) as RuntimeConfig
+          return cachedConfig
         }
       } catch {
         // Config file missing or unreachable — fall through to default.
       }
     }
 
-    cachedApiBaseUrl = DEFAULT_API_BASE_URL
-    return cachedApiBaseUrl
+    cachedConfig = {}
+    return cachedConfig
   })().finally(() => {
-    inFlightApiBaseUrl = null
+    inFlightConfig = null
   })
 
-  return inFlightApiBaseUrl
+  return inFlightConfig
+}
+
+export async function getApiBaseUrl(): Promise<string> {
+  if (cachedApiBaseUrl !== null) return cachedApiBaseUrl
+  const config = await loadRuntimeConfig()
+  cachedApiBaseUrl = normalizeApiBaseUrl(config.VUE_APP_ROOT_API)
+  return cachedApiBaseUrl
+}
+
+export async function getKeycloakConfigUrl(): Promise<string> {
+  const config = await loadRuntimeConfig()
+  return config.KEYCLOAK_CONFIG_URL?.trim() || DEFAULT_KEYCLOAK_CONFIG_URL
+}
+
+export async function getBCServicesCardUrl(): Promise<string> {
+  const config = await loadRuntimeConfig()
+  return config.BC_SERVICES_CARD_URL?.trim() || ''
 }

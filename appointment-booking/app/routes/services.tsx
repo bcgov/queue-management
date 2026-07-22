@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { InlineAlert } from '@bcgov/design-system-react-components'
 import { useNavigate } from 'react-router'
-import { getPublicServices, type Service } from '../api/services'
-import { useBooking } from '../booking/booking-context'
-import { BookingContinueRow } from '../components/BookingContinueRow'
-import { BookingStepProgress } from '../components/BookingStepProgress'
-import { ServicesSearch } from '../components/ServicesSearch'
-import { ServicesTable } from '../components/ServicesTable'
+import { getPublicServices, type Service } from '~/api/services'
+import { useBooking } from '~/booking/booking-context'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingStepProgress } from '~/components/BookingStepProgress'
+import { ServicesSearch } from '~/components/ServicesSearch'
+import { ServicesTable } from '~/components/ServicesTable'
 
 const BOOKING_STEP = 1
 const BOOKING_STEP_COUNT = 5
