@@ -23,6 +23,18 @@ export default function SigninCallbackPage() {
   useEffect(() => {
     let cancelled = false
 
+    // Browser back can restore this page without re-running login. Send them to /login.
+    function onPageShow(event: PageTransitionEvent) {
+      const hasCode =
+        window.location.search.includes('code=') || window.location.hash.includes('code=')
+      if (event.persisted && !hasCode) {
+        removeFromSession(SessionKeys.KeycloakLoginRedirectPending)
+        window.location.replace('/login')
+      }
+    }
+
+    window.addEventListener('pageshow', onPageShow)
+
     async function run() {
       // Only allowed booking IdPs (bcsc, otp) may start login from this route.
       if (!idpHint || !isAllowedBookingIdp(idpHint)) {
@@ -78,6 +90,7 @@ export default function SigninCallbackPage() {
 
     return () => {
       cancelled = true
+      window.removeEventListener('pageshow', onPageShow)
     }
     // Only re-run when the IdP changes. setSession/navigate are stable enough for this page.
   }, [idpHint]) // eslint-disable-line react-hooks/exhaustive-deps
