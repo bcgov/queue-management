@@ -485,21 +485,77 @@ p {
 .sign-in-panel {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--layout-padding-large);
-  margin: var(--layout-margin-large) 0;
+  margin: var(--layout-margin-large) auto;
   max-width: 32rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .sign-in-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--layout-padding-medium);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.sign-in-or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--layout-padding-medium);
+  align-self: stretch;
+  margin: var(--layout-margin-small) 0;
+  font: var(--typography-bold-small-body);
+  color: var(--typography-color-secondary);
+}
+
+.sign-in-or::before,
+.sign-in-or::after {
+  content: '';
+  flex: 1 1 0;
+  height: 1px;
+  background-color: var(--surface-color-border-default, #afb2b5);
 }
 
 .sign-in-learn-more {
+  display: inline-flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 100%;
   font: var(--typography-regular-small-body);
   color: var(--typography-color-link);
+  text-decoration: none;
+}
+
+.sign-in-learn-more span {
+  text-decoration: underline;
+}
+
+.sign-in-external-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 0.15em;
+}
+
+@media (max-width: 40rem) {
+  .layout-main {
+    padding: var(--layout-padding-medium);
+  }
+
+  .sign-in-panel {
+    margin: var(--layout-margin-medium) 0;
+  }
+
+  .booking-nav-row {
+    flex-wrap: wrap;
+  }
 }
 
 .login-next-copy {
