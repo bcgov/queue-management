@@ -1,4 +1,4 @@
-// OAuth return page after Keycloak/BCSC.
+// OAuth return page after Keycloak (BCSC or email OTP).
 // Not a user-facing step — it finishes login, then sends the user back to /login.
 import { useEffect, useState } from 'react'
 import { Button, InlineAlert, Text } from '@bcgov/design-system-react-components'
@@ -7,7 +7,8 @@ import { useNavigate, useParams } from 'react-router'
 import { createUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
 import { initKeycloakLogin, WrongIdpError } from '~/auth/keycloak'
-import { isAllowedBookingIdp } from '~/auth/session-keys'
+import { addToSession, getFromSession, removeFromSession } from '~/auth/session'
+import { isAllowedBookingIdp, SessionKeys } from '~/auth/session-keys'
 
 export function meta() {
   return [{ title: 'Signing in' }]
@@ -23,14 +24,30 @@ export default function SigninCallbackPage() {
     let cancelled = false
 
     async function run() {
-      // Only BCSC is allowed to start login from this route.
+      // Only allowed booking IdPs (bcsc, otp) may start login from this route.
       if (!idpHint || !isAllowedBookingIdp(idpHint)) {
+        removeFromSession(SessionKeys.KeycloakLoginRedirectPending)
         navigate('/login?error=idp', { replace: true })
         return
       }
 
+      // Browser back from Keycloak lands here without an OAuth code. Without this guard,
+      // login-required redirects to Keycloak again and the page appears to keep refreshing.
+      const hasOAuthCode =
+        window.location.search.includes('code=') || window.location.hash.includes('code=')
+
+      if (!hasOAuthCode) {
+        if (getFromSession(SessionKeys.KeycloakLoginRedirectPending) === idpHint) {
+          removeFromSession(SessionKeys.KeycloakLoginRedirectPending)
+          navigate('/login', { replace: true })
+          return
+        }
+        addToSession(SessionKeys.KeycloakLoginRedirectPending, idpHint)
+      }
+
       try {
         const session = await initKeycloakLogin(idpHint)
+        removeFromSession(SessionKeys.KeycloakLoginRedirectPending)
         if (cancelled) return
 
         if (!session) {
@@ -46,6 +63,7 @@ export default function SigninCallbackPage() {
 
         navigate('/login', { replace: true })
       } catch (err) {
+        removeFromSession(SessionKeys.KeycloakLoginRedirectPending)
         if (cancelled) return
         if (err instanceof WrongIdpError) {
           // Keycloak logout redirects to the login page with the IdP error.
@@ -70,7 +88,11 @@ export default function SigninCallbackPage() {
         <InlineAlert variant="danger" title="Sign-in failed">
           {error}
         </InlineAlert>
-        <Button type="button" variant="secondary" onPress={() => navigate('/login')}>
+        <Button
+          type="button"
+          variant="secondary"
+          onPress={() => navigate('/login', { replace: true })}
+        >
           Back to login
         </Button>
       </div>

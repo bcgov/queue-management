@@ -1,5 +1,5 @@
-// Keycloak login helpers for citizen booking (BC Services Card).
-// Handles: start login, read tokens after redirect, reject non-BCSC, logout.
+// Keycloak login helpers for citizen booking (BCSC or email OTP).
+// Handles: start login, read tokens after redirect, reject disallowed IdPs, logout.
 
 import Keycloak, { type KeycloakLoginOptions } from 'keycloak-js'
 
@@ -25,7 +25,7 @@ type TokenClaims = {
   display_name?: string
 }
 
-// Thrown when Keycloak signed someone in with the wrong identity provider (not BCSC).
+// Thrown when Keycloak signed someone in with a disallowed identity provider.
 export class WrongIdpError extends Error {
   readonly identityProvider: string
 
@@ -74,7 +74,7 @@ function resolveFullName(claims: TokenClaims): string {
   return claims.display_name?.trim() || claims.email?.trim() || 'Appointment User'
 }
 
-// Rebuilds the auth session after a refresh/redirect. Drops non-BCSC sessions.
+// Rebuilds the auth session after a refresh/redirect. Drops disallowed IdP sessions.
 export function readAuthSessionFromStorage(): AuthSession | null {
   const token = getFromSession(SessionKeys.KeyCloakToken)
   if (!token) return null
@@ -123,9 +123,12 @@ export function writeAuthSession(session: AuthSession): void {
   addToSession(SessionKeys.UserAccountType, session.loginSource)
 }
 
-function buildSessionFromKeycloak(kc: Keycloak): AuthSession {
+function buildSessionFromKeycloak(kc: Keycloak, requestedIdpHint: string): AuthSession {
   const token = kc.token || ''
   const claims = token ? decodeTokenClaims(token) : {}
+  const claimedIdp = resolveIdentityProvider(claims)
+  // Prefer the token claim; if the OTP/BCSC IdP mapper has not set it yet, use the IdP we asked for.
+  const loginSource = claimedIdp || requestedIdpHint.trim().toLowerCase()
 
   return {
     token,
@@ -133,7 +136,7 @@ function buildSessionFromKeycloak(kc: Keycloak): AuthSession {
     refreshToken: kc.refreshToken || '',
     userFullName: resolveFullName(claims),
     kcGuid: claims.sub || '',
-    loginSource: resolveIdentityProvider(claims),
+    loginSource,
   }
 }
 
@@ -142,14 +145,14 @@ function appLoginRedirectUri(): string {
   return `${window.location.origin}/login`
 }
 
-// Where Keycloak must send the browser back after BCSC (this finishes the OAuth code exchange).
+// Where Keycloak must send the browser back after IdP login (finishes the OAuth code exchange).
 function appSigninCallbackUri(idpHint: string): string {
   return `${window.location.origin}/signin/${idpHint}`
 }
 
-// First call: redirect to Keycloak/BCSC.
+// First call: redirect to Keycloak with the chosen IdP (bcsc or otp).
 // Second call (after return to /signin/:idpHint): finish login and return the session.
-// Rejects any IdP other than BCSC.
+// Rejects any IdP not in ALLOWED_BOOKING_IDPS.
 export async function initKeycloakLogin(idpHint: string): Promise<AuthSession | null> {
   if (loginInFlight) return loginInFlight
 
@@ -162,13 +165,26 @@ export async function initKeycloakLogin(idpHint: string): Promise<AuthSession | 
 
     // OAuth callback must return to this page so keycloak-js can finish the code exchange.
     const callbackUri = appSigninCallbackUri(idpHint)
+    // True when Keycloak has redirected back with an auth code (not a silent SSO reuse).
+    const isOAuthReturn =
+      window.location.search.includes('code=') || window.location.hash.includes('code=')
 
-    // Force the chosen IdP (bcsc) and our callback URL on every Keycloak login redirect.
+    // Force the chosen IdP + a fresh login so an existing Keycloak SSO session cannot win.
     const originalLogin = kc.login.bind(kc)
+    const loginWithRequestedIdp = () =>
+      originalLogin({
+        idpHint,
+        redirectUri: callbackUri,
+        prompt: 'login',
+      })
+
     kc.login = (options?: KeycloakLoginOptions) => {
-      const next = options
-        ? { ...options, idpHint, redirectUri: options.redirectUri || callbackUri }
-        : { idpHint, redirectUri: callbackUri }
+      const next: KeycloakLoginOptions = {
+        ...(options || {}),
+        idpHint,
+        redirectUri: options?.redirectUri || callbackUri,
+        prompt: 'login',
+      }
       return originalLogin(next)
     }
 
@@ -183,9 +199,14 @@ export async function initKeycloakLogin(idpHint: string): Promise<AuthSession | 
       return null
     }
 
-    const session = buildSessionFromKeycloak(kc)
+    const session = buildSessionFromKeycloak(kc, idpHint)
     if (!isAllowedBookingIdp(session.loginSource)) {
-      // End the Keycloak SSO session so the next attempt can use BCSC.
+      // If SSO reused a disallowed session (no OAuth code yet), force a fresh IdP login.
+      if (!isOAuthReturn) {
+        await loginWithRequestedIdp()
+        return null
+      }
+
       await kc.logout({ redirectUri: `${appLoginRedirectUri()}?error=idp` })
       throw new WrongIdpError(session.loginSource || 'unknown')
     }

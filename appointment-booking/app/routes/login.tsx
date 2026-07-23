@@ -1,6 +1,7 @@
-// Booking step 3: ask for BCSC sign-in, or show success after login.
-import { useEffect, useState } from 'react'
+// Booking step 3: BCSC or email OTP sign-in, or show success after login.
 import { Button, Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate, useSearchParams } from 'react-router'
 
 import { useAuth } from '~/auth/auth-context'
@@ -9,7 +10,6 @@ import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
-import { getBCServicesCardUrl } from '~/runtime-config'
 
 const BOOKING_STEP = 3
 const BOOKING_STEP_COUNT = 5
@@ -24,12 +24,7 @@ export default function LoginPage() {
   const { isReady: isAuthReady, isAuthenticated, session } = useAuth()
   const { isReady: isBookingReady, selectedService, selectedLocation } = useBooking()
   const hasSelections = !!selectedService && !!selectedLocation
-  const [bcscUrl, setBcscUrl] = useState('')
   const idpError = searchParams.get('error') === 'idp'
-
-  useEffect(() => {
-    void getBCServicesCardUrl().then(setBcscUrl)
-  }, [])
 
   // Wait until sessionStorage restore finishes so we do not flash the wrong screen.
   if (!isAuthReady || !isBookingReady) {
@@ -70,31 +65,61 @@ export default function LoginPage() {
 
         {idpError ? (
           <div className="login-alert">
-            <InlineAlert variant="danger" title="BC Services Card required">
-              This booking app only accepts BC Services Card sign-in. Please sign in again with BC
-              Services Card. Use a private browser window if you were signed in to Keycloak as IDIR.
+            <InlineAlert variant="danger" title="Sign-in method not accepted">
+              Please sign in with BC Services Card or email OTP.
             </InlineAlert>
           </div>
         ) : null}
 
         <div className="sign-in-panel">
-          <Text>To continue your appointment booking, please sign in using BC Services Card.</Text>
+          <Text>
+            To continue your appointment booking, please sign in using one of the following methods.
+          </Text>
 
           <div className="sign-in-actions">
-            <Button type="button" onPress={() => navigate(`/signin/${IdpHint.BCSC}`)}>
+            <Button
+              type="button"
+              onPress={() => navigate(`/signin/${IdpHint.OTP}`, { replace: true })}
+            >
+              Login with Email OTP
+            </Button>
+            <a
+              className="sign-in-learn-more"
+              href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/id-services/one-time-pc"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FontAwesomeIcon
+                icon={faArrowUpRightFromSquare}
+                className="sign-in-external-icon"
+                aria-hidden="true"
+              />
+              <span>Learn more about one-time passcode</span>
+            </a>
+
+            <div className="sign-in-or" role="separator" aria-label="or">
+              OR
+            </div>
+
+            <Button
+              type="button"
+              onPress={() => navigate(`/signin/${IdpHint.BCSC}`, { replace: true })}
+            >
               Login with BC Services Card
             </Button>
-
-            {bcscUrl ? (
-              <a
-                className="sign-in-learn-more"
-                href={bcscUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Learn more about BC Services Card app
-              </a>
-            ) : null}
+            <a
+              className="sign-in-learn-more"
+              href="https://www2.gov.bc.ca/gov/content/governments/government-id/bcservicescardapp"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FontAwesomeIcon
+                icon={faArrowUpRightFromSquare}
+                className="sign-in-external-icon"
+                aria-hidden="true"
+              />
+              <span>Learn more about BC Services Card</span>
+            </a>
           </div>
         </div>
 

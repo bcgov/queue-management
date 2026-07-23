@@ -4,7 +4,6 @@
 type RuntimeConfig = {
   VUE_APP_ROOT_API?: string
   KEYCLOAK_CONFIG_URL?: string
-  BC_SERVICES_CARD_URL?: string
 }
 
 const DEFAULT_API_BASE_URL = '/api/v1'
@@ -55,9 +54,4 @@ export async function getApiBaseUrl(): Promise<string> {
 export async function getKeycloakConfigUrl(): Promise<string> {
   const config = await loadRuntimeConfig()
   return config.KEYCLOAK_CONFIG_URL?.trim() || DEFAULT_KEYCLOAK_CONFIG_URL
-}
-
-export async function getBCServicesCardUrl(): Promise<string> {
-  const config = await loadRuntimeConfig()
-  return config.BC_SERVICES_CARD_URL?.trim() || ''
 }
