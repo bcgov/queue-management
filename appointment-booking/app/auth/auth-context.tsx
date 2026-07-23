@@ -9,11 +9,13 @@ import {
   writeAuthSession,
 } from './keycloak'
 import { clearStoredBookingSession } from './session'
+import { startTokenRefresh, stopTokenRefresh } from './token-refresh'
 import { AuthContext } from './auth-store'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false)
   const [session, setSessionState] = useState<AuthSession | null>(null)
+  const hasToken = !!session?.token
 
   useEffect(() => {
     // sessionStorage is browser-only, so restore it after the initial render.
@@ -24,11 +26,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(id)
   }, [])
 
+  // Start proactive refresh while signed in; stop on logout / unmount.
+  // Depend on hasToken (not the token string) so a refresh does not restart the loop.
+  useEffect(() => {
+    if (!hasToken) {
+      stopTokenRefresh()
+      return
+    }
+
+    void startTokenRefresh((next) => {
+      setSessionState(next)
+    })
+
+    return () => stopTokenRefresh()
+  }, [hasToken])
+
   // Stable callbacks — /signin effect depends on setSession and must not re-run mid-login.
   const setSession = useCallback((next: AuthSession | null) => {
     if (next) {
       writeAuthSession(next)
     } else {
+      stopTokenRefresh()
       clearStoredAuthSession()
     }
     setSessionState(next)
@@ -36,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(async () => {
+    stopTokenRefresh()
     const logoutPromise = logoutKeycloak(`${window.location.origin}/services`)
     // Logout ends the booking attempt too — do not leave service/location for the next user.
     clearStoredAuthSession()
@@ -48,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         isReady,
-        isAuthenticated: !!session?.token,
+        isAuthenticated: hasToken,
         session,
         setSession,
         logout,
