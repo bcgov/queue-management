@@ -12,6 +12,7 @@ export const SessionKeys = {
   // Booking selections survive the IdP redirect round-trip.
   BookingSelectedService: 'BOOKING_SELECTED_SERVICE',
   BookingSelectedLocation: 'BOOKING_SELECTED_LOCATION',
+  BookingSelectedSlot: 'BOOKING_SELECTED_SLOT',
 } as const
 
 // Cleared on logout and when discarding a bad/disallowed auth session.
@@ -28,6 +29,7 @@ export const AUTH_SESSION_KEYS = [
 export const BOOKING_SESSION_KEYS = [
   SessionKeys.BookingSelectedService,
   SessionKeys.BookingSelectedLocation,
+  SessionKeys.BookingSelectedSlot,
 ] as const
 
 export const IdpHint = {

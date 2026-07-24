@@ -237,6 +237,10 @@ p {
   overflow-x: auto;
   width: 100%;
   max-width: 100%;
+}
+
+.services-table-wrapper,
+.datetime-selection-panel {
   box-sizing: border-box;
   background: var(--surface-color-background-white);
   border: var(--layout-border-width-small) solid var(--surface-color-border-default);
@@ -564,6 +568,158 @@ p {
 
 .login-alert {
   margin-bottom: var(--layout-margin-large);
+}
+
+.datetime-status {
+  margin-top: var(--layout-margin-large);
+}
+
+/* Same gold top bar used on the services and locations tables. */
+.datetime-selection-panel {
+  margin-top: var(--layout-margin-large);
+  padding: var(--layout-padding-xlarge);
+}
+
+.datetime-selection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--layout-padding-xlarge);
+}
+
+.datetime-selection h2 {
+  margin-top: 0;
+  font: var(--typography-bold-h3);
+}
+
+.datetime-selected-day {
+  margin: var(--layout-margin-medium) 0 0;
+  padding: var(--layout-padding-small) var(--layout-padding-medium);
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--layout-border-radius-medium);
+  background: var(--theme-blue-10);
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+  text-align: center;
+}
+
+.datetime-time-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.datetime-calendar-legend {
+  margin: var(--layout-margin-small) 0 0;
+  padding: 0 0 0 1.25rem;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  list-style-position: outside;
+  text-align: left;
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+}
+
+.datetime-calendar-legend-unavailable {
+  color: var(--typography-color-danger);
+  text-decoration: line-through;
+}
+
+.datetime-calendar-legend-disabled {
+  color: var(--typography-color-disabled);
+}
+
+.datetime-time-slots {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.datetime-time-slots .bcds-react-aria-RadioGroup--options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  width: 100%;
+  gap: var(--layout-padding-medium);
+}
+
+.datetime-time-slots .bcds-react-aria-Radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--layout-padding-medium);
+  border: var(--layout-border-width-small) solid var(--surface-color-border-default);
+  border-radius: var(--layout-border-radius-medium);
+  background: var(--surface-color-background-white);
+  cursor: pointer;
+}
+
+.datetime-time-slots .bcds-react-aria-Radio[data-selected] {
+  border-color: var(--surface-color-border-active);
+  background: var(--theme-blue-10);
+  box-shadow: inset var(--layout-border-width-medium) 0 0 0 var(--theme-blue-80);
+}
+
+/* Make the calendar wider on desktop so it fills its column. */
+@media (min-width: 48rem) {
+  .datetime-selection .bcds-react-aria-Calendar {
+    display: flex;
+    width: 100%;
+    max-width: 26rem;
+  }
+
+  .datetime-selection .bcds-react-aria-Calendar--GridContainer,
+  .datetime-selection .bcds-react-aria-Calendar--Header,
+  .datetime-selection .bcds-react-aria-Calendar--Grid {
+    width: 100%;
+  }
+
+  .datetime-selection .bcds-react-aria-Calendar--GridContainer {
+    flex: 1 1 auto;
+  }
+
+  .datetime-selection .bcds-react-aria-Calendar--Cell {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .datetime-selection {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .datetime-selection section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .datetime-time-panel {
+    align-items: center;
+  }
+
+  .datetime-selected-day {
+    order: -1;
+    margin: 0 0 var(--layout-margin-medium);
+  }
+
+  .datetime-calendar-legend {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .datetime-time-slots .bcds-react-aria-RadioGroup--options {
+    grid-template-columns: 1fr;
+  }
 }
 
 .header-account {
