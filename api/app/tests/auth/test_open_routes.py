@@ -85,6 +85,94 @@ def test_bare_client_can_access_slots_without_authentication(bare_client, seeded
     assert json_of(response)
 
 
+def test_bare_client_can_find_active_offices_and_next_dates_by_service(
+    bare_client, seeded_data, app, monkeypatch
+):
+    """Assert that public service-scoped office discovery includes the next available date."""
+    from datetime import datetime
+
+    from app.models.theq import Office, Service
+    from app.resources.theq.offices import AvailabilityService
+    from app.utilities.yesno import YesNo
+    from qsystem import db
+
+    service_id = seeded_data["service_ids"]["msp"]
+    test_office_id = seeded_data["office_ids"]["test_office"]
+    victoria_office_id = seeded_data["office_ids"]["victoria"]
+
+    with app.app_context():
+        service = db.session.get(Service, service_id)
+        service.timeslot_duration = 45
+        service.is_dlkt = YesNo.YES
+        deleted_office = db.session.get(
+            Office, seeded_data["office_ids"]["limited_office"]
+        )
+        deleted_office.services.append(service)
+        deleted_office.deleted = datetime.now()
+        db.session.commit()
+
+    calls = []
+    expected_next_date = None
+
+    def available_slots(office, days, service):
+        nonlocal expected_next_date
+        calls.append(
+            (
+                office.office_id,
+                service.service_id,
+                service.timeslot_duration,
+                service.is_dlkt,
+            )
+        )
+        slots = {day.strftime("%m/%d/%Y"): [] for day in days}
+        if office.office_id == test_office_id:
+            expected_next_date = days[1].date().isoformat()
+            slots[days[1].strftime("%m/%d/%Y")] = [{"start_time": "09:00"}]
+        return slots
+
+    monkeypatch.setattr(
+        AvailabilityService, "get_available_slots", available_slots
+    )
+
+    response = bare_client.get(f"/offices?service_id={service_id}")
+    body = json_of(response)
+
+    assert_json_response(response, 200)
+    assert body["errors"] == {}
+    assert [office["office_name"] for office in body["offices"]] == [
+        "Test Office",
+        "Victoria",
+    ]
+    offices_by_id = {office["office_id"]: office for office in body["offices"]}
+    assert offices_by_id[test_office_id]["next_appointment_date"] == expected_next_date
+    assert offices_by_id[victoria_office_id]["next_appointment_date"] is None
+    assert calls == [
+        (test_office_id, service_id, 45, YesNo.YES),
+        (victoria_office_id, service_id, 45, YesNo.YES),
+    ]
+
+    existing_response = bare_client.get("/offices/")
+    assert_json_response(existing_response, 200)
+    assert all(
+        "next_appointment_date" not in office
+        for office in json_of(existing_response)["offices"]
+    )
+
+
+def test_service_scoped_offices_validates_service_id(bare_client):
+    """Assert that malformed service filters fail and unknown services return no offices."""
+    for path in ("/offices", "/offices?service_id=not-an-integer"):
+        response = bare_client.get(path)
+
+        assert_json_response(response, 400)
+        assert json_of(response)["message"] == "service_id must be an integer."
+
+    response = bare_client.get("/offices?service_id=2147483647")
+
+    assert_json_response(response, 200)
+    assert json_of(response) == {"offices": [], "errors": {}}
+
+
 def test_bare_client_can_access_walkin_lookup_without_authentication(
     bare_client, internal_ga_client, seeded_data, app
 ):
