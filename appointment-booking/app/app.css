@@ -592,7 +592,7 @@ p {
 }
 
 .datetime-selected-day {
-  margin: var(--layout-margin-medium) 0 0;
+  margin: 0 0 var(--layout-margin-medium);
   padding: var(--layout-padding-small) var(--layout-padding-medium);
   width: fit-content;
   max-width: 100%;
@@ -637,32 +637,13 @@ p {
   max-width: 28rem;
 }
 
-.datetime-time-slots .bcds-react-aria-RadioGroup--options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
+/* Stretch the select so the full "9:00 a.m. – 9:15 a.m." label fits on one line. */
+.datetime-time-slots .bcds-react-aria-Select {
   width: 100%;
-  gap: var(--layout-padding-medium);
 }
 
-.datetime-time-slots .bcds-react-aria-Radio {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
+.datetime-time-slots .bcds-react-aria-Select--Button {
   width: 100%;
-  min-height: 2.75rem;
-  padding: var(--layout-padding-medium);
-  border: var(--layout-border-width-small) solid var(--surface-color-border-default);
-  border-radius: var(--layout-border-radius-medium);
-  background: var(--surface-color-background-white);
-  cursor: pointer;
-}
-
-.datetime-time-slots .bcds-react-aria-Radio[data-selected] {
-  border-color: var(--surface-color-border-active);
-  background: var(--theme-blue-10);
-  box-shadow: inset var(--layout-border-width-medium) 0 0 0 var(--theme-blue-80);
 }
 
 /* Make the calendar wider on desktop so it fills its column. */
@@ -707,18 +688,9 @@ p {
     align-items: center;
   }
 
-  .datetime-selected-day {
-    order: -1;
-    margin: 0 0 var(--layout-margin-medium);
-  }
-
   .datetime-calendar-legend {
     margin-left: auto;
     margin-right: auto;
-  }
-
-  .datetime-time-slots .bcds-react-aria-RadioGroup--options {
-    grid-template-columns: 1fr;
   }
 }
 

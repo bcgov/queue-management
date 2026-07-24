@@ -4,8 +4,7 @@ import {
   Calendar,
   Callout,
   InlineAlert,
-  Radio,
-  RadioGroup,
+  Select,
   Text,
 } from '@bcgov/design-system-react-components'
 import { parseDate } from '@internationalized/date'
@@ -250,30 +249,26 @@ export default function DateTimePage() {
               <h2 id="datetime-time-heading">Select Time</h2>
               {activeDay ? (
                 <div className="datetime-time-panel">
+                  <p className="datetime-selected-day" aria-live="polite">
+                    {formatDate(activeDay)}
+                  </p>
                   <div className="datetime-time-slots">
-                    <RadioGroup
+                    <Select
                       aria-label={`Available times for ${formatDate(activeDay)}`}
-                      value={selectedSlotValue}
-                      onChange={(value) => {
+                      placeholder="Select a Time Slot"
+                      selectedKey={selectedSlotValue || null}
+                      items={activeDaySlots.map((slot) => ({
+                        id: slotValue(slot.startTime, slot.endTime),
+                        label: formatTimeRange(slot.startTime, slot.endTime),
+                      }))}
+                      onSelectionChange={(value) => {
                         const slot = activeDaySlots.find(
                           ({ startTime, endTime }) => slotValue(startTime, endTime) === value,
                         )
                         if (slot) setSelectedSlot({ date: activeDay, ...slot })
                       }}
-                    >
-                      {activeDaySlots.map((slot) => {
-                        const value = slotValue(slot.startTime, slot.endTime)
-                        return (
-                          <Radio key={value} value={value}>
-                            {formatTimeRange(slot.startTime, slot.endTime)}
-                          </Radio>
-                        )
-                      })}
-                    </RadioGroup>
+                    />
                   </div>
-                  <p className="datetime-selected-day" aria-live="polite">
-                    {formatDate(activeDay)}
-                  </p>
                 </div>
               ) : (
                 <Text>Select an available date to see its appointment times.</Text>
