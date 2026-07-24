@@ -153,6 +153,11 @@ export default function LoginPage() {
               </>
             ) : null}
           </Text>
+          {selectedLocation.appointmentMessage ? (
+            <InlineAlert variant="info" title="Location notice">
+              {selectedLocation.appointmentMessage}
+            </InlineAlert>
+          ) : null}
         </div>
       </Callout>
 
@@ -162,8 +167,7 @@ export default function LoginPage() {
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/service-locations')} />
-        {/* Date/time step is not built yet — Continue stays disabled. */}
-        <BookingContinueRow isDisabled />
+        <BookingContinueRow onContinue={() => navigate('/datetime')} />
       </div>
     </>
   )
