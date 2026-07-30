@@ -1,9 +1,13 @@
 import { getApiBaseUrl } from '../runtime-config'
-import type { Location } from './locations'
 
-// Location for the booking service-locations step (filtered offices + next appointment date).
-// nextAppointmentDate is mapped now for a later UI step; this page does not display it yet.
-export type ServiceLocation = Location & {
+// Bookable office for a selected service. nextAppointmentDate is for a later UI step.
+export type ServiceLocation = {
+  id: number
+  name: string
+  address: string
+  latitude: number | null
+  longitude: number | null
+  appointmentMessage: string
   nextAppointmentDate: string | null
 }
 

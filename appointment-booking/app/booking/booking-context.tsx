@@ -2,7 +2,7 @@
 // Also saved in the browser so choices survive the sign-in redirect.
 import { useContext, useEffect, useState, type ReactNode } from 'react'
 
-import type { Location } from '../api/locations'
+import type { ServiceLocation } from '../api/service-locations'
 import type { Service } from '../api/services'
 import { addJsonToSession, getJsonFromSession, removeFromSession } from '../auth/session'
 import { SessionKeys } from '../auth/session-keys'
@@ -19,14 +19,16 @@ function persistJson(key: string, value: unknown) {
 export function BookingProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false)
   const [selectedService, setSelectedServiceState] = useState<Service | null>(null)
-  const [selectedLocation, setSelectedLocationState] = useState<Location | null>(null)
+  const [selectedLocation, setSelectedLocationState] = useState<ServiceLocation | null>(null)
   const [selectedSlot, setSelectedSlotState] = useState<BookingSlot | null>(null)
 
   useEffect(() => {
     // Restore saved choices after the page first loads in the browser.
     const id = window.setTimeout(() => {
       setSelectedServiceState(getJsonFromSession<Service>(SessionKeys.BookingSelectedService))
-      setSelectedLocationState(getJsonFromSession<Location>(SessionKeys.BookingSelectedLocation))
+      setSelectedLocationState(
+        getJsonFromSession<ServiceLocation>(SessionKeys.BookingSelectedLocation),
+      )
       setSelectedSlotState(getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot))
       setIsReady(true)
     }, 0)
@@ -40,7 +42,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     persistJson(SessionKeys.BookingSelectedService, service)
   }
 
-  function setSelectedLocation(location: Location | null) {
+  function setSelectedLocation(location: ServiceLocation | null) {
     setSelectedLocationState(location)
     setSelectedSlot(null)
     persistJson(SessionKeys.BookingSelectedLocation, location)
