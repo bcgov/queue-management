@@ -7,7 +7,8 @@ import {
   SvgChevronDownIcon,
   SvgChevronUpIcon,
 } from '@bcgov/design-system-react-components'
-import { LocationsSearch, useNearestSort } from '../components/LocationsSearch'
+import { SearchRow } from '../components/SearchRow'
+import { useNearestSort } from '../components/useNearestSort'
 
 const PAGE_DESCRIPTION =
   'Find Service BC office locations in British Columbia. View addresses, contact details, hours of operation and book an appointment.'
@@ -1746,15 +1747,18 @@ export default function Locations() {
         offices by distance from you.
       </p>
 
-      <LocationsSearch
+      <SearchRow
         value={search}
         onChange={setSearch}
         onClear={() => setSearch('')}
-        nearestSort={nearestSort}
-        nearestStatus={locationStatus}
-        onNearestSortPress={toggleNearestSort}
+        name="office-search"
         ariaLabel="Search offices"
         placeholder="Search offices"
+        nearest={{
+          sort: nearestSort,
+          status: locationStatus,
+          onPress: toggleNearestSort,
+        }}
       />
 
       {locationError ? (

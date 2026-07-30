@@ -1,16 +1,16 @@
 import { SvgChevronDownIcon, SvgChevronUpIcon } from '@bcgov/design-system-react-components'
-import type { Location } from '../api/locations'
+import type { ServiceLocation } from '../api/service-locations'
 
 type SortDirection = 'asc' | 'desc'
 
 type LocationsTableProps = {
-  locations: Location[]
+  locations: ServiceLocation[]
   isLoading: boolean
   showNoResults: boolean
   sortDirection: SortDirection
   onToggleSort: () => void
   selectedId: string
-  onSelect: (location: Location) => void
+  onSelect: (location: ServiceLocation) => void
 }
 
 export function LocationsTable({

@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import type { Location } from '../api/locations'
+import type { ServiceLocation } from '../api/service-locations'
 import type { Service } from '../api/services'
 
 // The chosen appointment date and time. Date is YYYY-MM-DD; times are HH:MM.
@@ -14,8 +14,8 @@ export type BookingContextValue = {
   isReady: boolean
   selectedService: Service | null
   setSelectedService: (service: Service | null) => void
-  selectedLocation: Location | null
-  setSelectedLocation: (location: Location | null) => void
+  selectedLocation: ServiceLocation | null
+  setSelectedLocation: (location: ServiceLocation | null) => void
   selectedSlot: BookingSlot | null
   setSelectedSlot: (slot: BookingSlot | null) => void
 }

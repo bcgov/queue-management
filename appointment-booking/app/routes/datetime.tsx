@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-  Button,
-  Calendar,
-  Callout,
-  InlineAlert,
-  Select,
-  Text,
-} from '@bcgov/design-system-react-components'
+import { Button, Calendar, InlineAlert, Select, Text } from '@bcgov/design-system-react-components'
 import { parseDate } from '@internationalized/date'
 import { useNavigate } from 'react-router'
 
@@ -14,6 +7,7 @@ import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
+import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
 const BOOKING_STEP = 4
@@ -169,35 +163,13 @@ export default function DateTimePage() {
       <h1 className="sr-only">Select Date and Time</h1>
       {stepProgress}
 
-      <Callout variant="lightBlue">
-        <div className="booking-detail-callout-content">
-          <Text>
-            Selected Service - <strong>{selectedService.name}</strong>
-            <br />
-            Appointment Location - <strong>{selectedLocation.name}</strong>
-            {selectedLocation.address ? (
-              <>
-                <br />
-                Address - <strong>{selectedLocation.address}</strong>
-              </>
-            ) : null}
-            {selectedSlot ? (
-              <>
-                <br />
-                Appointment Date - <strong>{formatDate(selectedSlot.date)}</strong>
-                <br />
-                Appointment Time -{' '}
-                <strong>{formatTimeRange(selectedSlot.startTime, selectedSlot.endTime)}</strong>
-              </>
-            ) : null}
-          </Text>
-          {selectedLocation.appointmentMessage ? (
-            <InlineAlert variant="info" title="Location notice">
-              {selectedLocation.appointmentMessage}
-            </InlineAlert>
-          ) : null}
-        </div>
-      </Callout>
+      <BookingDetailCallout
+        selectedService={selectedService}
+        selectedLocation={selectedLocation}
+        selectedSlot={selectedSlot}
+        formatDate={formatDate}
+        formatTimeRange={formatTimeRange}
+      />
 
       {isLoading ? (
         <div className="datetime-status" role="status" aria-live="polite">

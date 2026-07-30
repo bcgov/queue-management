@@ -5,7 +5,7 @@ import { getPublicServices, type Service } from '~/api/services'
 import { useBooking } from '~/booking/booking-context'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
-import { ServicesSearch } from '~/components/ServicesSearch'
+import { SearchRow } from '~/components/SearchRow'
 import { ServicesTable } from '~/components/ServicesTable'
 
 const BOOKING_STEP = 1
@@ -102,7 +102,14 @@ export default function ServicesPage() {
       ) : (
         <>
           {!isLoading && (
-            <ServicesSearch value={search} onChange={setSearch} onClear={() => setSearch('')} />
+            <SearchRow
+              value={search}
+              onChange={setSearch}
+              onClear={() => setSearch('')}
+              name="service-search"
+              ariaLabel="Search services"
+              placeholder="Search services"
+            />
           )}
 
           <ServicesTable

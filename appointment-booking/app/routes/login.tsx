@@ -1,5 +1,5 @@
 // Booking step 3: BCSC or email OTP sign-in, or show success after login.
-import { Button, Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
+import { Button, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate, useSearchParams } from 'react-router'
@@ -9,6 +9,7 @@ import { IdpHint } from '~/auth/session-keys'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
 const BOOKING_STEP = 3
@@ -140,26 +141,7 @@ export default function LoginPage() {
         </InlineAlert>
       </div>
 
-      <Callout variant="lightBlue">
-        <div className="booking-detail-callout-content">
-          <Text>
-            Selected service - <strong>{selectedService.name}</strong>
-            <br />
-            Appointment Location - <strong>{selectedLocation.name}</strong>
-            {selectedLocation.address ? (
-              <>
-                <br />
-                Address - <strong>{selectedLocation.address}</strong>
-              </>
-            ) : null}
-          </Text>
-          {selectedLocation.appointmentMessage ? (
-            <InlineAlert variant="info" title="Location notice">
-              {selectedLocation.appointmentMessage}
-            </InlineAlert>
-          ) : null}
-        </div>
-      </Callout>
+      <BookingDetailCallout selectedService={selectedService} selectedLocation={selectedLocation} />
 
       <p className="login-next-copy">
         Continue to the next step to choose a date and time for your appointment.
