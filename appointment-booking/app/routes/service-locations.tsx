@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { getDistance } from 'geolib'
 import { useNavigate } from 'react-router'
-import { getBookingLocations, type Location } from '~/api/locations'
+import type { Location } from '~/api/locations'
+import { getServiceLocations, type ServiceLocation } from '~/api/service-locations'
 import type { Service } from '~/api/services'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
@@ -79,8 +80,9 @@ export default function ServiceLocationsPage() {
   const { selectedService, selectedLocation, setSelectedLocation } = useBooking()
   const selectedId = selectedLocation ? String(selectedLocation.id) : ''
 
-  const [locations, setLocations] = useState<Location[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // ServiceLocation keeps nextAppointmentDate for a later UI step; unused on this page yet.
+  const [locations, setLocations] = useState<ServiceLocation[]>([])
+  const [isLoading, setIsLoading] = useState(() => !!selectedService)
   const [loadError, setLoadError] = useState(false)
   const [search, setSearch] = useState('')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -93,10 +95,16 @@ export default function ServiceLocationsPage() {
     toggleNearestSort,
   } = useNearestSort()
 
+  const serviceId = selectedService?.id
+
   // Ignore late responses if the user leaves the page mid-fetch (SSR/client remounts).
   useEffect(() => {
+    if (serviceId == null) {
+      return
+    }
+
     let cancelled = false
-    getBookingLocations()
+    getServiceLocations(serviceId)
       .then((loaded) => {
         if (!cancelled) {
           setLocations(loaded)
@@ -116,7 +124,7 @@ export default function ServiceLocationsPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [serviceId])
 
   const visibleLocations = useMemo(() => {
     const tokens = search.trim().toLowerCase().split(/\s+/).filter(Boolean)
