@@ -35,7 +35,6 @@ export default function ServiceLocationsPage() {
   const { selectedService, selectedLocation, setSelectedLocation } = useBooking()
   const selectedId = selectedLocation ? String(selectedLocation.id) : ''
 
-  // nextAppointmentDate is mapped in the API client for a later UI; unused on this page yet.
   const [locations, setLocations] = useState<ServiceLocation[]>([])
   const [isLoading, setIsLoading] = useState(() => !!selectedService)
   const [loadError, setLoadError] = useState(false)
@@ -81,32 +80,80 @@ export default function ServiceLocationsPage() {
     }
   }, [serviceId])
 
+  // Knowledge-test bookings omit SHOW offices with no DLKT capacity / no slots.
+  // Disabled offices stay visible with an availability message.
+  const locationsForService = useMemo(() => {
+    if (!selectedService?.isDlkt) {
+      return locations
+    }
+    return locations.filter(
+      (location) => location.appointmentsDisabled || location.nextAppointmentDate !== null,
+    )
+  }, [locations, selectedService?.isDlkt])
+
+  // Keep the booking selection aligned with the latest mapped availability for this service.
+  useEffect(() => {
+    if (isLoading || loadError || !selectedLocation) {
+      return
+    }
+
+    const match = locationsForService.find((location) => location.id === selectedLocation.id)
+    if (!match) {
+      setSelectedLocation(null)
+      return
+    }
+
+    if (
+      match.isBookable !== selectedLocation.isBookable ||
+      match.appointmentsDisabled !== selectedLocation.appointmentsDisabled ||
+      match.nextAppointmentDate !== selectedLocation.nextAppointmentDate
+    ) {
+      setSelectedLocation(match)
+    }
+  }, [isLoading, loadError, locationsForService, selectedLocation, setSelectedLocation])
+
   const visibleLocations = useMemo(() => {
     const tokens = search.trim().toLowerCase().split(/\s+/).filter(Boolean)
     // Copy before sort — Array.sort mutates in place.
     const results = tokens.length
-      ? locations.filter((location) => {
+      ? locationsForService.filter((location) => {
           const haystack = `${location.name} ${location.address}`.toLowerCase()
           return tokens.every((token) => haystack.includes(token))
         })
-      : [...locations]
+      : [...locationsForService]
+
+    // Bookable locations first; then name or nearest order within each group.
+    const byBookable = (a: ServiceLocation, b: ServiceLocation) =>
+      Number(b.isBookable) - Number(a.isBookable)
 
     if (nearestSort && userLocation) {
-      results.sort((a, b) => kmFromUser(userLocation, a) - kmFromUser(userLocation, b))
+      results.sort((a, b) => {
+        const bookableOrder = byBookable(a, b)
+        if (bookableOrder !== 0) {
+          return bookableOrder
+        }
+        return kmFromUser(userLocation, a) - kmFromUser(userLocation, b)
+      })
       return results
     }
 
     results.sort((a, b) => {
+      const bookableOrder = byBookable(a, b)
+      if (bookableOrder !== 0) {
+        return bookableOrder
+      }
       const comparison = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
       return sortDirection === 'asc' ? comparison : -comparison
     })
     return results
-  }, [locations, search, sortDirection, nearestSort, userLocation])
+  }, [locationsForService, search, sortDirection, nearestSort, userLocation])
 
-  const canContinue = !!selectedService && !!selectedLocation
+  // Only a bookable location unlocks the next step; unavailable rows stay selectable for info.
+  const canContinue = !!selectedService && !!selectedLocation?.isBookable
   const showLoadError = !isLoading && loadError
-  const showUnavailable = !isLoading && !loadError && locations.length === 0
-  const showNoResults = !isLoading && locations.length > 0 && visibleLocations.length === 0
+  const showUnavailable = !isLoading && !loadError && locationsForService.length === 0
+  const showNoResults =
+    !isLoading && locationsForService.length > 0 && visibleLocations.length === 0
 
   return (
     <>

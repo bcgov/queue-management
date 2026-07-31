@@ -70,7 +70,10 @@ export function LocationsTable({
                 const address = location.address || '—'
 
                 return (
-                  <tr key={location.id}>
+                  <tr
+                    key={location.id}
+                    className={location.isBookable ? undefined : 'is-unavailable'}
+                  >
                     <td className="services-table-select-cell">
                       <input
                         type="radio"
