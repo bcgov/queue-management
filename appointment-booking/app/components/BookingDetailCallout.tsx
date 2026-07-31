@@ -56,6 +56,15 @@ export function BookingDetailCallout({
             </>
           ) : null}
         </Text>
+        {selectedLocation?.appointmentsDisabled === true ? (
+          <InlineAlert variant="info" title="Availability">
+            Appointments are not available at this location. Please select another location.
+          </InlineAlert>
+        ) : selectedLocation?.isBookable === false ? (
+          <InlineAlert variant="info" title="Availability">
+            No appointments available. Select another location, or visit for walk-in service.
+          </InlineAlert>
+        ) : null}
         {selectedLocation?.appointmentMessage ? (
           <InlineAlert variant="info" title="Location notice">
             {selectedLocation.appointmentMessage}

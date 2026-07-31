@@ -1,6 +1,7 @@
 import { getApiBaseUrl } from '../runtime-config'
 
-// Bookable office for a selected service. nextAppointmentDate is for a later UI step.
+// Mapped office for the booking locations step.
+// appointmentsDisabled / isBookable are derived — the API does not send them.
 export type ServiceLocation = {
   id: number
   name: string
@@ -9,9 +10,10 @@ export type ServiceLocation = {
   longitude: number | null
   appointmentMessage: string
   nextAppointmentDate: string | null
+  appointmentsDisabled: boolean
+  isBookable: boolean
 }
 
-// API response row from GET /api/v1/offices?service_id=.
 type ApiOffice = {
   office_id: number
   office_name: string
@@ -29,7 +31,24 @@ type ApiOfficesResponse = {
   offices: ApiOffice[]
 }
 
-// Fetch bookable offices for a selected service.
+// API sends "Status.SHOW" or "SHOW". HIDE (and unknown) are omitted from the list.
+function readOnlineStatus(value: string | null): 'SHOW' | 'DISABLE' | null {
+  if (!value) {
+    return null
+  }
+  if (value === 'HIDE' || value.endsWith('.HIDE')) {
+    return null
+  }
+  if (value === 'SHOW' || value.endsWith('.SHOW')) {
+    return 'SHOW'
+  }
+  if (value === 'DISABLE' || value.endsWith('.DISABLE')) {
+    return 'DISABLE'
+  }
+  return null
+}
+
+// Fetch offices for a selected service. Keeps SHOW and DISABLE; omits HIDE/deleted.
 // Throws on fetch/HTTP/parse failure so the page can tell error apart from empty [].
 export async function getServiceLocations(serviceId: number): Promise<ServiceLocation[]> {
   const url = `${await getApiBaseUrl()}/offices?service_id=${serviceId}`
@@ -48,11 +67,17 @@ export async function getServiceLocations(serviceId: number): Promise<ServiceLoc
   const locations: ServiceLocation[] = []
 
   for (const row of body.offices ?? []) {
-    const status = row.online_status ?? ''
-    const isShow = status === 'SHOW' || status.endsWith('.SHOW')
-    if (row.deleted || !row.appointments_enabled_ind || !isShow) {
+    if (row.deleted) {
       continue
     }
+
+    const status = readOnlineStatus(row.online_status)
+    if (!status) {
+      continue
+    }
+
+    const nextAppointmentDate = row.next_appointment_date ?? null
+    const appointmentsDisabled = status === 'DISABLE' || !row.appointments_enabled_ind
 
     locations.push({
       id: row.office_id,
@@ -61,7 +86,9 @@ export async function getServiceLocations(serviceId: number): Promise<ServiceLoc
       latitude: row.latitude,
       longitude: row.longitude,
       appointmentMessage: row.office_appointment_message?.trim() || '',
-      nextAppointmentDate: row.next_appointment_date ?? null,
+      nextAppointmentDate,
+      appointmentsDisabled,
+      isBookable: !appointmentsDisabled && nextAppointmentDate !== null,
     })
   }
 

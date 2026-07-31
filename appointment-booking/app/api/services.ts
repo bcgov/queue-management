@@ -8,6 +8,8 @@ export type Service = {
   name: string
   onlineAvailability: OnlineAvailability
   isOnlineBookable: boolean
+  /** Knowledge-test (DLKT) service; used to hide offices with no DLKT capacity. */
+  isDlkt: boolean
 }
 
 // API response row from GET /api/v1/services/.
@@ -19,6 +21,7 @@ type ApiService = {
   display_dashboard_ind: number
   online_availability: string | null
   deleted: string | null
+  is_dlkt?: boolean | null
 }
 
 type ApiServicesResponse = {
@@ -73,6 +76,7 @@ function mapRow(row: ApiService, availability: OnlineAvailability): Service {
     name,
     onlineAvailability: availability,
     isOnlineBookable: availability === 'SHOW',
+    isDlkt: row.is_dlkt === true,
   }
 }
 
