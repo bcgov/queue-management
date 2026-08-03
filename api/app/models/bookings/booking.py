@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from app.models.bookings import Base
 from qsystem import db
-from sqlalchemy_utc import UtcDateTime
+from app.utilities.sqlalchemy_compat import UtcDateTime
 
 
 class Booking(Base):
@@ -55,4 +55,3 @@ class Booking(Base):
 
     def __init__(self, **kwargs):
         super(Booking, self).__init__(**kwargs)
-

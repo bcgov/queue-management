@@ -28,10 +28,10 @@ class MultipleSelect2Field(Select2Field):
     def iter_choices(self):
         """Iterate over choices especially to check if one of the values is selected."""
         if self.allow_blank:
-            yield (u'__None', self.blank_text, self.data is None)
+            yield (u'__None', self.blank_text, self.data is None, {})
 
         for value, label in self.choices:
-            yield (value, label, self.coerce(value) in self.data)
+            yield (value, label, self.coerce(value) in self.data, {})
 
     def process_data(self, value):
         """This is called when you create the form with existing data."""
@@ -69,13 +69,15 @@ class TimeslotConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+        return self.get_current_role_code() in self.roles_allowed
 
     def get_query(self):
-        if current_user.role.role_code == 'SUPPORT':
+        role_code = self.get_current_role_code()
+        if role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=self.get_current_office_id())
+        if role_code == 'SUPPORT' or role_code is None:
             return self.session.query(self.model)
-        elif current_user.role.role_code == 'GA':
-            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+        return self.session.query(self.model)
 
     create_modal = False
     edit_modal = False

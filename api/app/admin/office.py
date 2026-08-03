@@ -17,7 +17,7 @@ import logging
 from app.models.theq import Office, Service, Counter
 from .base import Base
 from flask_login import current_user
-from flask import flash, url_for, has_app_context
+from flask import flash, url_for
 from flask_admin.babel import gettext
 from qsystem import db
 from sqlalchemy import and_
@@ -34,15 +34,15 @@ class OfficeConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+        return self.get_current_role_code() in self.roles_allowed
 
     @property
     def can_create(self):
-        return current_user.role.role_code != 'GA'
+        return self.get_current_role_code() != 'GA'
 
     @property
     def column_list(self):
-        if has_app_context() and current_user.role.role_code == 'SUPPORT':
+        if self.get_current_role_code() != 'GA':
             return self.column_list_support
         return self.column_list_GA    
 
@@ -55,10 +55,12 @@ class OfficeConfig(Base):
         pass # This is empty for some reason.
 
     def get_query(self):
-        if current_user.role.role_code == 'SUPPORT':
+        role_code = self.get_current_role_code()
+        if role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=self.get_current_office_id())
+        if role_code == 'SUPPORT' or role_code is None:
             return self.session.query(self.model)
-        elif current_user.role.role_code == 'GA':
-            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+        return self.session.query(self.model)
 
     create_modal = False
     edit_modal = False
@@ -323,7 +325,11 @@ class OfficeConfig(Base):
     }
 
     def on_model_change(self, form, model, is_created):
-        csr = CSR.find_by_username(current_user.username)
+        user = self.get_current_user()
+        if user is None:
+            return
+
+        csr = CSR.find_by_username(user.username)
         socketio.emit('clear_csr_cache', { "id": csr.csr_id})
         socketio.emit('csr_update',
                         {"csr_id": csr.csr_id, "receptionist_ind": csr.receptionist_ind},
@@ -331,12 +337,14 @@ class OfficeConfig(Base):
         socketio.emit('digital_signage_msg_update')
 
     def render(self, template, **kwargs):
-        if current_user.role.role_code == 'SUPPORT':
+        role_code = self.get_current_role_code()
+
+        if role_code == 'SUPPORT':
             if template == 'admin/model/edit.html':
                 template = 'office/office_edit.html'
             elif template == 'admin/model/create.html':
                 template = 'office/office_create.html'
-        elif current_user.role.role_code == 'GA':
+        elif role_code == 'GA':
             if template == 'admin/model/edit.html':
                 template = 'office/officega_edit.html'
             elif template == 'admin/model/create.html':

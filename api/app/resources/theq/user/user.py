@@ -30,6 +30,21 @@ from qsystem import api, db
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
 
+
+def _token_last_name(user_info):
+    return user_info.get('family_name') or user_info.get('lastName') or ''
+
+
+def _normalize_user_defaults(user: PublicUserModel):
+    if user.last_name is None:
+        user.last_name = ''
+    if user.telephone is None:
+        user.telephone = ''
+    if user.send_email_reminders is None:
+        user.send_email_reminders = False
+    if user.send_sms_reminders is None:
+        user.send_sms_reminders = False
+
 @api.route("/users/", methods=['POST'])
 class PublicUsers(Resource):
     user_schema = UserSchema(many=False)
@@ -38,16 +53,19 @@ class PublicUsers(Resource):
     def post(self):
         try:
             user_info = g.jwt_oidc_token_info
-            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
+            username = get_username()
+            user: PublicUserModel = PublicUserModel.find_by_username(username)
             if not user:
                 user = PublicUserModel()
-                user.username = get_username()
+                user.username = username
                 user.email = user_info.get('email')
             else:  # update email only if the email is None for existing user
                 if not user.email:
                     user.email = user_info.get('email')
             user.display_name = user_info.get('display_name')
-            user.last_name = user_info.get('family_name')
+            if not user.last_name:
+                user.last_name = _token_last_name(user_info)
+            _normalize_user_defaults(user)
             db.session.add(user)
             db.session.commit()
 
@@ -67,7 +85,8 @@ class PublicUser(Resource):
     def put(self, user_id: int):
         try:
             json_data = request.get_json()
-            user: PublicUserModel = PublicUserModel.find_by_username(get_username())
+            username = get_username()
+            user: PublicUserModel = PublicUserModel.find_by_username(username)
             current_sms_reminder: bool = user.send_sms_reminders
             user.email = json_data.get('email')
             user.telephone = json_data.get('telephone')
@@ -79,7 +98,7 @@ class PublicUser(Resource):
             # If the user is opting in for SMS reminders, send reminders for all the appointments.
             if not current_sms_reminder and user.send_sms_reminders:
                 appointments: List[AppointmentModel] = PublicUserModel.find_appointments_by_username(
-                    get_username())
+                    username)
                 for appointment in appointments:
                     office = appointment.office
                     send_sms(appointment, office, office.timezone, user,

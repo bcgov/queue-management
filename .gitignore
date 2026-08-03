@@ -149,7 +149,6 @@ version.GENERATED.ts
 
 
 # Docker
-api/Dockerfile
 frontend/Dockerfile
 api/init.sh
 api/wait-for-it.sh

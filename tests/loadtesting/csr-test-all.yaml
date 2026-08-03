@@ -45,7 +45,7 @@ scenarios:
   - name: "CSR – Login, load data, idle"
     beforeRequest: 'setAuthHeader'
     weight: 75
-    flow: &csrLoadData
+    flow:
       - get:
           url: "/api/v1/citizens/"
       - get:
@@ -55,7 +55,7 @@ scenarios:
       - get:
           url: "/api/v1/channels/"
       - get:
-          url: "/api/v1/services/?office_id=1"
+          url: "/api/v1/services/?office_id={{ $processEnvironment.LOADTEST_OFFICE_ID }}"
       - get:
           url: "/api/v1/exam_types/"
       - think: 5
@@ -66,14 +66,23 @@ scenarios:
     beforeRequest: 'setAuthHeader'
     weight: 75
     flow:
-      # Copy the same flow for idle CSRs, and just add more steps
-      - *csrLoadData
+      - get:
+          url: "/api/v1/citizens/"
+      - get:
+          url: "/api/v1/appointments/"
+      - get:
+          url: "/api/v1/categories/"
+      - get:
+          url: "/api/v1/channels/"
+      - get:
+          url: "/api/v1/services/?office_id={{ $processEnvironment.LOADTEST_OFFICE_ID }}"
+      - get:
+          url: "/api/v1/exam_types/"
+      - think: 5
       - post:
+          beforeRequest: "setDraftPayload"
           url: "/api/v1/appointments/draft"
-          json:
-            start_time: "2020-11-05T18:00:00Z"
-            end_time: "2020-11-05T18:15:00Z"
-            office_id: 1
+          json: {}
           capture:
             json: "$.appointment.appointment_id"
             as: "draftappointment_Id"
@@ -83,6 +92,7 @@ scenarios:
           url: "/api/v1/appointments/draft/{{draftappointment_Id}}/"
       - think: 5
       - post:
+          beforeRequest: "setCreateAppointmentPayload"
           # url: "/api/v1/appointments/draft"
           url: "/api/v1/appointments/"
           json:
@@ -92,13 +102,13 @@ scenarios:
             citizen_name: "name from test"
             contact_information: ""
             office_id: 1
-            appointment_draft_id: 1
           capture:
             json: "$.appointment.appointment_id"
             as: "appointment_id"
           strict: false # We don't mind if id can't be captured and the next requests 404s
       - think: 5
       - put:
+          beforeRequest: "setUpdateAppointmentPayload"
           url: "/api/v1/appointments/{{appointment_id}}/"
           json:
             start_time: "2020-11-05T18:00:00Z"
@@ -107,7 +117,6 @@ scenarios:
             citizen_name: "updated name from test"
             contact_information: ""
             office_id: 1
-            appointment_draft_id: 1
           capture:
             json: "$.appointment.appointment_id"
             as: "updateappointment_id"

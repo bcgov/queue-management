@@ -13,9 +13,7 @@
 # limitations under the License.
 """Endpoints to check and manage the health of the service."""
 
-from flask_restx import Namespace
-from flask_restx import Resource
-from flask_restx import cors
+from flask_restx import Namespace, Resource, cors
 
 api = Namespace('', description='API for Sending Service BC Notifications')
 

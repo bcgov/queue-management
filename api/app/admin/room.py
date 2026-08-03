@@ -20,27 +20,30 @@ from flask_admin.model.helpers import get_mdict_item_or_list
 from flask_login import current_user
 from qsystem import db
 from datetime import datetime
-import pytz
+
+from app.utilities.timezone_utils import as_utc
 
 
 class RoomConfig(Base):
     roles_allowed = ['SUPPORT', 'GA']
 
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.role.role_code in self.roles_allowed
+        return self.get_current_role_code() in self.roles_allowed
 
     def get_query(self):
-        if current_user.role.role_code == 'SUPPORT':
+        role_code = self.get_current_role_code()
+        if role_code == 'GA':
+            return self.session.query(self.model).filter_by(office_id=self.get_current_office_id())
+        if role_code == 'SUPPORT' or role_code is None:
             return self.session.query(self.model)
-        elif current_user.role.role_code == 'GA':
-            return self.session.query(self.model).filter_by(office_id=current_user.office_id)
+        return self.session.query(self.model)
 
     def on_model_change(self, form, model, is_created):
 
         if not is_created:
             room_id = get_mdict_item_or_list(request.args, 'id')
             today = datetime.now()
-            today_aware = pytz.utc.localize(today)
+            today_aware = as_utc(today)
 
             booking_room = Booking.query.filter_by(room_id=room_id)\
                                         .filter(Booking.start_time > today_aware).count()

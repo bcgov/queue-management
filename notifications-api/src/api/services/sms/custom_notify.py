@@ -15,7 +15,6 @@
 
 This module is being invoked from a job and it sends SMS reminders to customers.
 """
-import os
 from typing import Dict
 
 from . import SmsBaseService

@@ -1,0 +1,718 @@
+{
+  "realm": "servicebc-local",
+  "displayName": "ServiceBC Local Dev",
+  "enabled": true,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "internal_user",
+        "description": "Local ServiceBC internal user"
+      },
+      {
+        "name": "online_appointment_user",
+        "description": "Local ServiceBC appointment user"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "theq-frontend",
+      "name": "TheQ Frontend",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "frontchannelLogout": true,
+      "rootUrl": "http://localhost:8080",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8080"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:8080/*",
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-theq-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "theq_username",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "identity_provider",
+            "claim.name": "identity_provider",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "display_name",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "userid",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "userid",
+            "claim.name": "userid",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "name",
+            "claim.name": "name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "firstname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "firstName",
+            "claim.name": "firstname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "lastname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "lastName",
+            "claim.name": "lastname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "theq-appointment-frontend",
+      "name": "TheQ Appointment Frontend",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "frontchannelLogout": true,
+      "rootUrl": "http://localhost:8081",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:8081/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8081"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:8081/*",
+        "pkce.code.challenge.method": "S256"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-theq-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "theq_username",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "identity_provider",
+            "claim.name": "identity_provider",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "display_name",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "userid",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "userid",
+            "claim.name": "userid",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "name",
+            "claim.name": "name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "firstname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "firstName",
+            "claim.name": "firstname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "lastname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "lastName",
+            "claim.name": "lastname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "theq-queue-management-api",
+      "name": "TheQ Queue Management API",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "theq-local-dev-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": true,
+      "protocolMappers": [
+        {
+          "name": "audience-theq-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-queue-management-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "audience-theq-notifications-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "theq-notifications-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "theq_username",
+            "claim.name": "username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "identity_provider",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "identity_provider",
+            "claim.name": "identity_provider",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "display_name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "display_name",
+            "claim.name": "display_name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "userid",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "userid",
+            "claim.name": "userid",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "name",
+            "claim.name": "name",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "firstname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "firstName",
+            "claim.name": "firstname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "lastname",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "lastName",
+            "claim.name": "lastname",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "theq-notifications-api",
+      "name": "TheQ Notifications API",
+      "description": "Notifications API Client for The Q (SBC)",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true
+    }
+  ],
+  "users": [
+    {
+      "username": "democsr@idir",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "CSR",
+      "lastName": "Demo CITZ:EX",
+      "email": "csrdemo@example.com",
+      "attributes": {
+        "theq_username": [
+          "democsr"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "CSR, Demo CITZ:EX"
+        ],
+        "userid": [
+          "CSRDEMO"
+        ],
+        "name": [
+          "CSR, Demo CITZ:EX"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "demoga@idir",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "GA",
+      "lastName": "Demo CITZ:EX",
+      "email": "gademo@example.com",
+      "attributes": {
+        "theq_username": [
+          "demoga"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "GA, Demo CITZ:EX"
+        ],
+        "userid": [
+          "DEMOGA"
+        ],
+        "name": [
+          "GA, Demo CITZ:EX"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "admin@idir",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Test CITZ:EX",
+      "email": "admin@example.com",
+      "attributes": {
+        "theq_username": [
+          "admin"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "Admin, Test CITZ:EX"
+        ],
+        "userid": [
+          "ADMIN"
+        ],
+        "name": [
+          "Admin, Test CITZ:EX"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "citizen@bceidboth",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "Citizen",
+      "email": "citizen@example.com",
+      "attributes": {
+        "theq_username": [
+          "citizen"
+        ],
+        "identity_provider": [
+          "bceid"
+        ],
+        "display_name": [
+          "Test Citizen"
+        ],
+        "userid": [
+          "CITIZEN"
+        ],
+        "name": [
+          "Test Citizen"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    },
+    {
+      "username": "citizen2@bceidboth",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Test2",
+      "lastName": "Citizen2",
+      "email": "citizen2@example.com",
+      "attributes": {
+        "theq_username": [
+          "citizen2"
+        ],
+        "identity_provider": [
+          "bceid"
+        ],
+        "display_name": [
+          "Test2 Citizen2"
+        ],
+        "userid": [
+          "CITIZEN2"
+        ],
+        "name": [
+          "Test2 Citizen2"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-operator",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Operator",
+      "email": "cfms-postman-operator@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-operator"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "Postman Operator"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-non-operator",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Non Operator",
+      "email": "cfms-postman-non-operator@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-non-operator"
+        ],
+        "identity_provider": [
+          "idir"
+        ],
+        "display_name": [
+          "Postman Non Operator"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "internal_user"
+      ]
+    },
+    {
+      "username": "cfms-postman-public-user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Postman",
+      "lastName": "Public User",
+      "email": "cfms-postman-public-user@example.com",
+      "attributes": {
+        "theq_username": [
+          "cfms-postman-public-user"
+        ],
+        "identity_provider": [
+          "bceid"
+        ],
+        "display_name": [
+          "cfms-postman-public-user"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "online_appointment_user"
+      ]
+    }
+  ]
+}

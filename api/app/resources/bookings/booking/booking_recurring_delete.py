@@ -18,7 +18,7 @@ from app.schemas.bookings import BookingSchema
 from app.models.theq import CSR
 from qsystem import api, db
 from datetime import datetime, timedelta, date
-import logging, pytz
+import logging
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
 
@@ -27,7 +27,6 @@ from app.auth.auth import jwt
 class BookingRecurringDelete(Resource):
 
     booking_schema = BookingSchema
-    timezone = pytz.timezone("US/Pacific")
 
     @jwt.has_one_of_roles([Role.internal_user.value])
     def delete(self, id):

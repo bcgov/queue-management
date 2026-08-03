@@ -11,20 +11,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Email provider selection."""
+
+from flask import current_app
+
 from .email_base_service import EmailBaseService
-import os
 
 
 def get_email_service():
-    """Return SMS Service implementation."""
-    from .email_gc_notify import EmailGCNotify
+    """Return email service implementation."""
     from .email_ches_notify import EmailChesNotify
+    from .email_gc_notify import EmailGCNotify
+    from .email_log_notify import EmailLogNotify
 
-    _instance: EmailBaseService
-    if os.getenv('EMAIL_PROVIDER') == 'GC_NOTIFY':
-        _instance = EmailGCNotify()
-    elif os.getenv('EMAIL_PROVIDER') == 'CHES':
-        _instance = EmailChesNotify()
+    provider = current_app.config.get("EMAIL_PROVIDER", "GC_NOTIFY").upper()
+    instance: EmailBaseService
+    if provider == "CHES":
+        instance = EmailChesNotify()
+    elif provider == "LOG":
+        instance = EmailLogNotify()
     else:
-        _instance = EmailGCNotify()
-    return _instance
+        instance = EmailGCNotify()
+    return instance

@@ -13,7 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 import datetime as dt
 from datetime import timedelta, time
-import pytz
+
+from app.utilities.timezone_utils import get_timezone, localize
 
 days_mapping = {
     'Monday': 1,
@@ -38,7 +39,7 @@ def add_delta_to_time(time: time, timezone, minutes: int = 0, seconds: int = 0):
     else:
         delta_time -= timedelta(seconds=seconds)
 
-    return delta_time.replace(tzinfo=pytz.timezone(timezone)).time()
+    return localize(delta_time, timezone).timetz()
 
 
 def day_indexes(days):
@@ -51,4 +52,4 @@ def day_indexes(days):
 
 def current_pacific_time():
     """Return current time as in pacific zone."""
-    return dt.datetime.now().astimezone(pytz.timezone('US/Pacific'))
+    return dt.datetime.now(get_timezone('America/Vancouver'))

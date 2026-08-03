@@ -1,139 +1,339 @@
-[![img](https://img.shields.io/badge/Lifecycle-Stable-97ca00)]
-## Queue Managment System - About
+# The Q
 
-The Queue Managment System will be used to manage the citizen flow and provide analtyics for our Service BC locations. This system is designed to be used for government offices with a large number of services.
+The Q is the Service BC platform for managing in-person office flow, appointments, smartboard and digital signage displays, outbound notifications, and related service delivery workflows. The application is used by Service BC as well as other B.C. government ministries.
 
-## Technology Stack Used
+Service BC connects people with services offered by the B.C. provincial government. This application supports the day-to-day operations of Service BC locations by helping staff manage queues, appointments, exams, walk-ins, and communications across the province.
 
-Single Signon using KeyCloak. This is used so that we don't need to manage the security concerns of passwords within the application. This also integrates to internal authentication model.
+## Applications and Services
 
-Designed for use in an application platform buld for containers specifically OpenShift:
+### `api`
 
-- VueJS & BootStrap for Front End
-- Flask & Python for API Backend
-- EDB (Postgres)
-- Redis
-- Ngnix
+The primary backend service for the platform. It serves the main REST API under `/api/v1` plus Socket.IO endpoints used by the staff and public frontends.
 
-## Features
+Key responsibilities include:
 
-Designed to accomodate multiple locations.  
-Designed for both reception based offices and direct counter offices.
+- Queue and citizen service flows: create and manage citizens, service requests, queue state transitions, invite and serve flows, hold flows, and completion flows.
+- Office and reference data: offices, services, categories, channels, CSR state, user context, and related administrative data.
+- Appointments, bookings, and walk-ins: appointment slots, appointment creation and updates, recurring bookings, walk-in queue support, and reminder-related workflows.
+- Exams, rooms, and invigilators: exam scheduling, uploads, exports, room management, and invigilator management.
+- Smartboard and real-time updates: smartboard data endpoints plus Socket.IO events for queue changes and office-specific live updates.
+- Health endpoints: readiness and health checks for operational monitoring.
 
-Additional features for Reception offices:
+### `frontend`
 
-- Waiting queue displayed
-- Citizens are called by name
-- Digital Signage includes Current number of people waiting
-- Handles a Quick Transaction Counter
-- Ability to invite next citizen or pick from the waiting queue
+The internal staff-facing Vue 2 application. Staff use it for queue management, office administration, appointments, exams, uploads, smartboard support, and optional service-flow integrations.
 
-Basic Digital Signage URLs per office
+### `appointment-frontend`
 
-- Date and Time based on TimeZone
-- MP4 to display messageing
+The public-facing Vue 2 application for booking appointments, viewing booked appointments, managing account settings, handling sign-in flows, and viewing walk-in queue status.
 
-Hold Queue
+### `appointment-booking`
 
-- Allows staff to place citizen tickets on hold
+The new under development public-facing React 19 + TypeScript application for booking appointments at Service BC locations. It will eventually replace `appointment-frontend`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for setup instructions.
 
-Track Channels of an interaction from In Person, Phone, etc.
+### `notifications-api`
 
-Service Listings
+A separate Flask service for outbound notifications. It exposes authenticated `POST /api/v1/notifications/sms` and `POST /api/v1/notifications/email` endpoints and supports pluggable delivery providers, including GC Notify, CHES, and logging/custom implementations.
 
-- Sorted by category
-- Searching service listings includes descriptions
-- Hovering over a service listing displays descriptions
-- Ability to customize service listing per Office
-- Ability to hide Services from Digital Signage display
-- Ability to add multiple services in one interaction
+### `feedback-api`
 
-Office Status Panel
+> [!WARNING]
+> `feedback-api` is deprecated, retained only for legacy compatibility, and will be removed in a future version.
 
-- Provides a manager the ability to see counter interaction details
+This legacy Flask service accepts feedback submissions and forwards them to the older Camunda-based feedback flow.
 
-Service Appointments (Optional)
+## Technology Stack
 
-- Calendar for booking appointments
-- Ability to Checkin clients and place them at the top of the queue
+- Backend: Python, Flask, Flask-RESTX, SQLAlchemy, Flask-Migrate, Flask-SocketIO, Marshmallow, Gunicorn, and Gevent.
+- Frontend: Vue 2 , React 19 + TypeScript + Vite , Vue Router, Vuex, Vuetify, BootstrapVue, Buefy, and Axios.
+- Data and integrations: PostgreSQL, Redis-backed real-time/message queue usage, MinIO for object storage, Keycloak/OIDC authentication, optional Snowplow analytics, and GC Notify/CHES/custom notification providers.
+- Serving/runtime: Nginx serves built frontend assets in containerized deployments.
 
-Room Booking and Exam Invigilation (Optional)
+Older references to RabbitMQ remain in the repository, but they are not part of the current development guidance in this README.
 
-- Manage Industry Trade Authority Group and Individual Exams
-- Manage Other (Basic Exams)
-- Manage General Room Booking
-- Report on Exams
+## Development Options
 
-Basic Administration Panels to add, update and delete:
+This repository supports two local development workflows:
 
-- Offices
-- Customer Service Reps
-- Service Listing
-- Channels
-- Roles
-- Invigilators
-- Exam Types
-- Rooms
-- Counter Types
+- Using a [development container](https://containers.dev/)
+- Developing locally on your host machine
 
-Feedback
+### Dev Container Workflow
 
-- Sends to Teams and / or Service Now and / or Rocket Chat
+#### Prerequisites
 
-Analytics
+- Podman or another compatible Docker engine
+- Visual Studio Code (or another editor with Dev Container support)
+- The Dev Containers extension for VS Code
 
-- Key timing events are sent to snowplow for analysis and reporting
-- Data is also stored in the Patroni Postgres database as an alternative method to extract analytics
+#### Steps
 
-## Requirements
+1. Open the repository in an editor with dev container support
+2. Use the editor to reopen the project in the devcontainer
+   - For example, in VS Code, click the popup prompt or use the Command Palette to select "Dev Containers: Reopen in Container"
+3. Let the container build from the root `compose.yaml` definition and finish running the post-create script
+4. Confirm that the container has provisioned PostgreSQL and Keycloak, and forwarded the main ports
 
-Requires KeyCloak and additional Openshift / Kubernetes Config Maps
+The devcontainer now prepares local config files before API migrations/bootstrap and waits for PostgreSQL and Keycloak readiness before the post-create flow continues.
+It also provisions project-local Python environments for both `api` and `notifications-api`, so the checked-in VS Code debug configurations work without extra manual setup.
 
-- keycloak.json is required in Front End Container in the following location: /var/www/html/static/keycloak
+#### Expected Ports
 
-  {
-  "realm": "",
-  "auth-server-url": "" ,
-  "ssl-required": "",
-  "resource": "",
-  "credentials": {
-  "secret": ""
-  }
-  }
+- `5000`: queue management API
+- `5002`: notifications API
+- `5173`: appointment booking frontend (React)
+- `8080`: staff frontend
+- `8081`: appointment frontend
+- `8085`: Keycloak auth server
+- `5432`: PostgreSQL
 
-- secrets.json is required in API Container in the following location: /opt/app-root/src/client_secrets
+The devcontainer installs dependencies automatically for `api`, `notifications-api`, `frontend`, and `appointment-frontend`, applies database migrations, and may initialize seed data depending on the current database state.
 
-  {
-  "web": {
-  "realm_public_key": "",
-  "issuer": "" ,
-  "auth_uri": "" ,
-  "client_id": "",
-  "client_secret": "",
-  "redirect_urls": [
-  ""
-  ],
-  "userinfo_uri": "" ,
-  "token_uri": "" ,
-  "token_introspection_uri": ""  
-   }
-  }
+### Local Host Workflow
 
-- Digital Signage video (with the name of sbc.mp4) needs to be manually placed in /var/www/html/static/videos
+#### Prerequisites
 
-The openshift templates are used for build configs and deployment configs
+- Python 3.14 with `uv`
+- Node.js 20 with `npm`
+- PostgreSQL 16
 
-Additional Enviornment Variables for API pods are used:
+#### Setup
 
-TEAMS_URL - to integrate feedback to Teams
-THEQ_SNOWPLOW_ENDPOINT - where snowplow events are sent
-THEQ_SNOWPLOW_APPID - Application ID for snowplow
-THEQ_SNOWPLOW_NAMESPACE - Snowplow events namespace
-THEQ_SNOWPLOW_CALLFLAG - disable/enable snowplow (Value: True or False)
+1. Install backend dependencies:
 
-## [Installation](documentation/Readme.md)
+   ```bash
+   cd ./api
+   uv sync --group dev
 
-Additional information can be found in the [documention](documentation/Readme.md) folder.
+   cd ./notifications-api
+   uv sync --group dev
+   ```
+
+2. Install frontend dependencies:
+
+   ```bash
+   cd ./frontend
+   npm install
+
+   cd ./appointment-frontend
+   npm install
+
+   cd ./appointment-booking
+   npm install
+   ```
+
+3. Create the required local config files:
+
+   ```bash
+   ./scripts/setup-local-config.sh
+   ```
+
+   This script copies the checked-in local config defaults from `.devcontainer/config`, creates missing destination directories, validates required API auth keys, and leaves any existing local files untouched.
+
+4. Start the local auth server:
+
+   ```bash
+   docker compose up -d keycloak
+   ```
+
+   Local Keycloak details:
+
+   - Realm: `servicebc-local`
+   - Base URL: `http://localhost:8085/auth`
+   - Admin console: `http://localhost:8085/auth/admin/`
+   - Admin credentials: `admin` / `password`
+   - Demo users: `democsr@idir`, `demoga@idir`, `admin@idir`, `citizen@bceidboth`, `citizen2@bceidboth`
+   - Demo user password: `password`
+   - Confidential client id: `theq-queue-management-api`
+   - Confidential client secret: `theq-local-dev-secret`
+
+5. Make sure the database settings in `api/.env` point to your local PostgreSQL instance.
+
+6. Run database migrations:
+
+   ```bash
+   cd ./api
+   uv run python manage.py db upgrade
+   ```
+
+#### Run Commands
+
+Start the services in separate terminals.
+
+Queue management API using the local Python environment:
+
+```bash
+cd ./api
+uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
+```
+
+Queue management API using the production Dockerfile through Compose:
+
+```bash
+docker compose --profile api up --build api
+```
+
+The root `compose.yaml` is the single source of truth for local Docker services and the devcontainer. The optional `api` Compose service still serves the application on `http://localhost:5000`. It reads `api/.env`, then overrides container-only settings so it can reach the host PostgreSQL and host-run notifications API while continuing to use the local Keycloak on `http://localhost:8085/auth`.
+
+Notifications API:
+
+```bash
+cd ./notifications-api
+uv run gunicorn wsgi:application --bind=0.0.0.0:5002 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
+```
+
+Staff frontend:
+
+```bash
+cd ./frontend
+npm run serve
+```
+
+Appointment frontend:
+
+```bash
+cd ./appointment-frontend
+npm run serve -- --port 8081
+```
+
+Appointment booking frontend (React):
+
+```bash
+cd ./appointment-booking
+npm run dev
+```
+
+Opens at `http://localhost:5173`. See [`appointment-booking/README.md`](./appointment-booking/README.md) for Docker and environment variable details.
+
+#### Local Config Files
+
+These are the main local files you should expect to have in place when running the application locally:
+
+- `api/.env`
+- `api/client_secrets/secrets.json`
+- `frontend/public/static/keycloak/keycloak.json`
+- `frontend/public/config/configuration.json`
+- `appointment-frontend/.env.local`
+- `appointment-frontend/public/config/kc/keycloak-public.json`
+- `appointment-frontend/public/config/configuration.json`
+
+The checked-in local auth defaults now target the local Keycloak realm on `http://localhost:8085/auth`. If you need to switch back to the shared dev Keycloak server, update the copied local config files before starting the apps.
+
+## Testing
+
+This repository includes Python/pytest suites, Artillery-based load tests, and Postman/Newman collections. The commands below assume you already completed the local setup for the relevant service and, for API-backed tests, have the local stack running.
+
+### Pytest Suites
+
+The main application test suite lives in `api/app/tests` and is split into a DB-free `smoke` slice and a Postgres-backed `integration` slice.
+
+From `api`:
+
+```bash
+./scripts/run_api_smoke_tests.sh
+./scripts/run_api_integration_tests.sh
+./scripts/run_api_full_tests.sh
+```
+
+Equivalent direct pytest commands:
+
+```bash
+uv run pytest app/tests -m smoke -q --override-ini "addopts=--strict-markers"
+uv run pytest app/tests -m integration -q --override-ini "addopts=--strict-markers" --require-integration-db
+uv run pytest app/tests -q --require-integration-db
+```
+
+Additional pytest suites:
+
+```bash
+cd ./notifications-api
+uv sync --group dev
+uv run pytest
+```
+
+```bash
+cd ./feedback-api
+make setup
+make test
+```
+
+### Load Tests
+
+Load testing lives in `tests/loadtesting` and uses Artillery against the local API stack.
+
+Initial setup:
+
+```bash
+cd ./tests/loadtesting
+npm install
+cp envs.example.sh envs.sh
+chmod +x envs.sh profile-python.sh
+```
+
+Before running the load tests locally, start the local Keycloak realm and seed the API data:
+
+```bash
+docker compose up -d keycloak
+
+cd ./api
+uv run python manage.py db upgrade
+uv run python manage.py bootstrap
+```
+
+Run the load suites from `tests/loadtesting`:
+
+```bash
+npm run tests:all
+npm run tests:http
+npm run tests:socket
+```
+
+Optional Python profiling commands are also available there:
+
+```bash
+npm run python:profile
+npm run python:top
+```
+
+### Newman Tests
+
+Postman collections live in `api/postman`. They target the local API and local Keycloak realm, and the checked-in local setup expects the demo users from `keycloak-local/servicebc-local-realm.json`.
+
+Before running Newman locally, make sure the API database is migrated and bootstrapped:
+
+```bash
+cd ./api
+uv run python manage.py db upgrade
+uv run python manage.py bootstrap
+```
+
+Then install Newman and run the main collection from `api/postman`:
+
+```bash
+cd ./api/postman
+npm install
+./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --bail failure \
+  --global-var userid=cfms-postman-operator \
+  --global-var password=password \
+  --global-var userid_nonqtxn=cfms-postman-non-operator \
+  --global-var password_nonqtxn=password \
+  --global-var client_secret=theq-local-dev-secret \
+  --global-var url=http://localhost:5000/api/v1/ \
+  --global-var auth_url=http://localhost:8085 \
+  --global-var clientid=theq-queue-management-api \
+  --global-var realm=servicebc-local \
+  --global-var public_url=http://localhost:5000/api/v1/ \
+  --global-var public_user_id=cfms-postman-public-user \
+  --global-var public_user_password=password
+```
+
+See `api/postman/README-local-auth.md` for local auth troubleshooting details.
+
+## Deployment
+
+For deployment within the B.C. government, this project can be hosted on the [B.C. government Private Cloud](https://digital.gov.bc.ca/technology/cloud/private/). The platform is the B.C. Government Private Cloud PaaS, powered by Red Hat OpenShift, and is designed for hosting government applications in a managed private-cloud environment.
+
+This repository still includes deployment artifacts under [`openshift/templates`](./openshift/templates) for platform-specific builds and deployments.
 
 ## Getting Help or Reporting an Issue
 
@@ -141,43 +341,8 @@ To report bugs/issues/feature requests, please file an [issue](../../issues).
 
 ## How to Contribute
 
-_If you are including a Code of Conduct, make sure that you have a [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) file, and include the following text in here in the README:_
-"Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms."
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 ## License
 
-Detailed guidance around licenses is available
-[here](/BC-Open-Source-Development-Employee-Guide/Licenses.md)
-
-Attach the appropriate LICENSE file directly into your repository before you do anything else!
-
-The default license For code repositories is: Apache 2.0
-
-Here is the boiler-plate you should put into the comments header of every source code file as well as the bottom of your README.md:
-
-    Copyright 2015 Province of British Columbia
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-For repos that are made up of docs, wikis and non-code stuff it's Creative Commons Attribution 4.0 International, and should look like this at the bottom of your README.md:
-
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Licence" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">YOUR REPO NAME HERE</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">the Province of Britich Columbia</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
-
-and the code for the cc 4.0 footer looks like this:
-
-    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Licence"
-    style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span
-    xmlns:dct="http://purl.org/dc/terms/" property="dct:title">YOUR REPO NAME HERE</span> by <span
-    xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">the Province of Britich Columbia
-    </span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-    Creative Commons Attribution 4.0 International License</a>.
+This project is licensed under the Apache License, Version 2.0. See the root [`LICENSE`](./LICENSE) file for the full license text.

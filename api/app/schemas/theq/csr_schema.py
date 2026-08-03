@@ -42,7 +42,7 @@ class CSRSchema(BaseSchema):
     finance_designate = fields.Int()
     ita2_designate = fields.Int()
 
-    @post_dump(pass_many=True)
+    @post_dump(pass_collection=True)
     def add_counter_id(self, data, many, **kwargs):
         if not many:
             data['counter'] = data['counter_id']

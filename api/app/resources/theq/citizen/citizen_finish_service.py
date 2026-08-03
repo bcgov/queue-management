@@ -27,6 +27,29 @@ from sqlalchemy.orm import raiseload, joinedload
 from sqlalchemy.dialects import postgresql
 
 
+def _citizen_finish_service_query(citizen_id):
+    return Citizen.query \
+        .options(
+            joinedload(Citizen.service_reqs).options(
+                joinedload(ServiceReq.periods).options(
+                    joinedload(Period.ps).options(raiseload('*')),
+                    joinedload(Period.csr).options(raiseload('*')),
+                    raiseload('*')
+                ),
+                joinedload(ServiceReq.service).options(
+                    joinedload(Service.parent).options(
+                        raiseload(Service.parent).options(raiseload('*'))
+                    ),
+                    raiseload('*')
+                )
+            ),
+            raiseload(Citizen.user),
+            joinedload(Citizen.counter),
+            joinedload(Citizen.office).options(joinedload(Office.sb), raiseload('*'))
+        ) \
+        .filter_by(citizen_id=citizen_id)
+
+
 @api.route("/citizens/<int:id>/finish_service/", methods=["POST"])
 class CitizenFinishService(Resource):
 
@@ -37,11 +60,7 @@ class CitizenFinishService(Resource):
     @api_call_with_retry
     def post(self, id):
         csr = CSR.find_by_username(get_username())
-        citizen = Citizen.query\
-        .options(joinedload(Citizen.service_reqs).options(joinedload(ServiceReq.periods).options(joinedload(Period.ps).options(raiseload('*')),joinedload(Period.csr).options(raiseload('*')),raiseload('*')), joinedload(ServiceReq.service).options(joinedload(Service.parent).options(raiseload(Service.parent).options(raiseload('*'))),raiseload('*'))), raiseload(Citizen.counter),raiseload(Citizen.user), joinedload(Citizen.counter), joinedload(Citizen.office).options(joinedload(Office.sb),raiseload('*'))) \
-        .filter_by(citizen_id=id)
-        
-        citizen = citizen.first()
+        citizen = _citizen_finish_service_query(id).first()
 
         my_print("==> POST /citizens/" + str(citizen.citizen_id) + '/finish_service/, Ticket: ' + citizen.ticket_number)
         active_service_request = citizen.get_active_service_request()

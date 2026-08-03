@@ -1,8 +1,14 @@
 # Back-end Development Guide
 
-Generate new migrations
+Sync the project environment
 
 ```
-python3 manage.py db migrate
-python3 manage.py db upgrade
+uv sync --group dev
+```
+
+Generate new migrations
+
+```bash
+uv run python manage.py db migrate
+uv run python manage.py db upgrade
 ```

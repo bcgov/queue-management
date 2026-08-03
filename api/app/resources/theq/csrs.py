@@ -21,9 +21,9 @@ from app.models.bookings import Exam, ExamType, Booking
 from app.models.theq import Citizen, CSR, Period, ServiceReq, SRState
 from app.schemas.bookings import ExamSchema, ExamTypeSchema
 from app.schemas.theq import CitizenSchema, CSRSchema
-import pytz
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import get_timezone, localize
 
 
 @api.route("/csrs/", methods=["GET"])
@@ -58,7 +58,7 @@ class CsrSelf(Resource):
     citizen_schema = CitizenSchema(many=True)
     exam_schema = ExamSchema(many=True)
     exam_type_schema = ExamTypeSchema()
-    timezone = pytz.timezone("US/Pacific")
+    timezone = get_timezone("America/Vancouver")
     back_office_display = application.config['BACK_OFFICE_DISPLAY']
     recurring_feature_flag = application.config['RECURRING_FEATURE_FLAG']
 
@@ -75,7 +75,7 @@ class CsrSelf(Resource):
             db.session.add(csr)
             active_sr_state = SRState.get_state_by_name("Active")
             today = datetime.now()
-            start_date = self.timezone.localize(today).date()
+            start_date = localize(today, "America/Vancouver").date()
 
             active_citizens = Citizen.query \
                 .join(Citizen.service_reqs) \

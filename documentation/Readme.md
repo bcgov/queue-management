@@ -103,7 +103,25 @@ Note: starting Vue.js applications takes a long time for the webpack. When run o
 <details>
 <summary>How do I do development on Python code?</summary>
 
-The *.vscode/launch.json* file in the repo contains launchers for the API. Select the API you want from the drop-down list and then hit F5 to run it in *gunicorn*. Once the code is running, whenever you save a file *gunicorn* will automatically reload itself with the changes. You can set breakpoints in the code and then test with a browser, newman, or postman.
+There are now two recommended local workflows for the API:
+
+1. **Stable breakpoint debugging in VS Code**
+
+   Use the **queue_management_api** launcher from *.vscode/launch.json* and hit F5. This starts *api/wsgi.py* directly in a single process, which is more reliable for breakpoints on macOS.
+
+   This launcher does **not** auto-reload on file save. Restart the debugger manually after code changes.
+
+1. **Hot reload in a terminal or VS Code task**
+
+   Run the API with *gunicorn* when you want auto-reload while editing:
+
+   ```
+   uv run gunicorn wsgi --bind=0.0.0.0:5000 --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
+   ```
+
+   You can also run the **api: gunicorn hot reload** VS Code task.
+
+The two workflows are separate because the VS Code `debugpy` launcher plus *gunicorn* reloading can fork worker processes in a way that crashes on macOS with Objective-C fork-safety checks enabled. Keeping debugging single-process avoids that restart loop while preserving the existing *gunicorn* hot-reload workflow for normal development.
 
 </details>
 
@@ -237,17 +255,32 @@ For tests to run, you require two additional IDs created in your keycloak:
 
 ## Postman Tests
 
-Below is an example suing the localhost keycloak created above:
+Below is an example using the checked-in localhost Keycloak realm from `compose.yaml` and `keycloak-local/servicebc-local-realm.json`:
 
-- The application is now secured by roles. To add roels to the token, go to the client (id : account) and enable 'Full Scope Allowed' under Scope tab.
 - Create internal_user role and assign to anyone who will be accessing the application as a staff user
 - Create online_appointment_user role and assign to anyone who will be accessing the application as a public user
 
 - Create users & set passwords for the postman users in your keycloak instance:
 
-1. cfms-postman-operator (role: internal_user)
-1. cfms-postman-non-operator (role: internal_user)
-2. cfms-postman-public-user (role: online_appointment_user, with an attribute displayName and map it as display_name in token)
+1. cfms-postman-operator (role: internal_user, attributes `theq_username=cfms-postman-operator`, `identity_provider=idir`, `display_name=Postman Operator`)
+1. cfms-postman-non-operator (role: internal_user, attributes `theq_username=cfms-postman-non-operator`, `identity_provider=idir`, `display_name=Postman Non Operator`)
+1. cfms-postman-public-user (role: online_appointment_user, attributes `theq_username=cfms-postman-public-user`, `identity_provider=bceid`, `display_name=cfms-postman-public-user`, with non-empty `email` and `lastName`)
+
+Before running Newman, seed the local API database so the expected CSR records exist:
+
+1. `(cd api; uv run python manage.py db upgrade)`
+1. `(cd api; uv run python manage.py bootstrap)`
+
+The older `account` client and `registry` realm examples are legacy and do not match the current local stack.
+
+The checked-in local realm now maps both audiences onto Newman tokens minted by client `theq-queue-management-api`:
+
+1. `theq-queue-management-api`
+1. `theq-notifications-api`
+
+This keeps local appointment-booking Newman runs from logging a downstream `401` when the API forwards the caller token to `notifications-api` for email or SMS side effects.
+
+If you already imported the local realm before pulling this change, re-import `keycloak-local/servicebc-local-realm.json` or update client `theq-queue-management-api` in Keycloak to include protocol mapper `audience-theq-notifications-api`.
 
 Go \queue-manaement\api\postman & run the following command:
 
@@ -257,19 +290,21 @@ You will need the following information:
 
 1. password_qtxn=<cfms-postman-operator userid password>
 1. password_nonqtxn=<cfms-postman-non-operator userid password>
-1. client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79
+1. client_secret=theq-local-dev-secret
 1. url=http://localhost:5000/api/v1/
 1. auth_url=http://localhost:8085
-1. clientid=account
-1. realm=registry
+1. clientid=theq-queue-management-api
+1. realm=servicebc-local
 1. public_url=http://localhost:5000/api/v1/
 1. public_user_id=cfms-postman-public-user
 1. public_user_password=<cfms-postman-public-user userid password>
 
-For this test, I created the password for the two users as demo. From the postman folder run the following command to run the postman tests:
+For this test, the checked-in local realm uses `password` for the Postman users. From the postman folder run the following command to run the postman tests:
 
-`./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --global-var userid=cfms-postman-operator --global-var password=demo --global-var userid_nonqtxn=cfms-postman-non-operator --global-var password_nonqtxn=demo --global-var client_secret=5abdcb03-9dc6-4789-8c1f-8230c7d7cb79 --global-var url=http://localhost:5000/api/v1/ --global-var auth_url=http://localhost:8085 --global-var clientid=account --global-var realm=registry --global-var public_url=http://localhost:5000/api/v1/ --global-var public_user_id=cfms-postman-public-user --global-var public_user_password=password
+`./node_modules/newman/bin/newman.js run API_Test_TheQ_Booking.json -e postman_env.json --global-var userid=cfms-postman-operator --global-var password=password --global-var userid_nonqtxn=cfms-postman-non-operator --global-var password_nonqtxn=password --global-var client_secret=theq-local-dev-secret --global-var url=http://localhost:5000/api/v1/ --global-var auth_url=http://localhost:8085 --global-var clientid=theq-queue-management-api --global-var realm=servicebc-local --global-var public_url=http://localhost:5000/api/v1/ --global-var public_user_id=cfms-postman-public-user --global-var public_user_password=password
 `
+
+See `api/postman/README-local-auth.md` for local auth troubleshooting notes.
 
 ## Jest Test
 
