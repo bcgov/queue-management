@@ -42,3 +42,6 @@ class ServiceSchema(BaseSchema):
     email_paragraph = fields.Str(dump_only=True)
     css_colour = fields.Str(dump_only=True)
     is_dlkt = fields.Boolean()
+    partner = fields.Str()
+    program = fields.Str()
+    recoverable = fields.Str()
