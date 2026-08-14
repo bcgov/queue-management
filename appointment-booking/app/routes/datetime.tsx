@@ -103,12 +103,18 @@ export default function DateTimePage() {
   }, [isAuthReady, isBookingReady, isAuthenticated, selectedLocation, selectedService])
 
   const availableDates = Object.keys(timeSlots).sort()
-  // Prefer the day the user clicked; if none, use the day from a previously saved time.
+  // Prefer clicked day, then saved slot day, then next available date.
   const activeDay =
-    selectedDay ?? (selectedSlot && timeSlots[selectedSlot.date] ? selectedSlot.date : null)
+    selectedDay ??
+    (selectedSlot && timeSlots[selectedSlot.date] ? selectedSlot.date : null) ??
+    availableDates[0] ??
+    null
   const activeDaySlots = activeDay ? (timeSlots[activeDay] ?? []) : []
   const selectedSlotValue =
     selectedSlot?.date === activeDay ? slotValue(selectedSlot.startTime, selectedSlot.endTime) : ''
+  const nextDate = availableDates[0]
+  const nextAppointment =
+    nextDate && timeSlots[nextDate]?.[0] ? { date: nextDate, ...timeSlots[nextDate][0] } : null
 
   const stepProgress = (
     <BookingStepProgress
@@ -219,10 +225,41 @@ export default function DateTimePage() {
 
             <section aria-labelledby="datetime-time-heading">
               <h2 id="datetime-time-heading">Select Time</h2>
+              {nextAppointment ? (
+                <div className="datetime-time-panel">
+                  <p className="datetime-selected-day" aria-live="polite">
+                    {formatDate(nextAppointment.date)}
+                    <br />
+                    {formatTimeRange(nextAppointment.startTime, nextAppointment.endTime)}
+                  </p>
+                  <div className="datetime-next-available-action">
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="medium"
+                      onPress={() => {
+                        setSelectedDay(nextAppointment.date)
+                        setSelectedSlot(nextAppointment)
+                      }}
+                    >
+                      Select next available appointment
+                    </Button>
+                    <p className="datetime-next-available-or" aria-hidden="true">
+                      OR
+                    </p>
+                  </div>
+                </div>
+              ) : null}
               {activeDay ? (
                 <div className="datetime-time-panel">
                   <p className="datetime-selected-day" aria-live="polite">
                     {formatDate(activeDay)}
+                    {selectedSlot?.date === activeDay ? (
+                      <>
+                        <br />
+                        {formatTimeRange(selectedSlot.startTime, selectedSlot.endTime)}
+                      </>
+                    ) : null}
                   </p>
                   <div className="datetime-time-slots">
                     <Select
@@ -242,9 +279,7 @@ export default function DateTimePage() {
                     />
                   </div>
                 </div>
-              ) : (
-                <Text>Select an available date to see its appointment times.</Text>
-              )}
+              ) : null}
             </section>
           </div>
         </div>
