@@ -580,6 +580,21 @@ p {
   padding: var(--layout-padding-xlarge);
 }
 
+.datetime-next-available-action {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content;
+}
+
+.datetime-next-available-or {
+  margin-top: var(--layout-margin-large);
+  margin-bottom: var(--layout-margin-medium);
+  font: var(--typography-bold-small-body);
+  color: var(--typography-color-secondary);
+  text-align: center;
+}
+
 .datetime-selection {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
