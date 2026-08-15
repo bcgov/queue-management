@@ -7,34 +7,17 @@ import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
-import { BookingDetailCallout } from '~/components/BookingDetailCallout'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
+import {
+  BookingDetailCallout,
+  formatDate,
+  formatTimeRange,
+} from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
 const BOOKING_STEP = 4
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING = 'Select a date and time for your appointment.'
-
-function formatDate(date: string) {
-  const [year, month, day] = date.split('-').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(year, month - 1, day))
-}
-
-function formatTime(time: string) {
-  const [hour, minute] = time.split(':').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(2000, 0, 1, hour, minute))
-}
-
-function formatTimeRange(startTime: string, endTime: string) {
-  return `${formatTime(startTime)} – ${formatTime(endTime)}`
-}
 
 function slotValue(startTime: string, endTime: string) {
   return `${startTime}|${endTime}`
@@ -173,8 +156,6 @@ export default function DateTimePage() {
         selectedService={selectedService}
         selectedLocation={selectedLocation}
         selectedSlot={selectedSlot}
-        formatDate={formatDate}
-        formatTimeRange={formatTimeRange}
       />
 
       {isLoading ? (
@@ -287,6 +268,11 @@ export default function DateTimePage() {
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/login')} />
+        <BookingContinueRow
+          label="Review"
+          isDisabled={!selectedSlot}
+          onContinue={() => navigate('/review')}
+        />
       </div>
     </>
   )

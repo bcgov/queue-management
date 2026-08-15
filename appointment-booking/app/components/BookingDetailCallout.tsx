@@ -4,21 +4,40 @@ import type { ServiceLocation } from '~/api/service-locations'
 import type { Service } from '~/api/services'
 import type { BookingSlot } from '~/booking/booking-store'
 
+// Shared by the callout and the datetime step (calendar / time labels).
+export function formatDate(date: string) {
+  const [year, month, day] = date.split('-').map(Number)
+  return new Intl.DateTimeFormat('en-CA', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(year, month - 1, day))
+}
+
+function formatTime(time: string) {
+  const [hour, minute] = time.split(':').map(Number)
+  return new Intl.DateTimeFormat('en-CA', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(2000, 0, 1, hour, minute))
+}
+
+export function formatTimeRange(startTime: string, endTime: string) {
+  return `${formatTime(startTime)} – ${formatTime(endTime)}`
+}
+
 type BookingDetailCalloutProps = {
   selectedService: Service | null
   selectedLocation: ServiceLocation | null
-  /** When set (datetime step), show chosen date/time under location details. */
+  /** When set, show chosen date/time under location details. */
   selectedSlot?: BookingSlot | null
-  formatDate?: (date: string) => string
-  formatTimeRange?: (startTime: string, endTime: string) => string
 }
 
 export function BookingDetailCallout({
   selectedService,
   selectedLocation,
   selectedSlot = null,
-  formatDate,
-  formatTimeRange,
 }: BookingDetailCalloutProps) {
   return (
     <Callout variant="lightBlue">
@@ -46,7 +65,7 @@ export function BookingDetailCallout({
           ) : selectedService ? (
             <>Select a location from the list to view details.</>
           ) : null}
-          {selectedSlot && formatDate && formatTimeRange ? (
+          {selectedSlot ? (
             <>
               <br />
               Appointment date - <strong>{formatDate(selectedSlot.date)}</strong>
