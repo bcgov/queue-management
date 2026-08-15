@@ -15,6 +15,8 @@ export type AuthSession = {
   userFullName: string
   kcGuid: string
   loginSource: string
+  /** From token claims when present (e.g. email OTP). Not persisted separately. */
+  email?: string
 }
 
 type TokenClaims = {
@@ -74,6 +76,15 @@ function resolveFullName(claims: TokenClaims): string {
   return claims.display_name?.trim() || claims.email?.trim() || 'Appointment User'
 }
 
+// Email claim on an access token, if the IdP provided one (OTP usually does; BCSC may not).
+export function emailFromAccessToken(token: string): string | undefined {
+  try {
+    return decodeTokenClaims(token).email?.trim() || undefined
+  } catch {
+    return undefined
+  }
+}
+
 // Rebuilds the auth session after a refresh/redirect. Drops disallowed IdP sessions.
 export function readAuthSessionFromStorage(): AuthSession | null {
   const token = getFromSession(SessionKeys.KeyCloakToken)
@@ -82,6 +93,7 @@ export function readAuthSessionFromStorage(): AuthSession | null {
   let identityProvider = getFromSession(SessionKeys.UserAccountType) || ''
   let userFullName = getFromSession(SessionKeys.UserFullName) || ''
   let kcGuid = getFromSession(SessionKeys.UserKcId) || ''
+  let email: string | undefined
 
   try {
     const claims = decodeTokenClaims(token)
@@ -94,6 +106,7 @@ export function readAuthSessionFromStorage(): AuthSession | null {
     if (!kcGuid) {
       kcGuid = claims.sub || ''
     }
+    email = emailFromAccessToken(token)
   } catch {
     // Keep stored values if the token cannot be decoded.
   }
@@ -110,6 +123,7 @@ export function readAuthSessionFromStorage(): AuthSession | null {
     userFullName,
     kcGuid,
     loginSource: identityProvider,
+    email,
   }
 }
 
@@ -137,6 +151,7 @@ function buildSessionFromKeycloak(kc: Keycloak, requestedIdpHint: string): AuthS
     userFullName: resolveFullName(claims),
     kcGuid: claims.sub || '',
     loginSource,
+    email: emailFromAccessToken(token),
   }
 }
 

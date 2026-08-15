@@ -8,7 +8,12 @@ import Keycloak from 'keycloak-js'
 import { getKeycloakConfigUrl } from '../runtime-config'
 import { getFromSession } from './session'
 import { SessionKeys } from './session-keys'
-import { type AuthSession, clearStoredAuthSession, writeAuthSession } from './keycloak'
+import {
+  type AuthSession,
+  clearStoredAuthSession,
+  emailFromAccessToken,
+  writeAuthSession,
+} from './keycloak'
 
 // How early before access-token expiry we refresh (realm lifespan is 5 minutes).
 const REFRESH_EARLY_SECONDS = 30
@@ -48,6 +53,7 @@ function sessionFromKeycloakTokens(kc: Keycloak): AuthSession {
     userFullName: getFromSession(SessionKeys.UserFullName) || '',
     kcGuid: getFromSession(SessionKeys.UserKcId) || '',
     loginSource: getFromSession(SessionKeys.UserAccountType) || '',
+    email: emailFromAccessToken(kc.token || ''),
   }
 }
 

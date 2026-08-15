@@ -720,3 +720,17 @@ p {
   font: var(--typography-regular-small-body);
   text-align: right;
 }
+
+.review-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-xsmall);
+  margin-top: var(--layout-padding-large);
+  max-width: 28rem;
+}
+
+.review-contact-hint {
+  margin: 0;
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+}
