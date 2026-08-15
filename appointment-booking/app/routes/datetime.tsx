@@ -6,13 +6,10 @@ import { useNavigate } from 'react-router'
 import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
+import { formatDate, formatTimeRange } from '~/booking/format-slot'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
-import {
-  BookingDetailCallout,
-  formatDate,
-  formatTimeRange,
-} from '~/components/BookingDetailCallout'
+import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
 const BOOKING_STEP = 4

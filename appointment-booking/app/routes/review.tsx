@@ -20,12 +20,7 @@ export function meta() {
 export default function ReviewPage() {
   const navigate = useNavigate()
   const { isReady: isAuthReady, isAuthenticated, session } = useAuth()
-  const {
-    isReady: isBookingReady,
-    selectedService,
-    selectedLocation,
-    selectedSlot,
-  } = useBooking()
+  const { isReady: isBookingReady, selectedService, selectedLocation, selectedSlot } = useBooking()
   // null = still using signed-in email; string = user edited (including cleared).
   const [contactEmail, setContactEmail] = useState<string | null>(null)
   const confirmationEmail = contactEmail ?? session?.email?.trim() ?? ''
@@ -100,9 +95,7 @@ export default function ReviewPage() {
           // @ts-expect-error placeholder is supported by underlying react-aria TextField
           placeholder="name@example.com"
         />
-        <p className="review-contact-hint">
-          Appointment details will be sent to this email.
-        </p>
+        <p className="review-contact-hint">Appointment details will be sent to this email.</p>
       </div>
 
       <div className="booking-nav-row">
