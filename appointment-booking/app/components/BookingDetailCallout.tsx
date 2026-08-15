@@ -3,29 +3,7 @@ import { Callout, InlineAlert, Text } from '@bcgov/design-system-react-component
 import type { ServiceLocation } from '~/api/service-locations'
 import type { Service } from '~/api/services'
 import type { BookingSlot } from '~/booking/booking-store'
-
-// Shared by the callout and the datetime step (calendar / time labels).
-export function formatDate(date: string) {
-  const [year, month, day] = date.split('-').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(year, month - 1, day))
-}
-
-function formatTime(time: string) {
-  const [hour, minute] = time.split(':').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(2000, 0, 1, hour, minute))
-}
-
-export function formatTimeRange(startTime: string, endTime: string) {
-  return `${formatTime(startTime)} – ${formatTime(endTime)}`
-}
+import { formatDate, formatTimeRange } from '~/booking/format-slot'
 
 type BookingDetailCalloutProps = {
   selectedService: Service | null
