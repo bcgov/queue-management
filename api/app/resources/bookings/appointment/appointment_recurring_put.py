@@ -57,7 +57,7 @@ class AppointmentRecurringPut(Resource):
         result = self.appointment_schema.dump(appointments)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_update', result)
+            socketio.emit('appointment_update', result, room=csr.office.office_name)
 
         return {
             "appointments": result,

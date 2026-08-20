@@ -92,6 +92,6 @@ class AppointmentDraftPost(Resource):
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_create', result)
+            socketio.emit('appointment_create', result, room=office.office_name)
 
         return {"appointment": result, "warning": warning}, 201

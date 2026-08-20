@@ -38,6 +38,7 @@ class AppointmentDelete(Resource):
 
         appointment = Appointment.query.filter_by(appointment_id=id) \
             .first_or_404()
+        office_room = appointment.office.office_name
 
         csr = None if is_public_user() else CSR.find_by_username(get_username())
 
@@ -69,6 +70,6 @@ class AppointmentDelete(Resource):
         db.session.commit()
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_delete', id)
+            socketio.emit('appointment_delete', id, room=office_room)
 
         return {}, 204

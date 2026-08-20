@@ -53,9 +53,11 @@ class AppointmentPost(Resource):
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
+            draft = Appointment.query.filter_by(appointment_id=draft_id_to_delete, is_draft=True).first()
+            draft_room = draft.office.office_name if draft else None
             Appointment.delete_draft([draft_id_to_delete])
-            if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_delete', draft_id_to_delete)
+            if not application.config['DISABLE_AUTO_REFRESH'] and draft_room:
+                socketio.emit('appointment_delete', draft_id_to_delete, room=draft_room)
         #for stat
         if (json_data.get('stat_office_id', False)):
             json_data['office_id'] = json_data.get('stat_office_id')
@@ -157,7 +159,7 @@ class AppointmentPost(Resource):
             result = self.appointment_schema.dump(appointment)
 
             if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_create', result)
+                socketio.emit('appointment_create', result, room=office.office_name)
 
             return {"appointment": result,
                     "errors": {}}, 201

@@ -47,9 +47,11 @@ class AppointmentPut(Resource):
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
+            draft = Appointment.query.filter_by(appointment_id=draft_id_to_delete, is_draft=True).first()
+            draft_room = draft.office.office_name if draft else None
             Appointment.delete_draft([draft_id_to_delete])
-            if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_delete', draft_id_to_delete)
+            if not application.config['DISABLE_AUTO_REFRESH'] and draft_room:
+                socketio.emit('appointment_delete', draft_id_to_delete, room=draft_room)
 
         if is_public_user_appt:
             office_id = json_data.get('office_id')
@@ -124,9 +126,9 @@ class AppointmentPut(Resource):
             # Treat checked_in_time as a delete, as we filter those from frontend
             # this happens when checking in an appointment
             if "checked_in_time" in json_data:
-                socketio.emit('appointment_delete', id)
+                socketio.emit('appointment_delete', id, room=office.office_name)
             else:
-                socketio.emit('appointment_update', result)
+                socketio.emit('appointment_update', result, room=office.office_name)
         
 
         return {"appointment": result,
