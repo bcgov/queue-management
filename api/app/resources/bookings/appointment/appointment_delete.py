@@ -42,11 +42,11 @@ class AppointmentDelete(Resource):
 
         csr = None if is_public_user() else CSR.find_by_username(get_username())
 
-        user: PublicUser = PublicUser.find_by_username(get_username()) if is_public_user() else None
+        user = PublicUser.find_by_username(get_username()) if is_public_user() else None
         if is_public_user():
             # Check if it's a public user
             citizen = Citizen.find_citizen_by_id(appointment.citizen_id)
-            if not citizen or citizen.citizen_id != appointment.citizen_id:
+            if not user or not citizen or citizen.user_id != user.user_id:
                 abort(403)
 
         # Must call this prior to deleting from DB, so cannot 
