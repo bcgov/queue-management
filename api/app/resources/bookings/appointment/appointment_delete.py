@@ -22,7 +22,7 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, get_username
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_cancel_email_contents, send_email
+from app.utilities.email import get_cancel_email_contents, send_email, can_send_service_notification
 from app.utilities.snowplow import SnowPlow
 from qsystem import application
 from qsystem import api, db, socketio
@@ -56,7 +56,7 @@ class AppointmentDelete(Resource):
 
         # Do not log snowplow events or send emails if it's a draft.
         # If the appointment is public user's and if staff deletes it send email
-        if not appointment.is_draft and csr:
+        if can_send_service_notification(appointment) and csr:
 
             office = Office.find_by_id(appointment.office_id)
 

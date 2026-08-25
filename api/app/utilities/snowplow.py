@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from app.models.theq.channel import Channel
 from app.models.theq.citizen import Citizen
+from app.models.theq.counter import Counter
 from app.models.theq.csr import CSR
 from app.models.theq.office import Office
 from app.models.theq.role import Role
@@ -23,7 +24,7 @@ from snowplow_tracker import Subject, Tracker, AsyncEmitter
 from snowplow_tracker import SelfDescribingJson
 import logging
 import os
-from qsystem import application, my_print
+from qsystem import application, db, my_print
 from datetime import datetime, timezone
 
 # Defining String constants to appease SonarQube
@@ -46,7 +47,7 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             # Set up contexts for the call.
-            citizen_obj = Citizen.query.get(new_citizen.citizen_id)
+            citizen_obj = db.session.get(Citizen, new_citizen.citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name)
             office = SnowPlow.get_office(new_citizen.office_id)
             agent = SnowPlow.get_csr(csr, office)
@@ -81,7 +82,7 @@ class SnowPlow():
         if SnowPlow.call_snowplow_flag:
 
             #  Set up the contexts for the call.
-            citizen_obj = Citizen.query.get(citizen_id)
+            citizen_obj = db.session.get(Citizen, citizen_id)
             citizen = SnowPlow.get_citizen(citizen_obj, csr.counter.counter_name, svc_number = current_sr_number)
             office = SnowPlow.get_office(csr.office_id)
             agent = SnowPlow.get_csr(csr, office)
@@ -116,7 +117,7 @@ class SnowPlow():
 
             #  If no citizen object, get citizen information.
             if citizen_obj is None:
-                citizen_obj = Citizen.query.get(appointment.citizen_id)
+                citizen_obj = db.session.get(Citizen, appointment.citizen_id)
 
             # Online CSR has a default of Counter for Counter Name and csr id of 1000001
             if csr is None:
@@ -151,10 +152,13 @@ class SnowPlow():
     def get_citizen(citizen_obj, counter_name, svc_number = 1):
 
         citizen_type = counter_name
-        if citizen_obj.office.sb.sb_type == "nocallonsmartboard":
+        office = db.session.get(Office, citizen_obj.office_id)
+        if office.sb.sb_type == "nocallonsmartboard":
             citizen_type = "Counter"
-        elif citizen_obj.counter is not None:
-            citizen_type = citizen_obj.counter.counter_name
+        elif citizen_obj.counter_id is not None:
+            counter = db.session.get(Counter, citizen_obj.counter_id)
+            if counter is not None:
+                citizen_type = counter.counter_name
 
         # Set up the citizen context.
         citizen = SelfDescribingJson('iglu:ca.bc.gov.cfmspoc/citizen/jsonschema/4-0-0',
@@ -167,7 +171,7 @@ class SnowPlow():
     def get_office(id):
 
         #  Set up office variables.
-        curr_office = Office.query.get(id)
+        curr_office = db.session.get(Office, id)
         office_num = curr_office.office_number
         office_type = "non-reception"
         if (curr_office.sb.sb_type == "callbyname") or (curr_office.sb.sb_type == "callbyticket"):
@@ -223,10 +227,10 @@ class SnowPlow():
         pgm_id = service_request.service.parent_id
         svc_code = service_request.service.service_code
         svc_name = service_request.service.service_name
-        parent = Service.query.get(pgm_id)
+        parent = db.session.get(Service, pgm_id)
         pgm_code = parent.service_code
         pgm_name = parent.service_name
-        channel = Channel.query.get(service_request.channel_id)
+        channel = db.session.get(Channel, service_request.channel_id)
         channel_name = channel.channel_name
 
         #  Translate channel name to old versions, to avoid major Snowplow changes
@@ -344,8 +348,8 @@ class SnowPlow():
 # Set up core Snowplow environment
 if SnowPlow.call_snowplow_flag:
     s = Subject()  # .set_platform("app")
-    e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https")
-    t = Tracker(e, encode_base64=False, app_id=SnowPlow.sp_appid, namespace=SnowPlow.sp_namespace)
+    e = AsyncEmitter(SnowPlow.sp_endpoint, on_failure=SnowPlow.failure, protocol="https", method="get")
+    t = Tracker(namespace=SnowPlow.sp_namespace, emitters=e, encode_base64=False, app_id=SnowPlow.sp_appid)
 
     #  Set up the correct level of logging.
     print_flag = application.config['PRINT_ENABLE']

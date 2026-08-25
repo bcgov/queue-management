@@ -41,15 +41,15 @@ class Service(Base):
     display_dashboard_ind = db.Column(db.Integer, nullable=False)
     actual_service_ind = db.Column(db.Integer, nullable=False)
 
-    external_service_name = db.Column(db.String(100), nullable=True)
-    online_link = db.Column(db.String(200), nullable=True)
+    external_service_name = db.Column(db.String(500), nullable=True)
+    online_link = db.Column(db.String(500), nullable=True)
     online_availability = db.Column(Enum(Availability))
     timeslot_duration = db.Column(db.Integer, nullable=True)
     is_dlkt = db.Column(Enum(YesNo))
     email_paragraph = db.Column(db.String(2000), nullable=True)
     css_colour = db.Column(db.String(50), nullable=True)
 
-    offices = db.relationship("Office", secondary='office_service')
+    offices = db.relationship("Office", secondary='office_service', overlaps='services')
     parent = db.relationship("Service", remote_side=[service_id])
 
     def __repr__(self):

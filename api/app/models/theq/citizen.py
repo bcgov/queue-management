@@ -14,7 +14,7 @@ limitations under the License.'''
 
 from qsystem import db
 from app.models.theq import Base
-from sqlalchemy_utc import UtcDateTime, utcnow
+from app.utilities.sqlalchemy_compat import UtcDateTime, utcnow
 
 
 class Citizen(Base):
@@ -50,7 +50,7 @@ class Citizen(Base):
     start_position = db.Column(db.Integer, nullable=True)
 
     # digital signage
-    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow())
+    created_at = db.Column(UtcDateTime, nullable=True, default=utcnow)
 
 
     def __repr__(self):
@@ -87,4 +87,4 @@ class Citizen(Base):
     @classmethod
     def find_citizen_by_id(cls, citizen_id):
         """Find citizen record by user id."""
-        return cls.query.get(citizen_id)
+        return db.session.get(cls, citizen_id)

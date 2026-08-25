@@ -11,7 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
-import logging, pytz
+import logging
 from datetime import datetime, timedelta, timezone
 from flask import request, g
 from flask_restx import Resource
@@ -29,6 +29,7 @@ from app.utilities.email import send_email, get_walkin_reminder_email_contents
 from app.utilities.sms import send_walkin_reminder_sms
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import raiseload, joinedload, contains_eager
+from app.utilities.timezone_utils import UTC, as_utc, get_timezone
 
 # Defining String constants to appease SonarQube
 api_down_const = 'API is down'
@@ -88,7 +89,7 @@ class WalkinDetail(Resource):
             my_office_data = self.office_schema.dump(my_office)
             if my_office_data:
                 my_time_zone = my_office_data['timezone']['timezone_name']
-                local_timezone = pytz.timezone(my_time_zone)
+                local_timezone = get_timezone(my_time_zone)
         return local_timezone
     
     def am_i_on_hold(self, citizen):
@@ -143,9 +144,9 @@ class WalkinDetail(Resource):
                         if (not_booked_flag and each.get('cs', False)) and each['cs'].get('cs_state_name', '') == 'Active':
                             each_time_obj = datetime.strptime(each['start_time'], '%Y-%m-%dT%H:%M:%SZ')
                             # start
-                            local_datetime_start = each_time_obj.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+                            local_datetime_start = each_time_obj.replace(tzinfo=UTC).astimezone(local_timezone)
                             #end
-                            local_datetime_end = citizen.start_time.replace(tzinfo=pytz.utc).astimezone(local_timezone)                                    
+                            local_datetime_end = citizen.start_time.replace(tzinfo=UTC).astimezone(local_timezone)
                             if am_on_hold or local_datetime_start <= local_datetime_end:
                                 data_dict['flag'] = 'walkin_app'
                                 walkin_app.append(data_dict)
@@ -163,18 +164,8 @@ class WalkinDetail(Resource):
         if office_id:  
             past_hour = datetime.now(timezone.utc) - timedelta(minutes=15)
             future_hour = datetime.now(timezone.utc) + timedelta(minutes=15)
-            if past_hour.tzinfo is None:
-                # If it's naive, localize to UTC
-                local_past = pytz.utc.localize(past_hour)
-            else:
-                # If it's already timezone-aware, no need to localize
-                local_past = past_hour
-            if future_hour.tzinfo is None:
-                # Only localize if the datetime is naive
-                local_future = pytz.utc.localize(future_hour)
-            else:
-                # If it's already timezone-aware, no need to localize
-                local_future = future_hour
+            local_past = as_utc(past_hour)
+            local_future = as_utc(future_hour)
             # getting agenda panel app
             appointments = Appointment.query.filter_by(office_id=office_id)\
                                         .filter(Appointment.start_time <= local_future)\
@@ -196,7 +187,7 @@ class WalkinDetail(Resource):
                     if (len(data_dict['start_time']) >= 3) and ':' in data_dict['start_time'][-3]:
                         data_dict['start_time'] = '{}{}'.format(data_dict['start_time'][:-3], data_dict['start_time'][-2:])
                     utc_datetime = datetime.strptime(data_dict['start_time'], '%Y-%m-%dT%H:%M:%S%z')
-                    local_datetime = utc_datetime.replace(tzinfo=pytz.utc)
+                    local_datetime = utc_datetime.replace(tzinfo=UTC)
                     local_datetime = local_datetime.astimezone(local_timezone)
                     data_dict['start_time'] = local_datetime.strftime("%m/%d/%Y, %H:%M:%S")
                 booked_not_checkin.append(data_dict)

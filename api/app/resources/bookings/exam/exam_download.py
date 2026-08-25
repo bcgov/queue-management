@@ -12,12 +12,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
-from flask import Response
+from flask import send_file
 from flask_restx import Resource
 import io
 import logging
 import urllib
-from werkzeug.wsgi import FileWrapper
 from sqlalchemy import exc
 from app.models.theq import CSR
 from app.models.bookings import Exam
@@ -50,15 +49,12 @@ class ExamStatus(Resource):
                 req = urllib.request.Request(package_url)
                 response = urllib.request.urlopen(req).read()
                 exam_file = io.BytesIO(response)
-                file_wrapper = FileWrapper(exam_file)
-
-                return Response(file_wrapper,
-                                mimetype="application/pdf",
-                                direct_passthrough=True,
-                                headers={
-                                    "Content-Disposition": 'attachment; filename="%s.csv"' % exam.exam_id,
-                                    "Content-Type": "application/pdf"
-                                })
+                return send_file(
+                    exam_file,
+                    mimetype="application/pdf",
+                    as_attachment=True,
+                    download_name=f"{exam.exam_id}.pdf"
+                )
             else:
                 return {'message': 'Package not yet generated', 'status': job['jobStatus']}, 400
 

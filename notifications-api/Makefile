@@ -1,20 +1,22 @@
-.PHONY: license
-.PHONY: setup
-.PHONY: ci cd
-.PHONY: run
+.PHONY: setup sync lock export clean clean-build clean-pyc clean-test lint test run run-hot
 
-MKFILE_PATH:=$(abspath $(lastword $(MAKEFILE_LIST)))
-CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
+UV ?= uv
+PORT ?= 5002
 
-PROJECT_NAME:=pay_api
+setup: sync ## Sync the local development environment
 
-#################################################################################
-# COMMANDS -- Setup                                                             #
-#################################################################################
-setup: install install-dev ## Setup the project
+sync: ## Install/update dependencies into .venv
+	$(UV) sync --group dev
+
+lock: ## Refresh the uv lockfile
+	$(UV) lock
+
+export: ## Export pinned requirements files for runtime and dev
+	$(UV) export --frozen --no-dev --format requirements.txt --no-emit-project --output-file requirements.txt
+	$(UV) export --frozen --group dev --format requirements.txt --no-emit-project --output-file requirements_dev.txt
 
 clean: clean-build clean-pyc clean-test ## Clean the project
-	rm -rf venv/
+	rm -rf .venv/
 
 clean-build: ## Clean build files
 	rm -fr build/
@@ -29,60 +31,24 @@ clean-pyc: ## Clean cache files
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
-clean-test: ## clean test files
+clean-test: ## Clean test output
 	find . -name '.pytest_cache' -exec rm -fr {} +
-	rm -fr .tox/
 	rm -f .coverage
+	rm -f coverage.xml
 	rm -fr htmlcov/
 
-install: clean ## Install python virtrual environment
-	test -f venv/bin/activate || python3 -m venv  $(CURRENT_ABS_DIR)/venv ;\
-	. venv/bin/activate ;\
-	pip install --upgrade pip ;\
-	pip install-Ur requirements.txt ;\
-	touch venv/bin/activate  # update so it's as new as requirements/prod.txt
+lint: ## Lint the project
+	$(UV) run ruff check .
+	$(UV) run pylint src/api tests
 
-install-dev: ## Install local application
-	. venv/bin/activate && pip install -e .
+test: ## Run tests
+	$(UV) run pytest
 
-#################################################################################
-# COMMANDS - CI                                                                 #
-#################################################################################
-ci: lint flake8 test ## CI flow
+run: ## Run the project locally
+	$(UV) run python wsgi.py
 
-lint: ## Linting with pylint
-	. venv/bin/activate && pylint --rcfile=setup.cfg  src/$(PROJECT_NAME)
-
-flake8: ## Linting with flake8
-	. venv/bin/activate && flake8 src/$(PROJECT_NAME) tests
-
-test: ## Unit testing
-	. venv/bin/activate && pytest
-
-mac-cov: test ## Run the coverage report and display in a browser window (mac)
-	@open -a "Google Chrome" htmlcov/index.html
-
-#################################################################################
-# COMMANDS - CD                                                               #
-#################################################################################
-cd: build ## CD flow
-
-build: ## Build the docker container
-	docker build -t $(PROJECT_NAME) .
-
-build-nc: ## Build the docker container without caching
-	docker build --no-cache -t $(PROJECT_NAME) .
-
-#################################################################################
-# COMMANDS - Local                                                              #
-#################################################################################
-run: ## Run the project in local
-	. venv/bin/activate && python -m flask run -p 5000
-
-#################################################################################
-# Self Documenting Commands                                                     #
-#################################################################################
-.PHONY: help
+run-hot: ## Run gunicorn with hot reload
+	$(UV) run gunicorn wsgi:application --bind=0.0.0.0:$(PORT) --access-logfile=- --config=gunicorn_config.py --reload --timeout=0
 
 .DEFAULT_GOAL := help
 

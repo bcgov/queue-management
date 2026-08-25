@@ -24,7 +24,7 @@ class Healthz(Resource):
     @staticmethod
     def get():
         try:
-            db.engine.execute(sql)
+            db.session.execute(sql)
         except exc.SQLAlchemyError:
             return {"message": "api is down"}, 500
 

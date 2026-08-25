@@ -14,7 +14,6 @@ limitations under the License.'''
 
 import datetime, logging
 
-import pytz
 from flask_restx import Resource
 from flask import request
 from sqlalchemy import exc
@@ -22,8 +21,9 @@ from sqlalchemy import exc
 from app.models.theq import Office
 from app.models.theq import Service
 from app.services import AvailabilityService
-from qsystem import api
+from qsystem import api, db
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import get_timezone
 
 
 @api.route("/offices/<int:office_id>/slots/", methods=["GET"])
@@ -36,7 +36,7 @@ class OfficeSlots(Resource):
             appointments_days_limit = office.appointments_days_limit
 
             # Dictionary to store the available slots per day
-            tz = pytz.timezone(office.timezone.timezone_name)
+            tz = get_timezone(office.timezone.timezone_name)
 
             # today's date and time
             today = datetime.datetime.now().astimezone(tz)
@@ -47,7 +47,7 @@ class OfficeSlots(Resource):
             service = None
             service_id = request.args.get('service_id')
             if (service_id):
-                service = Service.query.get(int(service_id))
+                service = db.session.get(Service, int(service_id))
 
             return AvailabilityService.get_available_slots(office=office, days=days, service=service)
 

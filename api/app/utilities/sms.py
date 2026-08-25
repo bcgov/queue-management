@@ -16,15 +16,16 @@ import logging, re
 from datetime import datetime
 
 import json
-import pytz
 import requests
 from flask import current_app
 
 from app.models.bookings import Appointment
 from app.models.theq import Office, PublicUser, Citizen
+from app.utilities.timezone_utils import get_timezone
 
 # Defining String constants to appease SonarQube
 app_json_const = 'application/json'
+request_timeout_seconds = 30
 
 def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
     """Send confirmation email"""
@@ -35,13 +36,14 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
             display_name: str = user.display_name if user else ''  # For CSR appointment user is None
             requests.post(notifications_endpoint,
                           headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
-                          data=json.dumps([{
+                          json=[{
                               'user_telephone': telephone,
                               'display_name': display_name,
                               'location': office.office_name,
                               'formatted_date': format_sms_date(appointment.start_time, timezone),
                               'office_telephone': office.telephone
-                          }]))
+                          }],
+                          timeout=request_timeout_seconds)
         except Exception as exc:
             logging.exception("Error on sms sending - %s", exc)
 
@@ -57,7 +59,7 @@ def is_valid_phone(phone_number: str):
 
 
 def format_sms_date(dt: datetime, timezone):
-    dt_local = dt.astimezone(pytz.timezone(timezone.timezone_name))
+    dt_local = dt.astimezone(get_timezone(timezone.timezone_name))
     return dt_local.strftime('%A, %B %d at %I:%M %p')
 
 
@@ -77,12 +79,13 @@ def send_walkin_spot_confirmation_sms(citizen: Citizen, url, token: str):
         try:
             requests.post(notifications_endpoint,
                           headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
-                          data=json.dumps([{
+                          json=[{
                               'user_telephone': telephone,
                               'url': url,
                               'ticket_number': citizen.ticket_number,
                               "type": "CHECKIN_CONFIRMATION"
-                        }]))
+                        }],
+                          timeout=request_timeout_seconds)
             return True
         except Exception as exc:
             logging.exception('Error on sms sending - %s', exc)
@@ -99,11 +102,12 @@ def send_walkin_reminder_sms(citizen: Citizen, office: Office, token: str):
             msg = "We’re ready! Please come inside and speak to a Service BC Representative"
             requests.post(notifications_endpoint,
                           headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
-                          data=json.dumps([{
+                          json=[{
                               'user_telephone': telephone,
                               'message': office.check_in_reminder_msg if office.check_in_reminder_msg else msg,
                               "type": "CUSTOM"
-                          }]))
+                          }],
+                          timeout=request_timeout_seconds)
             return True
         except Exception as exc:
             logging.exception('Error on sms sending - %s', exc)

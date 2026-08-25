@@ -17,7 +17,7 @@ from flask import request
 from flask_restx import Resource
 from sqlalchemy import exc, or_, desc
 from app.models.bookings import Exam
-from app.models.theq import CSR
+from app.models.theq import CSR, Office
 from app.schemas.bookings import ExamSchema
 from qsystem import api
 from datetime import datetime, timedelta
@@ -42,8 +42,8 @@ class ExamList(Resource):
                     exams = Exam.query.filter(Exam.deleted_date.is_(None)) \
                         .filter(or_(Exam.exam_returned_date.is_(None),
                                     Exam.exam_returned_date > ninety_day_filter)) \
-                        .join(Exam.office, aliased=True) \
-                        .filter_by(office_number=request.args.get("office_number")) \
+                        .join(Exam.office) \
+                        .filter(Office.office_number == request.args.get("office_number")) \
                         .order_by(desc(Exam.exam_id))
                 else:
                     exams = Exam.query.filter(Exam.deleted_date.is_(None)) \

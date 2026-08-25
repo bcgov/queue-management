@@ -25,6 +25,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Install OpenShift CLI
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+          oc: "4"
+    - name: Verify OpenShift CLI
+      run: oc version --client
+        
     - name: Log in to OpenShift tools
       uses: redhat-actions/oc-login@v1
       with:

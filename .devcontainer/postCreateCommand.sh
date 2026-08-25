@@ -14,161 +14,156 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+set -euo pipefail
+
 ###############################################################################
-# Functions
+# Logging
 ###############################################################################
 
-COLOR_DEFAULT='\033[0m'
-COLOR_FAILURE='\033[0;31m'
+LOGDIR=".devcontainer/logs"
+LOGFILE="$LOGDIR/error.log"
 
-# Echo a string in red.
-#
-# Parameter: string
-#
+if [ ! -d $LOGDIR ]; then
+    mkdir -p $LOGDIR
+fi
+
+touch $LOGFILE
+
+# Redirect stderr to both the logfile and terminal using tee
+exec 2> >(tee -a $LOGFILE >&2)
+
 echo_failure () {
-    echo -e "$COLOR_FAILURE$*$COLOR_DEFAULT"
+    echo "$*" | tee -a "$LOGFILE" >&2
 }
 
-# If a configuration file doesn't exist then create a default file.
-#
-# Parameters: source_file destination_file
-#
-copy_config () {
-    SOURCE=$1
-    DESTINATION=$2
-
-    if [ ! -f $SOURCE ]; then
-        echo_failure configuration source file $(pwd)/$SOURCE is missing
-    else
-        if [ -f $DESTINATION ]; then
-            echo Using pre-existing file $(realpath $DESTINATION)
-        else
-            SOURCE=$(realpath $SOURCE)
-
-            DIRECTORY=$(dirname $DESTINATION)
-            if [ ! -d $DIRECTORY ]; then
-                echo Creating directory $(pwd)/$DIRECTORY
-                mkdir -p $DIRECTORY
-            fi
-
-            echo Copying $SOURCE to $(pwd)/$DESTINATION
-            cp $SOURCE $DESTINATION
-        fi
-    fi
-}
-
-# Check that a configuration value is defined in a file. As this only does a
-# grep for the key, it is likely to provide false positives for comments,
-# substrings of other keys, or keys defined without values.
-#
-# Parameters: filename key_name
-#
-check_setting () {
-    FILENAME=$1
-    KEY_NAME=$2
-
-    grep "$KEY_NAME" $FILENAME > /dev/null
-
-    if [ $? -ne 0 ]; then
-        echo_failure Missing configuration key $KEY_NAME in \
-            $(realpath $FILENAME)
-    fi
+run_setup_local_config () {
+    /bin/bash scripts/setup-local-config.sh
 }
 
 ###############################################################################
 # Dependency Installations
 ###############################################################################
 
-# Log the output to make it easier to find when things go wrong.
-LOGDIR=.devcontainer/logs
-if [ ! -d $LOGDIR ]; then
-    mkdir $LOGDIR
-fi
+install_api_deps () {
+    (
+        cd api
+        export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        # Ensure the environment directory is owned by the current user
+        if [ -d .venv ]; then
+            sudo chown -R $(id -u):$(id -g) .venv
+        fi
+        python3 -m pip install --upgrade pip -q
+        python3 -m pip install uv -q
+        uv sync --group dev
+    )
+}
 
-# To save time do the installations in parallel.
-
-(
-    cd api
-    rm -rf env
-    python -m venv env
-    source env/bin/activate
-    python -m pip install --upgrade pip -q
-    pip install -r requirements_dev.txt --progress-bar off
-
-    # Install newman so that the postman tests can be run on the command line.
-    echo Installing newman
-    cd postman
-    rm -rf node_modules
-    npm install newman
-) |& tee $LOGDIR/api.log &
+install_notifications_api_deps () {
+    (
+        cd notifications-api
+        export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        # Ensure the environment directory is owned by the current user
+        if [ -d .venv ]; then
+            sudo chown -R $(id -u):$(id -g) .venv
+        fi
+        python3 -m pip install --upgrade pip -q
+        python3 -m pip install uv -q
+        uv sync --group dev
+    )
+}
 
 # If NPM output is piped into a commmand, it does not display any indication of
 # progress. Use "script" to make NPM think it is running on a TTY.
-script -fq -c "(
-    cd appointment-frontend
-    rm -rf node_modules
-    npm install
-    $(npm bin)/cypress install
-)" |& tee $LOGDIR/appointment-frontend.log &
+install_appointment_frontend_deps () {
+    (
+        cd appointment-frontend
+        # Ensure the node_modules directory is owned by the current user
+        if [ -d node_modules ]; then
+            sudo chown -R $(id -u):$(id -g) node_modules
+        fi
+        npm install
+        npx cypress install
+    )
+}
 
-#(
-#    cd feedback-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/feedback-api.log &
+install_frontend_deps () {
+    (
+        cd frontend
+        # Ensure the node_modules directory is owned by the current user
+        if [ -d node_modules ]; then
+            sudo chown -R $(id -u):$(id -g) node_modules
+        fi
+        npm install
+    )
+}
 
-script -fq -c "(
-    cd frontend
-    rm -rf node_modules
-    npm install
-)" |& tee $LOGDIR/frontend.log &
+get_admin_csr_count () {
+    local table_exists
+    local count
 
-#(
-#    cd notifications-api
-#    rm -rf env
-#    python -m venv env
-#    source env/bin/activate
-#    python -m pip install --upgrade pip -q
-#    pip install -r requirements.txt --progress-bar off
-#) |& tee $LOGDIR/notifications-api.log &
+    table_exists=$(PGPASSWORD=postgres psql -h localhost -U postgres -d postgres \
+        -tA -c "SELECT to_regclass('public.csr') IS NOT NULL;")
 
-# Wait for all the above to complete.
-wait
+    if [ "$table_exists" != "t" ]; then
+        echo_failure "The csr table is missing after migrations; aborting bootstrap."
+        return 1
+    fi
+
+    count=$(PGPASSWORD=postgres psql -h localhost -U postgres -d postgres \
+        -tA -c "SELECT COUNT(*) FROM csr WHERE username = 'admin';")
+
+    case "$count" in
+        ''|*[!0-9]*)
+            echo_failure "Unexpected csr count result: '$count'"
+            return 1
+            ;;
+    esac
+
+    echo "$count"
+}
+
+echo
+run_setup_local_config
+
+install_api_deps
+install_notifications_api_deps
+install_appointment_frontend_deps
+install_frontend_deps
 
 ###############################################################################
 # Database Bootstrapping and Setup
 ###############################################################################
 
-(
-    cd api
-    source env/bin/activate
-    python manage.py db upgrade
+bootstrap_database () {
+    (
+        cd api
+        export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
+        local count
 
-    # If there is nothing in the CSR table, we're probably starting with a
-    # clean database and need to bootstrap it with default data.
-    COUNT=$(PGPASSWORD=postgres psql -h queue-management_devcontainer_db_1 \
-        -U postgres -c "SELECT COUNT(*) FROM csr;" -t)
-    if [ "$COUNT" -eq 0 ]; then
-        python manage.py bootstrap
-        python manage.py adduser
-    fi
-)
+        # Bootstrap runs inside the devcontainer, so it needs
+        # container-reachable Keycloak metadata even though the copied
+        # local .env remains host-friendly for non-container use.
+        export JWT_OIDC_WELL_KNOWN_CONFIG="http://keycloak:8080/auth/realms/servicebc-local/.well-known/openid-configuration"
+        export JWT_OIDC_JWKS_URI="http://keycloak:8080/auth/realms/servicebc-local/protocol/openid-connect/certs"
+        export JWT_OIDC_ISSUER="http://localhost:8085/auth/realms/servicebc-local"
+
+        uv run python manage.py db upgrade
+
+        # If the default bootstrap admin CSR is missing, we're probably
+        # starting with a clean database and need to bootstrap it.
+        uv run python manage.py migrate_db
+        count=$(get_admin_csr_count)
+        if [ "$count" -eq 0 ]; then
+            uv run python manage.py bootstrap
+        fi
+    )
+}
+
+bootstrap_database
 
 ###############################################################################
-# Configuration Files Setup and Checking
+# Configuration Files Setup
 ###############################################################################
 
 echo
-
-copy_config .devcontainer/config/api/dotenv api/.env
-check_setting api/.env JWT_OIDC_AUDIENCE
-check_setting api/.env JWT_OIDC_WELL_KNOWN_CONFIG
-
-copy_config .devcontainer/config/api/client_secrets/secrets.json \
-    api/client_secrets/secrets.json
-
-copy_config .devcontainer/config/frontend/public/config/configuration.json \
-    frontend/public/config/configuration.json
+run_setup_local_config

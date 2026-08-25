@@ -23,11 +23,24 @@ from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, get_username
-from app.utilities.email import send_email, get_confirmation_email_contents
+from app.utilities.email import send_email, get_confirmation_email_contents, can_send_service_notification
 from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
 from app.utilities.sms import send_sms
+
+
+def _get_valid_service(service_id):
+    if service_id in (None, ""):
+        return None
+
+    try:
+        service_id = int(service_id)
+    except (TypeError, ValueError):
+        return None
+
+    return db.session.get(Service, service_id)
+
 
 @api.route("/appointments/<int:id>/", methods=["PUT"])
 class AppointmentPut(Resource):
@@ -56,6 +69,17 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
+            appointment = Appointment.query.filter_by(appointment_id=id) \
+                .filter_by(office_id=office_id) \
+                .first_or_404()
+
+            service_id = json_data.get('service_id', appointment.service_id)
+            service = _get_valid_service(service_id)
+            if service is None:
+                return {
+                    "message": "Could not find service for service_id: " + str(service_id)
+                }, 400
+
             # user = PublicUser.find_by_username(g.oidc_token_info['username'])
             # citizen = Citizen.find_citizen_by_username(g.oidc_token_info['username'], office_id)
             # Validate if the same user has other appointments for same day at same office
@@ -71,8 +95,6 @@ class AppointmentPut(Resource):
             # Check for race condition
             start_time = parse(json_data.get('start_time'))
             end_time = parse(json_data.get('end_time'))
-            service_id = json_data.get('service_id')
-            service = Service.query.get(int(service_id))
             if not AvailabilityService.has_available_slots(office=office, start_time=start_time, end_time=end_time, service=service):
                 return {"code": "CONFLICT_APPOINTMENT",
                         "message": "Cannot create appointment due to scheduling conflict.  Please pick another time."}, 400
@@ -81,10 +103,16 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            if 'service_id' in json_data:
+                service = _get_valid_service(json_data.get('service_id'))
+                if service is None:
+                    return {
+                        "message": "Could not find service for service_id: " + str(json_data.get('service_id'))
+                    }, 400
 
-        appointment = Appointment.query.filter_by(appointment_id=id) \
-            .filter_by(office_id=office_id) \
-            .first_or_404()
+            appointment = Appointment.query.filter_by(appointment_id=id) \
+                .filter_by(office_id=office_id) \
+                .first_or_404()
 
         # If appointment is not made by same user, throw error
         if is_public_user_appt:
@@ -104,13 +132,14 @@ class AppointmentPut(Resource):
         db.session.add(appointment)
         db.session.commit()
 
-        # Send confirmation email
-        try:
-            send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
-            send_sms(appointment, office, office.timezone, user,
-                             request.headers['Authorization'].replace('Bearer ', ''))
-        except Exception as exc:
-            logging.exception('Error on token generation - %s', exc)
+        if can_send_service_notification(appointment):
+            # Send confirmation email
+            try:
+                send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
+                send_sms(appointment, office, office.timezone, user,
+                                 request.headers['Authorization'].replace('Bearer ', ''))
+            except Exception as exc:
+                logging.exception('Error on token generation - %s', exc)
 
         #   Make Snowplow call.
         schema = 'appointment_update'

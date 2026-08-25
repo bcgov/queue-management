@@ -43,7 +43,7 @@ class ServiceRequestsDetail(Resource):
         csr = CSR.find_by_username(get_username())
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
-                .join(ServiceReq.citizen, aliased=True).first_or_404()
+                .join(ServiceReq.citizen).first_or_404()
 
         try:
             service_request = self.service_request_schema.load(json_data, instance=service_request, partial=True)
@@ -77,8 +77,8 @@ class ServiceRequestActivate(Resource):
         csr = CSR.find_by_username(get_username())
 
         service_request = ServiceReq.query.filter_by(sr_id=id) \
-            .join(ServiceReq.citizen, aliased=True) \
-            .filter_by(office_id=csr.office_id).first_or_404()
+            .join(ServiceReq.citizen) \
+            .filter(Citizen.office_id == csr.office_id).first_or_404()
 
         active_service_state = SRState.get_state_by_name("Active")
         complete_service_state = SRState.get_state_by_name("Complete")

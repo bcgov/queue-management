@@ -28,17 +28,21 @@ class Role(Enum):
 def get_username() -> str:
     """
     Gets the username in the form user@idp, where username is lowercase
-    and the idp is typically one of "bceid", "bcsc", or "idir". Will
-    return an empty string if there is no authenticated user identity.
+    and the idp is typically one of "bceid", "bcsc", or "idir". Abort
+    with 401 when the authenticated identity is missing or malformed.
     """
-    if 'username' not in g.jwt_oidc_token_info or \
-            'identity_provider' not in g.jwt_oidc_token_info:
-        return ''
-
-    username = g.jwt_oidc_token_info['username'].lower() + '@' + \
-        g.jwt_oidc_token_info['identity_provider']
-
-    return username
+    token_info = getattr(g, 'jwt_oidc_token_info', None)
+    if token_info is None:
+        abort(401)
+    username = token_info.get('username')
+    identity_provider = token_info.get('identity_provider')
+    if not isinstance(username, str) or not isinstance(identity_provider, str):
+        abort(401)
+    username = username.strip().lower()
+    identity_provider = identity_provider.strip().lower()
+    if username == '' or identity_provider == '':
+        abort(401)
+    return username + '@' + identity_provider
 
 def is_public_user() -> bool:
     """Return if the user is a public user or not."""

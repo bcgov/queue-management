@@ -2,6 +2,7 @@ import logging
 import os
 import dotenv
 from pprint import pprint
+from sqlalchemy.engine import URL
 
 # Load all the environment variables from a .env file located in some directory above.
 dotenv.load_dotenv(dotenv.find_dotenv())
@@ -15,6 +16,30 @@ config = {
     "localhost": "config.LocalConfig",
     "default": "config.LocalConfig"
 }
+
+
+def normalize_database_engine(db_engine):
+    if db_engine == "postgres":
+        return "postgresql+psycopg2"
+    return db_engine
+
+
+def normalize_database_port(db_port):
+    if db_port in (None, ""):
+        return None
+    return int(db_port)
+
+
+def build_database_uri(engine, user, password, host, port, name):
+    return URL.create(
+        drivername=engine,
+        username=user,
+        password=password,
+        host=host,
+        port=normalize_database_port(port),
+        database=name,
+    ).render_as_string(hide_password=False)
+
 
 class BaseConfig(object):
 
@@ -60,7 +85,7 @@ class BaseConfig(object):
 
     DB_LONG_RUNNING_QUERY = float(os.getenv("DATABASE_LONG_RUNNING_QUERY", '0.5'))
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', '')
+    DB_ENGINE = normalize_database_engine(os.getenv('DATABASE_ENGINE', ''))
     DB_USER = os.getenv('DATABASE_USERNAME', '')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD','')
     DB_NAME = os.getenv('DATABASE_NAME','')
@@ -69,7 +94,7 @@ class BaseConfig(object):
     DB_POOL_TIMEOUT = os.getenv('DATABASE_TIMEOUT_STRING', '')
     DB_CONNECT_TIMEOUT = os.getenv('DATABASE_CONNECT_TIMEOUT_STRING', '')
 
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = build_database_uri(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -165,6 +190,8 @@ class BaseConfig(object):
     
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
+    JWT_OIDC_JWKS_URI = os.getenv('JWT_OIDC_JWKS_URI')
+    JWT_OIDC_ISSUER = os.getenv('JWT_OIDC_ISSUER')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', 'RS256')
     JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
     JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET', '')
@@ -184,7 +211,6 @@ class BaseConfig(object):
 class LocalConfig(BaseConfig):
     DEBUG = True
     TESTING = False
-    ENV = 'dev'
 
     USE_HTTPS = False
     PREFERRED_URL_SCHEME = 'http'
@@ -193,17 +219,17 @@ class LocalConfig(BaseConfig):
 
     SERVER_NAME = None
     SESSION_COOKIE_DOMAIN = None
-    CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://localhost:8081"]
+    CORS_ALLOWED_ORIGINS = ["http://localhost:8080", "http://localhost:8081", "http://localhost:5173", "http://localhost:5174"]
     SQLALCHEMY_ECHO = False
     SECRET_KEY = "pancakes"
 
-    DB_ENGINE = os.getenv('DATABASE_ENGINE', 'postgres')
+    DB_ENGINE = normalize_database_engine(os.getenv('DATABASE_ENGINE', 'postgresql+psycopg2'))
     DB_USER = os.getenv('DATABASE_USERNAME', 'postgres')
     DB_PASSWORD = os.getenv('DATABASE_PASSWORD', 'root')
     DB_NAME = os.getenv('DATABASE_NAME', 'qsystem')
     DB_HOST = os.getenv('DATABASE_HOST', '127.0.0.1')
     DB_PORT = os.getenv('DATABASE_PORT', '5432')
-    SQLALCHEMY_DATABASE_URI = '{engine}://{user}:{password}@{host}:{port}/{name}'.format(
+    SQLALCHEMY_DATABASE_URI = build_database_uri(
         engine=DB_ENGINE,
         user=DB_USER,
         password=DB_PASSWORD,
@@ -227,7 +253,6 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'dev'
 
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
@@ -240,7 +265,6 @@ class TestConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'test'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')
@@ -252,7 +276,6 @@ class ProductionConfig(BaseConfig):
     DEBUG = True
     REDIS_DEBUG = True
     TESTING = False
-    ENV = 'production'
     USE_HTTPS = True
     PREFERRED_URL_SCHEME = 'https'
     BCMP_BASE_URL = os.getenv('BCMP_BASE_URL')

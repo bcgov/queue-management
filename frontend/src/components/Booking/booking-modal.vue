@@ -517,7 +517,7 @@ export default class BookingModal extends Vue {
         if (this.exam.referrer === 'inventory') {
           redirect = true
         }
-        this.putRequest(payload).then(() => {
+        const finish = () => {
           this.getExams().then(() => {
             this.getBookings().then(() => {
               this.finishBooking()
@@ -526,7 +526,16 @@ export default class BookingModal extends Vue {
               }
             })
           })
-        })
+        }
+
+        if (putNotes) {
+          this.putRequest({
+            url: `/exams/${exam_id}/`,
+            data: { notes }
+          }).then(finish)
+        } else {
+          finish()
+        }
         this.booking_contact_information = ''
       })
     } else {

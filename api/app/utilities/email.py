@@ -15,13 +15,13 @@ limitations under the License.'''
 import re
 from datetime import datetime
 
-import pytz
 from flask import current_app
 from jinja2 import Environment, FileSystemLoader
 from .notification_email import send_email
 
 from app.models.bookings import Appointment
 from app.models.theq import Citizen, Office
+from app.utilities.timezone_utils import get_timezone
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
@@ -87,6 +87,18 @@ def get_blackout_email_contents(blackout_appt: Appointment, cancelled_appointmen
     return subject, get_email(user, cancelled_appointment), sender, body
 
 
+def can_send_service_notification(appointment: Appointment) -> bool:
+    """Return whether the appointment supports service-based notifications."""
+    return bool(
+        appointment
+        and not appointment.is_draft
+        and appointment.blackout_flag != "Y"
+        and not appointment.stat_flag
+        and appointment.service_id is not None
+        and appointment.service is not None
+    )
+
+
 def get_confirmation_email_contents(appointment: Appointment, office, timezone, user):
     """Send confirmation email"""
     sender = current_app.config.get('MAIL_FROM_ID')
@@ -120,7 +132,7 @@ def is_valid_email(email: str):
 
 
 def formatted_date(dt: datetime, timezone):
-    dt_local = dt.astimezone(pytz.timezone(timezone.timezone_name))
+    dt_local = dt.astimezone(get_timezone(timezone.timezone_name))
     return dt_local.strftime('%B %d, %Y at %I:%M %p'), dt_local.strftime('%B %d, %Y')
 
 

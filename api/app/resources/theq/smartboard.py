@@ -43,7 +43,7 @@ class Smartboard(Resource):
                 citizens = Citizen.query \
                     .options(joinedload(Citizen.service_reqs, innerjoin=True).options(joinedload(ServiceReq.periods).options(raiseload(Period.csr),raiseload(Period.sr))), raiseload(Citizen.cs),raiseload(Citizen.counter),raiseload(Citizen.user)) \
                     .filter_by(office_id=office.office_id) \
-                    .filter_by(cs_id=active_citizen_state) 
+                    .filter_by(cs_id=get_active_citizen_state_id())
 
                 for c in citizens:
                     active_service_request = c.get_active_service_request()
@@ -99,10 +99,11 @@ class SmartBoradQMenu(Resource):
             logging.exception(exception)
             return {'message': 'API is down'}, 500
 
-try:
-    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-    active_citizen_state = citizen_state.cs_id
-except Exception as ex:
-    active_citizen_state = 1
-    logging.exception("==> In smartboard.py")
-    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+def get_active_citizen_state_id():
+    try:
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+        return citizen_state.cs_id
+    except Exception:
+        logging.exception("==> In smartboard.py")
+        logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+        return 1

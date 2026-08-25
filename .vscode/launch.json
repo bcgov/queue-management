@@ -20,13 +20,33 @@
       // Run the components used for the Queue Management system.
       "name": "Queue Management",
       "configurations": [
+        "appointment_booking_front_end",
         "appointment_front_end",
         "queue_management_api",
-        "queue_management_front_end"
+        "queue_management_front_end",
+        "notifications_api"
       ]
     }
   ],
   "configurations": [
+    {
+      // Run the React SSR front end for the new Appointment Booking application.
+      "cwd": "${workspaceFolder}/appointment-booking",
+      "env": {
+        "API_PROXY_TARGET": "http://localhost:5000"
+      },
+      "name": "appointment_booking_front_end",
+      "request": "launch",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "runtimeExecutable": "npm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
     {
       // Run the Vue.js front end for the Appointment application.
       "cwd": "${workspaceFolder}/appointment-frontend",
@@ -52,23 +72,21 @@
       "type": "node"
     },
     {
-      // Run the Queue Management API Python gunicorn process.
-      "args": [
-        "wsgi",
-        "--bind=0.0.0.0:5000",
-        "--access-logfile=-",
-        "--config=gunicorn_config.py",
-        "--reload",
-        "--timeout=0" // Disable timeout; don't die at breakpoints
-      ],
+      // Run the Queue Management API in a single process for reliable debugging.
       "cwd": "${workspaceFolder}/api",
+      "env": {
+        "WSGI_DEBUG": "1",
+        "WSGI_HOST": "0.0.0.0",
+        "WSGI_PORT": "5000",
+        "WSGI_USE_RELOADER": "0"
+      },
       "gevent": true,
       "name": "queue_management_api",
       "preLaunchTask": "alembic: upgrade - api",
-      "program": "env/bin/gunicorn",
-      "python": "${workspaceFolder}/api/env/bin/python",
+      "program": "${workspaceFolder}/api/wsgi.py",
+      "python": "${workspaceFolder}/api/.venv/bin/python",
       "request": "launch",
-      "type": "python"
+      "type": "debugpy"
     },
     {
       // Run the Vue.js front end for the Queue Management application.
@@ -91,6 +109,22 @@
         "<node_internals>/**"
       ],
       "type": "node"
+    },
+    {
+      // Run the Notifications API in a single process for reliable debugging.
+      "cwd": "${workspaceFolder}/notifications-api",
+      "env": {
+        "WSGI_DEBUG": "1",
+        "WSGI_HOST": "0.0.0.0",
+        "WSGI_PORT": "5002",
+        "WSGI_USE_RELOADER": "0"
+      },
+      "envFile": "${workspaceFolder}/notifications-api/.env",
+      "name": "notifications_api",
+      "program": "${workspaceFolder}/notifications-api/wsgi.py",
+      "python": "${workspaceFolder}/notifications-api/.venv/bin/python",
+      "request": "launch",
+      "type": "debugpy"
     }
   ],
   "version": "0.2.0"

@@ -45,14 +45,15 @@ class ExamList(Resource):
             my_print("job_ids to update: ")
             my_print(job_ids)
 
-            exams_tobe_updated = None
+            updated_exam_ids = []
 
             if len(job_ids) != 0:
-                exams_tobe_updated = Exam.query.filter(Exam.bcmp_job_id.in_(job_ids))
+                exams_tobe_updated = Exam.query.filter(Exam.bcmp_job_id.in_(job_ids)).all()
 
                 for exam in exams_tobe_updated:
                     exam_upd = self.exam_schema.load({'upload_received_ind': 1}, instance=exam, partial=True)
                     db.session.add(exam_upd)
+                    updated_exam_ids.append(exam.exam_id)
 
                 try:
                     db.session.commit()
@@ -60,7 +61,7 @@ class ExamList(Resource):
                     db.session.rollback()
                     raise
 
-            return {"exams_updated": exams_tobe_updated}, 200
+            return {"exams_updated": updated_exam_ids}, 200
 
         except exc.SQLAlchemyError as error:
             logging.error(error, exc_info=True)
