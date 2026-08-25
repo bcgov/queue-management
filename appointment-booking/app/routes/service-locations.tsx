@@ -1,69 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Callout, InlineAlert, Text } from '@bcgov/design-system-react-components'
+import { InlineAlert } from '@bcgov/design-system-react-components'
 import { getDistance } from 'geolib'
 import { useNavigate } from 'react-router'
-import { getBookingLocations, type Location } from '~/api/locations'
-import type { Service } from '~/api/services'
+import { getServiceLocations, type ServiceLocation } from '~/api/service-locations'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
-import { LocationsSearch, useNearestSort, type Coordinates } from '~/components/LocationsSearch'
+import { SearchRow } from '~/components/SearchRow'
+import { useNearestSort, type Coordinates } from '~/components/useNearestSort'
 import { LocationsTable } from '~/components/LocationsTable'
 
 const BOOKING_STEP = 2
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING = 'Select a Service BC location for your appointment.'
 
-// Selection summary; nested InlineAlert shows the office online appointment message when set.
-function BookingDetailCallout({
-  selectedService,
-  selectedLocation,
-}: {
-  selectedService: Service | null
-  selectedLocation: Location | null
-}) {
-  return (
-    <Callout variant="lightBlue">
-      <div className="booking-detail-callout-content">
-        <Text>
-          {selectedService ? (
-            <>
-              Selected service - <strong>{selectedService.name}</strong>
-              <br />
-            </>
-          ) : (
-            <>Please go back to choose a service before selecting a location.</>
-          )}
-          {selectedLocation ? (
-            <>
-              {!selectedService ? <br /> : null}
-              Appointment Location - <strong>{selectedLocation.name}</strong>
-              {selectedLocation.address ? (
-                <>
-                  <br />
-                  Address - <strong>{selectedLocation.address}</strong>
-                </>
-              ) : null}
-            </>
-          ) : selectedService ? (
-            <>Select a location from the list to view details.</>
-          ) : null}
-        </Text>
-        {selectedLocation?.appointmentMessage ? (
-          <InlineAlert variant="info" title="Location notice">
-            {selectedLocation.appointmentMessage}
-          </InlineAlert>
-        ) : null}
-      </div>
-    </Callout>
-  )
-}
-
 type SortDirection = 'asc' | 'desc'
 
 // geolib returns meters; nearest-sort ranks by kilometres. Missing coords sort last.
-function kmFromUser(user: Coordinates, location: Location) {
+function kmFromUser(user: Coordinates, location: ServiceLocation) {
   if (location.latitude === null || location.longitude === null) {
     return Number.POSITIVE_INFINITY
   }
@@ -79,8 +35,8 @@ export default function ServiceLocationsPage() {
   const { selectedService, selectedLocation, setSelectedLocation } = useBooking()
   const selectedId = selectedLocation ? String(selectedLocation.id) : ''
 
-  const [locations, setLocations] = useState<Location[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [locations, setLocations] = useState<ServiceLocation[]>([])
+  const [isLoading, setIsLoading] = useState(() => !!selectedService)
   const [loadError, setLoadError] = useState(false)
   const [search, setSearch] = useState('')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -93,10 +49,16 @@ export default function ServiceLocationsPage() {
     toggleNearestSort,
   } = useNearestSort()
 
+  const serviceId = selectedService?.id
+
   // Ignore late responses if the user leaves the page mid-fetch (SSR/client remounts).
   useEffect(() => {
+    if (serviceId == null) {
+      return
+    }
+
     let cancelled = false
-    getBookingLocations()
+    getServiceLocations(serviceId)
       .then((loaded) => {
         if (!cancelled) {
           setLocations(loaded)
@@ -116,34 +78,82 @@ export default function ServiceLocationsPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [serviceId])
+
+  // Knowledge-test bookings omit SHOW offices with no DLKT capacity / no slots.
+  // Disabled offices stay visible with an availability message.
+  const locationsForService = useMemo(() => {
+    if (!selectedService?.isDlkt) {
+      return locations
+    }
+    return locations.filter(
+      (location) => location.appointmentsDisabled || location.nextAppointmentDate !== null,
+    )
+  }, [locations, selectedService?.isDlkt])
+
+  // Keep the booking selection aligned with the latest mapped availability for this service.
+  useEffect(() => {
+    if (isLoading || loadError || !selectedLocation) {
+      return
+    }
+
+    const match = locationsForService.find((location) => location.id === selectedLocation.id)
+    if (!match) {
+      setSelectedLocation(null)
+      return
+    }
+
+    if (
+      match.isBookable !== selectedLocation.isBookable ||
+      match.appointmentsDisabled !== selectedLocation.appointmentsDisabled ||
+      match.nextAppointmentDate !== selectedLocation.nextAppointmentDate
+    ) {
+      setSelectedLocation(match)
+    }
+  }, [isLoading, loadError, locationsForService, selectedLocation, setSelectedLocation])
 
   const visibleLocations = useMemo(() => {
     const tokens = search.trim().toLowerCase().split(/\s+/).filter(Boolean)
     // Copy before sort — Array.sort mutates in place.
     const results = tokens.length
-      ? locations.filter((location) => {
+      ? locationsForService.filter((location) => {
           const haystack = `${location.name} ${location.address}`.toLowerCase()
           return tokens.every((token) => haystack.includes(token))
         })
-      : [...locations]
+      : [...locationsForService]
+
+    // Bookable locations first; then name or nearest order within each group.
+    const byBookable = (a: ServiceLocation, b: ServiceLocation) =>
+      Number(b.isBookable) - Number(a.isBookable)
 
     if (nearestSort && userLocation) {
-      results.sort((a, b) => kmFromUser(userLocation, a) - kmFromUser(userLocation, b))
+      results.sort((a, b) => {
+        const bookableOrder = byBookable(a, b)
+        if (bookableOrder !== 0) {
+          return bookableOrder
+        }
+        return kmFromUser(userLocation, a) - kmFromUser(userLocation, b)
+      })
       return results
     }
 
     results.sort((a, b) => {
+      const bookableOrder = byBookable(a, b)
+      if (bookableOrder !== 0) {
+        return bookableOrder
+      }
       const comparison = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
       return sortDirection === 'asc' ? comparison : -comparison
     })
     return results
-  }, [locations, search, sortDirection, nearestSort, userLocation])
+  }, [locationsForService, search, sortDirection, nearestSort, userLocation])
 
-  const canContinue = !!selectedService && !!selectedLocation
+  // Only a bookable location unlocks the next step; unavailable rows stay selectable for info.
+  const canContinue = !!selectedService && !!selectedLocation?.isBookable
   const showLoadError = !isLoading && loadError
-  const showUnavailable = !isLoading && !loadError && locations.length === 0
-  const showNoResults = !isLoading && locations.length > 0 && visibleLocations.length === 0
+  const showUnavailable = !isLoading && !loadError && locationsForService.length === 0
+  const showNoResults =
+    !isLoading && locationsForService.length > 0 && visibleLocations.length === 0
 
   return (
     <>
@@ -166,13 +176,18 @@ export default function ServiceLocationsPage() {
       ) : (
         <div className="booking-locations-layout">
           {!isLoading && (
-            <LocationsSearch
+            <SearchRow
               value={search}
               onChange={setSearch}
               onClear={() => setSearch('')}
-              nearestSort={nearestSort}
-              nearestStatus={locationStatus}
-              onNearestSortPress={toggleNearestSort}
+              name="location-search"
+              ariaLabel="Search locations"
+              placeholder="Search locations"
+              nearest={{
+                sort: nearestSort,
+                status: locationStatus,
+                onPress: toggleNearestSort,
+              }}
             />
           )}
 

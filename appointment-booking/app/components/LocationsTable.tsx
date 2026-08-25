@@ -1,16 +1,16 @@
 import { SvgChevronDownIcon, SvgChevronUpIcon } from '@bcgov/design-system-react-components'
-import type { Location } from '../api/locations'
+import type { ServiceLocation } from '../api/service-locations'
 
 type SortDirection = 'asc' | 'desc'
 
 type LocationsTableProps = {
-  locations: Location[]
+  locations: ServiceLocation[]
   isLoading: boolean
   showNoResults: boolean
   sortDirection: SortDirection
   onToggleSort: () => void
   selectedId: string
-  onSelect: (location: Location) => void
+  onSelect: (location: ServiceLocation) => void
 }
 
 export function LocationsTable({
@@ -70,7 +70,10 @@ export function LocationsTable({
                 const address = location.address || '—'
 
                 return (
-                  <tr key={location.id}>
+                  <tr
+                    key={location.id}
+                    className={location.isBookable ? undefined : 'is-unavailable'}
+                  >
                     <td className="services-table-select-cell">
                       <input
                         type="radio"

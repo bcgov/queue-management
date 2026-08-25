@@ -1,46 +1,20 @@
 import { useEffect, useState } from 'react'
-import {
-  Button,
-  Calendar,
-  Callout,
-  InlineAlert,
-  Select,
-  Text,
-} from '@bcgov/design-system-react-components'
+import { Button, Calendar, InlineAlert, Select, Text } from '@bcgov/design-system-react-components'
 import { parseDate } from '@internationalized/date'
 import { useNavigate } from 'react-router'
 
 import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
+import { formatDate, formatTimeRange } from '~/booking/format-slot'
 import { BookingBackRow } from '~/components/BookingBackRow'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
+import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
 const BOOKING_STEP = 4
 const BOOKING_STEP_COUNT = 5
 const BOOKING_STEP_HEADING = 'Select a date and time for your appointment.'
-
-function formatDate(date: string) {
-  const [year, month, day] = date.split('-').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(year, month - 1, day))
-}
-
-function formatTime(time: string) {
-  const [hour, minute] = time.split(':').map(Number)
-  return new Intl.DateTimeFormat('en-CA', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(2000, 0, 1, hour, minute))
-}
-
-function formatTimeRange(startTime: string, endTime: string) {
-  return `${formatTime(startTime)} – ${formatTime(endTime)}`
-}
 
 function slotValue(startTime: string, endTime: string) {
   return `${startTime}|${endTime}`
@@ -109,12 +83,18 @@ export default function DateTimePage() {
   }, [isAuthReady, isBookingReady, isAuthenticated, selectedLocation, selectedService])
 
   const availableDates = Object.keys(timeSlots).sort()
-  // Prefer the day the user clicked; if none, use the day from a previously saved time.
+  // Prefer clicked day, then saved slot day, then next available date.
   const activeDay =
-    selectedDay ?? (selectedSlot && timeSlots[selectedSlot.date] ? selectedSlot.date : null)
+    selectedDay ??
+    (selectedSlot && timeSlots[selectedSlot.date] ? selectedSlot.date : null) ??
+    availableDates[0] ??
+    null
   const activeDaySlots = activeDay ? (timeSlots[activeDay] ?? []) : []
   const selectedSlotValue =
     selectedSlot?.date === activeDay ? slotValue(selectedSlot.startTime, selectedSlot.endTime) : ''
+  const nextDate = availableDates[0]
+  const nextAppointment =
+    nextDate && timeSlots[nextDate]?.[0] ? { date: nextDate, ...timeSlots[nextDate][0] } : null
 
   const stepProgress = (
     <BookingStepProgress
@@ -169,35 +149,11 @@ export default function DateTimePage() {
       <h1 className="sr-only">Select Date and Time</h1>
       {stepProgress}
 
-      <Callout variant="lightBlue">
-        <div className="booking-detail-callout-content">
-          <Text>
-            Selected Service - <strong>{selectedService.name}</strong>
-            <br />
-            Appointment Location - <strong>{selectedLocation.name}</strong>
-            {selectedLocation.address ? (
-              <>
-                <br />
-                Address - <strong>{selectedLocation.address}</strong>
-              </>
-            ) : null}
-            {selectedSlot ? (
-              <>
-                <br />
-                Appointment Date - <strong>{formatDate(selectedSlot.date)}</strong>
-                <br />
-                Appointment Time -{' '}
-                <strong>{formatTimeRange(selectedSlot.startTime, selectedSlot.endTime)}</strong>
-              </>
-            ) : null}
-          </Text>
-          {selectedLocation.appointmentMessage ? (
-            <InlineAlert variant="info" title="Location notice">
-              {selectedLocation.appointmentMessage}
-            </InlineAlert>
-          ) : null}
-        </div>
-      </Callout>
+      <BookingDetailCallout
+        selectedService={selectedService}
+        selectedLocation={selectedLocation}
+        selectedSlot={selectedSlot}
+      />
 
       {isLoading ? (
         <div className="datetime-status" role="status" aria-live="polite">
@@ -247,10 +203,41 @@ export default function DateTimePage() {
 
             <section aria-labelledby="datetime-time-heading">
               <h2 id="datetime-time-heading">Select Time</h2>
+              {nextAppointment ? (
+                <div className="datetime-time-panel">
+                  <p className="datetime-selected-day" aria-live="polite">
+                    {formatDate(nextAppointment.date)}
+                    <br />
+                    {formatTimeRange(nextAppointment.startTime, nextAppointment.endTime)}
+                  </p>
+                  <div className="datetime-next-available-action">
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="medium"
+                      onPress={() => {
+                        setSelectedDay(nextAppointment.date)
+                        setSelectedSlot(nextAppointment)
+                      }}
+                    >
+                      Select next available appointment
+                    </Button>
+                    <p className="datetime-next-available-or" aria-hidden="true">
+                      OR
+                    </p>
+                  </div>
+                </div>
+              ) : null}
               {activeDay ? (
                 <div className="datetime-time-panel">
                   <p className="datetime-selected-day" aria-live="polite">
                     {formatDate(activeDay)}
+                    {selectedSlot?.date === activeDay ? (
+                      <>
+                        <br />
+                        {formatTimeRange(selectedSlot.startTime, selectedSlot.endTime)}
+                      </>
+                    ) : null}
                   </p>
                   <div className="datetime-time-slots">
                     <Select
@@ -270,9 +257,7 @@ export default function DateTimePage() {
                     />
                   </div>
                 </div>
-              ) : (
-                <Text>Select an available date to see its appointment times.</Text>
-              )}
+              ) : null}
             </section>
           </div>
         </div>
@@ -280,6 +265,11 @@ export default function DateTimePage() {
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/login')} />
+        <BookingContinueRow
+          label="Review"
+          isDisabled={!selectedSlot}
+          onContinue={() => navigate('/review')}
+        />
       </div>
     </>
   )

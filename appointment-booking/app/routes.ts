@@ -7,5 +7,6 @@ export default [
   route('signin/:idpHint', 'routes/signin.$idpHint.tsx'),
   route('login', 'routes/login.tsx'),
   route('datetime', 'routes/datetime.tsx'),
+  route('review', 'routes/review.tsx'),
   route('locations', 'routes/locations.tsx'),
 ] satisfies RouteConfig
