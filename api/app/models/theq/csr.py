@@ -13,12 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from flask_login import UserMixin
 from qsystem import cache, db, my_print
 from app.models.theq import Base
 from sqlalchemy import func
 
 
-class CSR(Base):
+class CSR(UserMixin, Base):
 
     csr_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(150), nullable=False, unique=True)
@@ -38,7 +39,7 @@ class CSR(Base):
     office = db.relationship("Office", lazy='joined')
     counter = db.relationship("Counter", lazy='joined')
     periods = db.relationship("Period", primaryjoin="and_(CSR.csr_id==Period.csr_id,Period.time_end.is_(None))",
-                              order_by='desc(Period.time_start)')
+                              order_by='desc(Period.time_start)', overlaps='csr')
 
     format_string = 'csr_detail_%s'
 
@@ -50,6 +51,8 @@ class CSR(Base):
 
     @classmethod
     def find_by_username(cls, username):
+        if not username or not username.strip():
+            return None
         #   Possible keycloak->TheQ id values are user@idir->user, idir/user->user or user@bceid->user@bceid
         idir_id = username.split("idir/")[-1].lower()
         if "@idir" in username:
@@ -76,6 +79,8 @@ class CSR(Base):
 
     @classmethod
     def delete_user_cache(cls, username):
+        if not username or not username.strip():
+            return
         idir_id = username.split("idir/")[-1]
         key = (CSR.format_string % idir_id).lower()
         cache.delete(key)
@@ -94,3 +99,7 @@ class CSR(Base):
 
     def get_id(self):
         return str(self.csr_id)
+
+    @property
+    def is_active(self):
+        return self.deleted is None

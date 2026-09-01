@@ -15,16 +15,14 @@ limitations under the License.'''
 from app.models.theq import Base, Citizen
 from qsystem import cache, db
 from app.models.bookings.appointments import Appointment
-from datetime import datetime
-from pytz import timezone
-import pytz
+from datetime import datetime, timezone
 
 
 class PublicUser(Base):
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(100), unique=True, index=True)
-    last_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(200))
     display_name = db.Column(db.String(200))
     email = db.Column(db.String(200))
     telephone = db.Column(db.String(20))
@@ -40,19 +38,23 @@ class PublicUser(Base):
     @classmethod
     def find_by_username(cls, username):
         """Find User records by username."""
+        if not username or not username.strip():
+            return None
         user = cls.query.filter_by(username=username).one_or_none()
         return user
 
     @classmethod
     def find_by_user_id(cls, user_id):
         """Find User records by user_id."""
-        user = cls.query.get(user_id)
+        user = db.session.get(cls, user_id)
         return user
 
     @classmethod
     def find_appointments_by_username(cls, username: str):
         """Find all appointments for the user."""
-        today  = datetime.now(timezone('UTC'))
+        if not username or not username.strip():
+            return []
+        today = datetime.now(timezone.utc)
 
         query = db.session.query(Appointment) \
             .join(Citizen) \

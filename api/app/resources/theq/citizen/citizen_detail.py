@@ -50,13 +50,10 @@ class CitizenDetail(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def put(self, id):
-        json_data = request.get_json()
+        json_data = request.get_json(silent=True) or {}
 
         if 'counter_id' not in json_data:
-            json_data['counter_id'] = counter_id
-
-        if not json_data:
-            return {'message': 'No input data received for updating citizen'}, 400
+            json_data['counter_id'] = get_counter_id()
 
         csr = CSR.find_by_username(get_username())
         citizen = Citizen.query.filter_by(citizen_id=id).first()
@@ -108,13 +105,11 @@ class CitizenDetail(Resource):
 
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 200
-
-try:
-    counter = Counter.query.filter(Counter.counter_name=="Counter")[0]
-    counter_id = counter.counter_id
-#  NOTE!!  There should ONLY be an exception when first building the database
-#          from a python3 manage.py db upgrade command.
-except:
-    counter_id = 1
-    logging.exception("==> In citizen_detail.py")
-    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+def get_counter_id():
+    try:
+        counter = Counter.query.filter(Counter.counter_name == "Counter")[0]
+        return counter.counter_id
+    except Exception:
+        logging.exception("==> In citizen_detail.py")
+        logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+        return 1

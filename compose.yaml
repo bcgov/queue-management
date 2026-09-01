@@ -1,0 +1,128 @@
+services:
+  app:
+    build:
+      args:
+        VARIANT: "3.14-bookworm"
+        NODE_VERSION: "20"
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    environment:
+      UV_PROJECT_ENVIRONMENT: /workspace/api/.venv
+      DATABASE_NAME: postgres
+      DATABASE_PASSWORD: postgres
+      DISPLAY: ":14"
+      LIBGL_ALWAYS_INDIRECT: "0"
+      JWT_OIDC_WELL_KNOWN_CONFIG: ""
+      JWT_OIDC_JWKS_URI: http://keycloak:8080/auth/realms/servicebc-local/protocol/openid-connect/certs
+      JWT_OIDC_ISSUER: http://localhost:8085/auth/realms/servicebc-local
+    init: true
+    network_mode: service:db
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    volumes:
+      - x11:/tmp/.X11-unix:rw
+      - .:/workspace:cached
+      - api-venv:/workspace/api/.venv
+      - notifications-api-venv:/workspace/notifications-api/.venv
+      - appointment-frontend-node-modules:/workspace/appointment-frontend/node_modules
+      - frontend-node-modules:/workspace/frontend/node_modules
+
+  db:
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  x11:
+    environment:
+      DISPLAY: ":14"
+      MODE: tcp
+      XPRA_HTML: "yes"
+      XPRA_PASSWORD: password
+    image: jare/x11-bridge
+    ports:
+      - "10000:10000"
+    restart: always
+    volumes:
+      - x11:/tmp/.X11-unix:rw
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.2
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KC_DB: dev-mem
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: password
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "exec 3<>/dev/tcp/127.0.0.1/8080; echo -e 'GET /auth/realms/servicebc-local/.well-known/openid-configuration HTTP/1.1\\r\\nhost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3; grep 'HTTP/1.1 200 OK' <&3",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./keycloak-local:/opt/keycloak/data/import:ro
+
+  appointment-booking:
+    build:
+      context: ./appointment-booking
+      dockerfile: Dockerfile
+    ports:
+      - "5173:8080"
+
+  api:
+    profiles:
+      - api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      - keycloak
+    env_file:
+      - ./api/.env
+    environment:
+      FLASK_CONFIGURATION: localhost
+      DATABASE_HOST: host.docker.internal
+      DATABASE_PORT: "5432"
+      NOTIFICATIONS_ENDPOINT: http://host.docker.internal:5002/api/v1/notifications/sms
+      NOTIFICATIONS_EMAIL_ENDPOINT: http://host.docker.internal:5002/api/v1/notifications/email
+      JWT_OIDC_WELL_KNOWN_CONFIG: ""
+      JWT_OIDC_JWKS_URI: http://keycloak:8080/auth/realms/servicebc-local/protocol/openid-connect/certs
+      JWT_OIDC_ISSUER: http://localhost:8085/auth/realms/servicebc-local
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "5000:8080"
+
+volumes:
+  postgres-data:
+  x11:
+  api-venv:
+  notifications-api-venv:
+  appointment-frontend-node-modules:
+  frontend-node-modules:

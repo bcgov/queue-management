@@ -19,7 +19,8 @@ cp -r .devcontainer/config/api/client_secrets  api/
 ```
 
 Note: 
-- inorder to book an appointment, add a user to the local keycloak with the role ***'online_appointment_user'***.
+- a local Keycloak realm named `servicebc-local` is available through `docker compose up -d keycloak`
+- the seeded demo appointment user is `citizen@bceidboth` with password `password`
 
 - if you need to use BCSC or BCeID services, please point to the dev keycloak
 

@@ -1,11 +1,14 @@
 name: Wait for Rollouts
+
 on:
   workflow_call:
     inputs:
       image-names:
+        description: Space-separated list of OpenShift Deployment names
         required: true
         type: string
       tag-to:
+        description: Target environment suffix, such as dev, test, or prod
         required: true
         type: string
     secrets:
@@ -22,33 +25,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Log in to OpenShift ${{ inputs.tag-to }}
-      uses: redhat-actions/oc-login@v1
-      with:
-        namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
-        openshift_server_url: ${{ secrets.openshift-api }}
-        openshift_token: ${{ secrets.token }}
+      - name: Install OpenShift CLI
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
 
-    - name: Wait for Rollouts
-      run: |
-        #
-        # Parameters: namespace deployment-config
-        #
-        wait_for_rollout () {
-          NAMESPACE_DEPLOY=$1
-          DEPLOYMENT_CONFIG=$2
+      - name: Verify OpenShift CLI
+        run: oc version --client
 
-          STATUS=
-          while [ "$STATUS" != "Complete" ]; do
-            VERSION=$(oc -n $NAMESPACE_DEPLOY get deploymentconfig $DEPLOYMENT_CONFIG -o json | jq '.status.latestVersion')
-            STATUS=$(oc -n $NAMESPACE_DEPLOY rollout history dc/$DEPLOYMENT_CONFIG | grep ^$VERSION | awk '{ print $2 }')
-            WHEN=$(oc -n $NAMESPACE_DEPLOY get replicationcontroller $DEPLOYMENT_CONFIG-$VERSION --no-headers | awk '{ print $5 }')
+      - name: Log in to OpenShift ${{ inputs.tag-to }}
+        uses: redhat-actions/oc-login@v1
+        with:
+          namespace: ${{ secrets.licence-plate }}-${{ inputs.tag-to }}
+          openshift_server_url: ${{ secrets.openshift-api }}
+          openshift_token: ${{ secrets.token }}
 
-            echo "Rollout #$VERSION of $DEPLOYMENT_CONFIG is \"$STATUS\" $WHEN ago"
-            sleep 1
+      - name: Wait for Deployment rollouts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          NAMESPACE_DEPLOY="${{ secrets.licence-plate }}-${{ inputs.tag-to }}"
+          TAG_TO="${{ inputs.tag-to }}"
+
+          if ! oc auth can-i get deployments.apps -n "${NAMESPACE_DEPLOY}" | grep -qx "yes"; then
+            echo "ERROR: The logged-in service account cannot get Deployments in ${NAMESPACE_DEPLOY}."
+            echo "Grant the github-actions service account a suitable role, for example:"
+            echo "oc adm policy add-role-to-user view -z github-actions -n ${NAMESPACE_DEPLOY}"
+            exit 1
+          fi
+
+          wait_for_rollout() {
+            local requested_name="$1"
+            local deployment_name="${requested_name}"
+            local normalized_name="${requested_name%-${TAG_TO}}"
+
+            # Prefer the supplied name. For backward compatibility, if the
+            # caller passes a name such as appointment-nginx-frontend-dev,
+            # also try appointment-nginx-frontend.
+            if ! oc get deployment "${deployment_name}" \
+              -n "${NAMESPACE_DEPLOY}" >/dev/null 2>&1; then
+              if [[ "${normalized_name}" != "${requested_name}" ]] && \
+                oc get deployment "${normalized_name}" \
+                  -n "${NAMESPACE_DEPLOY}" >/dev/null 2>&1; then
+                echo "Using Deployment '${normalized_name}' instead of '${requested_name}'."
+                deployment_name="${normalized_name}"
+              else
+                echo "ERROR: Deployment '${requested_name}' was not found in ${NAMESPACE_DEPLOY}."
+                echo "Available Deployments:"
+                oc get deployments -n "${NAMESPACE_DEPLOY}" -o name
+                exit 1
+              fi
+            fi
+
+            echo "Waiting for deployment/${deployment_name} in ${NAMESPACE_DEPLOY}..."
+            oc rollout status "deployment/${deployment_name}" \
+              -n "${NAMESPACE_DEPLOY}" \
+              --timeout=10m
+          }
+
+          for deployment in ${{ inputs.image-names }}; do
+            wait_for_rollout "${deployment}"
           done
-        }
-
-        for image in ${{ inputs.image-names }}; do
-          wait_for_rollout ${{ secrets.licence-plate }}-${{ inputs.tag-to }} $image
-        done

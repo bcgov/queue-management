@@ -11,15 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Entrypoint for Flask CLI auto-discovery."""
 
-"""Manage the database and some other items required to run the API
-"""
 import logging
 
 from api import create_app
 
-
 APP = create_app()
+app = APP
 
-if __name__ == '__main__':
-    logging.log(logging.INFO, 'Running the Manager')
+
+if __name__ == "__main__":
+    logging.log(logging.INFO, "Running the Manager")

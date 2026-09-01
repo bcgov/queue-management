@@ -14,6 +14,7 @@ limitations under the License.'''
 
 from marshmallow import fields
 from app.models.theq import Service
+from app.utilities.yesno import YesNo
 from qsystem import ma
 from app.schemas import BaseSchema
 
@@ -29,7 +30,7 @@ class ServiceSchema(BaseSchema):
     service_code = fields.Str(dump_only=True)
     service_name = fields.Str(dump_only=True)
     service_desc = fields.Str(dump_only=True)
-    parent = fields.Nested('self', only=('service_name',))
+    parent = fields.Nested(lambda: ServiceSchema(only=('service_name',)))
     parent_id = fields.Int(dump_only=True)
     deleted = fields.DateTime(dump_only=True)
     prefix = fields.Str(dump_only=True)
@@ -41,4 +42,14 @@ class ServiceSchema(BaseSchema):
     timeslot_duration = fields.Int(dump_only=True)
     email_paragraph = fields.Str(dump_only=True)
     css_colour = fields.Str(dump_only=True)
-    is_dlkt = fields.Boolean()
+    is_dlkt = fields.Method(serialize="get_is_dlkt", deserialize="load_is_dlkt", allow_none=True)
+
+    def get_is_dlkt(self, obj):
+        if obj.is_dlkt is None:
+            return None
+        return obj.is_dlkt == YesNo.YES
+
+    def load_is_dlkt(self, value):
+        if value is None:
+            return None
+        return YesNo.YES if value else YesNo.NO

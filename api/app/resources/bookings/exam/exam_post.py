@@ -33,6 +33,29 @@ class ExamPost(Resource):
     exam_schema = ExamSchema()
     bcmp_service = BCMPService()
 
+    @staticmethod
+    def model_payload(json_data):
+        """Strip request-only BCMP fields before loading a SQLAlchemy Exam model."""
+        payload = dict(json_data)
+
+        for field_name in (
+            "bookdata",
+            "candidates",
+            "fees",
+            "ind_or_group",
+            "receipt_number",
+            "sbc_managed",
+        ):
+            payload.pop(field_name, None)
+
+        if "receipt" not in payload and json_data.get("receipt_number") is not None:
+            payload["receipt"] = json_data["receipt_number"]
+
+        if "sbc_managed_ind" not in payload and "sbc_managed" in json_data:
+            payload["sbc_managed_ind"] = 1 if json_data["sbc_managed"] == "sbc" else 0
+
+        return payload
+
     @jwt.has_one_of_roles([Role.internal_user.value])
     @api_call_with_retry
     def post(self):
@@ -45,9 +68,10 @@ class ExamPost(Resource):
         csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
+        exam_payload = self.model_payload(json_data)
 
-        exam = self.exam_schema.load(json_data)
-        warning = self.exam_schema.validate(json_data)
+        exam = self.exam_schema.load(exam_payload)
+        warning = self.exam_schema.validate(exam_payload)
 
         my_print("json_data: ")
         my_print(json_data)
@@ -57,7 +81,7 @@ class ExamPost(Resource):
             return {"message": warning}, 422
         
         if not (exam.office_id == csr.office_id or csr.ita2_designate == 1):
-            return {"The Exam Office ID and CSR Office ID do not match!"}, 403   
+            return {"message": "The Exam Office ID and CSR Office ID do not match!"}, 403
         
         if exam.is_pesticide:
             formatted_data = self.format_data(json_data, exam)
@@ -134,4 +158,3 @@ class ExamPost(Resource):
             'candidates_list_bcmp': candidates_list_bcmp, 
             'pesticide_office': pesticide_office,
         }
-

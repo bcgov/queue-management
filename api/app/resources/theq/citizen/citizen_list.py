@@ -45,7 +45,7 @@ class CitizenList(Resource):
 
             citizens = Citizen.query \
                 .options(joinedload(Citizen.service_reqs, innerjoin=True).joinedload(ServiceReq.periods).options(raiseload(Period.sr),joinedload(Period.csr).raiseload('*')),raiseload(Citizen.office),raiseload(Citizen.counter),raiseload(Citizen.user)) \
-                .filter_by(office_id=csr.office_id, cs_id=active_id) \
+                .filter_by(office_id=csr.office_id, cs_id=get_active_citizen_state_id()) \
                 .order_by(Citizen.priority)
 
             result = self.citizens_schema.dump(citizens)
@@ -69,7 +69,7 @@ class CitizenList(Resource):
         has_role([Role.internal_user.value], g.jwt_oidc_token_info['realm_access']['roles'], username,
                  "CitizenList POST /citizens/")
 
-        json_data = request.get_json()
+        json_data = request.get_json(silent=True)
 
         csr = CSR.find_by_username(username)
         if not csr:
@@ -89,7 +89,7 @@ class CitizenList(Resource):
             logging.exception(err)
             return {"message": err.messages}, 422
 
-        citizen.cs_id = active_id
+        citizen.cs_id = get_active_citizen_state_id()
         citizen.service_count = 1
         db.session.add(citizen)
         db.session.commit()
@@ -101,11 +101,11 @@ class CitizenList(Resource):
         return {'citizen': result,
                 'errors': self.citizen_schema.validate(citizen)}, 201
 
-try:
-    key = get_key()
-    citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
-    active_id = citizen_state.cs_id
-except:
-    active_id = 1
-    logging.exception("==> In citizen_list.py")
-    logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+def get_active_citizen_state_id():
+    try:
+        citizen_state = CitizenState.query.filter_by(cs_state_name="Active").first()
+        return citizen_state.cs_id
+    except Exception:
+        logging.exception("==> In citizen_list.py")
+        logging.exception("    --> NOTE!!  You should only see this if doing a 'python3 manage.py db upgrade'")
+        return 1

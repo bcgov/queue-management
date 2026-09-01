@@ -37,7 +37,10 @@ class Refresh(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value])
     def get(self):
         if request.args.get('office_id'):
-            office_id = int(request.args.get('office_id'))
+            try:
+                office_id = int(request.args.get('office_id'))
+            except ValueError:
+                return {'message': 'office_id must be an integer.'}, 400
             csr = CSR.find_by_username(get_username())
             
             if csr.role.role_code == "GA":
@@ -53,7 +56,7 @@ class Refresh(Resource):
                 # Get top requests for the office, and set the lists based on those.
                 
                 results = ServiceReq.query.options(
-                    noload('*'), joinedload('service')
+                    noload('*'), joinedload(ServiceReq.service)
                 ).join(
                     Citizen
                 ).join(
@@ -104,7 +107,7 @@ class Refresh(Resource):
             quick_list = top_reqs(is_back_office=False)
             back_office_list = top_reqs(is_back_office=True)
 
-            office = Office.query.get(office_id)
+            office = db.session.get(Office, office_id)
             office.quick_list =  quick_list
             office.back_office_list = back_office_list
             db.session.commit()
@@ -141,7 +144,7 @@ class Services(Resource):
         if request.args.get('office_id'):
             try:
                 office_id = int(request.args['office_id'])
-                office = Office.query.get(office_id)
+                office = db.session.get(Office, office_id)
                 services = sorted(office.services, key=cmp_to_key(self.sort_services))
                 filtered_services = [s for s in services if s.deleted is None]
                 result = self.service_schema.dump(filtered_services)

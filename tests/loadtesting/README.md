@@ -13,7 +13,7 @@
   - [Resources](#resources)
   - [FAQ / Troubleshooting](#faq--troubleshooting)
     - [Verify IDs are correct](#verify-ids-are-correct)
-    - [Verify the "admin" user is assigned to correct office](#verify-the-admin-user-is-assigned-to-correct-office)
+    - [Verify the Load-Test User Is Assigned to the Correct Office](#verify-the-load-test-user-is-assigned-to-the-correct-office)
     - [I get errors when testing locally, but not when testing OpenShift dev](#i-get-errors-when-testing-locally-but-not-when-testing-openshift-dev)
 
 ## Installation
@@ -34,6 +34,34 @@ chmod +x envs.sh
 pip install py-spy
 ```
 
+### Local prerequisites
+
+This load test harness runs against the current local stack in this repository.
+
+Before running it, make sure you have:
+
+```bash
+# Start the local Keycloak realm
+docker compose up -d keycloak
+
+# In the API workspace, point at your local Postgres, migrate, then seed demo data
+cd ../../api
+uv run python manage.py db upgrade
+uv run python manage.py bootstrap
+```
+
+Important local defaults:
+
+* API target: `http://localhost:5000`
+* Keycloak base URL: `http://localhost:8085/auth`
+* Keycloak realm: `servicebc-local`
+* Keycloak client id: `theq-queue-management-api`
+* Keycloak client secret: `theq-local-dev-secret`
+* Demo load-test user: `cfms-postman-operator`
+* Demo load-test password: `password`
+
+`bootstrap` wipes and recreates development data. The default load test IDs in `envs.sh` assume that freshly bootstrapped dataset.
+
 ## Usage
 
 We have created a number of npm scripts in `package.json` that expose the functionality we worked on.  For example, `npm run tests:all` runs all loadtesting - websocket and HTTP.  There is also `tests:http` and `tests:socket`.
@@ -43,7 +71,7 @@ Quick reference:
 
 ```bash
 # just runs load testing - no python profiling
-npm run tests:all 
+npm run tests:all
 
 # run both load testing and python profiling:
 npm run python:profile # in one terminal, start profiling
@@ -59,7 +87,14 @@ More details can be found [in python profiling](#python-profiling)
 Configuration of varables is done in `envs.sh`.  The main variables that will be used are
 
 * `MAX_VIRTUAL_USERS` - determines the maximum amount of concurrent virtual users that are accessing the system at once
-* `TARGET` - the endpoint being load tested.  This is configured to use the dev OIDC keycloak, so it can freely be changed between localhost and OpenShift dev.
+* `TARGET` - the endpoint being load tested. The default is the local API at `http://localhost:5000`
+* `KEYCLOAK_BASE_URL`, `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET` - local Keycloak token settings
+* `KEYCLOAK_USERNAME`, `KEYCLOAK_PASSWORD` - the demo user used to mint the token for the load test. The checked-in default is `cfms-postman-operator`.
+* `LOADTEST_OFFICE_ID`, `LOADTEST_CREATE_SERVICE_ID`, `LOADTEST_UPDATE_SERVICE_ID` - seeded local data IDs used by the appointment scenarios
+* `LOADTEST_DRAFT_OFFICE_ID`, `LOADTEST_DRAFT_SERVICE_ID` - seeded local data IDs used for draft creation. The local bootstrap default uses office `2` because office `1` has no appointment timeslots.
+* `LOADTEST_OFFICE_TIMEZONE` - IANA timezone used to turn slot times into draft appointment timestamps. The local bootstrap default is `America/Vancouver`.
+* `LOADTEST_DRAFT_OFFICE_TIMEZONE` - IANA timezone for the draft office. The local bootstrap default is `America/Creston` for office `2`.
+* `LOADTEST_DRAFT_SLOT_WEEK_RANGE` - size of the random future-week range used for generated draft windows. The default preserves the sampled slot weekday/time while avoiding concurrent VUs reserving the same appointment window.
 
 
 ### Running Load Tests
@@ -85,7 +120,7 @@ Python profiling allows us to get an in-depth look at where the Python API proce
 
 All Python commands must be run on the same machine that already has the API running.  Additionally, they cannot be run in OpenShift itself due to security constraints [(see more)](#python-profiling-on-openshift)
 
-These commands must be run on the same machine that already has the API running. It will ask for `sudo` password. It will scan for the parent gunicorn process by name and profile it.  Let this command run for the durattion of the profiling.  Typically, you start profiling, then run load testing, then exit profiling.  
+These commands must be run on the same machine that already has the API running. It will ask for `sudo` password. It will scan for the parent gunicorn process by name and profile it.  Let this command run for the durattion of the profiling.  Typically, you start profiling, then run load testing, then exit profiling.
 
 **Why sudo?** *The profiler we use, `pyspy` can profile already running Python processes.  This is great for profiling  real world performance, but sudo is required in order to spy on another process. This is Linux security to stop a non-sudo process from inspecting/modifying other processes which should not be allowed.*
 
@@ -106,7 +141,7 @@ We have included an example report, called `profile-demo-withloadtesting.svg`
 
 Summary - we cannot run this profiling on OpenShift due to BCGov specific security configurations.
 
-In order to profile another process on OpenShift, we need to make the below change and add `SYS_PTRACE`. 
+In order to profile another process on OpenShift, we need to make the below change and add `SYS_PTRACE`.
 
 ```yaml
 securityContext:
@@ -250,11 +285,11 @@ Running with 400 conurrent users caused many more errors:
 * Auth taking up 42.25% of all requests. Only ~12% of CPU spent on business logic.
 * Send emails on separate pod
 
-**Load Balancing not working** - it appears that load balancing between API pods is not working. Generally speaking (depending on load balancing config), when a new request comes in it should be distributed equally between all available pods.  This is not happening.  Instead, even though we have 2 API pods, all of the traffic is going to 1 pod.  This is a huge problem, as it means none of the horizontal scaling on OpenShift is working. There may be some technical hurdles, for example, there have been discussions before that perhaps load balancing would split the websocket sessions. 
+**Load Balancing not working** - it appears that load balancing between API pods is not working. Generally speaking (depending on load balancing config), when a new request comes in it should be distributed equally between all available pods.  This is not happening.  Instead, even though we have 2 API pods, all of the traffic is going to 1 pod.  This is a huge problem, as it means none of the horizontal scaling on OpenShift is working. There may be some technical hurdles, for example, there have been discussions before that perhaps load balancing would split the websocket sessions.
 
-**Recommendation Enable load balancing so that load is distributed equally among pods:** i.e. `roundrobin` [load balancing strategy - OpenShift docs link](https://docs.openshift.com/container-platform/3.5/architecture/core_concepts/routes.html#load-balancing).  
+**Recommendation Enable load balancing so that load is distributed equally among pods:** i.e. `roundrobin` [load balancing strategy - OpenShift docs link](https://docs.openshift.com/container-platform/3.5/architecture/core_concepts/routes.html#load-balancing).
 
-**Authentication taking up 42.25% of CPU on every request** - If we look at the flamegraph, for example, `profile-demo-withloadtesting.svg`, we can see that 36.75% of the CPU was spent on just parsing the OIDC token from Keycloak, and another 5.5% was spent in our `auth_util`.  Only 12% was for actual busienss logic. Another ~10% for JSON encoding, and the remaining ~35% for threading, eventlet, and gunicorn. 
+**Authentication taking up 42.25% of CPU on every request** - If we look at the flamegraph, for example, `profile-demo-withloadtesting.svg`, we can see that 36.75% of the CPU was spent on just parsing the OIDC token from Keycloak, and another 5.5% was spent in our `auth_util`.  Only 12% was for actual busienss logic. Another ~10% for JSON encoding, and the remaining ~35% for threading, eventlet, and gunicorn.
 
 **Recommendation: Refactor the `has_any_role`** function in `auth_util.py`, as it is in the hot path for basically every single request. Profile changes before and after to measure impact. While it's only 5% of CPU, it's 5% of CPU for _every request_, so any improvements here will benefit across the board.
 
@@ -273,13 +308,23 @@ Running with 400 conurrent users caused many more errors:
 
 ### Verify IDs are correct
 
-The first thing to check when trouble shooting is that the IDs in `csr-test-all.yaml` are correct.  For example, `service_id` and `office_id` we have hardcoded to 7 and 1 respectively.
+The first thing to check when troubleshooting is that the IDs in `envs.sh` match your local seeded data.
 
-### Verify the "admin" user is assigned to correct office
+The default values assume `uv run python manage.py bootstrap` has been run locally:
 
-The admin user must be assigned to the same office that the tests try to use.
+* `LOADTEST_OFFICE_ID=1`
+* `LOADTEST_CREATE_SERVICE_ID=11`
+* `LOADTEST_UPDATE_SERVICE_ID=7`
 
-For example, if you set `office_id` to 1, then admin must be assigned to Test Office (assuming 1 = Test Office).
+### Verify the Load-Test User Is Assigned to the Correct Office
+
+The seeded load-test user must be assigned to the same office that the tests try to use.
+
+With the checked-in defaults, `KEYCLOAK_USERNAME=cfms-postman-operator` should resolve to the app-level CSR `cfms-postman-operator`, which should belong to Test Office (`LOADTEST_OFFICE_ID=1`) after a fresh local `bootstrap`.
+
+If you copied `envs.example.sh` to `envs.sh` before this change, your local `envs.sh` may still override the checked-in defaults with an older username such as `admin@idir`.
+
+The load-test harness checks `/api/v1/csrs/me/` before proceeding with authenticated requests. If the CSR office and `LOADTEST_OFFICE_ID` differ, the run fails fast and tells you which `KEYCLOAK_USERNAME` was used, which office it resolved to, and that you should switch to `cfms-postman-operator` or re-bootstrap/reconfigure the chosen user.
 
 
 ### I get errors when testing locally, but not when testing OpenShift dev

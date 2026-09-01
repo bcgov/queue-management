@@ -1,4 +1,4 @@
-'''Copyright 2018 Province of British Columbia
+"""Copyright 2018 Province of British Columbia
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -10,21 +10,21 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.'''
+limitations under the License."""
 
 import logging
-from flask_restx import Resource
-from sqlalchemy import exc
+
+from app.auth.auth import jwt
 from app.models.bookings import Exam
 from app.schemas.bookings import ExamSchema
-from qsystem import api
 from app.utilities.auth_util import Role, has_any_role
-from app.auth.auth import jwt
+from flask_restx import Resource
+from qsystem import api
+from sqlalchemy import exc
 
 
-@api.route("/exams/event_id/<int:id>/", methods=["GET"])
+@api.route("/exams/event_id/<string:id>/", methods=["GET"])
 class ExamEventIDDetail(Resource):
-
     exam_schema = ExamSchema()
 
     @jwt.has_one_of_roles([Role.internal_user.value])
@@ -34,12 +34,11 @@ class ExamEventIDDetail(Resource):
             exam = Exam.query.filter_by(event_id=str(id)).all()
 
             if not exam:
-                return {'message': False}, 200
+                return {"message": False}, 200
 
             else:
-                return {'message': True}, 200
+                return {"message": True}, 200
 
         except exc.SQLAlchemyError as error:
-
             logging.error(error, exc_info=True)
             return {"message": "API is down"}, 500

@@ -27,12 +27,24 @@ from app.services import AvailabilityService
 from app.utilities.auth_util import Role, get_username
 from app.utilities.auth_util import is_public_user
 from app.utilities.email import get_confirmation_email_contents, send_email, \
-    get_blackout_email_contents
+    get_blackout_email_contents, can_send_service_notification
 from app.utilities.snowplow import SnowPlow
 from qsystem import api, api_call_with_retry, db, my_print, application
 from qsystem import socketio
 from app.auth.auth import jwt
 from app.utilities.sms import send_sms
+
+
+def _get_valid_service(service_id):
+    if service_id in (None, ""):
+        return None
+
+    try:
+        service_id = int(service_id)
+    except (TypeError, ValueError):
+        return None
+
+    return db.session.get(Service, service_id)
 
 
 @api.route("/appointments/", methods=["POST"])
@@ -89,7 +101,11 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
-            service = Service.query.get(int(service_id))
+            service = _get_valid_service(service_id)
+            if service is None:
+                return {
+                    "message": "Could not find service for service_id: " + str(service_id)
+                }, 400
 
             # Validate if the same user has other appointments for same day at same office
             appointments = Appointment.find_by_username_and_office_id(office_id=office_id,
@@ -117,6 +133,23 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            service_id = json_data.get('service_id')
+
+            # Preserve legacy Newman blackout payloads, which omit service_id for
+            # internal recurring blackout appointments.
+            if not (is_blackout_appt and service_id in (None, "")):
+                service = _get_valid_service(service_id)
+                if service is None:
+                    return {
+                        "message": "Could not find service for service_id: " + str(service_id)
+                    }, 400
+            else:
+                service = None
+
+            if service is None and not is_blackout_appt:
+                return {
+                    "message": "Could not find service for service_id: " + str(service_id)
+                }, 400
 
         citizen.office_id = office_id
         citizen.qt_xn_citizen_ind = 0
@@ -145,7 +178,7 @@ class AppointmentPost(Resource):
             
             is_stat = (json_data.get('stat_flag', False))
 
-            if ((not is_stat) and (not is_blackout_appt)):
+            if can_send_service_notification(appointment):
                 # Send confirmation email and sms
                 try:
                     send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
@@ -165,4 +198,4 @@ class AppointmentPost(Resource):
                     "errors": {}}, 201
 
         else:
-            return {"The Appointment Office ID and CSR Office ID do not match!"}, 403
+            return {"message": "The Appointment Office ID and CSR Office ID do not match!"}, 403

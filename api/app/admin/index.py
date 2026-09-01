@@ -20,7 +20,7 @@ class HomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        return self.render('admin/base.html')
+        return self.render('admin/home.html')
 
     def get_url(self, endpoint, **kwargs):
         new_kwargs = dict(kwargs, _external=True, _scheme=application.config['PREFERRED_URL_SCHEME'])
