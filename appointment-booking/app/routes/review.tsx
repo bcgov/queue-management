@@ -46,8 +46,8 @@ export default function ReviewPage() {
     }
   }, [isAuthReady, isAuthenticated])
 
-  const email = contactEmail ?? (profile?.email?.trim() || session?.email?.trim() || '')
-  const phone = contactPhone ?? (profile?.telephone?.trim() || '')
+  const email = (contactEmail ?? (profile?.email?.trim() || session?.email?.trim() || '')).trim()
+  const phone = (contactPhone ?? (profile?.telephone?.trim() || '')).trim()
   const validation = getContactValidation(email, phone)
 
   const stepProgress = (
@@ -126,8 +126,6 @@ export default function ReviewPage() {
           isInvalid={contactTouched && !!validation.emailError}
           errorMessage={contactTouched ? (validation.emailError ?? undefined) : undefined}
           // BC DS TextField only shows errorMessage when isInvalid is also set.
-          // @ts-expect-error placeholder is supported by underlying react-aria TextField
-          placeholder="name@example.com"
         />
 
         <TextField
@@ -141,8 +139,6 @@ export default function ReviewPage() {
           }}
           isInvalid={contactTouched && !!validation.phoneError}
           errorMessage={contactTouched ? (validation.phoneError ?? undefined) : undefined}
-          // @ts-expect-error placeholder is supported by underlying react-aria TextField
-          placeholder="250-555-0100"
         />
 
         {contactTouched && validation.sectionError ? (

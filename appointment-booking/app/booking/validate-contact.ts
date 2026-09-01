@@ -1,13 +1,20 @@
 // Email/phone validation for the review step contact fields.
 
+import { isValidPhoneNumber } from 'libphonenumber-js'
+
+const DEFAULT_COUNTRY = 'CA'
+
 export function isValidEmail(email: string): boolean {
   const trimmed = email.trim()
   return trimmed.length > 0 && /^[^@]+@[^@]+\.[^@]+$/.test(trimmed)
 }
 
 export function isValidPhone(phone: string): boolean {
-  const normalized = phone.trim().replace(/[ ()]/g, '')
-  return normalized.length > 0 && /^\+?1?[-.]?\d{3}[-.]?\d{3}[-.]?\d{4}$/.test(normalized)
+  const trimmed = phone.trim()
+  if (!trimmed) {
+    return false
+  }
+  return isValidPhoneNumber(trimmed, DEFAULT_COUNTRY)
 }
 
 export type ContactValidation = {
