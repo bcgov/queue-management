@@ -724,13 +724,24 @@ p {
 .review-contact {
   display: flex;
   flex-direction: column;
-  gap: var(--layout-padding-xsmall);
+  gap: var(--layout-padding-medium);
   margin-top: var(--layout-padding-large);
   max-width: 28rem;
 }
 
-.review-contact-hint {
+.review-contact h2 {
+  margin-top: 0;
+  font: var(--typography-bold-h3);
+}
+
+.review-contact-intro {
   margin: 0;
   font: var(--typography-regular-small-body);
   color: var(--typography-color-secondary);
+}
+
+.review-contact-section-error {
+  margin: 0;
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-danger, #d8292f);
 }

@@ -1,10 +1,12 @@
-// Booking step 5: review service, location, date/time, and confirmation email. No confirm yet.
-import { useState } from 'react'
+// Booking step 5: review service, location, date/time, and contact details. No confirm yet.
+import { useEffect, useState } from 'react'
 import { Button, InlineAlert, Text, TextField } from '@bcgov/design-system-react-components'
 import { useNavigate } from 'react-router'
 
+import { getCurrentUser, type PublicUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
+import { getContactValidation } from '~/booking/validate-contact'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
@@ -21,9 +23,32 @@ export default function ReviewPage() {
   const navigate = useNavigate()
   const { isReady: isAuthReady, isAuthenticated, session } = useAuth()
   const { isReady: isBookingReady, selectedService, selectedLocation, selectedSlot } = useBooking()
-  // null = still using signed-in email; string = user edited (including cleared).
+  const [profile, setProfile] = useState<PublicUser | null>(null)
+  // null = use profile/session default; string = user edited (including cleared).
   const [contactEmail, setContactEmail] = useState<string | null>(null)
-  const confirmationEmail = contactEmail ?? session?.email?.trim() ?? ''
+  const [contactPhone, setContactPhone] = useState<string | null>(null)
+  const [contactTouched, setContactTouched] = useState(false)
+
+  useEffect(() => {
+    if (!isAuthReady || !isAuthenticated) return
+
+    let cancelled = false
+    getCurrentUser()
+      .then((user) => {
+        if (!cancelled) setProfile(user)
+      })
+      .catch(() => {
+        // Profile load failed; session email is still used when available.
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthReady, isAuthenticated])
+
+  const email = (contactEmail ?? (profile?.email?.trim() || session?.email?.trim() || '')).trim()
+  const phone = (contactPhone ?? (profile?.telephone?.trim() || '')).trim()
+  const validation = getContactValidation(email, phone)
 
   const stepProgress = (
     <BookingStepProgress
@@ -85,18 +110,44 @@ export default function ReviewPage() {
         selectedSlot={selectedSlot}
       />
 
-      <div className="review-contact">
+      <section className="review-contact" aria-labelledby="review-contact-heading">
+        <h2 id="review-contact-heading">Contact details</h2>
+        <p className="review-contact-intro">Provide your contact information for confirmation.</p>
+
         <TextField
-          label="Confirmation email"
+          label="Email"
           type="email"
-          name="confirmationEmail"
-          value={confirmationEmail}
-          onChange={setContactEmail}
-          // @ts-expect-error placeholder is supported by underlying react-aria TextField
-          placeholder="name@example.com"
+          name="email"
+          value={email}
+          onChange={(value) => {
+            setContactEmail(value)
+            setContactTouched(true)
+          }}
+          isInvalid={contactTouched && !!validation.emailError}
+          errorMessage={contactTouched ? (validation.emailError ?? undefined) : undefined}
+          // BC DS TextField only shows errorMessage when isInvalid is also set.
         />
-        <p className="review-contact-hint">Appointment details will be sent to this email.</p>
-      </div>
+
+        <TextField
+          label="Phone number"
+          type="tel"
+          name="phone"
+          value={phone}
+          onChange={(value) => {
+            setContactPhone(value)
+            setContactTouched(true)
+          }}
+          isInvalid={contactTouched && !!validation.phoneError}
+          errorMessage={contactTouched ? (validation.phoneError ?? undefined) : undefined}
+        />
+
+        {contactTouched && validation.sectionError ? (
+          // Shown when both fields are empty; individual field errors do not cover that case.
+          <p className="review-contact-section-error" role="alert">
+            {validation.sectionError}
+          </p>
+        ) : null}
+      </section>
 
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/datetime')} />
