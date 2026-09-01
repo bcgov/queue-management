@@ -3,8 +3,8 @@ import { getAccessToken } from '../auth/token-refresh'
 
 export type PublicUser = {
   user_id: number
-  email: string
-  telephone: string
+  email: string | null
+  telephone: string | null
 }
 
 // Load the signed-in user's profile for contact pre-fill on the review step.
