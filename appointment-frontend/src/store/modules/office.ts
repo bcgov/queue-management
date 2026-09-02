@@ -198,8 +198,8 @@ export default class OfficeModule extends VuexModule {
   @Action({ rawError: true })
   public setAppointmentValues (appointment: Appointment): void {
     const apppointmentSlot: AppointmentSlot = {
-      startTime: appointment?.startTime,
-      endTime: appointment?.endTime
+      startTime: appointment?.localStartTime,
+      endTime: appointment?.localEndTime
     }
     this.context.commit('setCurrentOffice', appointment?.office)
     this.context.commit('setCurrentService', appointment?.service)

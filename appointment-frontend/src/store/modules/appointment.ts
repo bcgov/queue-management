@@ -38,10 +38,9 @@ export default class AppointmentModule extends VuexModule {
       appointmentsList = appointmentsList.map(appointment => {
         appointment.office = officeList.find(office => (office.officeId === appointment.officeId))
         appointment.service = serviceList.find(service => (service.serviceId === appointment.serviceId))
-        const timezone = appointment.office?.timezone?.timezoneName
-        appointment.appointmentDate = CommonUtils.getUTCToTimeZoneTime(appointment.startTime, timezone, 'MMM dd, yyyy')
-        appointment.appointmentStartTime = CommonUtils.getUTCToTimeZoneTime(appointment.startTime, timezone, 'hh:mmaaaa')
-        appointment.appointmentEndTime = CommonUtils.getUTCToTimeZoneTime(appointment.endTime, timezone, 'hh:mmaaaa')
+        appointment.appointmentDate = CommonUtils.getFormattedDate(appointment.localStartTime, 'MMM dd, yyyy')
+        appointment.appointmentStartTime = CommonUtils.getFormattedDate(appointment.localStartTime, 'hh:mmaaaa')
+        appointment.appointmentEndTime = CommonUtils.getFormattedDate(appointment.localEndTime, 'hh:mmaaaa')
         return appointment
       })
     }

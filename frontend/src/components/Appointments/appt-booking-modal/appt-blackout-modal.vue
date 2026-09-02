@@ -961,8 +961,8 @@ export default class AppointmentBlackoutModal extends Vue {
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
     const end = moment(end_time).clone().format('HH:mm:ss')
-    const start_date = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-    const end_date = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+    const start_date = `${date}T${start}`
+    const end_date = `${date}T${end}`
     const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
@@ -975,8 +975,8 @@ export default class AppointmentBlackoutModal extends Vue {
         const endDateR = moment(item.end).clone().format('YYYY-MM-DD')
         const endTimeR = moment(item.end).clone().format('HH:mm:ss')
         const e: any = {
-          start_time: moment.tz(startDateR + ' ' + startTimeR, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-          end_time: moment.tz(endDateR + ' ' + endTimeR, this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+          start_time: `${startDateR}T${startTimeR}`,
+          end_time: `${endDateR}T${endTimeR}`,
           citizen_name: this.user_name,
           contact_information: this.user_contact_info,
           blackout_flag: 'Y',
@@ -1109,21 +1109,17 @@ export default class AppointmentBlackoutModal extends Vue {
       this.show_next = false
       return false
     }
-    const start_year = parseInt(moment(this.recurring_start_date).utc().clone().format('YYYY'))
-    const start_month = parseInt(moment(this.recurring_start_date).utc().clone().format('MM'))
-    const start_day = parseInt(moment(this.recurring_start_date).utc().clone().format('DD'))
-    const start_hour = parseInt(moment(recurring_start_time).utc().clone().format('HH'))
+    const start_year = parseInt(moment(this.recurring_start_date).format('YYYY'))
+    const start_month = parseInt(moment(this.recurring_start_date).format('MM'))
+    const start_day = parseInt(moment(this.recurring_start_date).format('DD'))
     const local_start_hour = parseInt(moment(recurring_start_time).clone().format('HH'))
-    const start_minute = parseInt(moment(recurring_start_time).utc().clone().format('mm'))
-    const end_year = parseInt(moment(this.recurring_end_date).utc().clone().format('YYYY'))
-    const end_month = parseInt(moment(this.recurring_end_date).utc().clone().format('MM'))
-    const end_day = parseInt(moment(this.recurring_end_date).utc().clone().format('DD'))
-    const end_hour = parseInt(moment(recurring_end_time).utc().clone().format('HH'))
-    const end_minute = parseInt(moment(recurring_end_time).utc().clone().format('mm'))
+    const start_minute = parseInt(moment(recurring_start_time).format('mm'))
+    const end_year = parseInt(moment(this.recurring_end_date).format('YYYY'))
+    const end_month = parseInt(moment(this.recurring_end_date).format('MM'))
+    const end_day = parseInt(moment(this.recurring_end_date).format('DD'))
     const duration = moment.duration(moment(recurring_end_time).diff(moment(recurring_start_time)))
     const duration_minutes = duration.asMinutes()
     let input_frequency: any = null
-    let end_adj_day: any = null
     const local_dates_array: any = []
 
     switch (this.selected_frequency[0]) {
@@ -1144,32 +1140,23 @@ export default class AppointmentBlackoutModal extends Vue {
     if (!isNaN(start_year) || !isNaN(end_year)) {
       // IF RRule Breaks, this is where it will happen
       // INC0048019 - fix UTC error by creating new end day and if end_hour is 4pm PACIFIC (16:00) or later then add 1 day to end of series   ozamani 12/17/2020
-      if (start_hour > 15 && end_hour < 8) {
-        end_adj_day = end_day + 1
-      } else {
-        end_adj_day = end_day
-      }
-      const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day, start_hour, start_minute))
-      const until = new Date(Date.UTC(end_year, end_month - 1, end_adj_day, end_hour, end_minute))
+      const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
+      const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
 
       const rule = new RRule({
         freq: input_frequency,
         count: this.selected_count,
         byweekday: this.selected_weekdays,
         dtstart: date_start,
-        until: until,
-        tzid: Intl.DateTimeFormat().resolvedOptions().timeZone
+        until: until
       })
       const array = rule.all()
       this.rrule_text = rule.toText()
       array.forEach(date => {
          // INC0048019 - fix UTC error by creating new date field and if local time is 4pm PACIFIC (16:00) or later then add 1 day to series   ozamani 12/17/2020
-        const adj_date = moment(date)
-         if (local_start_hour >= 16 && start_hour == 0) {
-          adj_date.add(1, 'day')
-        }
-        const formatted_start_date = moment(adj_date).clone().set({ hour: local_start_hour }).format('YYYY-MM-DD HH:mm:ssZ')
-        const formatted_end_date = moment(adj_date).clone().set({ hour: local_start_hour }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+        const local_date = moment.utc(date).set({ hour: local_start_hour, minute: start_minute })
+        const formatted_start_date = local_date.format('YYYY-MM-DD[T]HH:mm:ss')
+        const formatted_end_date = local_date.clone().add(duration_minutes, 'minutes').format('YYYY-MM-DD[T]HH:mm:ss')
         local_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
     }
@@ -1444,8 +1431,8 @@ export default class AppointmentBlackoutModal extends Vue {
             if (self.only_this_office[0]){
               //for this office -appointment
               const e: any = {
-                  start_time: moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                  end_time: moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                  start_time: `${date}T${start}`,
+                  end_time: `${date}T${end}`,
                   citizen_name: stat_user_name+'_'+self.$store.state.user.office.office_name,
                   contact_information: user_contact_info,
                   stat_flag: true,
@@ -1464,8 +1451,8 @@ export default class AppointmentBlackoutModal extends Vue {
                   if (room.id != '_offsite') {
                     blackout_booking.room_id = room.id
                   }
-                  blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                  blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                  blackout_booking.start_time = `${date}T${start}`
+                  blackout_booking.end_time = `${date}T${end}`
                   blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name
                   blackout_booking.booking_contact_information = user_contact_info
                   blackout_booking.stat_flag = true
@@ -1482,8 +1469,8 @@ export default class AppointmentBlackoutModal extends Vue {
               // stat for appointments
               await all_offices.forEach(async function(office) {
                   const e: any = {
-                      start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      start_time: `${date}T${start}`,
+                      end_time: `${date}T${end}`,
                       citizen_name: stat_user_name+'_'+office.office_name,
                       contact_information: user_contact_info,
                       stat_flag: true,
@@ -1500,8 +1487,8 @@ export default class AppointmentBlackoutModal extends Vue {
                     if (room.id != '_offsite') {
                       blackout_booking.room_id = room.id
                     }
-                    blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                    blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.start_time = `${date}T${start}`
+                    blackout_booking.end_time = `${date}T${end}`
                     blackout_booking.booking_name = stat_user_name+'_'+office.office_name
                     blackout_booking.booking_contact_information = user_contact_info
                     blackout_booking.stat_flag = true

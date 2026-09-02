@@ -332,8 +332,7 @@ export default class Calendar extends Vue {
     if (info.weekday === 6 || info.weekday === 0) {
       return false
     }
-    const today =  moment.tz(moment().format(), this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ss')
-    if (info.start.isBefore(moment(today))) {
+    if (info.start.isBefore(moment())) {
       return false
     }
 

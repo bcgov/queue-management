@@ -293,8 +293,8 @@ export const commonActions: any = {
               booking.invigilator = b.invigilator
               booking.invigilator_id = b.invigilator_id
             }
-            booking.start = new Date(new Date(b.start_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
-            booking.end = new Date(new Date(b.end_time).toLocaleString('en-US', { timeZone: b.office.timezone.timezone_name }))
+            booking.start = new Date(b.local_start_time)
+            booking.end = new Date(b.local_end_time)
             if ( b.stat_flag && b.blackout_notes) {
               booking.name = b.blackout_notes
             } else {
@@ -1990,14 +1990,8 @@ export const commonActions: any = {
     const start = moment(datetime).local()
     const end = start.clone().add(4, 'hours')
     const booking: any = {
-      start_time: start
-        .clone()
-        .utc()
-        .format('YYYY-MM-DD[T]HH:mm:ssZ'),
-      end_time: end
-        .clone()
-        .utc()
-        .format('YYYY-MM-DD[T]HH:mm:ssZ'),
+      start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
+      end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
       fees: 'false',
       booking_name: responses.exam_name,
       office_id: context.state.user.office_id

@@ -73,7 +73,6 @@ import { Appointment, AppointmentSlot } from '@/models/appointment'
 import CommonUtils from '@/utils/common-util'
 import { Component, Mixins } from 'vue-property-decorator'
 import { mapActions, mapMutations, mapState } from 'vuex'
-import { zonedTimeToUtc } from 'date-fns-tz'
 import { Office } from '@/models/office'
 import { Service } from '../../models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
@@ -128,8 +127,8 @@ export default class DateSelection extends Mixins(StepperMixin) {
 
    private get selectedTimeSlot () {
      return (this.currentAppointmentSlot?.startTime && this.currentAppointmentSlot?.endTime)
-       ? `${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.startTime, this.currentOfficeTimezone, 'hh:mm aaa')} -
-        ${CommonUtils.getUTCToTimeZoneTime(this.currentAppointmentSlot?.endTime, this.currentOfficeTimezone, 'hh:mm aaa')}`
+       ? `${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.startTime, 'hh:mm aaa')} -
+        ${CommonUtils.getFormattedDate(this.currentAppointmentSlot?.endTime, 'hh:mm aaa')}`
        : ''
    }
 
@@ -190,23 +189,19 @@ export default class DateSelection extends Mixins(StepperMixin) {
    }
 
    async selectTimeSlot (slot: AppointmentSlot) {
-     // Note - For cross browser, we must use specific date string format below
-     // Chrome/FF pass with "2020-05-08 09:00" but Safari fails.
-     // Safari needs format from spec, "2020-05-08T09:00-07:00"
-     // (safari also needs timezone offset)
-     let st = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.startTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
-     let et = zonedTimeToUtc(new Date(`${this.selectedDate} ${slot.endTime}`.replace(/-/g, '/')), this.currentOfficeTimezone).toISOString()
-     st = st.replace('.000Z', '+00').replace('T', ' ')
-     et = et.replace('.000Z', '+00').replace('T', ' ')
      const selectedSlot: AppointmentSlot = {
-       startTime: st,
-       endTime: et
+       startTime: `${this.selectedDate}T${slot.startTime}:00`,
+       endTime: `${this.selectedDate}T${slot.endTime}:00`
      }
      this.setCurrentAppointmentSlot(selectedSlot)
      try {
        const resp = await this.createDraftAppointment()
        if (resp) {
          this.setCurrentDraftAppointment(resp)
+         this.setCurrentAppointmentSlot({
+           startTime: resp.localStartTime,
+           endTime: resp.localEndTime
+         })
          window.scrollTo(0, 0)
          this.stepNext()
        }

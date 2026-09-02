@@ -28,6 +28,7 @@ from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
 from app.utilities.sms import send_sms
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 def _get_valid_service(service_id):
@@ -69,6 +70,7 @@ class AppointmentPut(Resource):
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             appointment = Appointment.query.filter_by(appointment_id=id) \
                 .filter_by(office_id=office_id) \
                 .first_or_404()
@@ -103,6 +105,7 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             if 'service_id' in json_data:
                 service = _get_valid_service(json_data.get('service_id'))
                 if service is None:

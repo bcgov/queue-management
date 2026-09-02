@@ -40,6 +40,7 @@ dependencies = [
     "requests>=2.33,<2.34",
     "snowplow-tracker>=1.1,<1.2",
     "SQLAlchemy>=2.0,<2.1",
+    "tzdata>=2026.3,<2027",
     "WTForms>=3.2,<3.3",
 ]
 

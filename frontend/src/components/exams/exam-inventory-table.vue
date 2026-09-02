@@ -360,9 +360,9 @@
           <span
             v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
             class="expired"
-            >{{ formatDate(row.item.booking.start_time) }}</span
+            >{{ formatDate(row.item.booking.local_start_time) }}</span
           >
-          <span v-else>{{ formatDate(row.item.booking.start_time) }}</span>
+          <span v-else>{{ formatDate(row.item.booking.local_start_time) }}</span>
         </template>
 
         <!--  Field 5 - Exam method??? Don't see it.  -->
@@ -758,7 +758,6 @@ import ReturnExamModal from './return-exam-form-modal.vue'
 import SuccessExamAlert from './success-exam-alert.vue'
 import DeleteExamModal from './delete-exam-modal.vue'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
-import zone from 'moment-timezone'
 import UploadPesticideModal from './upload-pesticide-exam.vue'
 
 @Component({
@@ -1446,11 +1445,8 @@ export default class ExamInventoryTable extends Vue {
   }
 
   formatTime (d) {
-    const tz = d.office.timezone.timezone_name
-    const time = zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
-
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    return moment(time).format('h:mm a')
+    return moment(d.local_start_time).format('h:mm a')
   }
 
   getSize () {
@@ -1876,7 +1872,7 @@ export default class ExamInventoryTable extends Vue {
 
   updateCalendarBooking (item) {
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    item.gotoDate = moment(item.booking.start_time)
+    item.gotoDate = moment(item.booking.local_start_time)
     item.referrer = 'rescheduling'
     this.setSelectedExam(item)
     const booking = this.calendarEvents.find(event => event.id == item.booking_id)

@@ -21,6 +21,7 @@ from app.models.theq import CSR
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 @api.route("/appointments/recurring/<string:id>", methods=["PUT"])
@@ -37,6 +38,8 @@ class AppointmentRecurringPut(Resource):
 
         if not json_data:
             return {"message": "No input data received for updating an series of appointments"}
+
+        convert_local_fields_to_utc(json_data, csr.office.timezone.timezone_name)
 
         appointments = Appointment.query.filter_by(recurring_uuid=id)\
                                   .filter_by(office_id=csr.office_id)\

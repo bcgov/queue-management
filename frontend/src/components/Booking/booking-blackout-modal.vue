@@ -978,8 +978,8 @@ export default class BookingBlackoutModal extends Vue {
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
     const end = moment(end_time).clone().format('HH:mm:ss')
-    const start_date_office = moment.tz(date + ' ' + start, this.$store.state.user.office.timezone.timezone_name).format()
-    const end_date_office = moment.tz(date + ' ' + end, this.$store.state.user.office.timezone.timezone_name).format()
+    const start_date_office = `${date}T${start}`
+    const end_date_office = `${date}T${end}`
     const uuidv4 = require('uuid').v4
     let axiosArray: any = []
     const recurring_uuid = uuidv4()
@@ -1041,8 +1041,8 @@ export default class BookingBlackoutModal extends Vue {
             rrule_ind += 1
             let st = moment(ruleDate.start).clone()
             let ed = moment(ruleDate.end).clone()
-            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const startOffice = st.format('YYYY-MM-DD[T]HH:mm:ss')
+            const endOffice = ed.format('YYYY-MM-DD[T]HH:mm:ss')
             const booking: any = {}
             booking.start_time = startOffice
             booking.end_time = endOffice
@@ -1059,8 +1059,8 @@ export default class BookingBlackoutModal extends Vue {
             const booking: any = {}
             let st = moment(ruleDate.start).clone()
             let ed = moment(ruleDate.end).clone()
-            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const startOffice = st.format('YYYY-MM-DD[T]HH:mm:ss')
+            const endOffice = ed.format('YYYY-MM-DD[T]HH:mm:ss')
             booking.start_time = startOffice
             booking.end_time = endOffice
             booking.booking_name = self.blackout_name
@@ -1079,8 +1079,8 @@ export default class BookingBlackoutModal extends Vue {
             const booking: any = {}
             let st = moment(ruleDate.start).clone()
             let ed = moment(ruleDate.end).clone()
-            const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-            const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
+            const startOffice = st.format('YYYY-MM-DD[T]HH:mm:ss')
+            const endOffice = ed.format('YYYY-MM-DD[T]HH:mm:ss')
             booking.room_id = room
             booking.start_time = startOffice
             booking.end_time = endOffice
@@ -1192,7 +1192,7 @@ export default class BookingBlackoutModal extends Vue {
     const start_month = parseInt(moment(this.recurring_booking_start_date).clone().format('MM'))
     const start_day = parseInt(moment(this.recurring_booking_start_date).clone().format('DD'))
     const local_start_hour = parseInt(moment(recurring_booking_start_time).clone().format('HH'))
-    const start_minute = parseInt(moment(recurring_booking_start_time).utc().clone().format('mm'))
+    const start_minute = parseInt(moment(recurring_booking_start_time).format('mm'))
     const end_year = parseInt(moment(this.recurring_booking_end_date).clone().format('YYYY'))
     const end_month = parseInt(moment(this.recurring_booking_end_date).clone().format('MM'))
     const end_day = parseInt(moment(this.recurring_booking_end_date).clone().format('DD'))
@@ -1234,12 +1234,9 @@ export default class BookingBlackoutModal extends Vue {
       this.booking_rrule_text = rule.toText()
       array.forEach(date => {
         // created date_with_offset to fix pst -> utc 5pm bug
-        const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: start_minute }).add(new Date().getTimezoneOffset(), 'minutes')
-        if (local_start_hour >= 8 && local_start_hour < 15) {
-          date_with_offset.add(1, 'day')
-        }
-        const formatted_start_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
-        const formatted_end_date = moment(date_with_offset).clone().set({ hour: local_start_hour, minute: start_minute }).add(duration_minutes, 'minutes').format('YYYY-MM-DD HH:mm:ssZ')
+        const local_date = moment.utc(date).set({ hour: local_start_hour, minute: start_minute })
+        const formatted_start_date = local_date.format('YYYY-MM-DD[T]HH:mm:ss')
+        const formatted_end_date = local_date.clone().add(duration_minutes, 'minutes').format('YYYY-MM-DD[T]HH:mm:ss')
         local_booking_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
     }
@@ -1522,8 +1519,8 @@ export default class BookingBlackoutModal extends Vue {
               // stat for appointments
                if (self.only_bookings.length === 0) {
                   const e: any = {
-                      start_time: moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      end_time: moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      start_time: `${date}T${start}`,
+                      end_time: `${date}T${end}`,
                       citizen_name: stat_user_name+'_'+self.$store.state.user.office.office_name,
                       contact_information: user_contact_info,
                       stat_flag: true,
@@ -1540,8 +1537,8 @@ export default class BookingBlackoutModal extends Vue {
                 if (room.id != '_offsite') {
                   blackout_booking.room_id = room.id
                 }
-                blackout_booking.start_time = moment.tz(date+' '+start, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                blackout_booking.end_time = moment.tz(date+' '+end, self.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                blackout_booking.start_time = `${date}T${start}`
+                blackout_booking.end_time = `${date}T${end}`
                 blackout_booking.booking_name = stat_user_name+'_'+self.$store.state.user.office.office_name
                 blackout_booking.booking_contact_information = user_contact_info
                 blackout_booking.stat_flag = true
@@ -1558,8 +1555,8 @@ export default class BookingBlackoutModal extends Vue {
           else if (self.only_this_office.length == 0) {
               all_offices.forEach(async function(office) {
                   const e: any = {
-                      start_time: moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
-                      end_time: moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ'),
+                      start_time: `${date}T${start}`,
+                      end_time: `${date}T${end}`,
                       citizen_name: stat_user_name+'_'+office.office_name,
                       contact_information: user_contact_info,
                       stat_flag: true,
@@ -1576,8 +1573,8 @@ export default class BookingBlackoutModal extends Vue {
                     if (room.id != '_offsite') {
                       blackout_booking.room_id = room.id
                     }
-                    blackout_booking.start_time = moment.tz(date+' '+start, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
-                    blackout_booking.end_time = moment.tz(date+' '+end, office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ssZ')
+                    blackout_booking.start_time = `${date}T${start}`
+                    blackout_booking.end_time = `${date}T${end}`
                     blackout_booking.booking_name = stat_user_name+'_'+office.office_name
                     blackout_booking.booking_contact_information = user_contact_info
                     blackout_booking.stat_flag = true

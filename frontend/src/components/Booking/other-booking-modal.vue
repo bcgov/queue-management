@@ -785,12 +785,10 @@ export default class OtherBookingModal extends Vue {
       this.other_rrule_array.forEach(date => {
         let st = moment(date.start).clone()
         let ed = moment(date.end).clone()
-        const startOffice = moment.tz(st.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-        const endOffice = moment.tz(ed.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
         const booking = {
           room_id: self.resource.id,
-          start_time:startOffice,
-          end_time: endOffice,
+          start_time: st.format('YYYY-MM-DD[T]HH:mm:ss'),
+          end_time: ed.format('YYYY-MM-DD[T]HH:mm:ss'),
           fees: self.recurring_fees,
           booking_name: self.recurring_title,
           booking_contact_information: self.recurring_contact_information,
@@ -817,21 +815,15 @@ export default class OtherBookingModal extends Vue {
       this.message = ''
       this.state = null
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-      let start = moment(this.startTime).utc()
-     if (this.startTime) {
-       start = moment.tz(this.startTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
-     }
+      const start = moment(this.startTime)
 
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-      let end = moment(this.endTime).utc()
-      if (this.endTime) {
-        end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
-      }
+      const end = moment(this.endTime)
 
       const booking = {
         room_id: this.resource.id,
-        start_time: start.format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        end_time: end.format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
         fees: this.fees,
         booking_name: this.title,
         booking_contact_information: this.contact_information
@@ -967,22 +959,16 @@ export default class OtherBookingModal extends Vue {
     }
     // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
     // Removed these variables from the date_start and until variable declarations
-    const other_recurring_start_date = moment.tz(moment(this.other_recurring_start_date).format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-    const start_year = parseInt(moment(other_recurring_start_date).utc().clone().format('YYYY'))
-    const start_month = parseInt(moment(other_recurring_start_date).utc().clone().format('MM'))
-    const start_day = parseInt(moment(other_recurring_start_date).utc().clone().subtract(4, 'hours').format('DD'))
-    const other_recurring_start_time = moment.tz(moment(recurring_start_time_obj).format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-    const local_start_hour = parseInt(moment(other_recurring_start_time).clone().format('HH'))
-    const local_start_minute = parseInt(moment(other_recurring_start_time).clone().format('mm'))
-    const other_recurring_end_date_obj = moment(this.other_recurring_end_date).clone()
-    const other_recurring_end_date = moment.tz(other_recurring_end_date_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-    const end_year = parseInt(moment(other_recurring_end_date).utc().clone().format('YYYY'))
-    const end_month = parseInt(moment(other_recurring_end_date).utc().clone().format('MM'))
-    const end_day = parseInt(moment(other_recurring_end_date).utc().clone().format('DD'))
-    const other_recurring_end_time_obj = moment(recurring_end_time_obj).clone()
-    const other_recurring_end_time = moment.tz(other_recurring_end_time_obj.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name)
-    const local_end_hour = parseInt(moment(other_recurring_end_time).clone().format('HH'))
-    const local_end_minute = parseInt(moment(other_recurring_end_time).clone().format('mm'))
+    const start_year = parseInt(moment(this.other_recurring_start_date).format('YYYY'))
+    const start_month = parseInt(moment(this.other_recurring_start_date).format('MM'))
+    const start_day = parseInt(moment(this.other_recurring_start_date).format('DD'))
+    const local_start_hour = parseInt(moment(recurring_start_time_obj).format('HH'))
+    const local_start_minute = parseInt(moment(recurring_start_time_obj).format('mm'))
+    const end_year = parseInt(moment(this.other_recurring_end_date).format('YYYY'))
+    const end_month = parseInt(moment(this.other_recurring_end_date).format('MM'))
+    const end_day = parseInt(moment(this.other_recurring_end_date).format('DD'))
+    const local_end_hour = parseInt(moment(recurring_end_time_obj).format('HH'))
+    const local_end_minute = parseInt(moment(recurring_end_time_obj).format('mm'))
     let input_frequency: any = null
     const local_other_dates_array: any = []
 
@@ -1003,8 +989,8 @@ export default class OtherBookingModal extends Vue {
 
     if (!isNaN(start_year) || !isNaN(end_year)) {
       // IF RRule Breaks, this is where it will happen
-      const date_start = new Date(start_year+'/'+start_month+'/'+start_day)
-      let until = new Date(end_year+'/'+end_month+'/'+end_day)
+      const date_start = new Date(Date.UTC(start_year, start_month - 1, start_day))
+      const until = new Date(Date.UTC(end_year, end_month - 1, end_day))
       const rule = new RRule({
         freq: input_frequency,
         count: this.other_selected_count,
@@ -1023,11 +1009,11 @@ export default class OtherBookingModal extends Vue {
           if (local_start_hour >= 8 && local_start_hour < 16) {
             date_with_offset.add(1, 'd')
           }
-          const formatted_start_date = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          const formatted_start_date = moment.utc(date).set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD[T]HH:mm:ss')
           if (num_days < 0) {
             num_days = 0
           }
-          const formatted_end_date = moment(date).clone().set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD HH:mm:ssZ')
+          const formatted_end_date = moment.utc(date).set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD[T]HH:mm:ss')
           local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })
 
@@ -1079,4 +1065,3 @@ export default class OtherBookingModal extends Vue {
   color: red !important;
 }
 </style>
-
