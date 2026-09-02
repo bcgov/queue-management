@@ -79,8 +79,8 @@ def test_public_appointment_update_rejects_moving_onto_another_users_slot(
             "comments": "Move into a conflicting slot",
             "office_id": other_appointment["office_id"],
             "service_id": other_appointment["service_id"],
-            "start_time": taken_appointment["start_time"],
-            "end_time": taken_appointment["end_time"],
+            "start_time": taken_appointment["local_start_time"],
+            "end_time": taken_appointment["local_end_time"],
         },
     )
 
