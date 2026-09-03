@@ -957,8 +957,6 @@ export default class OtherBookingModal extends Vue {
       this.recurring_form_state = ''
       return false
     }
-    // Commented out start/end variables are for testing 5pm pst -> utc conversion bug
-    // Removed these variables from the date_start and until variable declarations
     const start_year = parseInt(moment(this.other_recurring_start_date).format('YYYY'))
     const start_month = parseInt(moment(this.other_recurring_start_date).format('MM'))
     const start_day = parseInt(moment(this.other_recurring_start_date).format('DD'))
@@ -1001,18 +999,8 @@ export default class OtherBookingModal extends Vue {
 
       const array = rule.all()
       this.other_rrule_text = rule.toText()
-      // JSTOTS added typr for this.startTime
-      const first_event_start_day: any = moment(this.startTime).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date((this.startTime as any)).getTimezoneOffset(), 'minutes')
-      let num_days = Math.floor(moment.duration(first_event_start_day.diff(moment(new Date()))).asDays())
       array.forEach(date => {
-          const date_with_offset = moment(date).clone().set({ hour: local_start_hour, minute: local_start_minute }).add(new Date(date).getTimezoneOffset(), 'minutes')
-          if (local_start_hour >= 8 && local_start_hour < 16) {
-            date_with_offset.add(1, 'd')
-          }
           const formatted_start_date = moment.utc(date).set({ hour: local_start_hour, minute: local_start_minute }).format('YYYY-MM-DD[T]HH:mm:ss')
-          if (num_days < 0) {
-            num_days = 0
-          }
           const formatted_end_date = moment.utc(date).set({ hour: local_end_hour, minute: local_end_minute }).format('YYYY-MM-DD[T]HH:mm:ss')
           local_other_dates_array.push({ start: formatted_start_date, end: formatted_end_date })
       })

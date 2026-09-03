@@ -869,17 +869,19 @@ export default class AppointmentBlackoutModal extends Vue {
   }
 
   private async countApptWarning (e) {
+    const blackoutStart = moment(e.start_time)
+    const blackoutEnd = moment(e.end_time)
     this.filtered_appt = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
-                                                    moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') >= e.start_time &&
-                                                    moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') <= e.end_time)
+                                                    moment(appt.local_start_time).isSameOrAfter(blackoutStart) &&
+                                                    moment(appt.local_end_time).isSameOrBefore(blackoutEnd))
     
     this.filtered_appt_start = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
-                                                          moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.start_time &&
-                                                          moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.start_time)
+                                                          moment(appt.local_start_time).isBefore(blackoutStart) &&
+                                                          moment(appt.local_end_time).isAfter(blackoutStart))
     
     this.filtered_appt_end = this.myappointments.filter(appt => appt.blackout_flag === 'N' && (!appt.stat_flag) &&
-                                                        moment(appt.start_time).format('YYYY-MM-DD HH:mm:ssZ') < e.end_time &&
-                                                        moment(appt.end_time).format('YYYY-MM-DD HH:mm:ssZ') > e.end_time)
+                                                        moment(appt.local_start_time).isBefore(blackoutEnd) &&
+                                                        moment(appt.local_end_time).isAfter(blackoutEnd))
     this.appt_overlap = this.appt_overlap + this.filtered_appt.length + this.filtered_appt_start.length + this.filtered_appt_end.length
   }
 
@@ -891,9 +893,9 @@ export default class AppointmentBlackoutModal extends Vue {
 
     const date = moment(this.blackout_date).clone().format('YYYY-MM-DD')
     const start = moment(start_time).clone().format('HH:mm:ss')
-    const start_date = moment(date + ' ' + start).format('YYYY-MM-DD HH:mm:ssZ')
+    const start_date = `${date}T${start}`
     const end = moment(end_time).clone().format('HH:mm:ss')
-    const end_date = moment(date + ' ' + end).format('YYYY-MM-DD HH:mm:ssZ')
+    const end_date = `${date}T${end}`
     const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     if (this.rrule_array.length > 0) {

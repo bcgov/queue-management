@@ -358,7 +358,7 @@
         <template #cell(start_time)="row">
           <span v-if="!row.item.booking">-</span>
           <span
-            v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
+            v-else-if="checkStartDate(row.item.booking.local_start_time,row.item.exam_returned_date)"
             class="expired"
             >{{ formatDate(row.item.booking.local_start_time) }}</span
           >
@@ -1119,7 +1119,7 @@ export default class ExamInventoryTable extends Vue {
   checkExamIsPast (ex: any): boolean {
     if (this.inventoryFilters.expiryFilter === 'current') {
       if (ex.booking) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1194,8 +1194,8 @@ export default class ExamInventoryTable extends Vue {
       return true
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1242,8 +1242,8 @@ export default class ExamInventoryTable extends Vue {
       }
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1265,8 +1265,8 @@ export default class ExamInventoryTable extends Vue {
       return true
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1296,8 +1296,8 @@ export default class ExamInventoryTable extends Vue {
 
   checkExamStart (ex:any, checkInvig:boolean = false): boolean {
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1320,7 +1320,7 @@ export default class ExamInventoryTable extends Vue {
 
   checkStartDate (date, exam_returned_date) {
     // duplicated code
-    this.checkExpiryDate(date, exam_returned_date)
+    return this.checkExpiryDate(date, exam_returned_date)
   }
 
   filteredExams () {
@@ -1762,8 +1762,8 @@ export default class ExamInventoryTable extends Vue {
         return lifeRing
       }
       if (item.booking) {
-        if (moment(item.booking.start_time).isValid()) {
-          if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(item.booking.local_start_time).isValid()) {
+          if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
             return lifeRing
           }
         }
@@ -1787,8 +1787,8 @@ export default class ExamInventoryTable extends Vue {
         return lifeRing
       }
       if (item.booking) {
-        if (moment(item.booking.start_time).isValid()) {
-          if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(item.booking.local_start_time).isValid()) {
+          if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
             return lifeRing
           }
         }
@@ -1802,8 +1802,8 @@ export default class ExamInventoryTable extends Vue {
       return lifeRing
     }
     if (item.booking) {
-      if (moment(item.booking.start_time).isValid()) {
-        if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(item.booking.local_start_time).isValid()) {
+        if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
           return lifeRing
         }
       }

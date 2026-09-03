@@ -268,7 +268,7 @@ export default class AgendaScreen extends Vue {
       service_id: appt.service_id,
       comments: appt.comments,
       start: moment(appt.local_start_time),
-      end: moment(appt.end_time),
+      end: moment(appt.local_end_time),
       appointment_id: appt.appointment_id,
       recurring_uuid: null,
       blackout_flag: 'N',
@@ -279,7 +279,7 @@ export default class AgendaScreen extends Vue {
     this.setAgendaClickedAppt(tempEvent)
     this.clickedTime =  {
       start: moment(appt.local_start_time),
-      end: moment(appt.end_time)
+      end: moment(appt.local_end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
 

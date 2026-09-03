@@ -214,7 +214,7 @@ export default class Agenda extends Vue {
   private duration (data: any) {
     const { exam } = data
     const start = moment(exam.booking.local_start_time).clone()
-    const end = moment(exam.booking.end_time).clone()
+    const end = moment(exam.booking.local_end_time).clone()
     return `${end.diff(start, 'hours')} hrs`
   }
 
