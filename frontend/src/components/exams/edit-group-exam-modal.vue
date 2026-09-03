@@ -698,7 +698,6 @@
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
-import zone from 'moment-timezone'
 import DatePicker from 'vue2-datepicker'
 const FileDownload = require('js-file-download')
 
@@ -903,7 +902,7 @@ export default class EditGroupExamBookingModal extends Vue {
 
   checkDate (e) {
     // JSTOTS INFO removed new from moment. no need to use new with moment
-    const date = moment(this.itemCopy.booking.start_time)
+    const date = moment(this.itemCopy.booking.local_start_time)
     // JSTOTS INFO removed new from moment. no need to use new with moment
     this.date = new Date(e)
     this.showMessage = false
@@ -938,7 +937,7 @@ export default class EditGroupExamBookingModal extends Vue {
       }
       return
     }
-    const time = zone.tz(this.itemCopy.booking.start_time, this.editedTimezone).format('HH:mm').toString()
+    const time = moment(this.itemCopy.booking.local_start_time).format('HH:mm').toString()
     // JSTOTS INFO removed new from moment. no need to use new with moment
     const newTime = moment(e).format('HH:mm').toString()
     if (newTime === time) {
@@ -1086,8 +1085,8 @@ export default class EditGroupExamBookingModal extends Vue {
         exam_id,
         invigilator_id: null,
         sbc_staff_invigilated: false,
-        start_time: startNoBook.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        end_time: end.clone().utc().format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        start_time: startNoBook.format('YYYY-MM-DD[T]HH:mm:ss'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
         booking_name: this.actionedExam.exam_name
       }
       if (this.invigilator_id) {
@@ -1119,8 +1118,6 @@ export default class EditGroupExamBookingModal extends Vue {
     }
     const edits = this.editedFields
     const putRequests: any = []
-    const local_timezone_name = this.user.office.timezone.timezone_name
-    const edit_timezone_name = this.actionedExam.booking.office.timezone.timezone_name
     const bookingChanges: any = {}
     const invigilator_id_list: any = []
     const current_invigilator_id_list: any = []
@@ -1140,18 +1137,12 @@ export default class EditGroupExamBookingModal extends Vue {
       console.log('    --> Edits include time, date, invigilator, or shadow invigilator')
       const baseDate = moment(this.date).clone().format('YYYY-MM-DD')
       const baseTime = moment(this.time).clone().format('HH:mm:ss')
-      if (local_timezone_name !== edit_timezone_name) {
-        start = zone.tz(`${baseDate}T${baseTime}`, edit_timezone_name)
-      }
-
-      if (local_timezone_name === edit_timezone_name) {
-        start = moment(`${baseDate}T${baseTime}`)
-      }
+      start = moment(`${baseDate}T${baseTime}`)
 
       const end = start.clone().add(parseInt(this.itemCopy.exam_type.number_of_hours), 'h')
 
-      bookingChanges.start_time = start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-      bookingChanges.end_time = end.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      bookingChanges.start_time = start.format('YYYY-MM-DD[T]HH:mm:ss')
+      bookingChanges.end_time = end.format('YYYY-MM-DD[T]HH:mm:ss')
       bookingChanges.sbc_staff_invigilated = false
 
       if (this.shadowInvigilator) {
@@ -1270,13 +1261,10 @@ export default class EditGroupExamBookingModal extends Vue {
       })
     }
     const tempItem = Object.assign({}, this.actionedExam)
-    if (tempItem.booking && tempItem.booking.start_time) {
-      const { start_time } = tempItem.booking
-      const { timezone_name } = this.actionedExam.booking.office.timezone
-      const time = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ss').toString()
-      this.time = new Date(time)
-      const date = zone.tz(start_time, timezone_name).clone().format('YYYY-MM-DD[T]HH:mm:ssZ').toString()
-      this.date = new Date(date)
+    if (tempItem.booking && tempItem.booking.local_start_time) {
+      const { local_start_time } = tempItem.booking
+      this.time = new Date(local_start_time)
+      this.date = new Date(local_start_time)
       if (tempItem.booking.sbc_staff_invigilated) {
         this.invigilator_id = 'sbc'
       } else {

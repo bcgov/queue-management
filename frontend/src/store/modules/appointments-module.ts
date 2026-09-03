@@ -72,8 +72,8 @@ export default {
       if (state.appointments.length > 0) {
         return state.appointments.map(apt =>
           ({
-            start: new Date(new Date(apt.start_time).toLocaleString('en-US', { timeZone: apt.office.timezone.timezone_name })),
-            end: new Date(new Date(apt.end_time).toLocaleString('en-US', { timeZone: apt.office.timezone.timezone_name })),
+            start: new Date(apt.local_start_time),
+            end: new Date(apt.local_end_time),
             appointment_id: apt.appointment_id,
             service_id: parseInt(apt.service_id),
             citizen_id: apt.citizen_id,

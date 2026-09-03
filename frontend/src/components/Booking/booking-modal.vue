@@ -485,16 +485,16 @@ export default class BookingModal extends Vue {
         }
       }
       // TOCHECK removed new keyword in moment. not needed
-      let end = moment(this.endTime).utc()
-      const start = moment.tz(this.date.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+      let end = moment(this.endTime)
+      const start = moment(this.date.start)
       if (this.endTime) {
-        end = moment.tz(this.endTime.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).utc()
+        end = moment(this.endTime)
       }
 
       const booking: any = {
         room_id: this.date.resource.id,
-        start_time: start.format('YYYY-MM-DD[T]HH:mm:ssZ'),
-        end_time: end.format('YYYY-MM-DD[T]HH:mm:ssZ'),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
         fees: 'false',
         booking_name: this.exam.exam_name,
         sbc_staff_invigilated: 0,

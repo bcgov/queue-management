@@ -25,6 +25,7 @@ from app.schemas.theq import CitizenSchema
 from app.services import AvailabilityService
 from app.utilities.auth_util import get_username
 from app.utilities.date_util import add_delta_to_time
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 from qsystem import api, db, my_print, application
 from qsystem import socketio
 
@@ -41,9 +42,10 @@ class AppointmentDraftPost(Resource):
 
         office_id = json_data.get('office_id')
         service_id = json_data.get('service_id')
+        office = Office.find_by_id(office_id)
+        convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
         start_time = parse(json_data.get('start_time'))
         end_time = parse(json_data.get('end_time'))
-        office = Office.find_by_id(office_id)
         service = db.session.get(Service, int(service_id)) if service_id else None
 
         # end_time can be null for CSRs when they click; whereas citizens know end-time.

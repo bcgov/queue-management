@@ -1145,10 +1145,10 @@ export default class EditBooking extends Vue {
           this.message = 'Selected date/time is is in the past. Press Reschedule and pick a new time.'
           return
         }
-        changes.start_time = this.start.utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        changes.start_time = this.start.format('YYYY-MM-DD[T]HH:mm:ss')
       }
       if (!(this.end as any).isSame(this.event.end)) {
-        changes.end_time = (this.end as any).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+        changes.end_time = (this.end as any).format('YYYY-MM-DD[T]HH:mm:ss')
       }
       if (this.newEvent && (this.newEvent.resource.id != this.event.resourceId)) {
         changes.room_id = this.newEvent.resource.id

@@ -21,6 +21,7 @@ from app.models.theq import CSR
 from app.schemas.bookings import BookingSchema
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 @api.route("/bookings/<int:id>/", methods=["PUT"])
@@ -40,6 +41,7 @@ class BookingPut(Resource):
             return {"message": "No input data received for updating a ooking"}
 
         booking = Booking.query.filter_by(booking_id=id).first_or_404()
+        convert_local_fields_to_utc(json_data, booking.office.timezone.timezone_name)
         booking = self.booking_schema.load(json_data, instance=booking, partial=True)
         warning = self.booking_schema.validate(json_data)
 

@@ -911,13 +911,13 @@ export default class ApptBookingModal extends Vue {
       if (!moment.isMoment(start_time)) {
         this.start = moment(start_time)
       }
-      const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-      const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+      const start = moment(this.start)
+      const end = moment(this.end)
       
       this.start = startDateObj
       const e: any = {
-        start_time: moment.utc(start).format(),
-        end_time: moment.utc(end).format(),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
         service_id,
         citizen_name: this.citizen_name,
         contact_information: this.contact_information

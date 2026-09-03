@@ -351,7 +351,7 @@ export default class Appointments extends Vue {
     }
     this.is_stat = false
     this.getAppointments().then((each) => {
-      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.local_start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
       if (bb) {
         this.is_stat = true
       }
@@ -405,13 +405,13 @@ export default class Appointments extends Vue {
 
   setTempEvent (event) {
     this.removeTempEvent()
-    const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    const start = moment(event.start)
 
     // for draft
     const data: any = {
-      start_time: moment.utc(start).format(),
+      start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
       // setting end time aftger 15 min of start to fix over appoinment time      
-      end_time: moment(start).clone().add(15, 'minutes')
+      end_time: moment(start).clone().add(15, 'minutes').format('YYYY-MM-DD[T]HH:mm:ss')
     }
 
     this.postDraftAppointment(data).then((resp) => {

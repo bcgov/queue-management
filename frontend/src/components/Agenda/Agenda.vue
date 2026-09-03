@@ -29,7 +29,7 @@
               >
                 <template
                   #cell(start)="row"
-                >{{ formatDetail(row.item.exam.booking.start_time) }}</template>
+                >{{ formatDetail(row.item.exam.booking.local_start_time) }}</template>
 
                 <template #cell(length)="row">{{ duration(row.item) }}</template>
 
@@ -213,8 +213,8 @@ export default class Agenda extends Vue {
 
   private duration (data: any) {
     const { exam } = data
-    const start = moment(exam.booking.start_time).clone()
-    const end = moment(exam.booking.end_time).clone()
+    const start = moment(exam.booking.local_start_time).clone()
+    const end = moment(exam.booking.local_end_time).clone()
     return `${end.diff(start, 'hours')} hrs`
   }
 

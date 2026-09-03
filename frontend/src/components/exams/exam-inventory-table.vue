@@ -358,11 +358,11 @@
         <template #cell(start_time)="row">
           <span v-if="!row.item.booking">-</span>
           <span
-            v-else-if="checkStartDate(row.item.booking.start_time,row.item.exam_returned_date)"
+            v-else-if="checkStartDate(row.item.booking.local_start_time,row.item.exam_returned_date)"
             class="expired"
-            >{{ formatDate(row.item.booking.start_time) }}</span
+            >{{ formatDate(row.item.booking.local_start_time) }}</span
           >
-          <span v-else>{{ formatDate(row.item.booking.start_time) }}</span>
+          <span v-else>{{ formatDate(row.item.booking.local_start_time) }}</span>
         </template>
 
         <!--  Field 5 - Exam method??? Don't see it.  -->
@@ -758,7 +758,6 @@ import ReturnExamModal from './return-exam-form-modal.vue'
 import SuccessExamAlert from './success-exam-alert.vue'
 import DeleteExamModal from './delete-exam-modal.vue'
 import AddCitizen from '../AddCitizen/add-citizen.vue'
-import zone from 'moment-timezone'
 import UploadPesticideModal from './upload-pesticide-exam.vue'
 
 @Component({
@@ -1120,7 +1119,7 @@ export default class ExamInventoryTable extends Vue {
   checkExamIsPast (ex: any): boolean {
     if (this.inventoryFilters.expiryFilter === 'current') {
       if (ex.booking) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1195,8 +1194,8 @@ export default class ExamInventoryTable extends Vue {
       return true
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1243,8 +1242,8 @@ export default class ExamInventoryTable extends Vue {
       }
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1266,8 +1265,8 @@ export default class ExamInventoryTable extends Vue {
       return true
     }
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1297,8 +1296,8 @@ export default class ExamInventoryTable extends Vue {
 
   checkExamStart (ex:any, checkInvig:boolean = false): boolean {
     if (ex.booking) {
-      if (moment(ex.booking.start_time).isValid()) {
-        if (moment(ex.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(ex.booking.local_start_time).isValid()) {
+        if (moment(ex.booking.local_start_time).isBefore(moment(), 'day')) {
           return true
         }
       }
@@ -1321,7 +1320,7 @@ export default class ExamInventoryTable extends Vue {
 
   checkStartDate (date, exam_returned_date) {
     // duplicated code
-    this.checkExpiryDate(date, exam_returned_date)
+    return this.checkExpiryDate(date, exam_returned_date)
   }
 
   filteredExams () {
@@ -1446,11 +1445,8 @@ export default class ExamInventoryTable extends Vue {
   }
 
   formatTime (d) {
-    const tz = d.office.timezone.timezone_name
-    const time = zone.tz(d.start_time, tz).format('2017-MM-DD[T]HH:mm:ss').toString()
-
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    return moment(time).format('h:mm a')
+    return moment(d.local_start_time).format('h:mm a')
   }
 
   getSize () {
@@ -1766,8 +1762,8 @@ export default class ExamInventoryTable extends Vue {
         return lifeRing
       }
       if (item.booking) {
-        if (moment(item.booking.start_time).isValid()) {
-          if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(item.booking.local_start_time).isValid()) {
+          if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
             return lifeRing
           }
         }
@@ -1791,8 +1787,8 @@ export default class ExamInventoryTable extends Vue {
         return lifeRing
       }
       if (item.booking) {
-        if (moment(item.booking.start_time).isValid()) {
-          if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+        if (moment(item.booking.local_start_time).isValid()) {
+          if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
             return lifeRing
           }
         }
@@ -1806,8 +1802,8 @@ export default class ExamInventoryTable extends Vue {
       return lifeRing
     }
     if (item.booking) {
-      if (moment(item.booking.start_time).isValid()) {
-        if (moment(item.booking.start_time).isBefore(moment(), 'day')) {
+      if (moment(item.booking.local_start_time).isValid()) {
+        if (moment(item.booking.local_start_time).isBefore(moment(), 'day')) {
           return lifeRing
         }
       }
@@ -1876,7 +1872,7 @@ export default class ExamInventoryTable extends Vue {
 
   updateCalendarBooking (item) {
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    item.gotoDate = moment(item.booking.start_time)
+    item.gotoDate = moment(item.booking.local_start_time)
     item.referrer = 'rescheduling'
     this.setSelectedExam(item)
     const booking = this.calendarEvents.find(event => event.id == item.booking_id)

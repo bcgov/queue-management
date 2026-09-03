@@ -33,6 +33,7 @@ from qsystem import api, api_call_with_retry, db, my_print, application
 from qsystem import socketio
 from app.auth.auth import jwt
 from app.utilities.sms import send_sms
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 def _get_valid_service(service_id):
@@ -74,9 +75,6 @@ class AppointmentPost(Resource):
         if (json_data.get('stat_office_id', False)):
             json_data['office_id'] = json_data.get('stat_office_id')
         
-        #get start date:
-        start_time_ct = json_data.get('start_time', False)
-        
         # remove below code, once code is tested - new req --> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
         csr = None
@@ -101,6 +99,7 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             service = _get_valid_service(service_id)
             if service is None:
                 return {
@@ -128,11 +127,13 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = json_data.get('office_id', csr.office_id)
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
 
         else:
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             service_id = json_data.get('service_id')
 
             # Preserve legacy Newman blackout payloads, which omit service_id for
@@ -151,6 +152,7 @@ class AppointmentPost(Resource):
                     "message": "Could not find service for service_id: " + str(service_id)
                 }, 400
 
+        start_time_ct = json_data.get('start_time', False)
         citizen.office_id = office_id
         citizen.qt_xn_citizen_ind = 0
         citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
