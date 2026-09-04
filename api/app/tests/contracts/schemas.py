@@ -513,7 +513,7 @@ EXAM_SCHEMA = object_schema(
         "invigilator_id": nullable({"type": "integer"}),
         "session_number": nullable({"type": "integer"}),
         "exam_returned_ind": nullable({"type": "integer"}),
-        "exam_returned_date": nullable({"type": "string"}),
+        "exam_returned_date": nullable(ISO_DATETIME_SCHEMA),
         "exam_returned_tracking_number": nullable({"type": "string"}),
         "exam_written_ind": {"type": "integer"},
         "upload_received_ind": nullable({"type": "integer"}),

@@ -215,6 +215,66 @@ def test_exam_update_accepts_iso_offset_exam_received_date(
     )
 
 
+def test_exam_return_update_accepts_frontend_date_only_value(
+    app, internal_ga_client, seeded_data
+):
+    """Assert the return-exam form's date-only value persists as UTC."""
+    booking = _create_booking(internal_ga_client, seeded_data, days_from_now=5)
+    exam = _create_exam(
+        internal_ga_client,
+        seeded_data,
+        booking["booking_id"],
+        event_id="event-return-date",
+    )
+
+    response = internal_ga_client.put(
+        f"/exams/{exam['exam_id']}/",
+        json={
+            "exam_returned_date": "2026-09-04",
+            "exam_returned_tracking_number": "TRACK-123",
+            "exam_written_ind": 1,
+        },
+    )
+    body = json_of(response)
+
+    assert_json_response(response, 201)
+    assert body["exam"]["exam_returned_date"] == "2026-09-04T00:00:00+00:00"
+    assert body["exam"]["exam_returned_tracking_number"] == "TRACK-123"
+    assert body["exam"]["exam_written_ind"] == 1
+
+    with app.app_context():
+        from app.models.bookings import Exam
+        from qsystem import db
+
+        saved_exam = db.session.get(Exam, exam["exam_id"])
+        assert saved_exam.exam_returned_date == datetime(
+            2026, 9, 4, tzinfo=ZoneInfo("UTC")
+        )
+
+
+def test_exam_return_update_rejects_invalid_date(
+    internal_ga_client, seeded_data
+):
+    """Assert malformed return dates produce a controlled validation response."""
+    booking = _create_booking(internal_ga_client, seeded_data, days_from_now=5)
+    exam = _create_exam(
+        internal_ga_client,
+        seeded_data,
+        booking["booking_id"],
+        event_id="event-invalid-return-date",
+    )
+
+    response = internal_ga_client.put(
+        f"/exams/{exam['exam_id']}/",
+        json={"exam_returned_date": "not-a-date"},
+    )
+
+    assert_json_response(response, 422)
+    assert json_of(response) == {
+        "message": {"exam_returned_date": ["Not a valid datetime."]}
+    }
+
+
 def test_exam_create_invalid_datetime_returns_validation_response(
     internal_ga_client, seeded_data
 ):
