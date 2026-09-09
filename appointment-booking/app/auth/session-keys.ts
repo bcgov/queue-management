@@ -13,6 +13,7 @@ export const SessionKeys = {
   BookingSelectedService: 'BOOKING_SELECTED_SERVICE',
   BookingSelectedLocation: 'BOOKING_SELECTED_LOCATION',
   BookingSelectedSlot: 'BOOKING_SELECTED_SLOT',
+  BookingDraftAppointmentId: 'BOOKING_DRAFT_APPOINTMENT_ID',
 } as const
 
 // Cleared on logout and when discarding a bad/disallowed auth session.
@@ -30,6 +31,7 @@ export const BOOKING_SESSION_KEYS = [
   SessionKeys.BookingSelectedService,
   SessionKeys.BookingSelectedLocation,
   SessionKeys.BookingSelectedSlot,
+  SessionKeys.BookingDraftAppointmentId,
 ] as const
 
 export const IdpHint = {

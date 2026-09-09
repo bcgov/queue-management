@@ -106,7 +106,8 @@ export default function ServiceLocationsPage() {
     if (
       match.isBookable !== selectedLocation.isBookable ||
       match.appointmentsDisabled !== selectedLocation.appointmentsDisabled ||
-      match.nextAppointmentDate !== selectedLocation.nextAppointmentDate
+      match.nextAppointmentDate !== selectedLocation.nextAppointmentDate ||
+      match.timezoneName !== selectedLocation.timezoneName
     ) {
       setSelectedLocation(match)
     }
