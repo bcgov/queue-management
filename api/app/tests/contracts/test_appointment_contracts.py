@@ -1,4 +1,5 @@
 import pytest
+from app.utilities.timezone_utils import local_datetime_to_utc
 from app.tests.api_test_support import (
     assert_json_response,
     first_day_with_slots,
@@ -57,7 +58,16 @@ def test_appointment_create_response_matches_the_contract(
 
     assert_json_response(response, 201)
     validate_schema(body, APPOINTMENT_RESPONSE_SCHEMA)
-    assert body["appointment"]["citizen_name"]
+    appointment = body["appointment"]
+    assert appointment["citizen_name"]
+    assert appointment["local_start_time"] == start_time
+    assert appointment["local_end_time"] == end_time
+    assert appointment["start_time"] == local_datetime_to_utc(
+        start_time, seeded_data["office_timezones"]["test_office"]
+    ).isoformat()
+    assert appointment["end_time"] == local_datetime_to_utc(
+        end_time, seeded_data["office_timezones"]["test_office"]
+    ).isoformat()
 
 
 def test_appointment_detail_response_matches_the_contract(

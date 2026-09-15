@@ -1,4 +1,5 @@
 import pytest
+from app.utilities.timezone_utils import local_datetime_to_utc
 from app.tests.api_test_support import (
     assert_json_response,
     future_utc_window,
@@ -50,7 +51,16 @@ def test_booking_create_response_matches_the_contract(internal_ga_client, seeded
 
     assert_json_response(response, 201)
     validate_schema(body, BOOKING_RESPONSE_SCHEMA)
-    assert body["booking"]["invigilators"] == [seeded_data["invigilator_ids"][0]]
+    booking = body["booking"]
+    assert booking["invigilators"] == [seeded_data["invigilator_ids"][0]]
+    assert booking["local_start_time"] == start_time
+    assert booking["local_end_time"] == end_time
+    assert booking["start_time"] == local_datetime_to_utc(
+        start_time, seeded_data["office_timezones"]["test_office"]
+    ).isoformat()
+    assert booking["end_time"] == local_datetime_to_utc(
+        end_time, seeded_data["office_timezones"]["test_office"]
+    ).isoformat()
 
 
 def test_booking_detail_response_matches_the_contract(internal_ga_client, seeded_data):

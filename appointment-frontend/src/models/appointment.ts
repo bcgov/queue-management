@@ -26,12 +26,14 @@ export interface Appointment {
   comments: string
   contactInformation: string
   endTime: string
+  localEndTime: string
   office: Office
   officeId: number
   recurringUuid: string
   service: Service
   serviceId: number
   startTime: string
+  localStartTime: string
   appointmentDate?: string
   appointmentStartTime?: string
   appointmentEndTime?: string
