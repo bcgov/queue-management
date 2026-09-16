@@ -275,7 +275,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
     if (!date) {
       return ''
     }
-    return CommonUtils.getUTCToTimeZoneTime(date, this.currentOfficeTimezone, formatStr)
+    return CommonUtils.getFormattedDate(date, formatStr)
   }
 
   private async fetchUserAppointments () {

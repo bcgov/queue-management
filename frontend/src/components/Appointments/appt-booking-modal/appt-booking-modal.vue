@@ -354,6 +354,7 @@
 </template>
 
 <script lang="ts">
+import { isPastOfficeTime } from '@/utils/office-time'
 /* eslint-disable */
 import { Action, namespace } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
@@ -800,7 +801,7 @@ export default class ApptBookingModal extends Vue {
         this.selectLength = this.clickedAppt.end.diff(this.clickedAppt.start, 'minutes')
       }
       this.allow_reschedule = true
-      if (this.clickedAppt.start < moment.now()) {
+      if (isPastOfficeTime(this.clickedAppt.start, this.$store.state.user.office)) {
           this.allow_reschedule = false
       }
       this.citizen_name = this.clickedAppt.title
@@ -911,13 +912,13 @@ export default class ApptBookingModal extends Vue {
       if (!moment.isMoment(start_time)) {
         this.start = moment(start_time)
       }
-      const start = moment(moment.tz(this.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
-      const end = moment(moment.tz(this.end.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+      const start = moment(this.start)
+      const end = moment(this.end)
       
       this.start = startDateObj
       const e: any = {
-        start_time: moment.utc(start).format(),
-        end_time: moment.utc(end).format(),
+        start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
+        end_time: end.format('YYYY-MM-DD[T]HH:mm:ss'),
         service_id,
         citizen_name: this.citizen_name,
         contact_information: this.contact_information

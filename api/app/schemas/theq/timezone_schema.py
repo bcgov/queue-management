@@ -12,7 +12,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.'''
 
+from datetime import datetime, timezone
 from marshmallow import fields
+from app.utilities.timezone_utils import office_clock_offsets
 from app.models.theq import Timezone
 from qsystem import ma
 from app.schemas import BaseSchema
@@ -26,3 +28,7 @@ class TimezoneSchema(BaseSchema):
 
     timezone_id = fields.Int()
     timezone_name = fields.Str()
+
+    clock_offsets = fields.Function(
+        lambda zone: office_clock_offsets(zone.timezone_name, datetime.now(timezone.utc).year)
+    )

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from datetime import datetime
 from uuid import uuid4
 
 import pytest
+from app.utilities.timezone_utils import local_datetime_to_utc
 from app.tests.api_test_support import (
     assert_json_response,
     create_public_user,
@@ -64,19 +66,31 @@ def test_internal_appointment_can_be_listed_and_retrieved(
 
 
 def test_internal_appointment_can_be_updated(internal_ga_client, seeded_data):
-    """Assert that internal appointments preserve comment updates."""
+    """Assert that internal appointments convert and return local time updates."""
     appointment = _create_internal_appointment(
         internal_ga_client, seeded_data, days_from_now=2
     )
+    start_time, end_time = future_utc_window(3)
 
     response = internal_ga_client.put(
         f"/appointments/{appointment['appointment_id']}/",
-        json={"comments": "Internal appointment updated"},
+        json={
+            "comments": "Internal appointment updated",
+            "start_time": start_time,
+            "end_time": end_time,
+        },
     )
 
     assert_json_response(response, 200)
-    assert (
-        json_of(response)["appointment"]["comments"] == "Internal appointment updated"
+    updated = json_of(response)["appointment"]
+    assert updated["comments"] == "Internal appointment updated"
+    assert updated["local_start_time"] == start_time
+    assert updated["local_end_time"] == end_time
+    assert datetime.fromisoformat(updated["start_time"]) == local_datetime_to_utc(
+        start_time, seeded_data["office_timezones"]["test_office"]
+    )
+    assert datetime.fromisoformat(updated["end_time"]) == local_datetime_to_utc(
+        end_time, seeded_data["office_timezones"]["test_office"]
     )
 
 

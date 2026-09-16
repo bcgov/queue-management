@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from datetime import datetime, time, timedelta, timezone
 from typing import Any, Optional
 from uuid import uuid4
-from zoneinfo import ZoneInfo
 
 
 @dataclass
@@ -98,13 +97,10 @@ def slot_window_to_iso(
     day_key: str, slot: dict[str, Any], timezone_name: str
 ) -> tuple[str, str]:
     day_value = datetime.strptime(day_key, "%m/%d/%Y").date()
-    timezone = ZoneInfo(timezone_name)
     start_hour, start_minute = [int(part) for part in slot["start_time"].split(":")]
     end_hour, end_minute = [int(part) for part in slot["end_time"].split(":")]
-    start_dt = datetime.combine(
-        day_value, time(start_hour, start_minute), tzinfo=timezone
-    )
-    end_dt = datetime.combine(day_value, time(end_hour, end_minute), tzinfo=timezone)
+    start_dt = datetime.combine(day_value, time(start_hour, start_minute))
+    end_dt = datetime.combine(day_value, time(end_hour, end_minute))
     return start_dt.isoformat(), end_dt.isoformat()
 
 
@@ -116,7 +112,7 @@ def future_utc_window(
     )
     start_dt = start_dt + timedelta(days=days_from_now)
     end_dt = start_dt + timedelta(minutes=duration_minutes)
-    return start_dt.isoformat(), end_dt.isoformat()
+    return start_dt.replace(tzinfo=None).isoformat(), end_dt.replace(tzinfo=None).isoformat()
 
 
 def unique_name(prefix: str) -> str:

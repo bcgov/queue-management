@@ -14,14 +14,16 @@ limitations under the License.'''
 
 import logging
 from flask_restx import Resource
+from marshmallow import ValidationError
 from flask import request
 from app.models.bookings import Room
 from app.schemas.bookings import BookingSchema
 from app.models.bookings import Invigilator
-from app.models.theq import CSR
+from app.models.theq import CSR, Office
 from qsystem import api, api_call_with_retry, db
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 @api.route("/bookings/", methods=["POST"])
@@ -35,6 +37,8 @@ class BookingPost(Resource):
         csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
         i_id = json_data.get('invigilator_id')
         if "room_id" in json_data and json_data["room_id"] == '_offsite':
             json_data["room_id"] = None
@@ -42,15 +46,17 @@ class BookingPost(Resource):
         if not json_data:
             return {"message": "No input data received for creating a booking"}, 400
 
+        office_id = json_data.get('office_id') or csr.office_id
+        office = Office.find_by_id(office_id)
+        json_data['office_id'] = office_id
+        convert_local_fields_to_utc(json_data, office.timezone.timezone_name, required=True)
+
         booking = self.booking_schema.load(json_data)
         warning = self.booking_schema.validate(json_data)
 
         if warning:
             logging.warning("WARNING: %s", warning)
             return {"message": warning}, 422
-
-        if booking.office_id is None:
-            booking.office_id = csr.office_id
 
         if booking.office_id == csr.office_id or csr.ita2_designate == 1 or json_data.get('for_stat', False):
 
