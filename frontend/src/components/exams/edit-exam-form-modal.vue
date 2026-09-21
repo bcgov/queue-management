@@ -595,9 +595,20 @@ export default class EditExamModal extends Vue {
   public search: string = ''
   public searching: boolean = false
   public showSearch: boolean = false
-  private selectedExam: any = []
-  private objectItem:any  = {}
-  private displayText: string = 'Select an option'
+
+  get selectedExam () {
+    return this.examTypes.find(type => type.exam_type_id === this.fields.exam_type_id) || null
+  }
+
+  set selectedExam (examType) {
+    this.setPlaceHolder(examType)
+  }
+
+  get displayText () {
+    return this.selectedExam
+      ? this.selectedExam.exam_type_name
+      : 'Select an option'
+  }
 
   get canDelete () {
     let examCanBeDeleted = false
@@ -614,26 +625,23 @@ export default class EditExamModal extends Vue {
     return examCanBeDeleted
   }
 
-  get isITAExam() {
-    const examType = this.examTypes.filter((examType) => examType.exam_type_id === this.actionedExam.exam_type_id);
+  get isITAExam () {
+    const examType = this.examTypes.find(examType => examType.exam_type_id === this.actionedExam.exam_type_id)
     if (!examType) {
-      return false;
+      return false
     }
-    return examType[0].ita_ind ===1 && examType[0].group_exam_ind === 0 && !examType[0].exam_type_name.includes('Monthly');
+    return examType.ita_ind === 1 && examType.group_exam_ind === 0 && !examType.exam_type_name.includes('Monthly')
   }
 
-  get iTAExamTypes() {
-    this.objectItem = {
-      exam_type_id: this.actionedExam.exam_type_id
-    }
+  get iTAExamTypes () {
     const exams = this.examTypes.filter(type =>
       type.ita_ind === 1 &&
       type.group_exam_ind === 0 &&
       !type.exam_type_name.includes('Monthly'))
-      return exams.sort((a, b) => a.exam_type_name - b.exam_type_name)
-      }
+    return exams.sort((a, b) => a.exam_type_name.localeCompare(b.exam_type_name))
+  }
 
-  get fieldsEdited() {
+  get fieldsEdited () {
     const fieldsEdited: any = []
     const data = Object.assign({}, this.fields)
     if (data.exam_received_date) {
@@ -657,7 +665,6 @@ export default class EditExamModal extends Vue {
 
   get allowSubmit () {
     if (this.actionedExam) {
-      this.fields.exam_type_id = this.objectItem.exam_type_id
       const fieldsEdited: any = []
       const data = Object.assign({}, this.fields)
       this.formatExamDates(data)
@@ -804,8 +811,7 @@ export default class EditExamModal extends Vue {
   }
 
   setPlaceHolder (item): void {
-    this.objectItem = { exam_type_id : item.exam_type_id }
-    this.displayText = item.exam_type_name
+    Vue.set(this.fields, 'exam_type_id', item ? item.exam_type_id : null)
   }
 
   handleConfirm () {
@@ -815,7 +821,6 @@ export default class EditExamModal extends Vue {
   }
 
   handleCancel () {
-    this.displayText = this.actionedExam.exam_type.exam_type_name
     this.showConfirmationModal = false
   }
 
@@ -883,7 +888,11 @@ export default class EditExamModal extends Vue {
   }
 
   handleExamDropClick (e) {
-    this.fields.exam_type_id = e.target.id
+    const selectedId = e.currentTarget ? e.currentTarget.id : e.target.id
+    const selectedType = this.examTypes.find(type => String(type.exam_type_id) === selectedId)
+    if (selectedType) {
+      Vue.set(this.fields, 'exam_type_id', selectedType.exam_type_id)
+    }
   }
 
   handleExamInputClick () {
@@ -917,7 +926,6 @@ export default class EditExamModal extends Vue {
       this.exam_received = true
     }
     this.office_number = exam.office.office_number
-    this.displayText = this.actionedExam.exam_type.exam_type_name
   }
 
   setOffice (officeNumber) {
@@ -946,6 +954,7 @@ export default class EditExamModal extends Vue {
     this.searching = false
     this.showMessage = false
     this.showSearch = false
+    this.showConfirmationModal = false
     this.resetExam()
   }
 
@@ -961,7 +970,7 @@ export default class EditExamModal extends Vue {
   }
 
   submit () {
-    if (this.isITAExam && this.actionedExam.booking_id !== null && this.actionedExam.exam_type_id !== this.objectItem.exam_type_id) {
+    if (this.isITAExam && this.actionedExam.booking_id !== null && this.actionedExam.exam_type_id !== this.fields.exam_type_id) {
       this.showConfirmationModal = true
     } else {
       this.submitExamDetails()
@@ -972,10 +981,6 @@ export default class EditExamModal extends Vue {
     const data = Object.assign({}, this.fields)
     const putRequest: any = {
       exam_id: this.fields.exam_id
-    }
-    if (this.objectItem.exam_type_id) {
-      data.exam_type_id = this.objectItem.exam_type_id
-      data.exam_type_name = this.objectItem.exam_type_name
     }
     if (data.exam_received_date) {
       data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
