@@ -203,8 +203,8 @@ export default function ReviewPage() {
       </section>
 
       {confirmError ? (
-        <div className="review-confirm-error">
-          <InlineAlert variant="danger" title="Unable to confirm">
+        <div className="review-confirm-error" role="alert">
+          <InlineAlert variant="danger" title="Unable to book this appointment">
             {confirmError}
           </InlineAlert>
         </div>
