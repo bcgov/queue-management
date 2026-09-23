@@ -8,7 +8,7 @@ import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
 import type { BookingSlot } from '~/booking/booking-store'
-import { formatDate, formatTimeRange, officeWallTimeToIso } from '~/booking/format-slot'
+import { formatDate, formatTimeRange } from '~/booking/format-slot'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingDetailCallout } from '~/components/BookingDetailCallout'
@@ -35,8 +35,6 @@ export default function DateTimePage() {
     selectedLocation,
     selectedSlot,
     setSelectedSlot,
-    draftAppointmentId,
-    setDraftAppointmentId,
   } = useBooking()
   const [timeSlots, setTimeSlots] = useState<AvailableTimeSlots>({})
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
@@ -89,40 +87,35 @@ export default function DateTimePage() {
   }, [isAuthReady, isBookingReady, isAuthenticated, selectedLocation, selectedService])
 
   // Create (or replace) a draft hold as soon as a timeslot is chosen.
-  async function holdSelectedSlot(slot: BookingSlot) {
+  // Slot is only stored after the draft succeeds, so a slot always has a draft id.
+  async function holdSelectedSlot(slot: Omit<BookingSlot, 'draftAppointmentId'>) {
     if (!selectedService || !selectedLocation) return
 
     setHoldError(null)
-    setSelectedSlot(slot)
     setIsHoldingSlot(true)
-
-    const timezoneName = selectedLocation.timezoneName
+    const previousDraftId = selectedSlot?.draftAppointmentId
 
     try {
-      if (!timezoneName) {
-        throw new Error('Missing office timezone. Please go back and select the location again.')
-      }
-
       // Release the previous hold first, so re-picking the same time is not a conflict.
-      if (draftAppointmentId != null) {
+      if (previousDraftId != null) {
         try {
-          await deleteDraftAppointment(draftAppointmentId)
+          await deleteDraftAppointment(previousDraftId)
         } catch {
           // Expired or already deleted.
         }
-        setDraftAppointmentId(null)
       }
 
-      const draftId = await createDraftAppointment({
+      const draftAppointmentId = await createDraftAppointment({
         office_id: selectedLocation.id,
         service_id: selectedService.id,
-        start_time: officeWallTimeToIso(slot.date, slot.startTime, timezoneName),
-        end_time: officeWallTimeToIso(slot.date, slot.endTime, timezoneName),
+        // Office wall clock; API converts to UTC using the office timezone.
+        start_time: `${slot.date}T${slot.startTime}:00`,
+        end_time: `${slot.date}T${slot.endTime}:00`,
       })
-      setDraftAppointmentId(draftId)
+      setSelectedSlot({ ...slot, draftAppointmentId })
     } catch (err) {
+      // Previous draft was already released above; clear local selection too.
       setSelectedSlot(null)
-      setDraftAppointmentId(null)
       setHoldError(
         err instanceof Error
           ? err.message
@@ -332,7 +325,7 @@ export default function DateTimePage() {
         <BookingBackRow onBack={() => navigate('/login')} />
         <BookingContinueRow
           label="Review"
-          isDisabled={!selectedSlot || !draftAppointmentId || isHoldingSlot}
+          isDisabled={!selectedSlot || isHoldingSlot}
           onContinue={() => navigate('/review')}
         />
       </div>

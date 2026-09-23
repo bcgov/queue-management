@@ -1,5 +1,4 @@
 // Shared appointment date/time labels (callout summary and datetime picker).
-import { CalendarDateTime, toZoned } from '@internationalized/date'
 
 export function formatDate(date: string) {
   const [year, month, day] = date.split('-').map(Number)
@@ -21,14 +20,4 @@ function formatTime(time: string) {
 
 export function formatTimeRange(startTime: string, endTime: string) {
   return `${formatTime(startTime)} – ${formatTime(endTime)}`
-}
-
-// Slot HH:MM values from the API are office-local, not the browser timezone.
-export function officeWallTimeToIso(date: string, time: string, timezoneName: string): string {
-  const [year, month, day] = date.split('-').map(Number)
-  const [hour, minute] = time.split(':').map(Number)
-  // toString includes "[America/Vancouver]"; the API wants plain ISO-8601.
-  return toZoned(new CalendarDateTime(year, month, day, hour, minute), timezoneName)
-    .toString()
-    .replace(/\[.*\]$/, '')
 }

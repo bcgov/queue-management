@@ -8,8 +8,6 @@ export type ServiceLocation = {
   address: string
   latitude: number | null
   longitude: number | null
-  /** IANA name from the office record; slot times are wall clock in this zone. */
-  timezoneName: string
   appointmentMessage: string
   nextAppointmentDate: string | null
   appointmentsDisabled: boolean
@@ -27,7 +25,6 @@ type ApiOffice = {
   deleted: string | null
   office_appointment_message: string | null
   next_appointment_date: string | null
-  timezone: { timezone_name: string | null } | null
 }
 
 type ApiOfficesResponse = {
@@ -88,7 +85,6 @@ export async function getServiceLocations(serviceId: number): Promise<ServiceLoc
       address: row.civic_address?.trim() || '',
       latitude: row.latitude,
       longitude: row.longitude,
-      timezoneName: row.timezone?.timezone_name?.trim() || '',
       appointmentMessage: row.office_appointment_message?.trim() || '',
       nextAppointmentDate,
       appointmentsDisabled,

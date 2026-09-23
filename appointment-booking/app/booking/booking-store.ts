@@ -4,10 +4,12 @@ import type { ServiceLocation } from '../api/service-locations'
 import type { Service } from '../api/services'
 
 // The chosen appointment date and time. Date is YYYY-MM-DD; times are HH:MM office-local.
+// draftAppointmentId is required: a held slot always has a server draft.
 export type BookingSlot = {
   date: string
   startTime: string
   endTime: string
+  draftAppointmentId: number
 }
 
 export type BookingContextValue = {
@@ -18,9 +20,6 @@ export type BookingContextValue = {
   setSelectedLocation: (location: ServiceLocation | null) => void
   selectedSlot: BookingSlot | null
   setSelectedSlot: (slot: BookingSlot | null) => void
-  /** Server draft that holds the selected slot; null when nothing is held. */
-  draftAppointmentId: number | null
-  setDraftAppointmentId: (id: number | null) => void
 }
 
 // Isolated from component exports so Vite/Fast Refresh cannot duplicate this context.

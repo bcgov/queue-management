@@ -22,7 +22,6 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [selectedService, setSelectedServiceState] = useState<Service | null>(null)
   const [selectedLocation, setSelectedLocationState] = useState<ServiceLocation | null>(null)
   const [selectedSlot, setSelectedSlotState] = useState<BookingSlot | null>(null)
-  const [draftAppointmentId, setDraftAppointmentIdState] = useState<number | null>(null)
 
   useEffect(() => {
     // Restore saved choices after the page first loads in the browser.
@@ -31,23 +30,18 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       setSelectedLocationState(
         getJsonFromSession<ServiceLocation>(SessionKeys.BookingSelectedLocation),
       )
-      setSelectedSlotState(getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot))
-      setDraftAppointmentIdState(getJsonFromSession<number>(SessionKeys.BookingDraftAppointmentId))
+      const savedSlot = getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot)
+      // Slot is only valid when it still carries a draft id (source of truth for the hold).
+      setSelectedSlotState(savedSlot?.draftAppointmentId ? savedSlot : null)
       setIsReady(true)
     }, 0)
     return () => window.clearTimeout(id)
   }, [])
 
-  function setDraftAppointmentId(id: number | null) {
-    setDraftAppointmentIdState(id)
-    persistJson(SessionKeys.BookingDraftAppointmentId, id)
-  }
-
   // Clearing the time also releases the held slot. Expired drafts are already gone server-side.
   function setSelectedSlot(slot: BookingSlot | null) {
-    if (!slot && draftAppointmentId != null) {
-      void deleteDraftAppointment(draftAppointmentId).catch(() => {})
-      setDraftAppointmentId(null)
+    if (!slot && selectedSlot?.draftAppointmentId != null) {
+      void deleteDraftAppointment(selectedSlot.draftAppointmentId).catch(() => {})
     }
     setSelectedSlotState(slot)
     persistJson(SessionKeys.BookingSelectedSlot, slot)
@@ -80,8 +74,6 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         setSelectedLocation,
         selectedSlot,
         setSelectedSlot,
-        draftAppointmentId,
-        setDraftAppointmentId,
       }}
     >
       {children}

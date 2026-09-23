@@ -22,9 +22,10 @@ export async function createDraftAppointment(body: {
   })
 
   if (!res.ok) {
-    // The API explains scheduling conflicts here; show that text to the user.
-    const error = (await res.json().catch(() => null)) as { message?: string } | null
-    throw new Error(error?.message || 'Unable to hold this time slot')
+    // Conflict responses include a string message; otherwise use a generic fallback.
+    const error = (await res.json().catch(() => null)) as { message?: unknown } | null
+    const message = typeof error?.message === 'string' ? error.message : null
+    throw new Error(message || 'Unable to hold this time slot')
   }
 
   const created = (await res.json()) as { appointment?: { appointment_id?: number } }

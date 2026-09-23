@@ -59,10 +59,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     stopTokenRefresh()
 
     // Free the held timeslot while the token is still usable.
-    const draftId = getJsonFromSession<number>(SessionKeys.BookingDraftAppointmentId)
-    if (draftId) {
+    const savedSlot = getJsonFromSession<{ draftAppointmentId?: number }>(
+      SessionKeys.BookingSelectedSlot,
+    )
+    if (savedSlot?.draftAppointmentId) {
       try {
-        await deleteDraftAppointment(draftId)
+        await deleteDraftAppointment(savedSlot.draftAppointmentId)
       } catch {
         // Draft may already be expired or deleted.
       }
