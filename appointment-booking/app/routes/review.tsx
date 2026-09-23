@@ -1,13 +1,18 @@
-// Booking step 5: review service, location, date/time, and contact details. No confirm yet.
+// Booking step 5: review details, contact, and confirm the appointment.
 import { useEffect, useState } from 'react'
 import { Button, InlineAlert, Text, TextField } from '@bcgov/design-system-react-components'
 import { useNavigate } from 'react-router'
 
+import { createAppointment } from '~/api/appointments'
 import { getCurrentUser, type PublicUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
+import { addJsonToSession } from '~/auth/session'
+import { SessionKeys } from '~/auth/session-keys'
 import { useBooking } from '~/booking/booking-context'
+import type { BookingConfirmation } from '~/booking/booking-store'
 import { getContactValidation } from '~/booking/validate-contact'
 import { BookingBackRow } from '~/components/BookingBackRow'
+import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
 
@@ -22,12 +27,20 @@ export function meta() {
 export default function ReviewPage() {
   const navigate = useNavigate()
   const { isReady: isAuthReady, isAuthenticated, session } = useAuth()
-  const { isReady: isBookingReady, selectedService, selectedLocation, selectedSlot } = useBooking()
+  const {
+    isReady: isBookingReady,
+    selectedService,
+    selectedLocation,
+    selectedSlot,
+    clearBookingAfterConfirm,
+  } = useBooking()
   const [profile, setProfile] = useState<PublicUser | null>(null)
   // null = use profile/session default; string = user edited (including cleared).
   const [contactEmail, setContactEmail] = useState<string | null>(null)
   const [contactPhone, setContactPhone] = useState<string | null>(null)
   const [contactTouched, setContactTouched] = useState(false)
+  const [isConfirming, setIsConfirming] = useState(false)
+  const [confirmError, setConfirmError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isAuthReady || !isAuthenticated) return
@@ -49,6 +62,46 @@ export default function ReviewPage() {
   const email = (contactEmail ?? (profile?.email?.trim() || session?.email?.trim() || '')).trim()
   const phone = (contactPhone ?? (profile?.telephone?.trim() || '')).trim()
   const validation = getContactValidation(email, phone)
+
+  async function handleConfirm() {
+    setContactTouched(true)
+    if (!validation.hasValidContact || !selectedService || !selectedLocation || !selectedSlot) {
+      return
+    }
+
+    setConfirmError(null)
+    setIsConfirming(true)
+
+    try {
+      await createAppointment({
+        office_id: selectedLocation.id,
+        service_id: selectedService.id,
+        // Office wall clock; API converts to UTC using the office timezone.
+        start_time: `${selectedSlot.date}T${selectedSlot.startTime}:00`,
+        end_time: `${selectedSlot.date}T${selectedSlot.endTime}:00`,
+        appointment_draft_id: selectedSlot.draftAppointmentId,
+      })
+
+      const confirmation: BookingConfirmation = {
+        bookedByName: session?.userFullName?.trim() || 'Appointment User',
+        serviceName: selectedService.name,
+        locationName: selectedLocation.name,
+        locationAddress: selectedLocation.address || null,
+        date: selectedSlot.date,
+        startTime: selectedSlot.startTime,
+        endTime: selectedSlot.endTime,
+      }
+      addJsonToSession(SessionKeys.BookingConfirmation, confirmation)
+      clearBookingAfterConfirm()
+      navigate('/confirmation')
+    } catch (err) {
+      setConfirmError(
+        err instanceof Error ? err.message : 'Unable to book this appointment. Please try again.',
+      )
+    } finally {
+      setIsConfirming(false)
+    }
+  }
 
   const stepProgress = (
     <BookingStepProgress
@@ -149,8 +202,21 @@ export default function ReviewPage() {
         ) : null}
       </section>
 
+      {confirmError ? (
+        <div className="review-confirm-error">
+          <InlineAlert variant="danger" title="Unable to confirm">
+            {confirmError}
+          </InlineAlert>
+        </div>
+      ) : null}
+
       <div className="booking-nav-row">
         <BookingBackRow onBack={() => navigate('/datetime')} />
+        <BookingContinueRow
+          label={isConfirming ? 'Confirming…' : 'Confirm appointment'}
+          isDisabled={isConfirming}
+          onContinue={() => void handleConfirm()}
+        />
       </div>
     </>
   )

@@ -64,6 +64,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     persistJson(SessionKeys.BookingSelectedLocation, location)
   }
 
+  // After POST /appointments/ the draft is already gone — clear local selection without DELETE.
+  function clearBookingAfterConfirm() {
+    setSelectedSlotState(null)
+    setSelectedServiceState(null)
+    setSelectedLocationState(null)
+    removeFromSession(SessionKeys.BookingSelectedSlot)
+    removeFromSession(SessionKeys.BookingSelectedService)
+    removeFromSession(SessionKeys.BookingSelectedLocation)
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -74,6 +84,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         setSelectedLocation,
         selectedSlot,
         setSelectedSlot,
+        clearBookingAfterConfirm,
       }}
     >
       {children}

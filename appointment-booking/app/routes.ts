@@ -8,5 +8,6 @@ export default [
   route('login', 'routes/login.tsx'),
   route('datetime', 'routes/datetime.tsx'),
   route('review', 'routes/review.tsx'),
+  route('confirmation', 'routes/confirmation.tsx'),
   route('locations', 'routes/locations.tsx'),
 ] satisfies RouteConfig

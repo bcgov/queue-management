@@ -48,29 +48,33 @@ function AppShell() {
 
   return (
     <>
-      <Header
-        title="Service BC"
-        skipLinks={[
-          <a key="main" href="#main-content">
-            Skip to main content
-          </a>,
-        ]}
-      >
-        {isAuthenticated ? (
-          <div className="header-account">
-            <span className="header-account-name">
-              Signed in as {session?.userFullName?.trim() || 'Appointment User'}
-            </span>
-            <Button size="small" onPress={() => void logout()}>
-              Log out
-            </Button>
-          </div>
-        ) : null}
-      </Header>
+      <div className="no-print">
+        <Header
+          title="Service BC"
+          skipLinks={[
+            <a key="main" href="#main-content">
+              Skip to main content
+            </a>,
+          ]}
+        >
+          {isAuthenticated ? (
+            <div className="header-account">
+              <span className="header-account-name">
+                Signed in as {session?.userFullName?.trim() || 'Appointment User'}
+              </span>
+              <Button size="small" onPress={() => void logout()}>
+                Log out
+              </Button>
+            </div>
+          ) : null}
+        </Header>
+      </div>
       <main id="main-content" className="layout-main">
         <Outlet />
       </main>
-      <Footer />
+      <div className="no-print">
+        <Footer />
+      </div>
     </>
   )
 }

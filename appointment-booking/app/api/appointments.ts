@@ -37,6 +37,42 @@ export async function createDraftAppointment(body: {
   return appointmentId
 }
 
+// Book the held timeslot. Deletes the draft server-side when appointment_draft_id is sent.
+// Returns the confirmed appointment id (reference number for the confirmation page).
+export async function createAppointment(body: {
+  office_id: number
+  service_id: number
+  start_time: string
+  end_time: string
+  appointment_draft_id: number
+}): Promise<number> {
+  const token = await getAccessToken()
+
+  const baseUrl = await getApiBaseUrl()
+  const res = await fetch(`${baseUrl}/appointments/`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    const error = (await res.json().catch(() => null)) as { message?: unknown } | null
+    const message = typeof error?.message === 'string' ? error.message : null
+    throw new Error(message || 'Unable to book this appointment')
+  }
+
+  const created = (await res.json()) as { appointment?: { appointment_id?: number } }
+  const appointmentId = created.appointment?.appointment_id
+  if (!appointmentId) {
+    throw new Error('Unable to book this appointment')
+  }
+
+  return appointmentId
+}
+
 // Release a held timeslot. 404 means the draft already expired or was deleted.
 export async function deleteDraftAppointment(appointmentId: number): Promise<void> {
   const token = await getAccessToken()
