@@ -96,6 +96,7 @@
 </template>
 
 <script lang="ts">
+import { officeNow, isPastOfficeTime } from '@/utils/office-time'
 /* eslint-disable */
 // /* eslint-disable sort-imports */
 import { Component, Vue } from 'vue-property-decorator'
@@ -172,8 +173,8 @@ export default class Appointments extends Vue {
   mode: any = 'stack'
   weekday: any = [1, 2, 3, 4, 5]
 
-  value: any = ''
-  currentDay: any = moment().format('YYYY-MM-DD')// new Date()
+  value: any = officeNow(this.$store.state.user.office).format('YYYY-MM-DD')
+  get currentDay () { return officeNow(this.$store.state.user.office).format('YYYY-MM-DD') }
 
   is_stat: boolean = false
   _keyListenerNewApp: any = null
@@ -346,12 +347,12 @@ export default class Appointments extends Vue {
 
   selectEvent (event) {
     const eventDate = moment(event.date + " " + event.time);
-    if (eventDate < moment(moment.now())) {
+    if (isPastOfficeTime(eventDate, this.$store.state.user.office)) {
       return
     }
     this.is_stat = false
     this.getAppointments().then((each) => {
-      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
+      const bb = each.find(element => ((moment(event.date).format('YYYY-MM-DD') === moment(element.local_start_time).format('YYYY-MM-DD')) && (element.stat_flag)));
       if (bb) {
         this.is_stat = true
       }
@@ -387,7 +388,7 @@ export default class Appointments extends Vue {
   }
 
   today () {
-    this.value = ''
+    this.value = officeNow(this.$store.state.user.office).format('YYYY-MM-DD')
     this.calendarSetup()
   }
 
@@ -405,13 +406,13 @@ export default class Appointments extends Vue {
 
   setTempEvent (event) {
     this.removeTempEvent()
-    const start = moment(moment.tz(event.start.format('YYYY-MM-DD HH:mm:ss'), this.$store.state.user.office.timezone.timezone_name).format()).clone()
+    const start = moment(event.start)
 
     // for draft
     const data: any = {
-      start_time: moment.utc(start).format(),
+      start_time: start.format('YYYY-MM-DD[T]HH:mm:ss'),
       // setting end time aftger 15 min of start to fix over appoinment time      
-      end_time: moment(start).clone().add(15, 'minutes')
+      end_time: moment(start).clone().add(15, 'minutes').format('YYYY-MM-DD[T]HH:mm:ss')
     }
 
     this.postDraftAppointment(data).then((resp) => {

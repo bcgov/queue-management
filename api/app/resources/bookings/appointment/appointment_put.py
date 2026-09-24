@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from marshmallow import ValidationError
 from flask import request, abort
 from flask_restx import Resource
 from qsystem import api, db
@@ -28,6 +29,7 @@ from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
 from app.utilities.sms import send_sms
+from app.utilities.timezone_utils import convert_local_fields_to_utc, validate_utc_interval
 
 
 def _get_valid_service(service_id):
@@ -49,6 +51,8 @@ class AppointmentPut(Resource):
     @jwt.has_one_of_roles([Role.internal_user.value, Role.online_appointment_user.value])
     def put(self, id):
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
         csr = None
         user = None
 
@@ -60,13 +64,16 @@ class AppointmentPut(Resource):
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
+            draft = Appointment.query.filter_by(appointment_id=draft_id_to_delete, is_draft=True).first()
+            draft_room = draft.office.office_name if draft else None
             Appointment.delete_draft([draft_id_to_delete])
-            if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_delete', draft_id_to_delete)
+            if not application.config['DISABLE_AUTO_REFRESH'] and draft_room:
+                socketio.emit('appointment_delete', draft_id_to_delete, room=draft_room)
 
         if is_public_user_appt:
             office_id = json_data.get('office_id')
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             appointment = Appointment.query.filter_by(appointment_id=id) \
                 .filter_by(office_id=office_id) \
                 .first_or_404()
@@ -101,6 +108,7 @@ class AppointmentPut(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
             if 'service_id' in json_data:
                 service = _get_valid_service(json_data.get('service_id'))
                 if service is None:
@@ -120,6 +128,7 @@ class AppointmentPut(Resource):
             if citizen.user_id != user.user_id:
                 abort(403)
 
+        validate_utc_interval(json_data, appointment)
         appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
         warning = self.appointment_schema.validate(json_data)
 
@@ -153,9 +162,9 @@ class AppointmentPut(Resource):
             # Treat checked_in_time as a delete, as we filter those from frontend
             # this happens when checking in an appointment
             if "checked_in_time" in json_data:
-                socketio.emit('appointment_delete', id)
+                socketio.emit('appointment_delete', id, room=office.office_name)
             else:
-                socketio.emit('appointment_update', result)
+                socketio.emit('appointment_update', result, room=office.office_name)
         
 
         return {"appointment": result,

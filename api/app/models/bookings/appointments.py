@@ -15,10 +15,10 @@ limitations under the License.'''
 from app.models.bookings import Base
 from qsystem import db
 from app.utilities.sqlalchemy_compat import UtcDateTime, utcnow
-from sqlalchemy import event, func, or_, and_, text
+from sqlalchemy import event, or_, and_, text
 from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
-from dateutil import tz
+from app.utilities.timezone_utils import get_timezone, localize, office_day_utc_bounds
 from app.utilities.date_util import current_pacific_time
 from sqlalchemy.orm import declared_attr
 from flask import g
@@ -68,7 +68,9 @@ class Appointment(Base):
     @classmethod
     def find_appointment_availability(cls, office_id: int, timezone:str, first_date: datetime, last_date: datetime):
         """Find appointment availability for dates in a month"""
-        query = db.session.query(Appointment).filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time)).between(func.date_trunc('day', func.timezone(timezone, first_date)), func.date_trunc('day', func.timezone(timezone, last_date))))
+        start, _ = office_day_utc_bounds(localize(first_date, timezone).date(), timezone)
+        _, end = office_day_utc_bounds(localize(last_date, timezone).date(), timezone)
+        query = db.session.query(Appointment).filter(Appointment.start_time >= start, Appointment.start_time < end)
         query = query.filter(Appointment.office_id == office_id)
         query = query.order_by(Appointment.start_time.asc())
         return query.all()
@@ -78,15 +80,20 @@ class Appointment(Base):
         """Find next day appointments."""
         from app.models.theq import Office, PublicUser, Citizen, Timezone
 
-        tomorrow = current_pacific_time() + timedelta(days=1)
+        now = current_pacific_time()
+        windows = []
+        for office_timezone in db.session.query(Timezone).all():
+            name = office_timezone.timezone_name
+            tomorrow = now.astimezone(get_timezone(name)).date() + timedelta(days=1)
+            start, end = office_day_utc_bounds(tomorrow, name)
+            windows.append(and_(Timezone.timezone_id == office_timezone.timezone_id,
+                                Appointment.start_time >= start, Appointment.start_time < end))
         query = db.session.query(Appointment, Office, Timezone, PublicUser). \
             join(Citizen, Citizen.citizen_id == Appointment.citizen_id). \
             join(Office, Office.office_id == Appointment.office_id). \
             join(Timezone, Timezone.timezone_id == Office.timezone_id). \
             outerjoin(PublicUser, PublicUser.user_id == Citizen.user_id). \
-            filter(func.date_trunc('day',
-                                   func.timezone(Timezone.timezone_name, Appointment.start_time)) ==
-                   tomorrow.strftime("%Y-%m-%d 00:00:00"))
+            filter(or_(*windows) if windows else False)
 
         return query.all()
 
@@ -120,12 +127,14 @@ class Appointment(Base):
         from app.models.theq import PublicUser, Citizen
 
         start_datetime = parse(start_time)
+        day = start_datetime.astimezone(get_timezone(timezone)).date()
+        start, end = office_day_utc_bounds(day, timezone)
         query = db.session.query(Appointment). \
             join(Citizen). \
             join(PublicUser). \
             filter(Appointment.citizen_id == Citizen.citizen_id). \
             filter(Citizen.user_id == PublicUser.user_id). \
-            filter(func.date_trunc('day', func.timezone(timezone, Appointment.start_time)) == (func.date_trunc('day', func.timezone(timezone, start_datetime)))). \
+            filter(Appointment.start_time >= start, Appointment.start_time < end). \
             filter(Appointment.office_id == office_id). \
             filter(PublicUser.username == user_name). \
             filter(Appointment.checked_in_time.is_(None))

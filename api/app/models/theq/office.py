@@ -17,6 +17,8 @@ from app.models.theq import Base
 from app.models.bookings import Exam, Room
 from qsystem import cache, db
 import enum, logging
+from flask import abort
+from marshmallow import ValidationError
 from sqlalchemy import Enum, desc
 
 
@@ -128,10 +130,15 @@ class Office(Base):
     @classmethod
     def find_by_id(cls, office_id: int):
         """Return a Office by office_id."""
+        if isinstance(office_id, bool) or not isinstance(office_id, (int, str)) or not str(office_id).isdigit():
+            raise ValidationError({"office_id": ["Must be a valid office ID."]})
+        office_id = int(office_id)
         key = Office.format_string % office_id
         office = cache.get(key)
         if not office:
             office = db.session.get(cls, office_id)
+            if office is None:
+                abort(404, description="Office not found.")
             office.timeslots
             office.timezone
         return office
@@ -159,6 +166,14 @@ class Office(Base):
             office_schema = OfficeSchema(many=True)
             active_offices = office_schema.dump(Office.query.filter(Office.deleted.is_(None)).order_by(Office.office_name))
             cache.set(Office.offices_cache_key, active_offices)
+        # Refresh clock rules even when the office reference data was cached
+        # before a deployment or a calendar-year boundary.
+        from datetime import datetime, timezone
+        from app.utilities.timezone_utils import office_clock_offsets
+        for office in active_offices:
+            if office.get('timezone'):
+                office['timezone']['clock_offsets'] = office_clock_offsets(
+                    office['timezone']['timezone_name'], datetime.now(timezone.utc).year)
         return active_offices
 
     @classmethod

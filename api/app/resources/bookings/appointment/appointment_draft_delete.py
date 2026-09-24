@@ -34,9 +34,10 @@ class AppointmentDraftDelete(Resource):
 
     def delete(self, id):
 
+        draft = Appointment.query.filter_by(appointment_id=id, is_draft=True).first()
+        draft_room = draft.office.office_name if draft else None
         Appointment.delete_draft([id])
-        if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_delete', id)
+        if not application.config['DISABLE_AUTO_REFRESH'] and draft_room:
+            socketio.emit('appointment_delete', id, room=draft_room)
 
         return {}, 204
-

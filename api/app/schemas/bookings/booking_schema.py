@@ -19,6 +19,7 @@ from app.models.bookings import Booking
 from app.schemas import BaseSchema
 from app.schemas.bookings import RoomSchema, InvigilatorSchema
 from app.schemas.theq import OfficeSchema
+from app.utilities.timezone_utils import office_local_isoformat
 
 
 class BookingSchema(BaseSchema):
@@ -35,6 +36,16 @@ class BookingSchema(BaseSchema):
     fees = fields.Str()
     room_id = fields.Int(allow_none=True)
     start_time = fields.DateTime()
+    local_start_time = fields.Function(
+        lambda booking: office_local_isoformat(
+            booking.start_time, booking.office.timezone.timezone_name
+        ), dump_only=True
+    )
+    local_end_time = fields.Function(
+        lambda booking: office_local_isoformat(
+            booking.end_time, booking.office.timezone.timezone_name
+        ), dump_only=True
+    )
     shadow_invigilator_id = fields.Int(allow_none=True)
     office_id = fields.Int()
     sbc_staff_invigilated = fields.Int()

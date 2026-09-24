@@ -152,6 +152,7 @@
 </template>
 
 <script lang="ts">
+import { officeNow, isPastOfficeTime } from '@/utils/office-time'
 /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
@@ -258,13 +259,13 @@ export default class Calendar extends Vue {
   categoryDays: number = categoryDefaultDays
   mode: any = 'stack'
   weekday: any = [1, 2, 3, 4, 5]
-  start: any = moment().format('YYYY-MM-DD')
+  start: any = officeNow(this.$store.state.user.office).format('YYYY-MM-DD')
   startTime : string = '08:30'
   intervalCount : string = '17'
 
-  value: any = ''
+  value: any = officeNow(this.$store.state.user.office).format('YYYY-MM-DD')
   eventsList: any = []
-  currentDay: any = moment().format('YYYY-MM-DD')// new Date()
+  get currentDay () { return officeNow(this.$store.state.user.office).format('YYYY-MM-DD') }
 
   categories: any = []
   show_loading: boolean = false
@@ -332,8 +333,7 @@ export default class Calendar extends Vue {
     if (info.weekday === 6 || info.weekday === 0) {
       return false
     }
-    const today =  moment.tz(moment().format(), this.$store.state.user.office.timezone.timezone_name).format('YYYY-MM-DD HH:mm:ss')
-    if (info.start.isBefore(moment(today))) {
+    if (isPastOfficeTime(info.start, this.$store.state.user.office)) {
       return false
     }
 
@@ -665,7 +665,7 @@ export default class Calendar extends Vue {
   }
 
   today () {
-    this.value = ''
+    this.value = officeNow(this.$store.state.user.office).format('YYYY-MM-DD')
     this.type = 'category'
     this.viewRender()
   }

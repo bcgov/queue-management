@@ -58,7 +58,7 @@ class ExamSchema(BaseSchema):
     invigilator_id = fields.Int(allow_none=True)
     session_number = fields.Int(allow_none=True)
     exam_returned_ind = fields.Int()
-    exam_returned_date = fields.Str(allow_none=True)
+    exam_returned_date = fields.DateTime(allow_none=True)
     exam_returned_tracking_number = fields.Str(allow_none=True)
     exam_written_ind = fields.Int()
     upload_received_ind = fields.Int(allow_none=True)

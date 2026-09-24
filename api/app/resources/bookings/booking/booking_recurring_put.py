@@ -13,14 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from marshmallow import ValidationError
 from flask import request
 from flask_restx import Resource
 from qsystem import api, db
 from app.models.bookings import Booking, Room, Invigilator
-from app.models.theq import CSR
+from app.models.theq import CSR, Office
 from app.schemas.bookings import BookingSchema
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import convert_local_fields_to_utc, validate_utc_interval
 
 
 @api.route("/bookings/recurring/<string:id>", methods=["PUT"])
@@ -34,9 +36,15 @@ class BookingRecurringPut(Resource):
         csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
 
         if not json_data:
             return {"message": "No input data received for updating recurring bookings"}
+
+        if 'start_time' in json_data or 'end_time' in json_data:
+            office = db.session.get(Office, csr.office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
 
         bookings = Booking.query.filter_by(recurring_uuid=id)\
                                 .filter_by(office_id=csr.office_id)\
@@ -44,6 +52,7 @@ class BookingRecurringPut(Resource):
 
         for booking in bookings:
 
+            validate_utc_interval(json_data, booking)
             booking = self.booking_schema.load(json_data, instance=booking, partial=True)
             warning = self.booking_schema.validate(json_data)
 
@@ -52,9 +61,10 @@ class BookingRecurringPut(Resource):
                 return {"message": warning}, 422
 
             db.session.add(booking)
-            db.session.commit()
 
-        result = self.booking_schema.dump(bookings)
+        db.session.commit()
+
+        result = self.booking_schema.dump(bookings, many=True)
 
         return {
             "bookings": result,

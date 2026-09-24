@@ -183,7 +183,7 @@ export default class AgendaScreen extends Vue {
       const service_name = service ? service.service_name : 'N/A';
       
       return {
-        start_time: appt.start_time,
+        start_time: appt.local_start_time,
         citizen_name: appt.citizen_name,
         service_name,
         contact_info: appt.contact_information,
@@ -226,16 +226,16 @@ export default class AgendaScreen extends Vue {
       online_flag: appt.online_flag,
       service_id: appt.service_id,
       comments: appt.comments,
-      start: moment(appt.start_time),
-      end: moment(appt.end_time),
+      start: moment(appt.local_start_time),
+      end: moment(appt.local_end_time),
       appointment_id: appt.appointment_id
     }
 
     this.setAgendaClickedAppt(tempEvent)
 
     this.clickedTime =  {
-      start: moment(appt.start_time),
-      end: moment(appt.end_time)
+      start: moment(appt.local_start_time),
+      end: moment(appt.local_end_time)
     }
     this.toggleApptBookingModal(true);
   }
@@ -267,8 +267,8 @@ export default class AgendaScreen extends Vue {
       online_flag: appt.online_flag,
       service_id: appt.service_id,
       comments: appt.comments,
-      start: moment(appt.start_time),
-      end: moment(appt.end_time),
+      start: moment(appt.local_start_time),
+      end: moment(appt.local_end_time),
       appointment_id: appt.appointment_id,
       recurring_uuid: null,
       blackout_flag: 'N',
@@ -278,8 +278,8 @@ export default class AgendaScreen extends Vue {
     }
     this.setAgendaClickedAppt(tempEvent)
     this.clickedTime =  {
-      start: moment(appt.start_time),
-      end: moment(appt.end_time)
+      start: moment(appt.local_start_time),
+      end: moment(appt.local_end_time)
     }
     this.setAgendaClickedTime(this.clickedTime);
 

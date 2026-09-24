@@ -13,14 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import logging
+from marshmallow import ValidationError
 from flask import request
 from flask_restx import Resource
 from qsystem import api, db, socketio, application
 from app.models.bookings import Appointment
-from app.models.theq import CSR
+from app.models.theq import CSR, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, get_username
 from app.auth.auth import jwt
+from app.utilities.timezone_utils import convert_local_fields_to_utc, validate_utc_interval
 
 
 @api.route("/appointments/recurring/<string:id>", methods=["PUT"])
@@ -34,9 +36,15 @@ class AppointmentRecurringPut(Resource):
         csr = CSR.find_by_username(get_username())
 
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
 
         if not json_data:
             return {"message": "No input data received for updating an series of appointments"}
+
+        if 'start_time' in json_data or 'end_time' in json_data:
+            office = db.session.get(Office, csr.office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name)
 
         appointments = Appointment.query.filter_by(recurring_uuid=id)\
                                   .filter_by(office_id=csr.office_id)\
@@ -44,6 +52,7 @@ class AppointmentRecurringPut(Resource):
 
         for appointment in appointments:
 
+            validate_utc_interval(json_data, appointment)
             appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
             warning = self.appointment_schema.validate(json_data)
 
@@ -52,12 +61,13 @@ class AppointmentRecurringPut(Resource):
                 return {"message": warning}, 422
 
             db.session.add(appointment)
-            db.session.commit()
 
-        result = self.appointment_schema.dump(appointments)
+        db.session.commit()
+
+        result = self.appointment_schema.dump(appointments, many=True)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_update', result)
+            socketio.emit('appointment_update', result, room=csr.office.office_name)
 
         return {
             "appointments": result,

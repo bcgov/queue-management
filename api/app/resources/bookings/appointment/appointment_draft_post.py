@@ -15,6 +15,7 @@ limitations under the License.'''
 import logging
 
 from dateutil.parser import parse
+from marshmallow import ValidationError
 from flask import request, g
 from flask_restx import Resource
 
@@ -24,7 +25,7 @@ from app.schemas.bookings import AppointmentSchema
 from app.schemas.theq import CitizenSchema
 from app.services import AvailabilityService
 from app.utilities.auth_util import get_username
-from app.utilities.date_util import add_delta_to_time
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 from qsystem import api, db, my_print, application
 from qsystem import socketio
 
@@ -38,17 +39,16 @@ class AppointmentDraftPost(Resource):
     def post(self):
         my_print("==> In AppointmentDraftPost, POST /appointments/draft")
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
 
         office_id = json_data.get('office_id')
         service_id = json_data.get('service_id')
+        office = Office.find_by_id(office_id)
+        convert_local_fields_to_utc(json_data, office.timezone.timezone_name, required=True)
         start_time = parse(json_data.get('start_time'))
         end_time = parse(json_data.get('end_time'))
-        office = Office.find_by_id(office_id)
         service = db.session.get(Service, int(service_id)) if service_id else None
-
-        # end_time can be null for CSRs when they click; whereas citizens know end-time.
-        if not end_time:
-            end_time = add_delta_to_time(start_time, minutes=office.appointment_duration, timezone=office.timezone.timezone_name)
 
         # Unauthenticated requests from citizens won't have name, so we set a fallback
         if (hasattr(g, 'jwt_oidc_token_info') and hasattr(g.jwt_oidc_token_info, 'username')):
@@ -92,6 +92,6 @@ class AppointmentDraftPost(Resource):
         result = self.appointment_schema.dump(appointment)
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_create', result)
+            socketio.emit('appointment_create', result, room=office.office_name)
 
         return {"appointment": result, "warning": warning}, 201

@@ -17,6 +17,7 @@ from app.models.bookings import Appointment
 from app.schemas.theq import OfficeSchema, ServiceSchema
 from qsystem import ma
 from app.schemas import BaseSchema
+from app.utilities.timezone_utils import office_local_isoformat
 
 
 class AppointmentSchema(BaseSchema):
@@ -31,6 +32,16 @@ class AppointmentSchema(BaseSchema):
     citizen_id = fields.Int()
     start_time = fields.DateTime()
     end_time = fields.DateTime()
+    local_start_time = fields.Function(
+        lambda appointment: office_local_isoformat(
+            appointment.start_time, appointment.office.timezone.timezone_name
+        ), dump_only=True
+    )
+    local_end_time = fields.Function(
+        lambda appointment: office_local_isoformat(
+            appointment.end_time, appointment.office.timezone.timezone_name
+        ), dump_only=True
+    )
     checked_in_time = fields.DateTime()
     comments = fields.String(allow_none=True)
     citizen_name = fields.String()
@@ -42,4 +53,3 @@ class AppointmentSchema(BaseSchema):
     stat_flag = fields.Boolean(allow_none=True)
     office = fields.Nested(OfficeSchema(exclude=('sb', 'counters', 'quick_list', 'back_office_list', 'timeslots')))
     service = fields.Nested(ServiceSchema())
-

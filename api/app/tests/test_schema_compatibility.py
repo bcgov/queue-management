@@ -4,8 +4,7 @@ import inspect
 import pkgutil
 import sys
 from datetime import datetime, timezone
-
-import pytest
+from types import SimpleNamespace
 
 
 def _schema_classes():
@@ -175,6 +174,26 @@ def test_exam_schema_accepts_iso_exam_received_date_inputs(app, seeded_data):
             "2026-04-17T07:00:00+00:00"
         )
         assert z_exam.exam_received_date.isoformat() == "2026-04-17T07:00:00+00:00"
+
+
+def test_exam_schema_parses_and_serializes_exam_returned_date(app):
+    """Assert return dates are converted to datetimes before persistence."""
+    with app.app_context():
+        from app.schemas.bookings import ExamSchema
+
+        returned_date_field = ExamSchema().fields["exam_returned_date"]
+
+        assert returned_date_field.deserialize("2026-09-04") == datetime(2026, 9, 4)
+        assert returned_date_field.deserialize("2026-09-04T07:00:00Z") == datetime(
+            2026, 9, 4, 7, tzinfo=timezone.utc
+        )
+        assert returned_date_field.deserialize(None) is None
+        assert returned_date_field.serialize(
+            "exam_returned_date",
+            SimpleNamespace(
+                exam_returned_date=datetime(2026, 9, 4, tzinfo=timezone.utc)
+            ),
+        ) == "2026-09-04T00:00:00+00:00"
 
 
 def test_no_schema_explicitly_uses_strict_literal_z_datetime_format(app, seeded_database):

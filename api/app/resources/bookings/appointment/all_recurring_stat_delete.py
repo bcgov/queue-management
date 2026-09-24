@@ -33,13 +33,15 @@ class AppointmentRecurringDelete(Resource):
 
         appointments = Appointment.query.filter_by(recurring_uuid=id)\
                                         .all()
+        office_rooms = {appointment.office.office_name for appointment in appointments}
 
         for appointment in appointments:
             db.session.delete(appointment)
             db.session.commit()
 
         if not application.config['DISABLE_AUTO_REFRESH']:
-            socketio.emit('appointment_delete', id)
+            for office_room in office_rooms:
+                socketio.emit('appointment_delete', id, room=office_room)
 
 
         return {}, 204

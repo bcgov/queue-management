@@ -16,6 +16,7 @@ import logging
 from datetime import datetime
 
 from dateutil.parser import parse
+from marshmallow import ValidationError
 from flask import request
 from flask_restx import Resource
 
@@ -33,6 +34,7 @@ from qsystem import api, api_call_with_retry, db, my_print, application
 from qsystem import socketio
 from app.auth.auth import jwt
 from app.utilities.sms import send_sms
+from app.utilities.timezone_utils import convert_local_fields_to_utc
 
 
 def _get_valid_service(service_id):
@@ -57,6 +59,8 @@ class AppointmentPost(Resource):
     def post(self):
         my_print("==> In AppointmentPost, POST /appointments/")
         json_data = request.get_json()
+        if not isinstance(json_data, dict):
+            raise ValidationError({"_schema": ["Must be a JSON object."]})
         
         if not json_data:
             return {"message": "No input data received for creating an appointment"}, 400
@@ -65,15 +69,14 @@ class AppointmentPost(Resource):
         # Clear up a draft if one was previously created by user reserving this time.
         if json_data.get('appointment_draft_id'):
             draft_id_to_delete = int(json_data['appointment_draft_id'])
+            draft = Appointment.query.filter_by(appointment_id=draft_id_to_delete, is_draft=True).first()
+            draft_room = draft.office.office_name if draft else None
             Appointment.delete_draft([draft_id_to_delete])
-            if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_delete', draft_id_to_delete)
+            if not application.config['DISABLE_AUTO_REFRESH'] and draft_room:
+                socketio.emit('appointment_delete', draft_id_to_delete, room=draft_room)
         #for stat
         if (json_data.get('stat_office_id', False)):
             json_data['office_id'] = json_data.get('stat_office_id')
-        
-        #get start date:
-        start_time_ct = json_data.get('start_time', False)
         
         # remove below code, once code is tested - new req --> Stop blackouts from cancelling items (offices will call and cancel people individually if we have to close)
         is_blackout_appt = json_data.get('blackout_flag', 'N') == 'Y'
@@ -99,6 +102,7 @@ class AppointmentPost(Resource):
             citizen.citizen_name = user.display_name
 
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name, required=True)
             service = _get_valid_service(service_id)
             if service is None:
                 return {
@@ -126,11 +130,13 @@ class AppointmentPost(Resource):
             csr = CSR.find_by_username(get_username())
             office_id = json_data.get('office_id', csr.office_id)
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name, required=True)
 
         else:
             csr = CSR.find_by_username(get_username())
             office_id = csr.office_id
             office = Office.find_by_id(office_id)
+            convert_local_fields_to_utc(json_data, office.timezone.timezone_name, required=True)
             service_id = json_data.get('service_id')
 
             # Preserve legacy Newman blackout payloads, which omit service_id for
@@ -149,6 +155,7 @@ class AppointmentPost(Resource):
                     "message": "Could not find service for service_id: " + str(service_id)
                 }, 400
 
+        start_time_ct = json_data.get('start_time', False)
         citizen.office_id = office_id
         citizen.qt_xn_citizen_ind = 0
         citizen_state = CitizenState.query.filter_by(cs_state_name="Appointment booked").first()
@@ -190,7 +197,7 @@ class AppointmentPost(Resource):
             result = self.appointment_schema.dump(appointment)
 
             if not application.config['DISABLE_AUTO_REFRESH']:
-                socketio.emit('appointment_create', result)
+                socketio.emit('appointment_create', result, room=office.office_name)
 
             return {"appointment": result,
                     "errors": {}}, 201

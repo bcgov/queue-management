@@ -6,6 +6,10 @@ ISO_DATETIME_SCHEMA = {
     "type": "string",
     "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:(?:Z|[+-]\d{2}:\d{2}))?$",
 }
+LOCAL_DATETIME_SCHEMA = {
+    "type": "string",
+    "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$",
+}
 DATE_KEY_SCHEMA = {"type": "string", "pattern": r"^\d{2}/\d{2}/\d{4}$"}
 
 
@@ -23,10 +27,16 @@ def object_schema(*, required, properties, additional_properties=False):
 
 
 TIMEZONE_SCHEMA = object_schema(
-    required=["timezone_id", "timezone_name"],
+    required=["timezone_id", "timezone_name", "clock_offsets"],
     properties={
         "timezone_id": {"type": "integer"},
         "timezone_name": {"type": "string"},
+        "clock_offsets": {"type": "array", "minItems": 1, "items": object_schema(
+            required=["start", "end", "offset_seconds"], properties={
+                "start": {"type": "string", "format": "date-time"},
+                "end": {"type": "string", "format": "date-time"},
+                "offset_seconds": {"type": "integer"},
+            })},
     },
 )
 
@@ -438,6 +448,8 @@ APPOINTMENT_SCHEMA = object_schema(
         "office_id",
         "start_time",
         "end_time",
+        "local_start_time",
+        "local_end_time",
         "citizen_name",
     ],
     properties={
@@ -447,6 +459,8 @@ APPOINTMENT_SCHEMA = object_schema(
         "citizen_id": nullable({"type": "integer"}),
         "start_time": nullable(ISO_DATETIME_SCHEMA),
         "end_time": nullable(ISO_DATETIME_SCHEMA),
+        "local_start_time": nullable(LOCAL_DATETIME_SCHEMA),
+        "local_end_time": nullable(LOCAL_DATETIME_SCHEMA),
         "checked_in_time": nullable(ISO_DATETIME_SCHEMA),
         "comments": nullable({"type": "string"}),
         "citizen_name": {"type": "string"},
@@ -462,7 +476,15 @@ APPOINTMENT_SCHEMA = object_schema(
 )
 
 BOOKING_SCHEMA = object_schema(
-    required=["booking_id", "office_id", "start_time", "end_time", "invigilators"],
+    required=[
+        "booking_id",
+        "office_id",
+        "start_time",
+        "end_time",
+        "local_start_time",
+        "local_end_time",
+        "invigilators",
+    ],
     properties={
         "booking_id": {"type": "integer"},
         "booking_name": nullable({"type": "string"}),
@@ -470,6 +492,8 @@ BOOKING_SCHEMA = object_schema(
         "fees": nullable({"type": "string"}),
         "room_id": nullable({"type": "integer"}),
         "start_time": nullable(ISO_DATETIME_SCHEMA),
+        "local_start_time": nullable(LOCAL_DATETIME_SCHEMA),
+        "local_end_time": nullable(LOCAL_DATETIME_SCHEMA),
         "shadow_invigilator_id": nullable({"type": "integer"}),
         "office_id": {"type": "integer"},
         "sbc_staff_invigilated": nullable({"type": "integer"}),
@@ -513,7 +537,7 @@ EXAM_SCHEMA = object_schema(
         "invigilator_id": nullable({"type": "integer"}),
         "session_number": nullable({"type": "integer"}),
         "exam_returned_ind": nullable({"type": "integer"}),
-        "exam_returned_date": nullable({"type": "string"}),
+        "exam_returned_date": nullable(ISO_DATETIME_SCHEMA),
         "exam_returned_tracking_number": nullable({"type": "string"}),
         "exam_written_ind": {"type": "integer"},
         "upload_received_ind": nullable({"type": "integer"}),

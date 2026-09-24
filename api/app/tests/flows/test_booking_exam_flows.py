@@ -5,8 +5,10 @@ from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import pytest
+from app.utilities.timezone_utils import local_datetime_to_utc
 from app.tests.api_test_support import (
     assert_json_response,
+    future_utc_window,
     json_of,
 )
 from app.tests.api_test_support import (
@@ -36,8 +38,9 @@ def test_booking_can_be_listed_and_retrieved(internal_ga_client, seeded_data):
 
 
 def test_booking_can_be_updated(internal_ga_client, seeded_data):
-    """Assert that booking updates preserve editable booking fields."""
+    """Assert that booking updates convert and return office-local times."""
     booking = _create_booking(internal_ga_client, seeded_data, days_from_now=2)
+    start_time, end_time = future_utc_window(3, duration_minutes=120)
 
     response = internal_ga_client.put(
         f"/bookings/{booking['booking_id']}/",
@@ -45,11 +48,22 @@ def test_booking_can_be_updated(internal_ga_client, seeded_data):
             "booking_name": "Updated single booking",
             "booking_contact_information": "updated-booking@example.com",
             "invigilator_id": [seeded_data["invigilator_ids"][1]],
+            "start_time": start_time,
+            "end_time": end_time,
         },
     )
 
     assert_json_response(response, 200)
-    assert json_of(response)["booking"]["booking_name"] == "Updated single booking"
+    updated = json_of(response)["booking"]
+    assert updated["booking_name"] == "Updated single booking"
+    assert updated["local_start_time"] == start_time
+    assert updated["local_end_time"] == end_time
+    assert datetime.fromisoformat(updated["start_time"]) == local_datetime_to_utc(
+        start_time, seeded_data["office_timezones"]["test_office"]
+    )
+    assert datetime.fromisoformat(updated["end_time"]) == local_datetime_to_utc(
+        end_time, seeded_data["office_timezones"]["test_office"]
+    )
 
 
 def test_booking_can_be_deleted(internal_ga_client, seeded_data):
@@ -213,6 +227,66 @@ def test_exam_update_accepts_iso_offset_exam_received_date(
     assert json_of(response)["exam"]["exam_received_date"] == (
         "2026-04-17T07:00:00+00:00"
     )
+
+
+def test_exam_return_update_accepts_frontend_date_only_value(
+    app, internal_ga_client, seeded_data
+):
+    """Assert the return-exam form's date-only value persists as UTC."""
+    booking = _create_booking(internal_ga_client, seeded_data, days_from_now=5)
+    exam = _create_exam(
+        internal_ga_client,
+        seeded_data,
+        booking["booking_id"],
+        event_id="event-return-date",
+    )
+
+    response = internal_ga_client.put(
+        f"/exams/{exam['exam_id']}/",
+        json={
+            "exam_returned_date": "2026-09-04",
+            "exam_returned_tracking_number": "TRACK-123",
+            "exam_written_ind": 1,
+        },
+    )
+    body = json_of(response)
+
+    assert_json_response(response, 201)
+    assert body["exam"]["exam_returned_date"] == "2026-09-04T00:00:00+00:00"
+    assert body["exam"]["exam_returned_tracking_number"] == "TRACK-123"
+    assert body["exam"]["exam_written_ind"] == 1
+
+    with app.app_context():
+        from app.models.bookings import Exam
+        from qsystem import db
+
+        saved_exam = db.session.get(Exam, exam["exam_id"])
+        assert saved_exam.exam_returned_date == datetime(
+            2026, 9, 4, tzinfo=ZoneInfo("UTC")
+        )
+
+
+def test_exam_return_update_rejects_invalid_date(
+    internal_ga_client, seeded_data
+):
+    """Assert malformed return dates produce a controlled validation response."""
+    booking = _create_booking(internal_ga_client, seeded_data, days_from_now=5)
+    exam = _create_exam(
+        internal_ga_client,
+        seeded_data,
+        booking["booking_id"],
+        event_id="event-invalid-return-date",
+    )
+
+    response = internal_ga_client.put(
+        f"/exams/{exam['exam_id']}/",
+        json={"exam_returned_date": "not-a-date"},
+    )
+
+    assert_json_response(response, 422)
+    assert json_of(response) == {
+        "message": {"exam_returned_date": ["Not a valid datetime."]}
+    }
 
 
 def test_exam_create_invalid_datetime_returns_validation_response(
