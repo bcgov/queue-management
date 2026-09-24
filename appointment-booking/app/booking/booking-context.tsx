@@ -1,7 +1,8 @@
-// Shared service, location, and appointment time across booking steps.
+// Shared service, location, appointment time, and draft hold across booking steps.
 // Also saved in the browser so choices survive the sign-in redirect.
 import { useContext, useEffect, useState, type ReactNode } from 'react'
 
+import { deleteDraftAppointment } from '../api/appointments'
 import type { ServiceLocation } from '../api/service-locations'
 import type { Service } from '../api/services'
 import { addJsonToSession, getJsonFromSession, removeFromSession } from '../auth/session'
@@ -29,28 +30,38 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       setSelectedLocationState(
         getJsonFromSession<ServiceLocation>(SessionKeys.BookingSelectedLocation),
       )
-      setSelectedSlotState(getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot))
+      const savedSlot = getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot)
+      // Slot is only valid when it still carries a draft id (source of truth for the hold).
+      setSelectedSlotState(savedSlot?.draftAppointmentId ? savedSlot : null)
       setIsReady(true)
     }, 0)
     return () => window.clearTimeout(id)
   }, [])
 
-  // Changing service or location clears any time already chosen.
+  // Clearing the time also releases the held slot. Expired drafts are already gone server-side.
+  function setSelectedSlot(slot: BookingSlot | null) {
+    if (!slot && selectedSlot?.draftAppointmentId != null) {
+      void deleteDraftAppointment(selectedSlot.draftAppointmentId).catch(() => {})
+    }
+    setSelectedSlotState(slot)
+    persistJson(SessionKeys.BookingSelectedSlot, slot)
+  }
+
+  // Changing service or office drops the time already chosen; refreshing the same one keeps it.
   function setSelectedService(service: Service | null) {
+    if (service?.id !== selectedService?.id) {
+      setSelectedSlot(null)
+    }
     setSelectedServiceState(service)
-    setSelectedSlot(null)
     persistJson(SessionKeys.BookingSelectedService, service)
   }
 
   function setSelectedLocation(location: ServiceLocation | null) {
+    if (location?.id !== selectedLocation?.id) {
+      setSelectedSlot(null)
+    }
     setSelectedLocationState(location)
-    setSelectedSlot(null)
     persistJson(SessionKeys.BookingSelectedLocation, location)
-  }
-
-  function setSelectedSlot(slot: BookingSlot | null) {
-    setSelectedSlotState(slot)
-    persistJson(SessionKeys.BookingSelectedSlot, slot)
   }
 
   return (

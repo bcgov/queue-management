@@ -1,6 +1,7 @@
 // Holds the signed-in user for the whole app (header + booking steps).
 import { useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 
+import { deleteDraftAppointment } from '../api/appointments'
 import {
   clearStoredAuthSession,
   logoutKeycloak,
@@ -8,7 +9,8 @@ import {
   type AuthSession,
   writeAuthSession,
 } from './keycloak'
-import { clearStoredBookingSession } from './session'
+import { clearStoredBookingSession, getJsonFromSession } from './session'
+import { SessionKeys } from './session-keys'
 import { startTokenRefresh, stopTokenRefresh } from './token-refresh'
 import { AuthContext } from './auth-store'
 
@@ -55,6 +57,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     stopTokenRefresh()
+
+    // Free the held timeslot while the token is still usable.
+    const savedSlot = getJsonFromSession<{ draftAppointmentId?: number }>(
+      SessionKeys.BookingSelectedSlot,
+    )
+    if (savedSlot?.draftAppointmentId) {
+      try {
+        await deleteDraftAppointment(savedSlot.draftAppointmentId)
+      } catch {
+        // Draft may already be expired or deleted.
+      }
+    }
+
     const logoutPromise = logoutKeycloak(`${window.location.origin}/services`)
     // Logout ends the booking attempt too — do not leave service/location for the next user.
     clearStoredAuthSession()

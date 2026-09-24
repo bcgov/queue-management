@@ -3,11 +3,13 @@ import { createContext } from 'react'
 import type { ServiceLocation } from '../api/service-locations'
 import type { Service } from '../api/services'
 
-// The chosen appointment date and time. Date is YYYY-MM-DD; times are HH:MM.
+// The chosen appointment date and time. Date is YYYY-MM-DD; times are HH:MM office-local.
+// draftAppointmentId is required: a held slot always has a server draft.
 export type BookingSlot = {
   date: string
   startTime: string
   endTime: string
+  draftAppointmentId: number
 }
 
 export type BookingContextValue = {

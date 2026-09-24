@@ -3,9 +3,11 @@ import { Button, Calendar, InlineAlert, Select, Text } from '@bcgov/design-syste
 import { parseDate } from '@internationalized/date'
 import { useNavigate } from 'react-router'
 
+import { createDraftAppointment, deleteDraftAppointment } from '~/api/appointments'
 import { getAvailableTimeSlots, type AvailableTimeSlots } from '~/api/timeslots'
 import { useAuth } from '~/auth/auth-context'
 import { useBooking } from '~/booking/booking-context'
+import type { BookingSlot } from '~/booking/booking-store'
 import { formatDate, formatTimeRange } from '~/booking/format-slot'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
@@ -38,6 +40,8 @@ export default function DateTimePage() {
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [isHoldingSlot, setIsHoldingSlot] = useState(false)
+  const [holdError, setHoldError] = useState<string | null>(null)
 
   useEffect(() => {
     if (
@@ -81,6 +85,46 @@ export default function DateTimePage() {
       window.clearTimeout(startId)
     }
   }, [isAuthReady, isBookingReady, isAuthenticated, selectedLocation, selectedService])
+
+  // Create (or replace) a draft hold as soon as a timeslot is chosen.
+  // Slot is only stored after the draft succeeds, so a slot always has a draft id.
+  async function holdSelectedSlot(slot: Omit<BookingSlot, 'draftAppointmentId'>) {
+    if (!selectedService || !selectedLocation) return
+
+    setHoldError(null)
+    setIsHoldingSlot(true)
+    const previousDraftId = selectedSlot?.draftAppointmentId
+
+    try {
+      // Release the previous hold first, so re-picking the same time is not a conflict.
+      if (previousDraftId != null) {
+        try {
+          await deleteDraftAppointment(previousDraftId)
+        } catch {
+          // Expired or already deleted.
+        }
+      }
+
+      const draftAppointmentId = await createDraftAppointment({
+        office_id: selectedLocation.id,
+        service_id: selectedService.id,
+        // Office wall clock; API converts to UTC using the office timezone.
+        start_time: `${slot.date}T${slot.startTime}:00`,
+        end_time: `${slot.date}T${slot.endTime}:00`,
+      })
+      setSelectedSlot({ ...slot, draftAppointmentId })
+    } catch (err) {
+      // Previous draft was already released above; clear local selection too.
+      setSelectedSlot(null)
+      setHoldError(
+        err instanceof Error
+          ? err.message
+          : 'Unable to hold this time slot. Please pick another time.',
+      )
+    } finally {
+      setIsHoldingSlot(false)
+    }
+  }
 
   const availableDates = Object.keys(timeSlots).sort()
   // Prefer clicked day, then saved slot day, then next available date.
@@ -155,6 +199,14 @@ export default function DateTimePage() {
         selectedSlot={selectedSlot}
       />
 
+      {holdError ? (
+        <div className="datetime-status">
+          <InlineAlert variant="danger" title="Time slot unavailable">
+            {holdError}
+          </InlineAlert>
+        </div>
+      ) : null}
+
       {isLoading ? (
         <div className="datetime-status" role="status" aria-live="polite">
           <Text>Loading available dates and times…</Text>
@@ -183,9 +235,13 @@ export default function DateTimePage() {
                 maxValue={parseDate(availableDates[availableDates.length - 1])}
                 defaultFocusedValue={parseDate(availableDates[0])}
                 isDateUnavailable={(date) => !timeSlots[date.toString()]}
+                isDisabled={isHoldingSlot}
                 onChange={(date) => {
                   const nextDay = date.toString()
-                  if (nextDay !== activeDay) setSelectedSlot(null)
+                  if (nextDay !== activeDay) {
+                    setHoldError(null)
+                    setSelectedSlot(null)
+                  }
                   setSelectedDay(nextDay)
                 }}
               />
@@ -215,9 +271,10 @@ export default function DateTimePage() {
                       type="button"
                       variant="primary"
                       size="medium"
+                      isDisabled={isHoldingSlot}
                       onPress={() => {
                         setSelectedDay(nextAppointment.date)
-                        setSelectedSlot(nextAppointment)
+                        void holdSelectedSlot(nextAppointment)
                       }}
                     >
                       Select next available appointment
@@ -244,6 +301,7 @@ export default function DateTimePage() {
                       aria-label={`Available times for ${formatDate(activeDay)}`}
                       placeholder="Select a Time Slot"
                       selectedKey={selectedSlotValue || null}
+                      isDisabled={isHoldingSlot}
                       items={activeDaySlots.map((slot) => ({
                         id: slotValue(slot.startTime, slot.endTime),
                         label: formatTimeRange(slot.startTime, slot.endTime),
@@ -252,7 +310,7 @@ export default function DateTimePage() {
                         const slot = activeDaySlots.find(
                           ({ startTime, endTime }) => slotValue(startTime, endTime) === value,
                         )
-                        if (slot) setSelectedSlot({ date: activeDay, ...slot })
+                        if (slot) void holdSelectedSlot({ date: activeDay, ...slot })
                       }}
                     />
                   </div>
@@ -267,7 +325,7 @@ export default function DateTimePage() {
         <BookingBackRow onBack={() => navigate('/login')} />
         <BookingContinueRow
           label="Review"
-          isDisabled={!selectedSlot}
+          isDisabled={!selectedSlot || isHoldingSlot}
           onContinue={() => navigate('/review')}
         />
       </div>
