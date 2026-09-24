@@ -13,6 +13,8 @@ export const SessionKeys = {
   BookingSelectedService: 'BOOKING_SELECTED_SERVICE',
   BookingSelectedLocation: 'BOOKING_SELECTED_LOCATION',
   BookingSelectedSlot: 'BOOKING_SELECTED_SLOT',
+  // Survives refresh on the confirmation page after a successful book.
+  BookingConfirmation: 'BOOKING_CONFIRMATION',
 } as const
 
 // Cleared on logout and when discarding a bad/disallowed auth session.
@@ -30,6 +32,7 @@ export const BOOKING_SESSION_KEYS = [
   SessionKeys.BookingSelectedService,
   SessionKeys.BookingSelectedLocation,
   SessionKeys.BookingSelectedSlot,
+  SessionKeys.BookingConfirmation,
 ] as const
 
 export const IdpHint = {

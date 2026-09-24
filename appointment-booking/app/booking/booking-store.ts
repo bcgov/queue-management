@@ -12,6 +12,17 @@ export type BookingSlot = {
   draftAppointmentId: number
 }
 
+// Snapshot shown on /confirmation after a successful book.
+export type BookingConfirmation = {
+  bookedByName: string
+  serviceName: string
+  locationName: string
+  locationAddress: string | null
+  date: string
+  startTime: string
+  endTime: string
+}
+
 export type BookingContextValue = {
   isReady: boolean
   selectedService: Service | null
@@ -20,6 +31,8 @@ export type BookingContextValue = {
   setSelectedLocation: (location: ServiceLocation | null) => void
   selectedSlot: BookingSlot | null
   setSelectedSlot: (slot: BookingSlot | null) => void
+  // Clears service/location/slot without releasing a draft (draft already consumed on confirm).
+  clearBookingAfterConfirm: () => void
 }
 
 // Isolated from component exports so Vite/Fast Refresh cannot duplicate this context.

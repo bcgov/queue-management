@@ -745,3 +745,70 @@ p {
   font: var(--typography-regular-small-body);
   color: var(--typography-color-danger, #d8292f);
 }
+
+.review-confirm-error {
+  margin-top: var(--layout-padding-large);
+}
+
+.confirmation-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-large);
+  margin-top: var(--layout-padding-medium);
+  width: 100%;
+}
+
+.confirmation-brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--layout-padding-small);
+}
+
+.confirmation-brand svg {
+  width: 129px;
+  height: auto;
+}
+
+.confirmation-brand-title {
+  margin: 0;
+  font: var(--typography-bold-h4);
+  color: var(--typography-color-primary);
+}
+
+.confirmation-header h1 {
+  margin: 0;
+  font: var(--typography-bold-h2);
+  color: var(--typography-color-primary);
+}
+
+.confirmation-intro {
+  margin: var(--layout-padding-small) 0 0;
+  font: var(--typography-regular-body);
+  color: var(--typography-color-secondary);
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: flex !important;
+  }
+
+  .layout-main {
+    padding: 0;
+  }
+
+  .confirmation-page {
+    margin-top: 0;
+  }
+
+  .confirmation-brand {
+    margin-bottom: var(--layout-padding-medium);
+  }
+}
