@@ -31,6 +31,9 @@ export type BookingContextValue = {
   setSelectedLocation: (location: ServiceLocation | null) => void
   selectedSlot: BookingSlot | null
   setSelectedSlot: (slot: BookingSlot | null) => void
+  // When set, review confirms with PUT instead of POST.
+  modifyingAppointmentId: number | null
+  setModifyingAppointmentId: (appointmentId: number | null) => void
   // Clears service/location/slot without releasing a draft (draft already consumed on confirm).
   clearBookingAfterConfirm: () => void
 }

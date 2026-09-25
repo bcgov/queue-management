@@ -9,10 +9,14 @@ export const SessionKeys = {
   UserAccountType: 'USER_ACCOUNT_TYPE',
   // Set while redirecting to Keycloak; used to break browser-back loops on /signin.
   KeycloakLoginRedirectPending: 'KEYCLOAK_LOGIN_REDIRECT_PENDING',
+  // After login from a deep link (e.g. modify), send the user back here.
+  LoginReturnTo: 'LOGIN_RETURN_TO',
   // Booking selections survive the IdP redirect round-trip.
   BookingSelectedService: 'BOOKING_SELECTED_SERVICE',
   BookingSelectedLocation: 'BOOKING_SELECTED_LOCATION',
   BookingSelectedSlot: 'BOOKING_SELECTED_SLOT',
+  // When set, review uses PUT to update this appointment instead of creating a new one.
+  BookingModifyingAppointmentId: 'BOOKING_MODIFYING_APPOINTMENT_ID',
   // Survives refresh on the confirmation page after a successful book.
   BookingConfirmation: 'BOOKING_CONFIRMATION',
 } as const
@@ -32,7 +36,9 @@ export const BOOKING_SESSION_KEYS = [
   SessionKeys.BookingSelectedService,
   SessionKeys.BookingSelectedLocation,
   SessionKeys.BookingSelectedSlot,
+  SessionKeys.BookingModifyingAppointmentId,
   SessionKeys.BookingConfirmation,
+  SessionKeys.LoginReturnTo,
 ] as const
 
 export const IdpHint = {
