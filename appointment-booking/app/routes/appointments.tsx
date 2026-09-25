@@ -38,31 +38,38 @@ export default function AppointmentsPage() {
     if (!isAuthReady || !isAuthenticated) return
 
     let cancelled = false
-    setIsLoading(true)
-    setLoadError(false)
 
-    getUserAppointments()
-      .then((loaded) => {
-        if (cancelled) return
-        const sorted = [...loaded].sort((a, b) => {
-          const aKey = a.local_start_time || a.start_time || ''
-          const bKey = b.local_start_time || b.start_time || ''
-          return aKey.localeCompare(bKey)
+    // Defer setState so the effect body does not update React state synchronously.
+    const startId = window.setTimeout(() => {
+      if (cancelled) return
+
+      setIsLoading(true)
+      setLoadError(false)
+
+      getUserAppointments()
+        .then((loaded) => {
+          if (cancelled) return
+          const sorted = [...loaded].sort((a, b) => {
+            const aKey = a.local_start_time || a.start_time || ''
+            const bKey = b.local_start_time || b.start_time || ''
+            return aKey.localeCompare(bKey)
+          })
+          setAppointments(sorted)
         })
-        setAppointments(sorted)
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setAppointments([])
-          setLoadError(true)
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false)
-      })
+        .catch(() => {
+          if (!cancelled) {
+            setAppointments([])
+            setLoadError(true)
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setIsLoading(false)
+        })
+    }, 0)
 
     return () => {
       cancelled = true
+      window.clearTimeout(startId)
     }
   }, [isAuthReady, isAuthenticated])
 
