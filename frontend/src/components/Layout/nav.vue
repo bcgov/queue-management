@@ -98,8 +98,12 @@
               id="office_agenda"
               >Office Agenda</b-dropdown-item
             >
-            <b-dropdown-item to="/service-flow"  id="service_flow" v-if="isServiceFLowEnabled"
-              >Service Flow</b-dropdown-item
+            <b-dropdown-item
+              :href="requestPortalUrl"
+              id="request_portal"
+              target="_blank"
+              rel="noopener noreferrer"
+              >IPS Request Portal</b-dropdown-item
             >
             <span v-if="user.role && (user.role.role_code == 'GA' || user.role.role_code == 'SUPPORT')">
               <b-dropdown-item @click="clickGAScreen">
@@ -158,7 +162,7 @@
       <router-view />
     </div>
     <AddCitizen/>
-    <ServeCitizen v-if="showServiceModal" :finishServiceFromFormIO="finishServiceFromFormIO"/>
+    <ServeCitizen v-if="showServiceModal" />
   </div>
 </template>
 
@@ -204,8 +208,7 @@ export default class Nav extends Vue {
 
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('toggleServiceModal') public toggleServiceModal: any
-  // to check service for enable
-  public isServiceFLowEnabled = configMap.isServiceFLowEnabled()
+  public requestPortalUrl: string = ''
 
   private flashIcon: boolean = true
   private showSpacer: boolean = false
@@ -219,18 +222,11 @@ export default class Nav extends Vue {
     }
 
   showIEWarning: boolean = config.IS_INTERNET_EXPLORER;
-  public finishServiceFromFormIO:boolean = false
-
-  mounted () {
+  async mounted () {
     // We don't want to re-evaluate this every time appointmentsEnabled is re-evaluated
     this.showIEWarning = this.showIEWarning && this.appointmentsEnabled
-    this.$root.$on(('navBeginService'), () => {
-      this.finishServiceFromFormIO = true
-      this.clickIcon()
-    })
-    this.$root.$on(('closefinishServiceFromFormIO'), () => {
-      this.finishServiceFromFormIO = false
-    })
+    await configMap.fetchConfig()
+    this.requestPortalUrl = configMap.getValue('REQUEST_PORTAL_URL')
   }
 
   get appointmentsEnabled () : boolean {

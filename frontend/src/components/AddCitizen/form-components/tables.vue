@@ -234,7 +234,7 @@ export default class Tables extends Vue {
       this.clickAddServiceApply()
     } else if (this.addModalSetup === 'edit_mode') {
       this.clickEditApply()
-    } else if (this.$route.path === '/exams' || this.$route.path === '/booking' || this.$route.path === '/service-flow') {
+    } else if (this.$route.path === '/exams' || this.$route.path === '/booking') {
       this.toggleExamsTrackingIP(true)
       this.clickBeginService({ simple: true })
     } else if (this.$route.path === '/appointments') {
