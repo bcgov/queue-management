@@ -1,4 +1,5 @@
-// Booking step 3: BCSC or email OTP sign-in, or show success after login.
+// Login page: booking step 3, or header Login when there is no booking in progress.
+import { useEffect } from 'react'
 import { Button, InlineAlert, Text } from '@bcgov/design-system-react-components'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -19,6 +20,52 @@ export function meta() {
   return [{ title: 'Login' }]
 }
 
+function SignInMethods() {
+  const navigate = useNavigate()
+
+  return (
+    <div className="sign-in-actions">
+      <Button type="button" onPress={() => navigate(`/signin/${IdpHint.OTP}`, { replace: true })}>
+        Login with Email OTP
+      </Button>
+      <a
+        className="sign-in-learn-more"
+        href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/id-services/one-time-pc"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FontAwesomeIcon
+          icon={faArrowUpRightFromSquare}
+          className="sign-in-external-icon"
+          aria-hidden="true"
+        />
+        <span>Learn more about one-time passcode</span>
+      </a>
+
+      <div className="sign-in-or" role="separator" aria-label="or">
+        OR
+      </div>
+
+      <Button type="button" onPress={() => navigate(`/signin/${IdpHint.BCSC}`, { replace: true })}>
+        Login with BC Services Card
+      </Button>
+      <a
+        className="sign-in-learn-more"
+        href="https://www2.gov.bc.ca/gov/content/governments/government-id/bcservicescardapp"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <FontAwesomeIcon
+          icon={faArrowUpRightFromSquare}
+          className="sign-in-external-icon"
+          aria-hidden="true"
+        />
+        <span>Learn more about BC Services Card</span>
+      </a>
+    </div>
+  )
+}
+
 export default function LoginPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -26,38 +73,52 @@ export default function LoginPage() {
   const { isReady: isBookingReady, selectedService, selectedLocation } = useBooking()
   const hasSelections = !!selectedService && !!selectedLocation
   const idpError = searchParams.get('error') === 'idp'
+  const signedInAs = session?.userFullName?.trim() || 'Appointment User'
 
-  // Wait until sessionStorage restore finishes so we do not flash the wrong screen.
+  // Header login with no booking: go straight to appointments after auth.
+  useEffect(() => {
+    if (!isAuthReady || !isBookingReady || !isAuthenticated || hasSelections) return
+    navigate('/appointments', { replace: true })
+  }, [isAuthReady, isBookingReady, isAuthenticated, hasSelections, navigate])
+
   if (!isAuthReady || !isBookingReady) {
     return (
       <div className="sign-in-panel" role="status" aria-live="polite">
-        <Text>Loading booking…</Text>
+        <Text>Loading…</Text>
+      </div>
+    )
+  }
+
+  if (!hasSelections) {
+    if (isAuthenticated) {
+      return (
+        <div className="sign-in-panel" role="status" aria-live="polite">
+          <Text>Loading…</Text>
+        </div>
+      )
+    }
+
+    return (
+      <div className="sign-in-panel">
+        {idpError ? (
+          <div className="login-alert">
+            <InlineAlert variant="danger" title="Login method not accepted">
+              Please login with BC Services Card or email OTP.
+            </InlineAlert>
+          </div>
+        ) : null}
+        <Text>
+          Please login using one of the following methods to view your appointments or continue a
+          booking.
+        </Text>
+        <SignInMethods />
       </div>
     )
   }
 
   const heading = isAuthenticated
-    ? 'You have successfully signed in.'
-    : 'Sign in to continue your booking.'
-  const signedInAs = session?.userFullName?.trim() || 'Appointment User'
-
-  if (!hasSelections) {
-    return (
-      <>
-        <BookingStepProgress step={BOOKING_STEP} stepCount={BOOKING_STEP_COUNT} heading={heading} />
-
-        <InlineAlert variant="warning" title="Start your booking">
-          Please go back to the services page and start by selecting a service, then a location.
-        </InlineAlert>
-
-        <div className="booking-nav-row">
-          <Button type="button" onPress={() => navigate('/services')}>
-            Go to services
-          </Button>
-        </div>
-      </>
-    )
-  }
+    ? 'You have successfully logged in.'
+    : 'Login to continue your booking.'
 
   if (!isAuthenticated) {
     return (
@@ -66,62 +127,17 @@ export default function LoginPage() {
 
         {idpError ? (
           <div className="login-alert">
-            <InlineAlert variant="danger" title="Sign-in method not accepted">
-              Please sign in with BC Services Card or email OTP.
+            <InlineAlert variant="danger" title="Login method not accepted">
+              Please login with BC Services Card or email OTP.
             </InlineAlert>
           </div>
         ) : null}
 
         <div className="sign-in-panel">
           <Text>
-            To continue your appointment booking, please sign in using one of the following methods.
+            To continue your appointment booking, please login using one of the following methods.
           </Text>
-
-          <div className="sign-in-actions">
-            <Button
-              type="button"
-              onPress={() => navigate(`/signin/${IdpHint.OTP}`, { replace: true })}
-            >
-              Login with Email OTP
-            </Button>
-            <a
-              className="sign-in-learn-more"
-              href="https://www2.gov.bc.ca/gov/content/governments/services-for-government/information-management-technology/id-services/one-time-pc"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FontAwesomeIcon
-                icon={faArrowUpRightFromSquare}
-                className="sign-in-external-icon"
-                aria-hidden="true"
-              />
-              <span>Learn more about one-time passcode</span>
-            </a>
-
-            <div className="sign-in-or" role="separator" aria-label="or">
-              OR
-            </div>
-
-            <Button
-              type="button"
-              onPress={() => navigate(`/signin/${IdpHint.BCSC}`, { replace: true })}
-            >
-              Login with BC Services Card
-            </Button>
-            <a
-              className="sign-in-learn-more"
-              href="https://www2.gov.bc.ca/gov/content/governments/government-id/bcservicescardapp"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FontAwesomeIcon
-                icon={faArrowUpRightFromSquare}
-                className="sign-in-external-icon"
-                aria-hidden="true"
-              />
-              <span>Learn more about BC Services Card</span>
-            </a>
-          </div>
+          <SignInMethods />
         </div>
 
         <div className="booking-nav-row">
@@ -136,8 +152,8 @@ export default function LoginPage() {
       <BookingStepProgress step={BOOKING_STEP} stepCount={BOOKING_STEP_COUNT} heading={heading} />
 
       <div className="login-alert">
-        <InlineAlert variant="success" title="Signed in">
-          You are successfully signed in as {signedInAs}.
+        <InlineAlert variant="success" title="Logged in">
+          You are successfully logged in as {signedInAs}.
         </InlineAlert>
       </div>
 

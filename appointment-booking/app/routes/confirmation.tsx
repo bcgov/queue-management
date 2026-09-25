@@ -44,7 +44,7 @@ export default function ConfirmationPage() {
       <div className="confirmation-page">
         <h1>Appointment confirmation</h1>
         <InlineAlert variant="warning" title="No confirmation to show">
-          There is no appointment confirmation on this device. Book an appointment to see one here.
+          There is no appointment confirmation to show. Book an appointment to see one here.
         </InlineAlert>
         <div className="booking-nav-row no-print">
           <Button type="button" onPress={() => navigate('/services')}>

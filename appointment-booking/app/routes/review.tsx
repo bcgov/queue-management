@@ -95,8 +95,13 @@ export default function ReviewPage() {
       clearBookingAfterConfirm()
       navigate('/confirmation')
     } catch (err) {
+      const expired = err instanceof Error && err.message === 'Session expired'
       setConfirmError(
-        err instanceof Error ? err.message : 'Unable to book this appointment. Please try again.',
+        expired
+          ? 'Your session has expired. Please sign in again to continue.'
+          : err instanceof Error
+            ? err.message
+            : 'Unable to book this appointment. Please try again.',
       )
     } finally {
       setIsConfirming(false)
@@ -207,6 +212,13 @@ export default function ReviewPage() {
           <InlineAlert variant="danger" title="Unable to book this appointment">
             {confirmError}
           </InlineAlert>
+          {confirmError.includes('sign in again') ? (
+            <div className="booking-nav-row">
+              <Button type="button" onPress={() => navigate('/login')}>
+                Sign in again
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
