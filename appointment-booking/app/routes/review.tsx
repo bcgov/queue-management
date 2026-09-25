@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Button, InlineAlert, Text, TextField } from '@bcgov/design-system-react-components'
 import { useNavigate } from 'react-router'
 
-import { createAppointment } from '~/api/appointments'
+import { createAppointment, updateAppointment } from '~/api/appointments'
 import { getCurrentUser, type PublicUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
 import { addJsonToSession } from '~/auth/session'
@@ -32,8 +32,10 @@ export default function ReviewPage() {
     selectedService,
     selectedLocation,
     selectedSlot,
+    modifyingAppointmentId,
     clearBookingAfterConfirm,
   } = useBooking()
+  const isModifying = modifyingAppointmentId != null
   const [profile, setProfile] = useState<PublicUser | null>(null)
   // null = use profile/session default; string = user edited (including cleared).
   const [contactEmail, setContactEmail] = useState<string | null>(null)
@@ -73,14 +75,20 @@ export default function ReviewPage() {
     setIsConfirming(true)
 
     try {
-      await createAppointment({
+      const payload = {
         office_id: selectedLocation.id,
         service_id: selectedService.id,
         // Office wall clock; API converts to UTC using the office timezone.
         start_time: `${selectedSlot.date}T${selectedSlot.startTime}:00`,
         end_time: `${selectedSlot.date}T${selectedSlot.endTime}:00`,
         appointment_draft_id: selectedSlot.draftAppointmentId,
-      })
+      }
+
+      if (modifyingAppointmentId != null) {
+        await updateAppointment(modifyingAppointmentId, payload)
+      } else {
+        await createAppointment(payload)
+      }
 
       const confirmation: BookingConfirmation = {
         bookedByName: session?.userFullName?.trim() || 'Appointment User',
@@ -133,8 +141,11 @@ export default function ReviewPage() {
           Please go back to the services page and start by selecting a service, then a location.
         </InlineAlert>
         <div className="booking-nav-row">
-          <Button type="button" onPress={() => navigate('/services')}>
-            Go to services
+          <Button
+            type="button"
+            onPress={() => navigate(isModifying ? '/appointments' : '/services')}
+          >
+            {isModifying ? 'My appointments' : 'Go to services'}
           </Button>
         </div>
       </>

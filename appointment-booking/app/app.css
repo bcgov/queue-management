@@ -772,6 +772,12 @@ p {
   color: var(--typography-color-primary);
 }
 
+.appointments-modify-note {
+  margin: 0;
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+}
+
 .appointments-footer {
   display: flex;
   justify-content: flex-end;
@@ -821,6 +827,12 @@ p {
   text-align: right;
 }
 
+.appointments-row-actions {
+  margin-top: var(--layout-padding-small);
+  display: flex;
+  justify-content: flex-end;
+}
+
 @media (max-width: 40rem) {
   .appointments-row {
     grid-template-columns: 1fr;
@@ -830,6 +842,10 @@ p {
   .appointments-row-date,
   .appointments-row-time {
     text-align: left;
+  }
+
+  .appointments-row-actions {
+    justify-content: flex-start;
   }
 }
 

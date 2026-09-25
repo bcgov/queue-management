@@ -10,10 +10,10 @@ import { SessionKeys } from '../auth/session-keys'
 import { BookingContext, type BookingSlot } from './booking-store'
 
 function persistJson(key: string, value: unknown) {
-  if (value) {
-    addJsonToSession(key, value)
-  } else {
+  if (value === null || value === undefined) {
     removeFromSession(key)
+  } else {
+    addJsonToSession(key, value)
   }
 }
 
@@ -22,6 +22,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [selectedService, setSelectedServiceState] = useState<Service | null>(null)
   const [selectedLocation, setSelectedLocationState] = useState<ServiceLocation | null>(null)
   const [selectedSlot, setSelectedSlotState] = useState<BookingSlot | null>(null)
+  const [modifyingAppointmentId, setModifyingAppointmentIdState] = useState<number | null>(null)
 
   useEffect(() => {
     // Restore saved choices after the page first loads in the browser.
@@ -33,6 +34,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       const savedSlot = getJsonFromSession<BookingSlot>(SessionKeys.BookingSelectedSlot)
       // Slot is only valid when it still carries a draft id (source of truth for the hold).
       setSelectedSlotState(savedSlot?.draftAppointmentId ? savedSlot : null)
+      const savedModifyingId = getJsonFromSession<number>(SessionKeys.BookingModifyingAppointmentId)
+      setModifyingAppointmentIdState(typeof savedModifyingId === 'number' ? savedModifyingId : null)
       setIsReady(true)
     }, 0)
     return () => window.clearTimeout(id)
@@ -64,14 +67,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     persistJson(SessionKeys.BookingSelectedLocation, location)
   }
 
-  // After POST /appointments/ the draft is already gone — clear local selection without DELETE.
+  function setModifyingAppointmentId(appointmentId: number | null) {
+    setModifyingAppointmentIdState(appointmentId)
+    persistJson(SessionKeys.BookingModifyingAppointmentId, appointmentId)
+  }
+
+  // After POST/PUT the draft is already gone — clear local selection without DELETE.
   function clearBookingAfterConfirm() {
     setSelectedSlotState(null)
     setSelectedServiceState(null)
     setSelectedLocationState(null)
+    setModifyingAppointmentIdState(null)
     removeFromSession(SessionKeys.BookingSelectedSlot)
     removeFromSession(SessionKeys.BookingSelectedService)
     removeFromSession(SessionKeys.BookingSelectedLocation)
+    removeFromSession(SessionKeys.BookingModifyingAppointmentId)
   }
 
   return (
@@ -84,6 +94,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         setSelectedLocation,
         selectedSlot,
         setSelectedSlot,
+        modifyingAppointmentId,
+        setModifyingAppointmentId,
         clearBookingAfterConfirm,
       }}
     >
