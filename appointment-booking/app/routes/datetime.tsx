@@ -116,10 +116,13 @@ export default function DateTimePage() {
     } catch (err) {
       // Previous draft was already released above; clear local selection too.
       setSelectedSlot(null)
+      const expired = err instanceof Error && err.message === 'Session expired'
       setHoldError(
-        err instanceof Error
-          ? err.message
-          : 'Unable to hold this time slot. Please pick another time.',
+        expired
+          ? 'Your session has expired. Please sign in again to continue.'
+          : err instanceof Error
+            ? err.message
+            : 'Unable to hold this time slot. Please pick another time.',
       )
     } finally {
       setIsHoldingSlot(false)
@@ -204,6 +207,13 @@ export default function DateTimePage() {
           <InlineAlert variant="danger" title="Time slot unavailable">
             {holdError}
           </InlineAlert>
+          {holdError.includes('sign in again') ? (
+            <div className="booking-nav-row">
+              <Button type="button" onPress={() => navigate('/login')}>
+                Sign in again
+              </Button>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

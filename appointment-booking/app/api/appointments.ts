@@ -11,7 +11,7 @@ type AppointmentApiErrorBody = {
 function bookingErrorMessage(body: AppointmentApiErrorBody | null, fallback: string): string {
   const code = typeof body?.code === 'string' ? body.code : null
   if (code === 'MAX_NO_OF_APPOINTMENTS_REACHED') {
-    return 'You already have the maximum number of appointments for this office on that day.'
+    return 'You already have an appointment on this date. Please modify or cancel your existing appointment before booking another.'
   }
   if (code === 'CONFLICT_APPOINTMENT') {
     return 'That time is no longer available. Please pick another time.'
