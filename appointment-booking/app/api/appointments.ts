@@ -6,6 +6,23 @@ type AppointmentApiErrorBody = {
   message?: unknown
 }
 
+// Upcoming confirmed appointments for the signed-in public user (GET /users/appointments/).
+export type UserAppointment = {
+  appointment_id: number
+  start_time: string | null
+  end_time: string | null
+  local_start_time: string | null
+  local_end_time: string | null
+  office: {
+    office_name: string
+    civic_address: string | null
+  } | null
+  service: {
+    service_name: string
+    external_service_name: string | null
+  } | null
+}
+
 // Map known API rejection codes to clear citizen-facing copy. Falls back to the
 // API message, then to the caller fallback (hold vs book).
 function bookingErrorMessage(body: AppointmentApiErrorBody | null, fallback: string): string {
@@ -107,4 +124,23 @@ export async function deleteDraftAppointment(appointmentId: number): Promise<voi
   if (!res.ok && res.status !== 404) {
     throw new Error(`Failed to release held time slot (${res.status})`)
   }
+}
+
+// Future, not-checked-in appointments for the current public user.
+export async function getUserAppointments(): Promise<UserAppointment[]> {
+  const token = await getAccessToken()
+
+  const baseUrl = await getApiBaseUrl()
+  const res = await fetch(`${baseUrl}/users/appointments/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to load appointments (${res.status})`)
+  }
+
+  const body = (await res.json()) as { appointments?: UserAppointment[] }
+  return Array.isArray(body.appointments) ? body.appointments : []
 }

@@ -1,6 +1,14 @@
 import { Button, Footer, Header } from '@bcgov/design-system-react-components'
 import { config } from '@fortawesome/fontawesome-svg-core'
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useNavigate,
+} from 'react-router'
 
 import type { Route } from './+types/root'
 import { AuthProvider, useAuth } from '~/auth/auth-context'
@@ -44,6 +52,7 @@ export default function App() {
 }
 
 function AppShell() {
+  const navigate = useNavigate()
   const { isAuthenticated, session, logout } = useAuth()
 
   return (
@@ -57,16 +66,25 @@ function AppShell() {
             </a>,
           ]}
         >
-          {isAuthenticated ? (
-            <div className="header-account">
-              <span className="header-account-name">
-                Signed in as {session?.userFullName?.trim() || 'Appointment User'}
-              </span>
-              <Button size="small" onPress={() => void logout()}>
-                Log out
+          <div className="header-account">
+            {isAuthenticated ? (
+              <>
+                <span className="header-account-name">
+                  Logged in as {session?.userFullName?.trim() || 'Appointment User'}
+                </span>
+                <Button size="small" variant="secondary" onPress={() => navigate('/appointments')}>
+                  My Appointments
+                </Button>
+                <Button size="small" onPress={() => void logout()}>
+                  Log out
+                </Button>
+              </>
+            ) : (
+              <Button size="small" onPress={() => navigate('/login')}>
+                Login
               </Button>
-            </div>
-          ) : null}
+            )}
+          </div>
         </Header>
       </div>
       <main id="main-content" className="layout-main">
