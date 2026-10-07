@@ -14,15 +14,16 @@ module.exports = {
   devServer: {
     client: {
       overlay: {
-        warnings: true,
+        warnings: false,
         errors: true
       }
     },
     // Configure local API calls to hit OpenShift dev
     proxy: {
       '/api/v1': {
-        target: 'http://localhost:5000',
+        target: 'https://test-theq-public.apps.silver.devops.gov.bc.ca',
         changeOrigin: true,
+        secure: true,
         logLevel: 'debug'
       }
     },
