@@ -55,6 +55,16 @@
                 v-model="enableSmsReminder"
                 label="Send me appointment reminders via SMS text message"
               ></v-switch>
+              <v-alert
+                v-if="isSmsEnabled"
+                border="left"
+                type="warning"
+                color="warning"
+                icon="mdi-alert-circle-outline"
+                dense
+              >
+                By providing your phone number above, you consent to receiving informational text messages from the Government of British Columbia. Text STOP to cancel.
+              </v-alert>
             </v-form>
             <v-row>
               <v-col class="d-flex">
