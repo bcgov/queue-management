@@ -8,7 +8,9 @@
     "cy": "cypress run --config-file=cypress.config.ts",
     "cy:open": "cypress open --config-file=cypress.config.ts",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit --testPathPattern=."
+    "test:unit": "vue-cli-service test:unit --testPathPattern=.",
+    "dev": "vite",
+    "build:vite": "vite build"
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
@@ -48,6 +50,7 @@
     "@types/jest": "^27.0.1",
     "@types/node": "^20.14.9",
     "@types/puppeteer": "^5.4.5",
+    "@vitejs/plugin-vue2": "2.3.4",
     "@vue/cli-plugin-babel": "^5.0.4",
     "@vue/cli-plugin-e2e-nightwatch": "^5.0.4",
     "@vue/cli-plugin-eslint": "^5.0.4",
@@ -76,6 +79,7 @@
     "ts-jest": "^27.1.0",
     "typescript": "~4.5.5",
     "url-parse": "~1.5.10",
+    "vite": "7.3.7",
     "vm2": "^3.9.17",
     "vue-cli-plugin-vuetify": "^2.4.8",
     "vue-template-compiler": "^2.6.14",

@@ -17,7 +17,7 @@
             @change="officeSelection"
             @input="clickSelection"
             @keyup="setKeyPressed"
-            auto-select-first="true"
+            :auto-select-first="true"
             hide-details
           >
           </v-combobox>
@@ -107,14 +107,14 @@
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
                 <template v-if='location.externalMapLink'>
                   <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
-                    <v-img v-if="location.civicAddress" :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))" :alt="location.civicAddress || 'No address'" class='static-map'>
+                    <v-img v-if="location.civicAddress" :src="officeMapUrl(location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png')" :alt="location.civicAddress || 'No address'" class='static-map'>
                     </v-img>
                   </a>
                 </template>
                 <template v-else>
                   <v-img
                     v-if="location.civicAddress"
-                    :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))"
+                    :src="officeMapUrl(location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png')"
                     :alt="location.civicAddress || 'No address'"
                     class='static-map'
                     data-cy="step-1-image-map"
@@ -174,6 +174,7 @@ import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
+import { getOfficeMapUrl } from '@/utils/office-map'
 
 @Component({
   components: {
@@ -240,6 +241,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
 
   $refs: {
     locationServiceListPopup: ServiceListPopup
+  }
+
+  private officeMapUrl (filename: string): string {
+  return getOfficeMapUrl(filename)
   }
 
   private async mounted () {

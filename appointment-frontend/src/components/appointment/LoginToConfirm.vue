@@ -21,7 +21,7 @@
           <v-img
             v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="require('@/assets/img/BCServicesCard.png')"
+            :src="bcServicesCardUrl"
             max-width="132"
             contain
             data-cy="step-4-image-bcsc"
@@ -49,7 +49,7 @@
         <v-img
             v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="require('@/assets/img/bceid_logo.jpg')"
+            :src="bceidLogoUrl"
             max-width="132"
             contain
             data-cy="step-4-image-bceid-login"
@@ -74,7 +74,7 @@
         <v-img
             v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="require('@/assets/img/bceid_logo.jpg')"
+            :src="bceidLogoUrl"
             max-width="132"
             contain
           ></v-img>
@@ -91,6 +91,8 @@ import ConfigHelper from '@/utils/config-helper'
 import { IdpHint } from '@/utils/constants'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
+import bcServicesCardImage from '@/assets/img/BCServicesCard.png'
+import bceidLogoImage from '@/assets/img/bceid_logo.jpg'
 
 @Component({
   computed: {
@@ -191,6 +193,10 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
   private get BCServicesCardURL (): string {
     return ConfigHelper.getValue('BCServicesCardUrl')
   }
+
+  private bcServicesCardUrl = bcServicesCardImage
+
+  private bceidLogoUrl = bceidLogoImage
 }
 </script>
 

@@ -61,11 +61,11 @@
             <v-col cols="12">
               <template v-if='staticMapData.externalMapLink'>
                     <a class='link-w-icon mt-6' v-bind:href='staticMapData.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civicAddress}`'>
-                      <img :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
+                      <img :src=""officeMapUrl(staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
                     </a>
                   </template>
                   <template v-else><img
-                    :src="require('@/assets/img/officemaps/' + staticMapData.officeNumber)"
+                    :src="officeMapUrl(staticMapData.officeNumber)"
                     :alt="staticMapData.civicAddress"
                     class='map-view'
                     data-cy="step-5-image-map"
@@ -169,6 +169,7 @@ import { Service } from '@/models/service'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import TermsOfServicePopup from './TermsOfServicePopup.vue'
 import { getModule } from 'vuex-module-decorators'
+import { getOfficeMapUrl } from '@/utils/office-map'
 
 @Component({
   computed: {
@@ -219,6 +220,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
   private isLoading: boolean = false
   private anyActiveDLKT: boolean = false
   private myappointmentList: Appointment[] = []
+  private officeMapUrl = getOfficeMapUrl
   private readonly getAppointmentList!: () => Promise<Appointment[]>
   private dialogPopup = {
     showDialog: false,

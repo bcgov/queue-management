@@ -102,7 +102,7 @@ class KeyCloakService {
             if (!authenticated) {
               resolve()
             }
-            redirectUrl = redirectUrl || `${window.location.origin}${process.env.VUE_APP_PATH}`
+            redirectUrl = redirectUrl || `${window.location.origin}${import.meta.env.BASE_URL}`
             this.kc && this.kc.logout({ redirectUri: redirectUrl })
               .then(() => {
                 resolve()
