@@ -21,6 +21,9 @@ export type BookingConfirmation = {
   date: string
   startTime: string
   endTime: string
+  // Which channels were opted in when the user confirmed (for on-screen copy).
+  sentEmail: boolean
+  sentSms: boolean
 }
 
 export type BookingContextValue = {

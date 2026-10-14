@@ -18,6 +18,21 @@ export function meta() {
   return [{ title: 'Appointment Confirmation' }]
 }
 
+function confirmationDeliveryCopy(confirmation: BookingConfirmation): string {
+  const channels: string[] = []
+  if (confirmation.sentEmail) channels.push('email')
+  if (confirmation.sentSms) channels.push('SMS')
+
+  const delivery =
+    channels.length === 0
+      ? 'No email or SMS confirmation was selected.'
+      : channels.length === 1
+        ? `A confirmation will be sent by ${channels[0]}.`
+        : 'A confirmation will be sent by email and SMS.'
+
+  return `${delivery} You can also optionally print or download this page for your records, and bring it when you visit the office.`
+}
+
 export default function ConfirmationPage() {
   const navigate = useNavigate()
   const [isReady, setIsReady] = useState(false)
@@ -65,10 +80,7 @@ export default function ConfirmationPage() {
 
       <header className="confirmation-header">
         <h1>Appointment confirmed</h1>
-        <p className="confirmation-intro">
-          Your booking is complete. A confirmation will be emailed to you. You can also optionally
-          print or download this page for your records, and bring it when you visit the office.
-        </p>
+        <p className="confirmation-intro">{confirmationDeliveryCopy(confirmation)}</p>
       </header>
 
       <Callout variant="lightBlue">

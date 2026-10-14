@@ -4,13 +4,13 @@ import { Button, InlineAlert, Text, TextField } from '@bcgov/design-system-react
 import { useNavigate } from 'react-router'
 
 import { createAppointment, updateAppointment } from '~/api/appointments'
-import { getCurrentUser, type PublicUser } from '~/api/users'
+import { getCurrentUser, updateUser, type PublicUser } from '~/api/users'
 import { useAuth } from '~/auth/auth-context'
 import { addJsonToSession } from '~/auth/session'
 import { SessionKeys } from '~/auth/session-keys'
 import { useBooking } from '~/booking/booking-context'
 import type { BookingConfirmation } from '~/booking/booking-store'
-import { getContactValidation } from '~/booking/validate-contact'
+import { getContactValidation, isValidEmail, isValidPhone } from '~/booking/validate-contact'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingDetailCallout } from '~/components/BookingDetailCallout'
@@ -40,6 +40,9 @@ export default function ReviewPage() {
   // null = use profile/session default; string = user edited (including cleared).
   const [contactEmail, setContactEmail] = useState<string | null>(null)
   const [contactPhone, setContactPhone] = useState<string | null>(null)
+  // null = use profile opt-in defaults until the user toggles a checkbox.
+  const [sendEmailConfirmation, setSendEmailConfirmation] = useState<boolean | null>(null)
+  const [sendSmsConfirmation, setSendSmsConfirmation] = useState<boolean | null>(null)
   const [contactTouched, setContactTouched] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
   const [confirmError, setConfirmError] = useState<string | null>(null)
@@ -63,6 +66,10 @@ export default function ReviewPage() {
 
   const email = (contactEmail ?? (profile?.email?.trim() || session?.email?.trim() || '')).trim()
   const phone = (contactPhone ?? (profile?.telephone?.trim() || '')).trim()
+  const emailOk = isValidEmail(email)
+  const phoneOk = isValidPhone(phone)
+  const wantEmail = sendEmailConfirmation ?? Boolean(profile?.send_email_reminders)
+  const wantSms = sendSmsConfirmation ?? Boolean(profile?.send_sms_reminders)
   const validation = getContactValidation(email, phone)
 
   async function handleConfirm() {
@@ -70,11 +77,34 @@ export default function ReviewPage() {
     if (!validation.hasValidContact || !selectedService || !selectedLocation || !selectedSlot) {
       return
     }
+    if (wantEmail && !emailOk) {
+      setConfirmError('Enter a valid email address to receive email confirmation.')
+      return
+    }
+    if (wantSms && !phoneOk) {
+      setConfirmError('Enter a valid phone number to receive SMS confirmation.')
+      return
+    }
+    if (!profile?.user_id) {
+      setConfirmError('Unable to save your contact details. Please refresh and try again.')
+      return
+    }
 
     setConfirmError(null)
     setIsConfirming(true)
 
     try {
+      // Save contact + opt-in flags first so the API can send confirmation after book.
+      const userUpdate = {
+        email,
+        telephone: phone,
+        send_email_reminders: wantEmail && emailOk,
+        send_sms_reminders: wantSms && phoneOk,
+      }
+      // Local debug: confirm opt-in reached the API before book.
+      console.info('[booking] saving confirmation preferences', userUpdate)
+      await updateUser(profile.user_id, userUpdate)
+
       const payload = {
         office_id: selectedLocation.id,
         service_id: selectedService.id,
@@ -98,6 +128,8 @@ export default function ReviewPage() {
         date: selectedSlot.date,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
+        sentEmail: wantEmail && emailOk,
+        sentSms: wantSms && phoneOk,
       }
       addJsonToSession(SessionKeys.BookingConfirmation, confirmation)
       clearBookingAfterConfirm()
@@ -181,7 +213,9 @@ export default function ReviewPage() {
 
       <section className="review-contact" aria-labelledby="review-contact-heading">
         <h2 id="review-contact-heading">Contact details</h2>
-        <p className="review-contact-intro">Provide your contact information for confirmation.</p>
+        <p className="review-contact-intro">
+          Provide your contact information and choose how you want to receive confirmation.
+        </p>
 
         <TextField
           label="Email"
@@ -196,6 +230,19 @@ export default function ReviewPage() {
           errorMessage={contactTouched ? (validation.emailError ?? undefined) : undefined}
           // BC DS TextField only shows errorMessage when isInvalid is also set.
         />
+        <label className="review-contact-opt-in">
+          <input
+            type="checkbox"
+            name="send_email_confirmation"
+            checked={wantEmail && emailOk}
+            disabled={!emailOk}
+            onChange={(event) => {
+              setSendEmailConfirmation(event.target.checked)
+              setContactTouched(true)
+            }}
+          />
+          <span>Send confirmation and reminders by email</span>
+        </label>
 
         <TextField
           label="Phone number"
@@ -209,6 +256,19 @@ export default function ReviewPage() {
           isInvalid={contactTouched && !!validation.phoneError}
           errorMessage={contactTouched ? (validation.phoneError ?? undefined) : undefined}
         />
+        <label className="review-contact-opt-in">
+          <input
+            type="checkbox"
+            name="send_sms_confirmation"
+            checked={wantSms && phoneOk}
+            disabled={!phoneOk}
+            onChange={(event) => {
+              setSendSmsConfirmation(event.target.checked)
+              setContactTouched(true)
+            }}
+          />
+          <span>Send confirmation and reminders by SMS text</span>
+        </label>
 
         {contactTouched && validation.sectionError ? (
           // Shown when both fields are empty; individual field errors do not cover that case.

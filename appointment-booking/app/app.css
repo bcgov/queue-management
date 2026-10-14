@@ -746,6 +746,26 @@ p {
   color: var(--typography-color-danger, #d8292f);
 }
 
+.review-contact-opt-in {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--layout-padding-small);
+  margin: calc(var(--layout-padding-small) * -0.5) 0 0;
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+  cursor: pointer;
+}
+
+.review-contact-opt-in input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.review-contact-opt-in:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .review-confirm-error {
   margin-top: var(--layout-padding-large);
 }
