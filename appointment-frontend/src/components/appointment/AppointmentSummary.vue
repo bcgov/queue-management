@@ -61,7 +61,7 @@
             <v-col cols="12">
               <template v-if='staticMapData.externalMapLink'>
                     <a class='link-w-icon mt-6' v-bind:href='staticMapData.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ staticMapData.civicAddress}`'>
-                      <img :src=""officeMapUrl(staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
+                      <img :src="officeMapUrl(staticMapData.officeNumber)" :alt="staticMapData.civicAddress" class='map-view'>
                     </a>
                   </template>
                   <template v-else><img

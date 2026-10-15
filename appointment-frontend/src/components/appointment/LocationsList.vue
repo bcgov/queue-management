@@ -244,7 +244,7 @@ export default class LocationsList extends Mixins(StepperMixin) {
   }
 
   private officeMapUrl (filename: string): string {
-  return getOfficeMapUrl(filename)
+    return getOfficeMapUrl(filename)
   }
 
   private async mounted () {

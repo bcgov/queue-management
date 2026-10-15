@@ -3,14 +3,14 @@
   "version": "2.1.6",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --mode production",
+    "serve": "vite",
+    "build": "vite build",
     "cy": "cypress run --config-file=cypress.config.ts",
     "cy:open": "cypress open --config-file=cypress.config.ts",
-    "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit --testPathPattern=.",
+    "lint": "eslint src tests --ext .js,.ts,.tsx,.vue",
+    "test:unit": "vitest run",
     "dev": "vite",
-    "build:vite": "vite build"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
@@ -70,6 +70,7 @@
     "eslint-plugin-vue": "^7.20.0",
     "jest": "^27.1.0",
     "jest-localstorage-mock": "^2.4.19",
+    "jsdom": "26.1.0",
     "puppeteer": "^13.5.1",
     "sass": "^1.49.9",
     "sass-loader": "^10.2.1",
@@ -80,6 +81,7 @@
     "typescript": "~4.5.5",
     "url-parse": "~1.5.10",
     "vite": "7.3.7",
+    "vitest": "4.1.11",
     "vm2": "^3.9.17",
     "vue-cli-plugin-vuetify": "^2.4.8",
     "vue-template-compiler": "^2.6.14",

@@ -214,7 +214,7 @@ export default class Home extends Vue {
   }
 
   private officeMapUrl (filename: string): string {
-  return getOfficeMapUrl(filename)
+    return getOfficeMapUrl(filename)
   }
 
   private bookNewAppointment () {
