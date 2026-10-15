@@ -709,6 +709,12 @@ p {
   }
 }
 
+.shell-feedback {
+  margin: 0;
+  padding: var(--layout-padding-medium);
+  text-align: center;
+}
+
 .header-account {
   display: flex;
   align-items: center;
