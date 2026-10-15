@@ -16,6 +16,8 @@ export default mergeConfig(
       }
     },
     test: {
+      pool: 'threads',
+      maxWorkers: 1,
       globals: true,
       environment: 'jsdom',
       environmentOptions: {

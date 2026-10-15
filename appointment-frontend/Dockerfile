@@ -1,14 +1,21 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:14 as build-stage
-ENV VUE_APP_PATH=/
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.21.0 AS build-stage
+
 WORKDIR /app
-COPY ./package*.json ./
-RUN npm install
+
+ENV CYPRESS_INSTALL_BINARY=0 \
+    PUPPETEER_SKIP_DOWNLOAD=true
+
+COPY package*.json ./
+RUN npm ci
+
 COPY . .
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.25.3 as production-stage
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.31.7 AS production-stage
+
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir /app
+RUN mkdir -p /app
 COPY --from=build-stage /app/dist /app
-EXPOSE 8080:8080
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
