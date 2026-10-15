@@ -270,6 +270,11 @@ export default function ReviewPage() {
           <span>Send confirmation and reminders by SMS text</span>
         </label>
 
+        <InlineAlert
+          variant="warning"
+          title="By providing your phone number above, you consent to receiving informational text messages from the Government of British Columbia. Text STOP to cancel."
+        />
+
         {contactTouched && validation.sectionError ? (
           // Shown when both fields are empty; individual field errors do not cover that case.
           <p className="review-contact-section-error" role="alert">
