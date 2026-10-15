@@ -6,7 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useNavigate, useSearchParams } from 'react-router'
 
 import { useAuth } from '~/auth/auth-context'
-import { IdpHint } from '~/auth/session-keys'
+import { getJsonFromSession, removeFromSession } from '~/auth/session'
+import { IdpHint, SessionKeys } from '~/auth/session-keys'
 import { useBooking } from '~/booking/booking-context'
 import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
@@ -75,10 +76,16 @@ export default function LoginPage() {
   const idpError = searchParams.get('error') === 'idp'
   const signedInAs = session?.userFullName?.trim() || 'Appointment User'
 
-  // Header login with no booking: go straight to appointments after auth.
+  // Header login / deep-link return: after auth with no booking, go to returnTo or appointments.
   useEffect(() => {
     if (!isAuthReady || !isBookingReady || !isAuthenticated || hasSelections) return
-    navigate('/appointments', { replace: true })
+    const returnTo = getJsonFromSession<string>(SessionKeys.LoginReturnTo)
+    removeFromSession(SessionKeys.LoginReturnTo)
+    const safeReturnTo =
+      typeof returnTo === 'string' && /^\/appointments\/\d+\/modify$/.test(returnTo)
+        ? returnTo
+        : null
+    navigate(safeReturnTo ?? '/appointments', { replace: true })
   }, [isAuthReady, isBookingReady, isAuthenticated, hasSelections, navigate])
 
   if (!isAuthReady || !isBookingReady) {

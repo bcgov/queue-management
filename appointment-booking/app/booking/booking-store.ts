@@ -21,6 +21,9 @@ export type BookingConfirmation = {
   date: string
   startTime: string
   endTime: string
+  // Which channels were opted in when the user confirmed (for on-screen copy).
+  sentEmail: boolean
+  sentSms: boolean
 }
 
 export type BookingContextValue = {
@@ -31,6 +34,9 @@ export type BookingContextValue = {
   setSelectedLocation: (location: ServiceLocation | null) => void
   selectedSlot: BookingSlot | null
   setSelectedSlot: (slot: BookingSlot | null) => void
+  // When set, review confirms with PUT instead of POST.
+  modifyingAppointmentId: number | null
+  setModifyingAppointmentId: (appointmentId: number | null) => void
   // Clears service/location/slot without releasing a draft (draft already consumed on confirm).
   clearBookingAfterConfirm: () => void
 }

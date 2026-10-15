@@ -1,5 +1,7 @@
 import { Button, Footer, Header } from '@bcgov/design-system-react-components'
 import { config } from '@fortawesome/fontawesome-svg-core'
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   isRouteErrorResponse,
   Links,
@@ -91,6 +93,21 @@ function AppShell() {
         <Outlet />
       </main>
       <div className="no-print">
+        <p className="shell-feedback">
+          <a
+            className="sign-in-learn-more"
+            href="https://www.gov.bc.ca/servicebc/commentscomplaints"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FontAwesomeIcon
+              icon={faArrowUpRightFromSquare}
+              className="sign-in-external-icon"
+              aria-hidden="true"
+            />
+            <span>Give Feedback</span>
+          </a>
+        </p>
         <Footer />
       </div>
     </>

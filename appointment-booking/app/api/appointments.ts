@@ -9,6 +9,8 @@ type AppointmentApiErrorBody = {
 // Upcoming confirmed appointments for the signed-in public user (GET /users/appointments/).
 export type UserAppointment = {
   appointment_id: number
+  office_id: number
+  service_id: number | null
   start_time: string | null
   end_time: string | null
   local_start_time: string | null
@@ -107,6 +109,35 @@ export async function createAppointment(body: {
   }
 
   return appointmentId
+}
+
+// Update an existing confirmed appointment (reschedule). Deletes the draft when
+// appointment_draft_id is sent.
+export async function updateAppointment(
+  appointmentId: number,
+  body: {
+    office_id: number
+    service_id: number
+    start_time: string
+    end_time: string
+    appointment_draft_id: number
+  },
+): Promise<void> {
+  const token = await getAccessToken()
+
+  const baseUrl = await getApiBaseUrl()
+  const res = await fetch(`${baseUrl}/appointments/${appointmentId}/`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    await throwBookingHttpError(res, 'Unable to update this appointment')
+  }
 }
 
 // Release a held timeslot. 404 means the draft already expired or was deleted.

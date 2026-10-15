@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 
 import { getUserAppointments, type UserAppointment } from '~/api/appointments'
 import { useAuth } from '~/auth/auth-context'
+import { useBooking } from '~/booking/booking-context'
 import { formatDate, formatTimeRange } from '~/booking/format-slot'
 
 export function meta() {
@@ -30,6 +31,7 @@ function serviceLabel(appointment: UserAppointment): string {
 export default function AppointmentsPage() {
   const navigate = useNavigate()
   const { isReady: isAuthReady, isAuthenticated } = useAuth()
+  const { setModifyingAppointmentId } = useBooking()
   const [appointments, setAppointments] = useState<UserAppointment[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
@@ -95,6 +97,13 @@ export default function AppointmentsPage() {
     <div className="appointments-page">
       <h1>My Appointments</h1>
 
+      {!isLoading && !loadError && appointments.length > 0 ? (
+        <p className="appointments-modify-note">
+          Use Modify to change the date or time. To change the service or location, cancel the
+          appointment and book a new one.
+        </p>
+      ) : null}
+
       {isLoading ? (
         <div role="status" aria-live="polite">
           <Text>Loading appointments…</Text>
@@ -133,6 +142,15 @@ export default function AppointmentsPage() {
                   {start && end ? (
                     <p className="appointments-row-time">{formatTimeRange(start.time, end.time)}</p>
                   ) : null}
+                  <div className="appointments-row-actions">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onPress={() => navigate(`/appointments/${appointment.appointment_id}/modify`)}
+                    >
+                      Modify
+                    </Button>
+                  </div>
                 </div>
               </li>
             )
@@ -142,7 +160,14 @@ export default function AppointmentsPage() {
 
       {!isLoading ? (
         <div className="appointments-footer">
-          <Button type="button" variant="primary" onPress={() => navigate('/services')}>
+          <Button
+            type="button"
+            variant="primary"
+            onPress={() => {
+              setModifyingAppointmentId(null)
+              navigate('/services')
+            }}
+          >
             Book a new appointment
           </Button>
         </div>

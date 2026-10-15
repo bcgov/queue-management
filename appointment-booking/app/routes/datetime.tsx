@@ -35,7 +35,10 @@ export default function DateTimePage() {
     selectedLocation,
     selectedSlot,
     setSelectedSlot,
+    modifyingAppointmentId,
+    setModifyingAppointmentId,
   } = useBooking()
+  const isModifying = modifyingAppointmentId != null
   const [timeSlots, setTimeSlots] = useState<AvailableTimeSlots>({})
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -167,8 +170,11 @@ export default function DateTimePage() {
           Please go back to the services page and start by selecting a service, then a location.
         </InlineAlert>
         <div className="booking-nav-row">
-          <Button type="button" onPress={() => navigate('/services')}>
-            Go to services
+          <Button
+            type="button"
+            onPress={() => navigate(isModifying ? '/appointments' : '/services')}
+          >
+            {isModifying ? 'My appointments' : 'Go to services'}
           </Button>
         </div>
       </>
@@ -264,6 +270,12 @@ export default function DateTimePage() {
                   <span className="datetime-calendar-legend-disabled">Greyed out</span> — outside
                   the booking window or not selectable
                 </li>
+                {isModifying ? (
+                  <li>
+                    Service and location stay the same — cancel and book a new appointment to change
+                    them
+                  </li>
+                ) : null}
               </ul>
             </section>
 
@@ -332,7 +344,17 @@ export default function DateTimePage() {
       )}
 
       <div className="booking-nav-row">
-        <BookingBackRow onBack={() => navigate('/login')} />
+        <BookingBackRow
+          onBack={() => {
+            if (isModifying) {
+              setSelectedSlot(null)
+              setModifyingAppointmentId(null)
+              navigate('/appointments')
+              return
+            }
+            navigate('/login')
+          }}
+        />
         <BookingContinueRow
           label="Review"
           isDisabled={!selectedSlot || isHoldingSlot}
