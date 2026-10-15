@@ -1906,12 +1906,7 @@ export default function Locations() {
         </table>
       </div>
 
-      <ListPagination
-        page={page}
-        totalPages={totalPages}
-        onPrevious={goPrevious}
-        onNext={goNext}
-      />
+      <ListPagination page={page} totalPages={totalPages} onPrevious={goPrevious} onNext={goNext} />
     </>
   )
 }
