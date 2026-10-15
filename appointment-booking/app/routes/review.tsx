@@ -121,6 +121,7 @@ export default function ReviewPage() {
       }
 
       const confirmation: BookingConfirmation = {
+        kind: 'booked',
         bookedByName: session?.userFullName?.trim() || 'Appointment User',
         serviceName: selectedService.name,
         locationName: selectedLocation.name,

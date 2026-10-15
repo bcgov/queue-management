@@ -17,7 +17,7 @@ export const SessionKeys = {
   BookingSelectedSlot: 'BOOKING_SELECTED_SLOT',
   // When set, review uses PUT to update this appointment instead of creating a new one.
   BookingModifyingAppointmentId: 'BOOKING_MODIFYING_APPOINTMENT_ID',
-  // Survives refresh on the confirmation page after a successful book.
+  // Survives refresh on the confirmation page after a successful book or cancel.
   BookingConfirmation: 'BOOKING_CONFIRMATION',
 } as const
 

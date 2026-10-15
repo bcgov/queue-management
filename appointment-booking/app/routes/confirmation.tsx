@@ -1,4 +1,4 @@
-// Shown after a successful book. Print-friendly summary for the user's records.
+// Shown after a successful book or cancel. Print-friendly summary for the user's records.
 import { useEffect, useState } from 'react'
 import {
   Button,
@@ -11,8 +11,10 @@ import { useNavigate } from 'react-router'
 
 import { getJsonFromSession } from '~/auth/session'
 import { SessionKeys } from '~/auth/session-keys'
+import { useBooking } from '~/booking/booking-context'
 import type { BookingConfirmation } from '~/booking/booking-store'
 import { formatDate, formatTimeRange } from '~/booking/format-slot'
+import { AppointmentSummaryCallout } from '~/components/AppointmentSummaryCallout'
 
 export function meta() {
   return [{ title: 'Appointment Confirmation' }]
@@ -35,6 +37,7 @@ function confirmationDeliveryCopy(confirmation: BookingConfirmation): string {
 
 export default function ConfirmationPage() {
   const navigate = useNavigate()
+  const { setModifyingAppointmentId } = useBooking()
   const [isReady, setIsReady] = useState(false)
   const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null)
 
@@ -45,6 +48,11 @@ export default function ConfirmationPage() {
     }, 0)
     return () => window.clearTimeout(id)
   }, [])
+
+  function goBookNew() {
+    setModifyingAppointmentId(null)
+    navigate('/services')
+  }
 
   if (!isReady) {
     return (
@@ -59,16 +67,19 @@ export default function ConfirmationPage() {
       <div className="confirmation-page">
         <h1>Appointment confirmation</h1>
         <InlineAlert variant="warning" title="No confirmation to show">
-          There is no appointment confirmation to show. Book an appointment to see one here.
+          There is no appointment confirmation to show. Book or cancel an appointment to see one
+          here.
         </InlineAlert>
         <div className="booking-nav-row no-print">
-          <Button type="button" onPress={() => navigate('/services')}>
+          <Button type="button" onPress={goBookNew}>
             Go to services
           </Button>
         </div>
       </div>
     )
   }
+
+  const isCancelled = confirmation.kind === 'cancelled'
 
   return (
     <div className="confirmation-page">
@@ -79,39 +90,47 @@ export default function ConfirmationPage() {
       </div>
 
       <header className="confirmation-header">
-        <h1>Appointment confirmed</h1>
-        <p className="confirmation-intro">{confirmationDeliveryCopy(confirmation)}</p>
+        <h1>{isCancelled ? 'Appointment cancelled' : 'Appointment confirmed'}</h1>
+        <p className="confirmation-intro">
+          {isCancelled
+            ? 'Your appointment has been cancelled. You can optionally print or download this page for your records.'
+            : confirmationDeliveryCopy(confirmation)}
+        </p>
       </header>
 
-      <Callout variant="lightBlue">
-        <div className="booking-detail-callout-content">
-          <Text>
-            Booked by - <strong>{confirmation.bookedByName}</strong>
-            <br />
-            Selected service - <strong>{confirmation.serviceName}</strong>
-            <br />
-            Appointment location - <strong>{confirmation.locationName}</strong>
-            {confirmation.locationAddress ? (
-              <>
-                <br />
-                Address - <strong>{confirmation.locationAddress}</strong>
-              </>
-            ) : null}
-            <br />
-            Appointment date - <strong>{formatDate(confirmation.date)}</strong>
-            <br />
-            Appointment time -{' '}
-            <strong>{formatTimeRange(confirmation.startTime, confirmation.endTime)}</strong>
-          </Text>
-        </div>
-      </Callout>
+      {isCancelled ? (
+        <AppointmentSummaryCallout {...confirmation} />
+      ) : (
+        <Callout variant="lightBlue">
+          <div className="booking-detail-callout-content">
+            <Text>
+              Booked by - <strong>{confirmation.bookedByName || 'Appointment User'}</strong>
+              <br />
+              Selected service - <strong>{confirmation.serviceName}</strong>
+              <br />
+              Appointment location - <strong>{confirmation.locationName}</strong>
+              {confirmation.locationAddress ? (
+                <>
+                  <br />
+                  Address - <strong>{confirmation.locationAddress}</strong>
+                </>
+              ) : null}
+              <br />
+              Appointment date - <strong>{formatDate(confirmation.date)}</strong>
+              <br />
+              Appointment time -{' '}
+              <strong>{formatTimeRange(confirmation.startTime, confirmation.endTime)}</strong>
+            </Text>
+          </div>
+        </Callout>
+      )}
 
       <div className="booking-nav-row no-print">
-        <Button type="button" variant="secondary" onPress={() => navigate('/services')}>
-          Book another appointment
+        <Button type="button" variant="secondary" onPress={goBookNew}>
+          {isCancelled ? 'Book a new appointment' : 'Book another appointment'}
         </Button>
         <Button type="button" variant="primary" onPress={() => window.print()}>
-          Print Appointment Confirmation
+          {isCancelled ? 'Print Cancellation Confirmation' : 'Print Appointment Confirmation'}
         </Button>
       </div>
     </div>

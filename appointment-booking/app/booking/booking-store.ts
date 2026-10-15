@@ -12,18 +12,20 @@ export type BookingSlot = {
   draftAppointmentId: number
 }
 
-// Snapshot shown on /confirmation after a successful book.
+// Snapshot shown on /confirmation after a successful book or cancel.
 export type BookingConfirmation = {
-  bookedByName: string
+  // Missing kind treated as booked (older session snapshots).
+  kind?: 'booked' | 'cancelled'
+  bookedByName?: string
   serviceName: string
   locationName: string
   locationAddress: string | null
   date: string
   startTime: string
   endTime: string
-  // Which channels were opted in when the user confirmed (for on-screen copy).
-  sentEmail: boolean
-  sentSms: boolean
+  // Which channels were opted in when the user confirmed (book only).
+  sentEmail?: boolean
+  sentSms?: boolean
 }
 
 export type BookingContextValue = {

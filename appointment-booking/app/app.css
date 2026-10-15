@@ -856,6 +856,8 @@ p {
 .appointments-row-actions {
   margin-top: var(--layout-padding-small);
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--layout-padding-small);
   justify-content: flex-end;
 }
 

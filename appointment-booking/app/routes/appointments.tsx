@@ -5,27 +5,12 @@ import { useNavigate } from 'react-router'
 
 import { getUserAppointments, type UserAppointment } from '~/api/appointments'
 import { useAuth } from '~/auth/auth-context'
+import { parseLocalDateTime, serviceLabel } from '~/booking/appointment-display'
 import { useBooking } from '~/booking/booking-context'
 import { formatDate, formatTimeRange } from '~/booking/format-slot'
 
 export function meta() {
   return [{ title: 'My Appointments' }]
-}
-
-// local_* values are office wall clock without offset, e.g. 2026-09-25T14:30:00
-function parseLocalDateTime(value: string | null): { date: string; time: string } | null {
-  if (!value) return null
-  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(value)
-  if (!match) return null
-  return { date: match[1], time: match[2] }
-}
-
-function serviceLabel(appointment: UserAppointment): string {
-  return (
-    appointment.service?.external_service_name?.trim() ||
-    appointment.service?.service_name?.trim() ||
-    'Service'
-  )
 }
 
 export default function AppointmentsPage() {
@@ -149,6 +134,14 @@ export default function AppointmentsPage() {
                       onPress={() => navigate(`/appointments/${appointment.appointment_id}/modify`)}
                     >
                       Modify
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      danger
+                      onPress={() => navigate(`/appointments/${appointment.appointment_id}/cancel`)}
+                    >
+                      Cancel
                     </Button>
                   </div>
                 </div>

@@ -11,5 +11,6 @@ export default [
   route('confirmation', 'routes/confirmation.tsx'),
   route('appointments', 'routes/appointments.tsx'),
   route('appointments/:appointmentId/modify', 'routes/appointments.$appointmentId.modify.tsx'),
+  route('appointments/:appointmentId/cancel', 'routes/appointments.$appointmentId.cancel.tsx'),
   route('locations', 'routes/locations.tsx'),
 ] satisfies RouteConfig

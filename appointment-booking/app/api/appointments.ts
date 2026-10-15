@@ -157,6 +157,23 @@ export async function deleteDraftAppointment(appointmentId: number): Promise<voi
   }
 }
 
+// Cancel a confirmed appointment owned by the current public user. Success is 204.
+export async function deleteAppointment(appointmentId: number): Promise<void> {
+  const token = await getAccessToken()
+
+  const baseUrl = await getApiBaseUrl()
+  const res = await fetch(`${baseUrl}/appointments/${appointmentId}/`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to cancel this appointment (${res.status})`)
+  }
+}
+
 // Future, not-checked-in appointments for the current public user.
 export async function getUserAppointments(): Promise<UserAppointment[]> {
   const token = await getAccessToken()
