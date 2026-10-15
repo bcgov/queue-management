@@ -8,7 +8,9 @@ import { BookingBackRow } from '~/components/BookingBackRow'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingDetailCallout } from '~/components/BookingDetailCallout'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
+import { ListPagination } from '~/components/ListPagination'
 import { SearchRow } from '~/components/SearchRow'
+import { useClientPagination } from '~/components/useClientPagination'
 import { useNearestSort, type Coordinates } from '~/components/useNearestSort'
 import { LocationsTable } from '~/components/LocationsTable'
 
@@ -148,6 +150,8 @@ export default function ServiceLocationsPage() {
     return results
   }, [locationsForService, search, sortDirection, nearestSort, userLocation])
 
+  const { page, pageItems, totalPages, goPrevious, goNext } = useClientPagination(visibleLocations)
+
   // Only a bookable location unlocks the next step; unavailable rows stay selectable for info.
   const canContinue = !!selectedService && !!selectedLocation?.isBookable
   const showLoadError = !isLoading && loadError
@@ -198,19 +202,28 @@ export default function ServiceLocationsPage() {
           ) : null}
 
           <div className="booking-locations-body">
-            <LocationsTable
-              locations={visibleLocations}
-              isLoading={isLoading}
-              showNoResults={showNoResults}
-              sortDirection={sortDirection}
-              onToggleSort={() => {
-                // Name sort and nearest sort are mutually exclusive.
-                clearNearestSort()
-                setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
-              }}
-              selectedId={selectedId}
-              onSelect={setSelectedLocation}
-            />
+            <div className="booking-locations-list">
+              <LocationsTable
+                locations={pageItems}
+                isLoading={isLoading}
+                showNoResults={showNoResults}
+                sortDirection={sortDirection}
+                onToggleSort={() => {
+                  // Name sort and nearest sort are mutually exclusive.
+                  clearNearestSort()
+                  setSortDirection((direction) => (direction === 'asc' ? 'desc' : 'asc'))
+                }}
+                selectedId={selectedId}
+                onSelect={setSelectedLocation}
+              />
+
+              <ListPagination
+                page={page}
+                totalPages={totalPages}
+                onPrevious={goPrevious}
+                onNext={goNext}
+              />
+            </div>
 
             <aside
               className="booking-locations-detail"

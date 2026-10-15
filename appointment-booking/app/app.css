@@ -233,6 +233,20 @@ p {
   min-width: 0;
 }
 
+.list-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--layout-padding-medium);
+  margin-top: var(--layout-padding-medium);
+}
+
+.list-pagination-status {
+  font: var(--typography-regular-small-body);
+  color: var(--typography-color-secondary);
+}
+
 .services-table-wrapper {
   overflow-x: auto;
   width: 100%;
@@ -387,9 +401,16 @@ p {
   width: 100%;
 }
 
-.booking-locations-body > .services-table-fieldset {
+.booking-locations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-padding-medium);
   min-width: 0;
   order: 2;
+}
+
+.booking-locations-list .list-pagination {
+  margin-top: 0;
 }
 
 @media (min-width: 48rem) {
@@ -402,7 +423,7 @@ p {
     align-items: flex-start;
   }
 
-  .booking-locations-body > .services-table-fieldset,
+  .booking-locations-list,
   .booking-locations-detail {
     flex: 1 1 0;
     min-width: 0;
@@ -412,7 +433,7 @@ p {
     order: 2;
   }
 
-  .booking-locations-body > .services-table-fieldset {
+  .booking-locations-list {
     order: 1;
   }
 }
