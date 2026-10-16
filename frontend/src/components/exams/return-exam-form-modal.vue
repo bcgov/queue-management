@@ -286,7 +286,12 @@ export default class ReturnExamModal extends Vue {
       }
       if (this.modalUse === 'return') {
         this.$nextTick(() => {
-          (this.$refs.returnactiontaken as any).focus()
+          this.$nextTick(() => {
+            const input = this.$refs.returnactiontaken as any
+            if (input && typeof input.focus === 'function') {
+              input.focus()
+            }
+          })
         })
       }
     }
