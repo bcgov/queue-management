@@ -1,4 +1,4 @@
-"""Convert exam expiry_date and exam_received_date to calendar dates.
+"""Convert exam expiry, received, and returned dates to calendar dates.
 
 Revision ID: a1b2c3d4e5f6
 Revises: 8b6c67545310
@@ -34,9 +34,25 @@ def upgrade():
         existing_nullable=True,
         postgresql_using="(exam_received_date AT TIME ZONE 'UTC')::date",
     )
+    op.alter_column(
+        'exam',
+        'exam_returned_date',
+        existing_type=sqlalchemy_utc.sqltypes.UtcDateTime(timezone=True),
+        type_=sa.Date(),
+        existing_nullable=True,
+        postgresql_using="(exam_returned_date AT TIME ZONE 'UTC')::date",
+    )
 
 
 def downgrade():
+    op.alter_column(
+        'exam',
+        'exam_returned_date',
+        existing_type=sa.Date(),
+        type_=sqlalchemy_utc.sqltypes.UtcDateTime(timezone=True),
+        existing_nullable=True,
+        postgresql_using="(exam_returned_date::timestamp AT TIME ZONE 'UTC')",
+    )
     op.alter_column(
         'exam',
         'exam_received_date',
