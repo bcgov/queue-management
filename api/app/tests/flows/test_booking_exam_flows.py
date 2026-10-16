@@ -160,16 +160,16 @@ def test_exam_can_be_listed_and_retrieved(internal_ga_client, seeded_data):
     )
 
 
-def test_exam_create_accepts_iso_offset_exam_received_date(
+def test_exam_create_accepts_iso_exam_received_date(
     internal_ga_client, seeded_data
 ):
-    """Assert exam creation accepts frontend ISO offset timestamps."""
+    """Assert exam creation accepts frontend ISO calendar dates."""
     response = internal_ga_client.post(
         "/exams/",
         json={
             "exam_method": "paper",
-            "exam_received_date": "2026-04-17T07:00:00+00:00",
-            "expiry_date": "2026-05-22T07:00:00+00:00",
+            "exam_received_date": "2026-04-17",
+            "expiry_date": "2026-05-22",
             "exam_type_id": seeded_data["exam_type_id"],
             "event_id": "test1234887",
             "exam_name": "test exam",
@@ -187,7 +187,8 @@ def test_exam_create_accepts_iso_offset_exam_received_date(
     body = json_of(response)
 
     assert_json_response(response, 201)
-    assert body["exam"]["exam_received_date"] == "2026-04-17T07:00:00+00:00"
+    assert body["exam"]["exam_received_date"] == "2026-04-17"
+    assert body["exam"]["expiry_date"] == "2026-05-22"
 
 
 def test_exam_can_be_updated(internal_ga_client, seeded_data):
@@ -206,10 +207,10 @@ def test_exam_can_be_updated(internal_ga_client, seeded_data):
     assert json_of(response)["exam"]["exam_name"] == "Updated exam name"
 
 
-def test_exam_update_accepts_iso_offset_exam_received_date(
+def test_exam_update_accepts_iso_exam_received_date(
     internal_ga_client, seeded_data
 ):
-    """Assert exam updates accept frontend ISO offset timestamps."""
+    """Assert exam updates accept frontend ISO calendar dates."""
     booking = _create_booking(internal_ga_client, seeded_data, days_from_now=5)
     exam = _create_exam(
         internal_ga_client,
@@ -220,13 +221,11 @@ def test_exam_update_accepts_iso_offset_exam_received_date(
 
     response = internal_ga_client.put(
         f"/exams/{exam['exam_id']}/",
-        json={"exam_received_date": "2026-04-17T07:00:00+00:00"},
+        json={"exam_received_date": "2026-04-17"},
     )
 
     assert_json_response(response, 201)
-    assert json_of(response)["exam"]["exam_received_date"] == (
-        "2026-04-17T07:00:00+00:00"
-    )
+    assert json_of(response)["exam"]["exam_received_date"] == "2026-04-17"
 
 
 def test_exam_return_update_accepts_frontend_date_only_value(
@@ -289,7 +288,7 @@ def test_exam_return_update_rejects_invalid_date(
     }
 
 
-def test_exam_create_invalid_datetime_returns_validation_response(
+def test_exam_create_invalid_date_returns_validation_response(
     internal_ga_client, seeded_data
 ):
     """Assert schema load errors return a controlled JSON 422 response."""
@@ -298,7 +297,7 @@ def test_exam_create_invalid_datetime_returns_validation_response(
         json={
             "exam_method": "paper",
             "exam_received_date": "not-a-date",
-            "expiry_date": "2026-05-22T07:00:00+00:00",
+            "expiry_date": "2026-05-22",
             "exam_type_id": seeded_data["exam_type_id"],
             "event_id": "event-invalid-date",
             "exam_name": "Invalid date exam",
@@ -316,7 +315,7 @@ def test_exam_create_invalid_datetime_returns_validation_response(
 
     assert_json_response(response, 422)
     assert json_of(response) == {
-        "message": {"exam_received_date": ["Not a valid datetime."]}
+        "message": {"exam_received_date": ["Not a valid date."]}
     }
 
 

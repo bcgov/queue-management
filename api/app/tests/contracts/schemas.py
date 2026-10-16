@@ -6,6 +6,10 @@ ISO_DATETIME_SCHEMA = {
     "type": "string",
     "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:(?:Z|[+-]\d{2}:\d{2}))?$",
 }
+ISO_DATE_SCHEMA = {
+    "type": "string",
+    "pattern": r"^\d{4}-\d{2}-\d{2}$",
+}
 LOCAL_DATETIME_SCHEMA = {
     "type": "string",
     "pattern": r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$",
@@ -525,12 +529,12 @@ EXAM_SCHEMA = object_schema(
         "exam_method": nullable({"type": "string"}),
         "exam_name": {"type": "string"},
         "exam_received": nullable({"type": "integer"}),
-        "exam_received_date": nullable(ISO_DATETIME_SCHEMA),
+        "exam_received_date": nullable(ISO_DATE_SCHEMA),
         "exam_type_id": {"type": "integer"},
         "examinee_name": nullable({"type": "string"}),
         "examinee_phone": nullable({"type": "string"}),
         "examinee_email": nullable({"type": "string"}),
-        "expiry_date": nullable(ISO_DATETIME_SCHEMA),
+        "expiry_date": nullable(ISO_DATE_SCHEMA),
         "notes": nullable({"type": "string"}),
         "number_of_students": nullable({"type": "integer"}),
         "office_id": {"type": "integer"},

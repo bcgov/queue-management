@@ -33,11 +33,7 @@ def _create_booking(api_client, seeded_data, *, days_from_now):
 
 
 def _create_exam(api_client, seeded_data, booking_id, *, event_id):
-    expiry_date = (
-        (datetime.now(timezone.utc) + timedelta(days=30))
-        .replace(microsecond=0)
-        .isoformat()
-    )
+    expiry_date = (datetime.now(timezone.utc) + timedelta(days=30)).date().isoformat()
     response = api_client.post(
         "/exams/",
         json={
@@ -76,9 +72,9 @@ def test_exam_create_response_matches_the_contract(internal_ga_client, seeded_da
             "number_of_students": 19,
             "office_id": seeded_data["office_ids"]["test_office"],
             "offsite_location": "Test Office",
-            "expiry_date": (datetime.now(timezone.utc) + timedelta(days=30))
-            .replace(microsecond=0)
-            .isoformat(),
+            "expiry_date": (
+                datetime.now(timezone.utc) + timedelta(days=30)
+            ).date().isoformat(),
         },
     )
     body = json_of(response)
