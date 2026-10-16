@@ -16,7 +16,7 @@
             @change="serviceSelection"
             @input="clickSelection"
             @keyup="setKeyPressed"
-            auto-select-first="true"
+            :auto-select-first="true"
             data-cy="step-2-combobox-service"
             hide-details
           >
