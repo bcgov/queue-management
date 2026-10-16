@@ -63,7 +63,7 @@ def _create_export_exam(
             event_id=f"event-{uuid4().hex[:8]}",
             exam_name=exam_name,
             examinee_name="Codex Examinee",
-            expiry_date=start_time + timedelta(days=30),
+            expiry_date=(start_time + timedelta(days=30)).date(),
             notes="Export flow",
             number_of_students=1,
             exam_method="paper",

@@ -35,7 +35,7 @@ class ExamList(Resource):
         try:
             csr = CSR.find_by_username(get_username())
 
-            ninety_day_filter = datetime.now() - timedelta(days=90)
+            ninety_day_filter = (datetime.now() - timedelta(days=90)).date()
 
             if csr.ita2_designate == 1:
                 if request.args and request.args.get("office_number"):

@@ -257,11 +257,7 @@ def create_exam(
     office_id: Optional[int] = None,
     **overrides: Any,
 ) -> dict[str, Any]:
-    expiry_date = (
-        (datetime.now(timezone.utc) + timedelta(days=30))
-        .replace(microsecond=0)
-        .isoformat()
-    )
+    expiry_date = (datetime.now(timezone.utc) + timedelta(days=30)).date().isoformat()
     payload = {
         "event_id": event_id,
         "exam_method": "paper",

@@ -201,7 +201,7 @@ def build_bcmp_exam_payload(seeded_data) -> dict:
         "number_of_students": 1,
         "office_id": seeded_data["office_ids"]["test_office"],
         "offsite_location": "Test Office",
-        "expiry_date": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        "expiry_date": datetime.now(timezone.utc).date().isoformat(),
         "is_pesticide": 1,
         "sbc_managed": "sbc",
         "ind_or_group": "individual",

@@ -282,7 +282,7 @@ export default class UploadPesticideModal extends Vue {
           this.submitted = true
           console.log(bcmpResponse)
           putData.upload_received_ind = this.actionedExam.upload_received_ind = 1
-          putData.exam_returned_date = this.actionedExam.exam_returned_date = new Date().toISOString()
+          putData.exam_returned_date = this.actionedExam.exam_returned_date = moment().format('YYYY-MM-DD')
           console.log(this.actionedExam)
           this.updateExam(putData)
           this.isLoading = false
@@ -298,7 +298,7 @@ export default class UploadPesticideModal extends Vue {
       console.log('=====> Submit Exam ===> this returned date', this.actionedExam.exam_returned_date)
       this.submitted = true
       putData.upload_received_ind = this.actionedExam.upload_received_ind = 0
-      putData.exam_returned_date = this.actionedExam.exam_returned_date = new Date().toISOString()
+      putData.exam_returned_date = this.actionedExam.exam_returned_date = moment().format('YYYY-MM-DD')
       console.log(this.actionedExam)
       this.updateExam(putData)
       this.isLoading = false
