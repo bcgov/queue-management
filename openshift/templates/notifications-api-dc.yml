@@ -101,6 +101,8 @@ objects:
                   value: "${SMS_REMINDER_TEMPLATE}"
                 - name: SMS_CHECKIN_CONFIRMATION_TEMPLATE
                   value: "${SMS_CHECKIN_CONFIRMATION_TEMPLATE}"
+                - name: SMS_CANCEL_TEMPLATE
+                  value: "${SMS_CANCEL_TEMPLATE}"
                 - name: JWT_OIDC_WELL_KNOWN_CONFIG
                   value: "${JWT_OIDC_WELL_KNOWN_CONFIG}"    
                 - name: EMAIL_PROVIDER
@@ -242,6 +244,10 @@ parameters:
     description: "SMS Template for checkin confirmation"
     required: true
     value: "Thank you for saving your spot in line with Service BC! We will be with you shortly. To see your place in line, follow this link, you are ticket {ticket_number}: {url}"
+  - name: SMS_CANCEL_TEMPLATE
+    description: "SMS Template for appointment cancellation"
+    required: true
+    value: "Your Service BC appointment on {formatted_date} has been cancelled. Book a new one: {app_url}"
   - name: EMAIL_PROVIDER
     description: "Defines the provider of email. For GC Notify use GC_NOTIFY and for ches use CHES"
     required: true

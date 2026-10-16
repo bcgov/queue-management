@@ -28,7 +28,7 @@ app_json_const = 'application/json'
 request_timeout_seconds = 30
 
 def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
-    """Send confirmation email"""
+    """Send appointment reminder/confirmation SMS."""
     telephone: str = get_user_telephone(user, appointment)
     if telephone:
         notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
@@ -46,6 +46,24 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
                           timeout=request_timeout_seconds)
         except Exception as exc:
             logging.exception("Error on sms sending - %s", exc)
+
+
+def send_cancel_sms(appointment: Appointment, office: Office, timezone, user: PublicUser, token: str):
+    """Send a short SMS when an appointment is cancelled (date + book link)."""
+    telephone: str = get_user_telephone(user, appointment)
+    if telephone:
+        notifications_endpoint = current_app.config.get('NOTIFICATIONS_ENDPOINT')
+        try:
+            requests.post(notifications_endpoint,
+                          headers={'Content-Type': app_json_const, 'Authorization': f'Bearer {token}'},
+                          json=[{
+                              'user_telephone': telephone,
+                              'formatted_date': format_sms_date(appointment.start_time, timezone),
+                              'type': 'CANCEL',
+                          }],
+                          timeout=request_timeout_seconds)
+        except Exception as exc:
+            logging.exception("Error on cancel sms sending - %s", exc)
 
 
 def is_valid_phone(phone_number: str):

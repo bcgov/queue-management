@@ -1,0 +1,24 @@
+Hello {{ display_name }},
+
+{% if service_name is not none %}
+Service: {{ service_name }}
+
+{% endif %}
+Location: {{ location }}
+{% if civic_address is not none %}
+Address: {{ civic_address }}
+
+{% endif %}
+Date and time: {{ formatted_date }}
+Duration: {{ duration }} minutes
+
+Your appointment with Service BC has been cancelled as you requested.
+
+To book a new appointment, please visit Service BC Book an Appointment and sign in.
+
+[Book an Appointment with Service BC]({{ url }})
+Thank you,
+
+Service BC {{ location }}
+{{ civic_address }}
+{{ telephone }}

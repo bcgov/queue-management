@@ -84,6 +84,7 @@ class _Config:  # pylint: disable=too-few-public-methods
     APPOINTMENT_APP_URL = os.getenv("APPOINTMENT_APP_URL", "")
     SMS_REMINDER_TEMPLATE = os.getenv("SMS_REMINDER_TEMPLATE", "")
     SMS_CHECKIN_CONFIRMATION_TEMPLATE = os.getenv("SMS_CHECKIN_CONFIRMATION_TEMPLATE", "")
+    SMS_CANCEL_TEMPLATE = os.getenv("SMS_CANCEL_TEMPLATE", "")
 
     EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "GC_NOTIFY").strip().upper()
     CHES_SSO_TOKEN_URL = os.getenv("CHES_SSO_TOKEN_URL", "")

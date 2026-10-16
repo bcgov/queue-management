@@ -5,8 +5,10 @@ import { getPublicServices, type Service } from '~/api/services'
 import { useBooking } from '~/booking/booking-context'
 import { BookingContinueRow } from '~/components/BookingContinueRow'
 import { BookingStepProgress } from '~/components/BookingStepProgress'
+import { ListPagination } from '~/components/ListPagination'
 import { SearchRow } from '~/components/SearchRow'
 import { ServicesTable } from '~/components/ServicesTable'
+import { useClientPagination } from '~/components/useClientPagination'
 
 const BOOKING_STEP = 1
 const BOOKING_STEP_COUNT = 5
@@ -74,6 +76,8 @@ export default function ServicesPage() {
     return results
   }, [services, search, sortDirection])
 
+  const { page, pageItems, totalPages, goPrevious, goNext } = useClientPagination(visibleServices)
+
   // Page owns Continue enablement; only a bookable selection unlocks the next step.
   const canContinue = !!selectedService?.isOnlineBookable
   const hasUnavailableServices = services.some((service) => !service.isOnlineBookable)
@@ -113,7 +117,7 @@ export default function ServicesPage() {
           )}
 
           <ServicesTable
-            services={visibleServices}
+            services={pageItems}
             isLoading={isLoading}
             showNoResults={showNoResults}
             sortDirection={sortDirection}
@@ -122,6 +126,13 @@ export default function ServicesPage() {
             }
             selectedId={selectedId}
             onSelect={setSelectedService}
+          />
+
+          <ListPagination
+            page={page}
+            totalPages={totalPages}
+            onPrevious={goPrevious}
+            onNext={goNext}
           />
 
           {!isLoading && hasUnavailableServices && (

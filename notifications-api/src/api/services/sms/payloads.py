@@ -12,6 +12,8 @@ def construct_sms_text(sms_request: dict) -> str:
         template = current_app.config.get("SMS_REMINDER_TEMPLATE", "")
     elif message_type == "CHECKIN_CONFIRMATION":
         template = current_app.config.get("SMS_CHECKIN_CONFIRMATION_TEMPLATE", "")
+    elif message_type == "CANCEL":
+        template = current_app.config.get("SMS_CANCEL_TEMPLATE", "")
     elif message_type == "CUSTOM":
         return sms_request.get("message", "")
 

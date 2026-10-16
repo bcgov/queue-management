@@ -22,7 +22,13 @@ from app.models.theq import CSR, PublicUser, Citizen, Office
 from app.schemas.bookings import AppointmentSchema
 from app.utilities.auth_util import Role, get_username
 from app.utilities.auth_util import is_public_user
-from app.utilities.email import get_cancel_email_contents, send_email, can_send_service_notification
+from app.utilities.email import (
+    get_cancel_email_contents,
+    get_self_cancel_email_contents,
+    send_email,
+    can_send_service_notification,
+)
+from app.utilities.sms import send_cancel_sms
 from app.utilities.snowplow import SnowPlow
 from qsystem import application
 from qsystem import api, db, socketio
@@ -55,16 +61,22 @@ class AppointmentDelete(Resource):
             SnowPlow.snowplow_appointment(None, csr, appointment, 'appointment_delete')
 
         # Do not log snowplow events or send emails if it's a draft.
-        # If the appointment is public user's and if staff deletes it send email
-        if can_send_service_notification(appointment) and csr:
+        # Staff cancel → staff cancel template; public self-cancel → self-cancel template.
+        if can_send_service_notification(appointment) and (csr or user):
 
             office = Office.find_by_id(appointment.office_id)
 
-            # Send blackout email
             try:
-                send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_cancel_email_contents(appointment, user, office, office.timezone))
+                token = request.headers['Authorization'].replace('Bearer ', '')
+                email_contents = (
+                    get_cancel_email_contents(appointment, user, office, office.timezone)
+                    if csr
+                    else get_self_cancel_email_contents(appointment, user, office, office.timezone)
+                )
+                send_email(token, *email_contents)
+                send_cancel_sms(appointment, office, office.timezone, user, token)
             except Exception as exc:
-                logging.exception(f'Error on token generation - {exc}')
+                logging.exception(f'Error on sms or email sending - {exc}')
 
         db.session.delete(appointment)
         db.session.commit()

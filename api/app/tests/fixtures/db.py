@@ -232,6 +232,8 @@ def _stub_integrations():
         "app.resources.bookings.appointment.appointment_delete": {
             "send_email": email_stub,
             "get_cancel_email_contents": email_contents_stub,
+            "get_self_cancel_email_contents": email_contents_stub,
+            "send_cancel_sms": sms_stub,
         },
     }
 

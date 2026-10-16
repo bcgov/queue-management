@@ -7,7 +7,9 @@ import {
   SvgChevronDownIcon,
   SvgChevronUpIcon,
 } from '@bcgov/design-system-react-components'
+import { ListPagination } from '../components/ListPagination'
 import { SearchRow } from '../components/SearchRow'
+import { useClientPagination } from '../components/useClientPagination'
 import { useNearestSort } from '../components/useNearestSort'
 
 const PAGE_DESCRIPTION =
@@ -1710,6 +1712,8 @@ export default function Locations() {
     return results
   }, [search, sortColumn, sortDirection, nearestSort, userLocation, officeDistances])
 
+  const { page, pageItems, totalPages, goPrevious, goNext } = useClientPagination(visibleOffices)
+
   function toggleSort(column: SortColumn) {
     clearNearestSort()
 
@@ -1815,7 +1819,7 @@ export default function Locations() {
                 <td colSpan={4}>No offices match your search.</td>
               </tr>
             ) : (
-              visibleOffices.map((office) => (
+              pageItems.map((office) => (
                 <tr key={office.name}>
                   <th scope="row">
                     {office.name}
@@ -1901,6 +1905,8 @@ export default function Locations() {
           </tbody>
         </table>
       </div>
+
+      <ListPagination page={page} totalPages={totalPages} onPrevious={goPrevious} onNext={goNext} />
     </>
   )
 }
