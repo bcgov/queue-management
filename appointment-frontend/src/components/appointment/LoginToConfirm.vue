@@ -21,7 +21,7 @@
           <v-img
             v-if="!($vuetify.breakpoint.xs)"
             class="login-logo"
-            :src="bcServicesCardUrl"
+            :src="bcServicesCardLogoUrl"
             max-width="132"
             contain
             data-cy="step-4-image-bcsc"
@@ -194,7 +194,7 @@ export default class LoginToConfirm extends Mixins(StepperMixin) {
     return ConfigHelper.getValue('BCServicesCardUrl')
   }
 
-  private bcServicesCardUrl = bcServicesCardImage
+  private bcServicesCardLogoUrl = bcServicesCardImage
 
   private bceidLogoUrl = bceidLogoImage
 }
