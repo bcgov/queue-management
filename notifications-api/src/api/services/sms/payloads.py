@@ -8,6 +8,9 @@ def construct_sms_text(sms_request: dict) -> str:
     message_type: str = sms_request.get("type", "REMINDER")
     template = ""
     app_url = current_app.config.get("APPOINTMENT_APP_URL", "")
+    appointment_id = sms_request.get("appointment_id")
+    if app_url and appointment_id is not None and str(appointment_id).strip() != "":
+        app_url = f"{str(app_url).rstrip('/')}/appointments/{appointment_id}/modify"
     if message_type == "REMINDER":
         template = current_app.config.get("SMS_REMINDER_TEMPLATE", "")
     elif message_type == "CHECKIN_CONFIRMATION":

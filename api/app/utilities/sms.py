@@ -41,7 +41,8 @@ def send_sms(appointment: Appointment, office: Office, timezone, user: PublicUse
                               'display_name': display_name,
                               'location': office.office_name,
                               'formatted_date': format_sms_date(appointment.start_time, timezone),
-                              'office_telephone': office.telephone
+                              'office_telephone': office.telephone,
+                              'appointment_id': appointment.appointment_id,
                           }],
                           timeout=request_timeout_seconds)
         except Exception as exc:
