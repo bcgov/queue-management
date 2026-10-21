@@ -3,5 +3,14 @@ import { type RouteConfig, index, route } from '@react-router/dev/routes'
 export default [
   index('routes/home.tsx'),
   route('services', 'routes/services.tsx'),
+  route('service-locations', 'routes/service-locations.tsx'),
+  route('signin/:idpHint', 'routes/signin.$idpHint.tsx'),
+  route('login', 'routes/login.tsx'),
+  route('datetime', 'routes/datetime.tsx'),
+  route('review', 'routes/review.tsx'),
+  route('confirmation', 'routes/confirmation.tsx'),
+  route('appointments', 'routes/appointments.tsx'),
+  route('appointments/:appointmentId/modify', 'routes/appointments.$appointmentId.modify.tsx'),
+  route('appointments/:appointmentId/cancel', 'routes/appointments.$appointmentId.cancel.tsx'),
   route('locations', 'routes/locations.tsx'),
 ] satisfies RouteConfig

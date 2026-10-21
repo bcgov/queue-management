@@ -27,10 +27,28 @@ ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
 
 def get_cancel_email_contents(appt: Appointment, user, office, timezone):
-    """Send cancellation email"""
+    """Send cancellation email (staff-initiated)."""
     sender = current_app.config.get('MAIL_FROM_ID')
 
     template = ENV.get_template('email_templates/delete_email.html')
+    date, day = formatted_date(appt.start_time, timezone)
+    subject = f'Cancelled – Your appointment on {day}'
+    body = template.render(display_name=appt.citizen_name,
+                           location=office.office_name,
+                           formatted_date=date,
+                           duration=get_duration(appt.start_time, appt.end_time),
+                           telephone=office.telephone,
+                           service_name=appt.service.external_service_name if appt.service.external_service_name else appt.service.service_name,
+                           civic_address=office.civic_address,
+                           url=current_app.config.get('EMAIL_APPOINTMENT_APP_URL'))
+    return subject, get_email(user, appt), sender, body
+
+
+def get_self_cancel_email_contents(appt: Appointment, user, office, timezone):
+    """Send cancellation email when the citizen cancels their own appointment."""
+    sender = current_app.config.get('MAIL_FROM_ID')
+
+    template = ENV.get_template('email_templates/self_cancel_email.html')
     date, day = formatted_date(appt.start_time, timezone)
     subject = f'Cancelled – Your appointment on {day}'
     body = template.render(display_name=appt.citizen_name,

@@ -155,6 +155,14 @@ def test_blackout_appointment_delete_skips_notifications(
         "app.resources.bookings.appointment.appointment_delete.get_cancel_email_contents",
         _unexpected,
     )
+    monkeypatch.setattr(
+        "app.resources.bookings.appointment.appointment_delete.get_self_cancel_email_contents",
+        _unexpected,
+    )
+    monkeypatch.setattr(
+        "app.resources.bookings.appointment.appointment_delete.send_cancel_sms",
+        _unexpected,
+    )
 
     response = internal_ga_client.delete(
         f"/appointments/{appointment['appointment_id']}/"

@@ -35,6 +35,15 @@ def _token_last_name(user_info):
     return user_info.get('family_name') or user_info.get('lastName') or ''
 
 
+def _token_display_name(user_info):
+    # Match frontend appointment booking: display_name → email → default. Null breaks appointment create.
+    return (
+        (user_info.get('display_name') or '').strip()
+        or (user_info.get('email') or '').strip()
+        or 'Appointment User'
+    )
+
+
 def _normalize_user_defaults(user: PublicUserModel):
     if user.last_name is None:
         user.last_name = ''
@@ -62,7 +71,7 @@ class PublicUsers(Resource):
             else:  # update email only if the email is None for existing user
                 if not user.email:
                     user.email = user_info.get('email')
-            user.display_name = user_info.get('display_name')
+            user.display_name = _token_display_name(user_info)
             if not user.last_name:
                 user.last_name = _token_last_name(user_info)
             _normalize_user_defaults(user)

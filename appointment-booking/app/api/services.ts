@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from '../runtime-config'
+
 // Service type used by the frontend after mapping from the API.
 export type OnlineAvailability = 'SHOW' | 'DISABLE'
 
@@ -6,6 +8,8 @@ export type Service = {
   name: string
   onlineAvailability: OnlineAvailability
   isOnlineBookable: boolean
+  /** Knowledge-test (DLKT) service; used to hide offices with no DLKT capacity. */
+  isDlkt: boolean
 }
 
 // API response row from GET /api/v1/services/.
@@ -17,19 +21,11 @@ type ApiService = {
   display_dashboard_ind: number
   online_availability: string | null
   deleted: string | null
+  is_dlkt?: boolean | null
 }
 
 type ApiServicesResponse = {
   services: ApiService[]
-}
-
-function apiBaseUrl() {
-  // VITE_Q_API_URL should include /api/v1, e.g. http://localhost:5000/api/v1
-  const fromEnv = import.meta.env.VITE_Q_API_URL
-  if (fromEnv) {
-    return fromEnv.replace(/\/$/, '')
-  }
-  return '/api/v1'
 }
 
 // API sends values like "Availability.SHOW" or sometimes just "SHOW".
@@ -80,13 +76,14 @@ function mapRow(row: ApiService, availability: OnlineAvailability): Service {
     name,
     onlineAvailability: availability,
     isOnlineBookable: availability === 'SHOW',
+    isDlkt: row.is_dlkt === true,
   }
 }
 
 // Fetch from the API and filter here, not in the UI.
 // Throws on fetch/HTTP/parse failure so the page can tell error apart from empty [].
 export async function getPublicServices(): Promise<Service[]> {
-  const url = `${apiBaseUrl()}/services/`
+  const url = `${await getApiBaseUrl()}/services/`
 
   let body: ApiServicesResponse
   try {

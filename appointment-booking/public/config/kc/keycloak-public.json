@@ -1,0 +1,8 @@
+{
+  "realm": "servicebc-local",
+  "auth-server-url": "http://localhost:8085/auth",
+  "ssl-required": "external",
+  "resource": "theq-appointment-frontend",
+  "public-client": "true",
+  "confidential-port": 0
+}
