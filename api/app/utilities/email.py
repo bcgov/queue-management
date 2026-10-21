@@ -117,12 +117,12 @@ def can_send_service_notification(appointment: Appointment) -> bool:
     )
 
 
-def get_appointment_modify_url(appointment_id) -> str | None:
-    """Booking-app URL that opens modify for this appointment (or base URL if id missing)."""
+def get_appointments_url() -> str | None:
+    """Booking-app My Appointments URL (no appointment id)."""
     base = current_app.config.get('EMAIL_APPOINTMENT_APP_URL')
-    if not base or appointment_id is None:
+    if not base:
         return base
-    return f"{str(base).rstrip('/')}/appointments/{appointment_id}/modify"
+    return f"{str(base).rstrip('/')}/appointments"
 
 
 def get_confirmation_email_contents(appointment: Appointment, office, timezone, user):
@@ -146,7 +146,7 @@ def get_confirmation_email_contents(appointment: Appointment, office, timezone, 
                            # Default to Public online name if available
                            service_name=appointment.service.external_service_name if appointment.service.external_service_name else appointment.service.service_name,
                            civic_address=office.civic_address,
-                           url=get_appointment_modify_url(appointment.appointment_id))
+                           url=get_appointments_url())
     return subject, get_email(user, appointment), sender, body
 
 
