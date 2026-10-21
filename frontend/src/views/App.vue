@@ -92,7 +92,6 @@ export default class App extends Vue {
   // }
 
   get style () {
-    // removing overflowX: 'hidden' from { marginTop: 72 + 'px', width: '100%', overflowX: 'hidden' } for serviceflow double scrolling fix
     const output: any = { marginTop: 72 + 'px', width: '100%' }
     if (this.showSchedulingIndicator) {
       output.marginBottom = '100px'

@@ -20,8 +20,7 @@
       "vuetify",
       "node",
       "@simonsmith/cypress-image-snapshot/types",
-      "vue-search-select",
-      "camunda-formio-tasklist-vue" 
+      "vue-search-select"
     ],
     "paths": {
       "@/*": [

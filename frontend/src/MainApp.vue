@@ -18,8 +18,4 @@ export default class MainApp extends Vue { }
     width: 100% !important;
     height: 100% !important;
   }
-  .service-flow-body {
-    padding-right: 0px !important;
-    overflow-y: hidden !important;
-}
 </style>
