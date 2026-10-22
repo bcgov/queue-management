@@ -58,7 +58,7 @@ This repository supports two local development workflows:
 - Using a [development container](https://containers.dev/)
 - Developing locally on your host machine
 
-### Dev Container Workflow
+### Dev Container Workflow.
 
 #### Prerequisites
 
