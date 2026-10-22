@@ -6,7 +6,7 @@ ENV CYPRESS_INSTALL_BINARY=0 \
     PUPPETEER_SKIP_DOWNLOAD=true
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY . .
 RUN npm run build
