@@ -1754,12 +1754,9 @@ export default class ExamInventoryTable extends Vue {
     }
 
     if (item.exam_type.exam_type_name === 'Monthly Session Exam') {
-      console.log('    --> Monthly Session Exam, name: ' + item.exam_name)
-      console.log('    --> item.booking: ', item.booking)
       if (!item.booking) {
         return lifeRing
       }
-      console.log('    --> this.checkInvigilator(item): ', this.checkInvigilator(item))
       if (!this.checkInvigilator(item)) {
         return lifeRing
       }
@@ -1856,7 +1853,6 @@ export default class ExamInventoryTable extends Vue {
         output.push('Event ID')
       }
     }
-    console.log('==> In stillRequires(item), item: ', item)
     if (item.booking) {
       if (item.exam_type.group_exam_ind == 1) {
         if (length_of_invigilator_array == 0 && number_of_invigilators == 1) {
