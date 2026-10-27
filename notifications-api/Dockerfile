@@ -1,45 +1,42 @@
-FROM python:3.8.5-buster
-#FROM python:.6-stretch
+FROM python:3.14-slim
 
-#RUN echo "deb http://ftp.debian.org/debian stretch main contrib" > /etc/apt/sources.list
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    GUNICORN_PROCESSES=3 \
+    GUNICORN_THREADS=1 \
+    GUNICORN_TIMEOUT=120 \
+    WSGI_PORT=8080
 
-# todo: Revert this entire pull request when libcairo2 >= 1.14.2 is available from the debian
-#       jessie repo.  This is a temporary fix for https://github.com/Kozea/WeasyPrint/issues/233
+WORKDIR /opt/app-root/src
 
-# reconfigure Debian to allow installs from both stretch (testing) repo and jessie (stable) repo
-# install all the dependencies except libcairo2 from jessie, then install libcairo2 from stretch
+# Build tools needed if a Python dependency has no prebuilt wheel.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    libffi-dev \
+ && rm -rf /var/lib/apt/lists/*
 
-#RUN apt-get -y update \
-#    && apt-get install -y \
-#        fonts-font-awesome \
-#        libffi-dev \
-#        libgdk-pixbuf2.0-0 \
-#        python-dev \
-#        python-lxml \
-#        shared-mime-info \
-#    && apt-get install -y ttf-mscorefonts-installer \
-#                        libpango1.0-0 \
-#                        libcairo2 \
-#                        libpangocairo-1.0-0 \
-#    && apt-get -y clean
+COPY requirements.txt .
 
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
 
+COPY . .
 
+# Installs the src/api package. Dependencies were installed above.
+RUN pip install --no-deps . && \
+    chgrp -R 0 /opt/app-root/src && \
+    chmod -R g=u /opt/app-root/src
 
-RUN apt-get -y update && apt-get install -y build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+# OpenShift can replace this with an arbitrary permitted UID.
+USER 1001
 
+EXPOSE 8080
 
-COPY . /app
-WORKDIR /app
-
-RUN python3 -m pip install -r requirements.txt
-RUN python3 setup.py install
-
-
-EXPOSE 5001
-
-ENV NUM_WORKERS=3
-ENV TIMEOUT=120
-
-#CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--timeout", "$TIMEOUT", "--workers", "$NUM_WORKERS", "wsgi:app"]
-CMD gunicorn --bind 0.0.0.0:5001 --timeout $TIMEOUT --workers $NUM_WORKERS  wsgi:application
+CMD ["gunicorn", "wsgi:application", \
+     "--bind", "0.0.0.0:8080", \
+     "--access-logfile=-", \
+     "--error-logfile=-", \
+     "--no-control-socket", \
+     "--config=gunicorn_config.py"]
