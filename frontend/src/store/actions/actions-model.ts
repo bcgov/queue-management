@@ -2130,18 +2130,10 @@ export const commonActions: any = {
         ? responses.number_of_students
         : 1
     // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    const exp = moment(responses.expiry_date)
-      .format('YYYY-MM-DD')
-      .toString()
-    // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-    responses.expiry_date = moment(exp)
-      .utc()
-      .format('YYYY-MM-DD[T]HH:mm:ssZ')
+    responses.expiry_date = moment(responses.expiry_date).format('YYYY-MM-DD')
     if (responses.exam_received_date) {
       // JSTOTS TOCHECK removed new from moment. no need to use new with moment
-      responses.exam_received_date = moment(responses.exam_received_date)
-        .utc()
-        .format('YYYY-MM-DD[T]HH:mm:ssZ')
+      responses.exam_received_date = moment(responses.exam_received_date).format('YYYY-MM-DD')
     }
     if (responses.notes === null) {
       responses.notes = ''

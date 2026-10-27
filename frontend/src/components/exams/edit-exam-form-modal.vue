@@ -644,12 +644,7 @@ export default class EditExamModal extends Vue {
   get fieldsEdited () {
     const fieldsEdited: any = []
     const data = Object.assign({}, this.fields)
-    if (data.exam_received_date) {
-      data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
-    if (data.expiry_date) {
-      data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
+    this.formatExamDates(data)
     for (const key in data) {
       if (data[key] != this.actionedExam[key]) {
         fieldsEdited.push(key)
@@ -685,10 +680,10 @@ export default class EditExamModal extends Vue {
 
   formatExamDates (data: any) {
     if (data.exam_received_date) {
-      data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      data.exam_received_date = moment(data.exam_received_date).format('YYYY-MM-DD')
     }
     if (data.expiry_date) {
-      data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
+      data.expiry_date = moment(data.expiry_date).format('YYYY-MM-DD')
     }
   }
 
@@ -982,12 +977,7 @@ export default class EditExamModal extends Vue {
     const putRequest: any = {
       exam_id: this.fields.exam_id
     }
-    if (data.exam_received_date) {
-      data.exam_received_date = moment(data.exam_received_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
-    if (data.expiry_date) {
-      data.expiry_date = moment(data.expiry_date).utc().format('YYYY-MM-DD[T]HH:mm:ssZ')
-    }
+    this.formatExamDates(data)
     Object.keys(data).forEach(key => {
       if (data[key] != this.actionedExam[key]) {
         putRequest[key] = data[key]

@@ -451,9 +451,7 @@ def _build_exam_create_request(ctx):
             "number_of_students": 19,
             "office_id": ctx["seeded_data"]["office_ids"]["test_office"],
             "offsite_location": "Test Office",
-            "expiry_date": datetime.now(timezone.utc)
-            .replace(microsecond=0)
-            .isoformat(),
+            "expiry_date": datetime.now(timezone.utc).date().isoformat(),
         },
     }
 
@@ -523,9 +521,7 @@ def _build_exam_event_lookup_request(ctx):
             "number_of_students": 19,
             "office_id": ctx["seeded_data"]["office_ids"]["test_office"],
             "offsite_location": "Test Office",
-            "expiry_date": datetime.now(timezone.utc)
-            .replace(microsecond=0)
-            .isoformat(),
+            "expiry_date": datetime.now(timezone.utc).date().isoformat(),
         },
     )
     assert_status(create_exam_response, 201)

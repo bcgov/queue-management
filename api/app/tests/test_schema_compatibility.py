@@ -3,7 +3,7 @@ import importlib
 import inspect
 import pkgutil
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from types import SimpleNamespace
 
 
@@ -101,7 +101,7 @@ def test_service_schema_serializes_parent_name(app, seeded_data):
 
 
 def test_exam_schema_uses_iso_exam_received_date_format(app, seeded_data):
-    """Assert that exam received dates use Marshmallow's normal ISO contract."""
+    """Assert that exam received dates use Marshmallow's ISO date contract."""
     with app.app_context():
         from app.models.bookings import Exam, ExamType, Invigilator
         from app.models.theq import Office
@@ -122,7 +122,7 @@ def test_exam_schema_uses_iso_exam_received_date_format(app, seeded_data):
             invigilator=invigilator,
             exam_name="Knowledge Test",
             exam_method="paper",
-            exam_received_date=datetime(2026, 3, 25, 12, 30, tzinfo=timezone.utc),
+            exam_received_date=date(2026, 3, 25),
             exam_written_ind=0,
         )
         exam.exam_received = 1
@@ -132,17 +132,17 @@ def test_exam_schema_uses_iso_exam_received_date_format(app, seeded_data):
 
         dumped = ExamSchema().dump(exam)
 
-        assert dumped["exam_received_date"] == "2026-03-25T12:30:00+00:00"
+        assert dumped["exam_received_date"] == "2026-03-25"
 
 
 def test_exam_schema_accepts_iso_exam_received_date_inputs(app, seeded_data):
-    """Assert that frontend ISO offset dates load without strict literal-Z parsing."""
+    """Assert that plain ISO calendar dates load for exam received/expiry fields."""
     with app.app_context():
         from app.schemas.bookings import ExamSchema
 
         base_payload = {
             "exam_method": "paper",
-            "expiry_date": "2026-05-22T07:00:00+00:00",
+            "expiry_date": "2026-05-22",
             "exam_type_id": seeded_data["exam_type_id"],
             "event_id": "test1234887",
             "exam_name": "test exam",
@@ -157,43 +157,30 @@ def test_exam_schema_accepts_iso_exam_received_date_inputs(app, seeded_data):
             "number_of_students": 1,
         }
 
-        offset_exam = ExamSchema().load(
+        loaded_exam = ExamSchema().load(
             {
                 **base_payload,
-                "exam_received_date": "2026-04-17T07:00:00+00:00",
-            }
-        )
-        z_exam = ExamSchema().load(
-            {
-                **base_payload,
-                "exam_received_date": "2026-04-17T07:00:00Z",
+                "exam_received_date": "2026-04-17",
             }
         )
 
-        assert offset_exam.exam_received_date.isoformat() == (
-            "2026-04-17T07:00:00+00:00"
-        )
-        assert z_exam.exam_received_date.isoformat() == "2026-04-17T07:00:00+00:00"
+        assert loaded_exam.exam_received_date == date(2026, 4, 17)
+        assert loaded_exam.expiry_date == date(2026, 5, 22)
 
 
 def test_exam_schema_parses_and_serializes_exam_returned_date(app):
-    """Assert return dates are converted to datetimes before persistence."""
+    """Assert return dates use Marshmallow's ISO date contract."""
     with app.app_context():
         from app.schemas.bookings import ExamSchema
 
         returned_date_field = ExamSchema().fields["exam_returned_date"]
 
-        assert returned_date_field.deserialize("2026-09-04") == datetime(2026, 9, 4)
-        assert returned_date_field.deserialize("2026-09-04T07:00:00Z") == datetime(
-            2026, 9, 4, 7, tzinfo=timezone.utc
-        )
+        assert returned_date_field.deserialize("2026-09-04") == date(2026, 9, 4)
         assert returned_date_field.deserialize(None) is None
         assert returned_date_field.serialize(
             "exam_returned_date",
-            SimpleNamespace(
-                exam_returned_date=datetime(2026, 9, 4, tzinfo=timezone.utc)
-            ),
-        ) == "2026-09-04T00:00:00+00:00"
+            SimpleNamespace(exam_returned_date=date(2026, 9, 4)),
+        ) == "2026-09-04"
 
 
 def test_no_schema_explicitly_uses_strict_literal_z_datetime_format(app, seeded_database):
