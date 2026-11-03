@@ -244,6 +244,16 @@ export function debounce (func, wait, immediate) {
   }
 }
 
+const OFFICE_MAP_FALLBACK = './999.png'
+
+/** Office static map, or the Service BC logo when that office has no image. */
+export function officeMapSrc (officeNumber?: number | null): string {
+  const maps = require.context('../assets/img/officemaps', false, /\.png$/)
+  const file = officeNumber ? `./${officeNumber}.png` : OFFICE_MAP_FALLBACK
+  const key = maps.keys().indexOf(file) !== -1 ? file : OFFICE_MAP_FALLBACK
+  return maps(key)
+}
+
 // https://stackoverflow.com/a/50069453
 // returns e.g. "-7:00" and can be appended to end of date string
 // appending timezone string is important for Safari which otherwise
