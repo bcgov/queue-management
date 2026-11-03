@@ -250,7 +250,7 @@ const OFFICE_MAP_FALLBACK = './999.png'
 export function officeMapSrc (officeNumber?: number | null): string {
   const maps = require.context('../assets/img/officemaps', false, /\.png$/)
   const file = officeNumber ? `./${officeNumber}.png` : OFFICE_MAP_FALLBACK
-  const key = maps.keys().indexOf(file) !== -1 ? file : OFFICE_MAP_FALLBACK
+  const key = maps.keys().includes(file) ? file : OFFICE_MAP_FALLBACK
   return maps(key)
 }
 
