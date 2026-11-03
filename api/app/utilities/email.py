@@ -21,7 +21,7 @@ from .notification_email import send_email
 
 from app.models.bookings import Appointment
 from app.models.theq import Citizen, Office
-from app.utilities.timezone_utils import get_timezone
+from app.utilities.timezone_utils import as_utc, get_timezone
 
 ENV = Environment(loader=FileSystemLoader('.'), autoescape=True)
 
@@ -96,6 +96,28 @@ def can_send_service_notification(appointment: Appointment) -> bool:
         and not appointment.stat_flag
         and appointment.service_id is not None
         and appointment.service is not None
+    )
+
+
+def _utc_instant(value: datetime | None) -> datetime | None:
+    """Normalize a datetime to a UTC instant for equality checks."""
+    if value is None:
+        return None
+    return as_utc(value).replace(microsecond=0)
+
+
+def has_user_impacting_appointment_change(before: dict, after: Appointment) -> bool:
+    """Return whether start, end, or service changed for the citizen.
+
+    Office/location is omitted because this update path loads the appointment by
+    current office, so office_id does not change here.
+    """
+    if not after:
+        return False
+    return (
+        _utc_instant(before.get("start_time")) != _utc_instant(after.start_time)
+        or _utc_instant(before.get("end_time")) != _utc_instant(after.end_time)
+        or before.get("service_id") != after.service_id
     )
 
 

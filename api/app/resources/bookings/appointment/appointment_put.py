@@ -24,7 +24,12 @@ from app.schemas.bookings import AppointmentSchema
 from app.utilities.snowplow import SnowPlow
 from app.utilities.auth_util import is_public_user
 from app.utilities.auth_util import Role, get_username
-from app.utilities.email import send_email, get_confirmation_email_contents, can_send_service_notification
+from app.utilities.email import (
+    send_email,
+    get_confirmation_email_contents,
+    can_send_service_notification,
+    has_user_impacting_appointment_change,
+)
 from app.services import AvailabilityService
 from dateutil.parser import parse
 from qsystem import socketio, application
@@ -128,6 +133,13 @@ class AppointmentPut(Resource):
             if citizen.user_id != user.user_id:
                 abort(403)
 
+        # Notify only when time or service changes. Office is not compared;
+        # this PUT loads the appointment by current office.
+        previous = {
+            "start_time": appointment.start_time,
+            "end_time": appointment.end_time,
+            "service_id": appointment.service_id,
+        }
         validate_utc_interval(json_data, appointment)
         appointment = self.appointment_schema.load(json_data, instance=appointment, partial=True)
         warning = self.appointment_schema.validate(json_data)
@@ -139,7 +151,10 @@ class AppointmentPut(Resource):
         db.session.add(appointment)
         db.session.commit()
 
-        if can_send_service_notification(appointment):
+        if (
+            can_send_service_notification(appointment)
+            and has_user_impacting_appointment_change(previous, appointment)
+        ):
             # Send confirmation email
             try:
                 send_email(request.headers['Authorization'].replace('Bearer ', ''), *get_confirmation_email_contents(appointment, office, office.timezone, user))
