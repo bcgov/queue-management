@@ -24,7 +24,7 @@
             cols="12"
             md="5"
           >
-          <img :src="require('@/assets/img/officemaps/' + getOfficeMap(appointment))" :alt="getMapAltText(appointment)" class='static-map'>
+          <img :src="getOfficeMap(appointment)" :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
             cols="12"
@@ -132,6 +132,7 @@ import ConfigHelper from '@/utils/config-helper'
 import { NoEmailAlert } from '@/components/common'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
+import { officeMapSrc } from '@/utils/common-util'
 
 @Component({
   components: {
@@ -196,7 +197,7 @@ export default class Home extends Vue {
   }
 
   private getOfficeMap (appointment: Appointment) {
-    return appointment?.office?.officeNumber ? appointment?.office?.officeNumber.toString() + '.png' : '999.png'
+    return officeMapSrc(appointment?.office?.officeNumber)
   }
 
   private getServiceName (appointment: Appointment) {

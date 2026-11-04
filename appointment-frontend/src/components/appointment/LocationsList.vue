@@ -107,14 +107,14 @@
               <v-col cols="12" md="6" align-self="stretch" align="center" class="loc-map">
                 <template v-if='location.externalMapLink'>
                   <a class='link-w-icon mt-6' v-bind:href='location.externalMapLink' target="_blank" rel="noopener noreferrer" :alt='`Open link for ${ location.civicAddress}`'>
-                    <v-img v-if="location.civicAddress" :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))" :alt="location.civicAddress || 'No address'" class='static-map'>
+                    <v-img v-if="location.civicAddress" :src="officeMap(location.officeNumber)" :alt="location.civicAddress || 'No address'" class='static-map'>
                     </v-img>
                   </a>
                 </template>
                 <template v-else>
                   <v-img
                     v-if="location.civicAddress"
-                    :src="require('@/assets/img/officemaps/' + (location.officeNumber ? location.officeNumber.toString() + '.png' : '999.png'))"
+                    :src="officeMap(location.officeNumber)"
                     :alt="location.civicAddress || 'No address'"
                     class='static-map'
                     data-cy="step-1-image-map"
@@ -174,6 +174,7 @@ import ServiceListPopup from './ServiceListPopup.vue'
 import StepperMixin from '@/mixins/StepperMixin.vue'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
+import { officeMapSrc } from '@/utils/common-util'
 
 @Component({
   components: {
@@ -353,6 +354,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.$refs.locationServiceListPopup.open()
     const mySP = { label: 'View Location Services', step: 'Location Selection', loggedIn: this.isAuthenticated, apptID: null, clientID: this.currentUserProfile?.userId, loc: location.officeName, serv: null, url: null }
     this.callSnowplowClick(mySP)
+  }
+
+  private officeMap (officeNumber?: number) {
+    return officeMapSrc(officeNumber)
   }
 
   private getCoordinates (location) {
