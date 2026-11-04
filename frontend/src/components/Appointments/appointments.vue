@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { officeNow, isPastOfficeTime } from '@/utils/office-time'
+import { isPastOfficeTime, officeNow } from '@/utils/office-time'
 /* eslint-disable */
 // /* eslint-disable sort-imports */
 import { Component, Vue } from 'vue-property-decorator'

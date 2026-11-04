@@ -12,8 +12,6 @@
  See the License for the specific language governing permissions and
  limitations under the License. */
 
-import 'es6-promise/auto'
-
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { addExamModule } from './modules/add-exam-module'

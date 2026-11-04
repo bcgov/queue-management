@@ -1,2 +1,8 @@
 **/node_modules
 **/dist
+.git
+.env.local
+.env.*.local
+npm-debug.log*
+public/static/keycloak/keycloak.json
+public/config/configuration.json
