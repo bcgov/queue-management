@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN CYPRESS_INSTALL_BINARY=0 PUPPETEER_SKIP_DOWNLOAD=true npm ci
 
 COPY . .
-RUN npm run build
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.31.8 AS production-stage
 
