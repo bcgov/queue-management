@@ -8,10 +8,8 @@ const DEFAULT_KEYCLOAK_CLIENT_SECRET = 'theq-local-dev-secret';
 const DEFAULT_KEYCLOAK_USERNAME = 'cfms-postman-operator';
 const DEFAULT_KEYCLOAK_PASSWORD = 'password';
 const DEFAULT_TARGET = 'http://localhost:5000';
-const DEFAULT_OFFICE_TIMEZONE = 'America/Vancouver';
 const DEFAULT_DRAFT_OFFICE_ID = 2;
 const DEFAULT_DRAFT_SERVICE_ID = 11;
-const DEFAULT_DRAFT_OFFICE_TIMEZONE = 'America/Creston';
 const DEFAULT_DRAFT_SLOT_WEEK_RANGE = 300000;
 
 // This implementation assumes it never has to refresh a token and they never expire
@@ -47,8 +45,6 @@ function getLoadTestConfig() {
         updateServiceId: Number(process.env.LOADTEST_UPDATE_SERVICE_ID || 7),
         draftOfficeId: Number(process.env.LOADTEST_DRAFT_OFFICE_ID || DEFAULT_DRAFT_OFFICE_ID),
         draftServiceId: Number(process.env.LOADTEST_DRAFT_SERVICE_ID || DEFAULT_DRAFT_SERVICE_ID),
-        officeTimezone: process.env.LOADTEST_OFFICE_TIMEZONE || DEFAULT_OFFICE_TIMEZONE,
-        draftOfficeTimezone: process.env.LOADTEST_DRAFT_OFFICE_TIMEZONE || DEFAULT_DRAFT_OFFICE_TIMEZONE,
         draftSlotWeekRange: Number(
             process.env.LOADTEST_DRAFT_SLOT_WEEK_RANGE || DEFAULT_DRAFT_SLOT_WEEK_RANGE
         ),
@@ -59,34 +55,13 @@ function buildApiUrl(target, path) {
     return new URL(path, target.replace(/\/$/, '')).toString();
 }
 
-function parseSlotDate(day, time, timezone) {
+function parseSlotDate(day, time) {
     const [month, date, year] = day.split('/').map(Number);
     const [hour, minute] = time.split(':').map(Number);
-    const utcGuess = Date.UTC(year, month - 1, date, hour, minute);
-    const localParts = new Intl.DateTimeFormat('en-CA', {
-        timeZone: timezone,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hourCycle: 'h23',
-    }).formatToParts(new Date(utcGuess)).reduce((parts, part) => {
-        parts[part.type] = part.value;
-        return parts;
-    }, {});
-    const zonedAsUtc = Date.UTC(
-        Number(localParts.year),
-        Number(localParts.month) - 1,
-        Number(localParts.day),
-        Number(localParts.hour),
-        Number(localParts.minute),
-        Number(localParts.second)
-    );
-    const timezoneOffset = zonedAsUtc - utcGuess;
+    const pad = (value) => String(value).padStart(2, '0');
 
-    return new Date(utcGuess - timezoneOffset).toISOString();
+    // Slots are office-local wall times. The API applies the office's timezone.
+    return `${String(year).padStart(4, '0')}-${pad(month)}-${pad(date)}T${pad(hour)}:${pad(minute)}:00`;
 }
 
 function findFirstAvailableSlot(slotsByDay) {
@@ -112,13 +87,13 @@ function addDaysToSlotDay(day, daysToAdd) {
 }
 
 function buildDraftPayloadFromSlot(day, slot) {
-    const { draftOfficeId, draftServiceId, draftOfficeTimezone, draftSlotWeekRange } = getLoadTestConfig();
+    const { draftOfficeId, draftServiceId, draftSlotWeekRange } = getLoadTestConfig();
     const sequencedDay = addDaysToSlotDay(day, randomInt(1, draftSlotWeekRange + 1) * 7);
     return {
         office_id: draftOfficeId,
         service_id: draftServiceId,
-        start_time: parseSlotDate(sequencedDay, slot.start_time, draftOfficeTimezone),
-        end_time: parseSlotDate(sequencedDay, slot.end_time, draftOfficeTimezone),
+        start_time: parseSlotDate(sequencedDay, slot.start_time),
+        end_time: parseSlotDate(sequencedDay, slot.end_time),
     };
 }
 

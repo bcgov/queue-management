@@ -92,9 +92,11 @@ Configuration of varables is done in `envs.sh`.  The main variables that will be
 * `KEYCLOAK_USERNAME`, `KEYCLOAK_PASSWORD` - the demo user used to mint the token for the load test. The checked-in default is `cfms-postman-operator`.
 * `LOADTEST_OFFICE_ID`, `LOADTEST_CREATE_SERVICE_ID`, `LOADTEST_UPDATE_SERVICE_ID` - seeded local data IDs used by the appointment scenarios
 * `LOADTEST_DRAFT_OFFICE_ID`, `LOADTEST_DRAFT_SERVICE_ID` - seeded local data IDs used for draft creation. The local bootstrap default uses office `2` because office `1` has no appointment timeslots.
-* `LOADTEST_OFFICE_TIMEZONE` - IANA timezone used to turn slot times into draft appointment timestamps. The local bootstrap default is `America/Vancouver`.
-* `LOADTEST_DRAFT_OFFICE_TIMEZONE` - IANA timezone for the draft office. The local bootstrap default is `America/Creston` for office `2`.
 * `LOADTEST_DRAFT_SLOT_WEEK_RANGE` - size of the random future-week range used for generated draft windows. The default preserves the sampled slot weekday/time while avoiding concurrent VUs reserving the same appointment window.
+
+Appointment timestamps must be office-local values (`YYYY-MM-DDTHH:mm:ss`) without `Z` or a UTC offset. Drafts preserve the slot's local clock time; the API applies the configured office timezone. The harness does not need timezone environment variables.
+
+The HTTP scenarios request gzip, deflate, or Brotli compression explicitly. Artillery's response decoder does not support Zstandard (`zstd`), which newer HTTP clients may otherwise negotiate and which prevents JSON response captures from working.
 
 
 ### Running Load Tests
