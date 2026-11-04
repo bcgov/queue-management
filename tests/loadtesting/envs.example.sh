@@ -19,8 +19,6 @@ export LOADTEST_CREATE_SERVICE_ID=11
 export LOADTEST_UPDATE_SERVICE_ID=7
 export LOADTEST_DRAFT_OFFICE_ID=2
 export LOADTEST_DRAFT_SERVICE_ID=11
-export LOADTEST_OFFICE_TIMEZONE="America/Vancouver"
-export LOADTEST_DRAFT_OFFICE_TIMEZONE="America/Creston"
 export LOADTEST_DRAFT_SLOT_WEEK_RANGE=300000
 
 # Resolve a fresh access token after the Keycloak variables are exported.
