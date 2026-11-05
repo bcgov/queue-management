@@ -80,7 +80,7 @@ export default defineConfig({
   base: '/',
 
   optimizeDeps: {
-    include: ['jsonwebtoken']
+    include: ['jsonwebtoken', 'stompjs/lib/stomp.js']
   },
 
     esbuild: {
@@ -99,6 +99,12 @@ export default defineConfig({
         find: /^vue$/,
         replacement: fileURLToPath(
           new URL('./node_modules/vue/dist/vue.esm.js', import.meta.url)
+        )
+      },
+      {
+        find: /^stompjs$/,
+        replacement: fileURLToPath(
+          new URL('./src/utils/stomp-browser.ts', import.meta.url)
         )
       },
       {

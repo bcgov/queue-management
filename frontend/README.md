@@ -86,14 +86,16 @@ TZ=UTC npm run test:unit
 ```
 
 Unit tests use Jest and ts-jest directly, without Vue CLI.
-Legacy Puppeteer tests remain under `src/test` and require a running
-application, browser setup, and test credentials. The current `npm test`
-command may discover those tests as well as unit tests.
+`npm test` runs the same configured unit suite as `npm run test:unit`.
 
 `npm run preview` serves the built artifact for inspection. It does not
 reproduce the complete OpenShift deployment or its runtime configuration.
 
 ## Deployment
+
+The build sets NODE_OPTIONS=--max-old-space-size=4096 because the
+production bundle exceeded Node's default heap limit in OpenShift.
+The build container currently has a 7 GiB memory limit.
 
 OpenShift uses a Docker build with `contextDir: frontend` and
 `dockerfilePath: Dockerfile`.
@@ -121,3 +123,7 @@ The BuildConfig's Git repository and ref determine which revision is built.
   vm-browserify eval usage, and bundle size.
 - The local admin screen has a deferred redirect/CORS issue.
 - Production-image validation and manual regression testing remain required.
+- Camunda uses STOMP over a browser socket. An exact-match Vite alias
+  redirects `stompjs` to a local adapter for its browser implementation,
+  preserving the default export without loading Node-only TCP/WebSocket
+  adapters.
