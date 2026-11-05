@@ -10,10 +10,11 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "useDefineForClassFields": false,
     "experimentalDecorators": true,
     "types": [
-      "webpack-env",
-      "jest"
+      "vite/client",
+      "vitest/globals"
     ],
     "paths": {
       "@/*": [

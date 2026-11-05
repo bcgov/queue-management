@@ -8,7 +8,7 @@
       v-if="!isWalkin"
       class="mx-2 bc-logo"
       data-cy="header-image-bcgov"
-      :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
+      :src="$vuetify.breakpoint.xs ? mobileLogoUrl : desktopLogoUrl"
       max-width="132"
       contain
       @click="goTo('home')"
@@ -16,7 +16,7 @@
     <v-img
       v-else
       class="mx-2 bc-logo"
-      :src="($vuetify.breakpoint.xs) ? require('@/assets/img/gov3_bc_logo_mobile.png') : require('@/assets/img/gov3_bc_logo.png')"
+      :src="$vuetify.breakpoint.xs ? mobileLogoUrl : desktopLogoUrl"
       :max-width="($vuetify.breakpoint.xs) ? 60 : 132"
       contain
       @click="goTo('home')"
@@ -65,6 +65,8 @@ import { Office } from '@/models/office'
 import { Service } from '@/models/service'
 import SignedUser from './SignedUser.vue'
 import { User } from '@/models/user'
+import desktopLogoImage from '@/assets/img/gov3_bc_logo.png'
+import mobileLogoImage from '@/assets/img/gov3_bc_logo_mobile.png'
 
 @Component({
   components: {
@@ -102,6 +104,8 @@ export default class AppHeader extends Vue {
   private curService: string
   private curOffice: string
   private isWalkin:boolean = false
+  private desktopLogoUrl = desktopLogoImage
+  private mobileLogoUrl = mobileLogoImage
 
   async mounted () {
     this.isWalkin = window.location.href.includes('walk-in-Q')

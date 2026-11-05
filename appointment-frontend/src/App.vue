@@ -73,7 +73,7 @@ export default class App extends Vue {
   private headerLinks = []
 
   private async beforeMount () {
-    await KeyCloakService.setKeycloakConfigUrl(`${process.env.VUE_APP_PATH}config/kc/keycloak-public.json`)
+    await KeyCloakService.setKeycloakConfigUrl(`${import.meta.env.BASE_URL}config/kc/keycloak-public.json`)
     this.syncWithSessionStorage()
   }
 

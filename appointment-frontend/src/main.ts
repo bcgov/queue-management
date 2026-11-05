@@ -1,6 +1,4 @@
-import 'core-js/stable' // to polyfill ECMAScript features
 import '@mdi/font/css/materialdesignicons.min.css' // icon library (https://materialdesignicons.com/)
-import 'regenerator-runtime/runtime' // to use transpiled generator functions
 import * as VueGoogleMaps from 'vue2-google-maps'
 import App from './App.vue'
 import ConfigHelper from '@/utils/config-helper'
@@ -11,14 +9,12 @@ import router from './router'
 import { store } from './store'
 import vuetify from './plugins/vuetify'
 
-require('date-time-format-timezone') // IE 11 polyfill to work with timezones
-
 Vue.config.productionTip = false
 Vue.prototype.$tokenService = new TokenService()
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: process.env.GOOGLE_MAP_API_KEY || '',
+    key: import.meta.env.VITE_GOOGLE_MAP_API_KEY || '',
     libraries: 'places'
   }
 })

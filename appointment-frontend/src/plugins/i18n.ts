@@ -4,23 +4,27 @@ import Vue from 'vue'
 Vue.use(VueI18n)
 
 function loadLocaleMessages (): LocaleMessages {
-  // the "i" on the end of the regex indicates case insensitivity, so the "A-Z" is redundant. Just use "a-z".
-  const locales = require.context('../locales', true, /[a-z0-9-_,\s]+\.json$/i)
+  const locales = import.meta.glob('../locales/**/*.json', {
+    eager: true,
+    import: 'default'
+  })
+
   const messages: LocaleMessages = {}
-  locales.keys().forEach((key) => {
-    // the "i" on the end of the regex indicates case insensitivity, so the "A-Z" is redundant. Just use "a-z".
-    const matched = key.match(/([a-z0-9-_]+)\./i)
-    if (matched && matched.length > 1) {
-      const locale = matched[1]
-      messages[locale] = locales(key)
+
+  Object.entries(locales).forEach(([path, content]) => {
+    const matched = path.match(/\/([^/]+)\.json$/)
+
+    if (matched) {
+      messages[matched[1]] = content as LocaleMessages[string]
     }
   })
+
   return messages
 }
 
 const i18n = new VueI18n({
-  locale: process.env.VUE_APP_I18N_LOCALE || 'en',
-  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
+  locale: import.meta.env.VITE_I18N_LOCALE || 'en',
+  fallbackLocale: import.meta.env.VITE_I18N_FALLBACK_LOCALE || 'en',
   messages: loadLocaleMessages()
 })
 

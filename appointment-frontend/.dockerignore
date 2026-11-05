@@ -1,2 +1,8 @@
 **/node_modules
 **/dist
+.git
+coverage
+.env.local
+.env.*.local
+public/config/configuration.json
+public/config/kc/keycloak-public.json

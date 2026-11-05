@@ -24,7 +24,7 @@
             cols="12"
             md="5"
           >
-          <img :src="getOfficeMap(appointment)" :alt="getMapAltText(appointment)" class='static-map'>
+          <img :src="officeMapUrl(getOfficeMap(appointment))" :alt="getMapAltText(appointment)" class='static-map'>
           </v-col>
           <v-col
             cols="12"
@@ -132,7 +132,7 @@ import ConfigHelper from '@/utils/config-helper'
 import { NoEmailAlert } from '@/components/common'
 import { User } from '@/models/user'
 import { getModule } from 'vuex-module-decorators'
-import { officeMapSrc } from '@/utils/common-util'
+import { getOfficeMapUrl } from '@/utils/office-map'
 
 @Component({
   components: {
@@ -211,6 +211,10 @@ export default class Home extends Vue {
   private goToAccountSettings () {
     this.$router.push('/account-settings')
     this.callsp()
+  }
+
+  private officeMapUrl (filename: string): string {
+    return getOfficeMapUrl(filename)
   }
 
   private bookNewAppointment () {
