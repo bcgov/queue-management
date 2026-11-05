@@ -127,3 +127,8 @@ The BuildConfig's Git repository and ref determine which revision is built.
   redirects `stompjs` to a local adapter for its browser implementation,
   preserving the default export without loading Node-only TCP/WebSocket
   adapters.
+- Node API compatibility packages are supplied transitively by
+  vite-plugin-node-polyfills through node-stdlib-browser. The application
+  does not import these packages directly, so redundant root dependency
+  declarations were removed. Required compatibility code remains bundled
+  for the Camunda/FormIO integration.
