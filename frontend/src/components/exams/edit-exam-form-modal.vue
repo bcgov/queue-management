@@ -221,11 +221,11 @@
                 <div>
                   <b-input v-if="!isITAExam" :style="examInputStyle" :value="examInputText" class="less-15-mb"
                     placeholder="click here to see options" read-only :disabled="true" />
-                <multiselect 
+                <multiselect
                   v-if="isITAExam"
-                  v-model="selectedExam" 
-                  :options="iTAExamTypes" 
-                  track-by="exam_type_id" 
+                  v-model="selectedExam"
+                  :options="iTAExamTypes"
+                  track-by="exam_type_id"
                   label="exam_type_name"
                   :show-labels="false"
                   class="custom-multiselect"
@@ -242,7 +242,6 @@
 
                 </div>
                 <div :class="examTypeDropClass" style="border: 1px solid grey " @click="handleExamInputClick">
-
 
                   <template v-for="(type, i) in examTypeDropItems">
                     <b-dd-header v-if="type.header" :key="i + 'exam-type-dd-h'" :style="
@@ -501,6 +500,7 @@
 </template>
 
 <script lang="ts">
+import FileDownload from 'js-file-download'
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
@@ -512,13 +512,11 @@ import FailureExamAlert from './failure-exam-alert.vue'
 import OfficeDrop from './office-drop.vue'
 
 import moment from 'moment'
-import { ModelListSelect } from "vue-search-select"
+import { ModelListSelect } from 'vue-search-select'
 import EditExamConfirmationModal from './edit-exam-confirmation-modal.vue'
 
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
-
-const FileDownload = require('js-file-download')
 
 @Component({
   components: {

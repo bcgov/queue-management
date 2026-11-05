@@ -157,13 +157,13 @@ export default class DashButtons extends Vue {
   @Mutation('toggleFeedbackModal') public toggleFeedbackModal: any
   @Mutation('setAddModalSelectedItem') public setAddModalSelectedItem: any
 
-  get quickListItems() {
+  get quickListItems () {
     return this.user?.office?.quick_list?.filter(
       (item: any) => item.deleted === null
     ) || []
   }
 
-  get backOfficeItems() {
+  get backOfficeItems () {
     return this.user?.office?.back_office_list?.filter(
       (item: any) => item.deleted === null
     ) || []

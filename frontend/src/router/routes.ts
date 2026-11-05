@@ -15,7 +15,6 @@ import ButtonsUpload from '@/components/upload/buttons-upload.vue'
 import Calendar from '../components/Booking/calendar.vue'
 import Dash from '@/components/ServeCitizen/dash.vue'
 import Exams from '../components/exams/exams.vue'
-import Smartboard from '@/components/smartboard/index.vue'
 
 import Upload from '@/components/upload/upload.vue'
 import Tasklist from '@/views/TaskList.vue'
@@ -103,14 +102,5 @@ export const routes = [
         meta: { hideCitizenWaiting: false }
       }
     ]
-  },
-  {
-    path: '/smartboard/:office_number',
-    component: Smartboard,
-    props: true
-  },
-  {
-    path: '/smartboard/',
-    component: Smartboard
   }
 ]

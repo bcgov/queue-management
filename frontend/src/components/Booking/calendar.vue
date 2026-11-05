@@ -152,7 +152,7 @@
 </template>
 
 <script lang="ts">
-import { officeNow, isPastOfficeTime } from '@/utils/office-time'
+import { isPastOfficeTime, officeNow } from '@/utils/office-time'
 /* eslint-disable */
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Vue, Watch } from 'vue-property-decorator'
