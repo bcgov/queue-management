@@ -158,10 +158,10 @@
 <script lang="ts">
 import { Appointment, AppointmentSlot } from '@/models/appointment'
 import { AppointmentModule, AuthModule } from '@/store/modules'
+import CommonUtils, { officeMapSrc } from '@/utils/common-util'
 import { Component, Mixins } from 'vue-property-decorator'
 import { User, UserUpdateBody } from '@/models/user'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import CommonUtils from '@/utils/common-util'
 import ConfigHelper from '@/utils/config-helper'
 import { NoEmailAlert } from '@/components/common'
 import { Office } from '@/models/office'
@@ -265,7 +265,7 @@ export default class AppointmentSummary extends Mixins(StepperMixin) {
 
   private get staticMapData () {
     return {
-      officeNumber: this.currentOffice?.officeNumber ? this.currentOffice?.officeNumber.toString() + '.png' : '999.png',
+      mapSrc: officeMapSrc(this.currentOffice?.officeNumber),
       civicAddress: this.currentOffice?.civicAddress || '',
       latitude: this.currentOffice?.latitude || 0,
       longitude: this.currentOffice?.longitude || 0,

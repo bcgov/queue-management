@@ -360,6 +360,10 @@ export default class LocationsList extends Mixins(StepperMixin) {
     this.callSnowplowClick(mySP)
   }
 
+  private officeMap (officeNumber?: number) {
+    return officeMapSrc(officeNumber)
+  }
+
   private getCoordinates (location) {
     return {
       lat: location.latitude || 0,

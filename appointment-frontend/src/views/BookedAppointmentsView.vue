@@ -197,7 +197,7 @@ export default class Home extends Vue {
   }
 
   private getOfficeMap (appointment: Appointment) {
-    return appointment?.office?.officeNumber ? appointment?.office?.officeNumber.toString() + '.png' : '999.png'
+    return officeMapSrc(appointment?.office?.officeNumber)
   }
 
   private getServiceName (appointment: Appointment) {
