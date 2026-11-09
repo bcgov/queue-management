@@ -17,10 +17,10 @@ RUN python3 -m pip install --no-cache-dir setuptools && \
     python3 -m pip install --no-cache-dir -r requirements.txt && \
     python3 setup.py install
 
-EXPOSE 8080
+EXPOSE 5001
 
 ENV NUM_WORKERS=3
 ENV TIMEOUT=120
 
 #CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--timeout", "$TIMEOUT", "--workers", "$NUM_WORKERS", "wsgi:app"]
-CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--timeout", "120", "--workers", "3", "--no-control-socket", "wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--timeout", "120", "--workers", "3", "--no-control-socket", "wsgi:application"]
