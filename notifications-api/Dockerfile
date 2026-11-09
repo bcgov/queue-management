@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . /app
 WORKDIR /app
 
-RUN python3 -m pip install --no-cache-dir -r requirements.txt setuptools && \
+RUN python3 -m pip install --no-cache-dir setuptools && \
+    python3 -m pip install --no-cache-dir -r requirements.txt && \
     python3 setup.py install
 
 EXPOSE 5001
