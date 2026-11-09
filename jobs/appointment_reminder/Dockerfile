@@ -2,7 +2,7 @@ FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.14-slim
 
 # Update package list and upgrade nghttp2
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl nghttp2 && \
+    apt-get install -y --no-install-recommends curl git nghttp2 && \
     apt-get upgrade -y nghttp2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
