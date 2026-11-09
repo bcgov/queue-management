@@ -17,7 +17,7 @@ RUN python3 -m pip install --no-cache-dir setuptools && \
     python3 -m pip install --no-cache-dir -r requirements.txt && \
     python3 setup.py install
 
-EXPOSE 5001
+EXPOSE 8080
 
 ENV NUM_WORKERS=3
 ENV TIMEOUT=120
