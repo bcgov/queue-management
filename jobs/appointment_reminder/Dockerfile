@@ -1,27 +1,17 @@
-#FROM python:3.8.5-buster
-FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.10.5-buster
-
+FROM artifacts.developer.gov.bc.ca/docker-remote/python:3.14-slim
 
 # Update package list and upgrade nghttp2
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends nghttp2 && \
+    apt-get install -y --no-install-recommends curl git nghttp2 && \
     apt-get upgrade -y nghttp2 && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# ========================================================================================================
-# Install go-crond (from https://github.com/BCDevOps/go-crond)
-#  - Adds some additional logging enhancements on top of the upstream project;
-#    https://github.com/webdevops/go-crond
-#
-# CRON Jobs in OpenShift:
-# - https://blog.danman.eu/cron-jobs-in-openshift/
-#
-# --------------------------------------------------------------------------------------------------------
-ARG SOURCE_REPO=BCDevOps
-ARG GOCROND_VERSION=0.6.2
+# Install go-crond
+ARG SOURCE_REPO=webdevops
+ARG GOCROND_VERSION=20.7.0
 RUN curl https://github.com/$SOURCE_REPO/go-crond/releases/download/$GOCROND_VERSION/go-crond-64-linux -s -L -o /usr/local/bin/go-crond
 RUN chmod ug+x /usr/local/bin/go-crond
-# ========================================================================================================
 
 # Add a job user
 ARG uid=1001
@@ -30,6 +20,7 @@ RUN useradd -U -ms /bin/bash -u $uid $user \
     && usermod -a -G root $user
 
 ENV HOME=/appointment_reminder
+ENV PYTHONPATH="/appointment_reminder/src/queue-api/api"
 
 RUN mkdir $HOME && chmod 755 $HOME
 
@@ -42,10 +33,7 @@ COPY . .
 RUN pip install --upgrade pip --user
 RUN pip install --no-cache-dir -r requirements.txt
 
-
-
 # Set ownership and permissions
-# Set scripts as executable (make files and python files do not have to be marked)
 # Make /etc/passwd writable for the root group so an entry can be created for an OpenShift assigned user account.
 RUN chown -R $user:root $HOME \
     && chmod -R ug+rw $HOME \
