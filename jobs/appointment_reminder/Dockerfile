@@ -9,7 +9,7 @@ RUN apt-get update && \
 
 # Install go-crond
 ARG SOURCE_REPO=webdevops
-ARG GOCROND_VERSION=23.2.0
+ARG GOCROND_VERSION=20.7.0
 RUN curl https://github.com/$SOURCE_REPO/go-crond/releases/download/$GOCROND_VERSION/go-crond-64-linux -s -L -o /usr/local/bin/go-crond
 RUN chmod ug+x /usr/local/bin/go-crond
 
