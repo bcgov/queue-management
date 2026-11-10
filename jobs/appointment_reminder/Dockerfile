@@ -20,6 +20,7 @@ RUN useradd -U -ms /bin/bash -u $uid $user \
     && usermod -a -G root $user
 
 ENV HOME=/appointment_reminder
+ENV PYTHONPATH="/appointment_reminder/src/queue-api/api"
 
 RUN mkdir $HOME && chmod 755 $HOME
 
