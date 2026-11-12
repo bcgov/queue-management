@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref }}
 
@@ -84,7 +84,7 @@ jobs:
           working-directory: appointment-frontend
 
       - name: On Failure Upload Screenshot Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: appointment-frontend-cypress

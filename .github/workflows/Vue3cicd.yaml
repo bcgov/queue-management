@@ -155,13 +155,13 @@ jobs:
           target: ${{ env.ZAP_URL }}
 
       - name: Upload Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: OWASP ZAP - Staff Front End Report
           path: report_html.html
 
       - name: Upload Report as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: OWASP ZAP - Appointment Front End Report
           path: report_html.html
