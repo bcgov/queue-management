@@ -100,16 +100,16 @@ export const routes = [
           buttons: ButtonTasklist
         },
         meta: { hideCitizenWaiting: false }
-      },
-      {
-        path: '/smartboard/:office_number',
-        component: Smartboard,
-        props: true
-      },
-      {
-        path: '/smartboard/',
-        component: Smartboard
       }
     ]
+  },
+  {
+    path: '/smartboard/:office_number',
+    component: Smartboard,
+    props: true
+  },
+  {
+    path: '/smartboard/',
+    component: Smartboard
   }
 ]
