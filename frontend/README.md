@@ -109,7 +109,6 @@ The BuildConfig's Git repository and ref determine which revision is built.
 ## Compatibility and remaining work
 
 - Vue CLI and Webpack have been removed.
-- The unused smartboard UI and vue-video-player dependency were removed.
 - Camunda's Vue components require the legacy TypeScript decorator transform
   in vite.config.mts. This is unrelated to legacy browser support.
 - Camunda/FormIO dependencies require Node API compatibility code in the
@@ -132,3 +131,9 @@ The BuildConfig's Git repository and ref determine which revision is built.
   does not import these packages directly, so redundant root dependency
   declarations were removed. Required compatibility code remains bundled
   for the Camunda/FormIO integration.
+  - Smartboard video playback retains vue-video-player 5.0.2 and
+  video.js 6.13.0. This dependency chain includes babel-runtime and
+  core-js 2.6.12, plus legacy HLS/Flash packages. Replacing the player
+  requires separate compatibility testing. The strict no-legacy-polyfills
+  acceptance criterion therefore requires an agreed exception or further
+  modernization.
