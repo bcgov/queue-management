@@ -1,9 +1,9 @@
 /*eslint-disable */
 const config = {
-    APP_API_URL: process.env.VUE_APP_API_URL || '/api/v1/',
-    SOCKET_URL: process.env.VUE_APP_SOCKET_URL || '',
-    REFRESH_TOKEN_SECONDS_LEFT: process.env.VUE_APP_REFRESH_TOKEN_SECONDS_LEFT || '180',
-    BASE_URL: process.env.BASE_URL || '',
+    APP_API_URL: import.meta.env.VITE_API_URL || '/api/v1/',
+    SOCKET_URL: import.meta.env.VITE_SOCKET_URL || '',
+    REFRESH_TOKEN_SECONDS_LEFT: import.meta.env.VITE_REFRESH_TOKEN_SECONDS_LEFT || '180',
+    BASE_URL: import.meta.env.BASE_URL,
     IS_INTERNET_EXPLORER: isInternetExplorer()
 }
 

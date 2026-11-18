@@ -18,13 +18,13 @@ limitations under the License. */ -->
 </template>
 
 <script lang="ts">
+import { io } from 'socket.io-client'
 import { Action, namespace } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
 import config from './../../config'
 import configMap from '@/utils/config-helper'
 
-const io = require('socket.io-client')
 let socket
 
 const appointmentsModule = namespace('appointmentsModule')

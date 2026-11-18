@@ -484,7 +484,7 @@
           <b-form-row>
             <b-col cols="12">
               <b-button
-                id="recurringInfo" 
+                id="recurringInfo"
                 variant="primary"
                 class="w-100 mb-2"
                 v-b-toggle.other-recurring-rule-collapse
@@ -562,6 +562,7 @@ import { apiProgressBus, APIProgressBusEvents } from '../../events/progressBus'
 import { showBookingFlagBus, ShowBookingFlagBusEvents } from '../../events/showBookingFlagBus'
 import 'vue2-datepicker/index.css'
 import 'vue2-timepicker/dist/VueTimepicker.css'
+import { v4 as uuidv4 } from 'uuid'
 
 
 const appointmentsModule = namespace('appointmentsModule')
@@ -776,7 +777,6 @@ export default class OtherBookingModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.other_rrule_array.length)
     this.submitting_flag = true
-    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     const self = this
     let sent_flag: number = 0

@@ -693,13 +693,13 @@
 </template>
 
 <script lang="ts">
+import FileDownload from 'js-file-download'
 // /* eslint-disable */
 
 import { Action, Getter, Mutation, State } from 'vuex-class'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import DatePicker from 'vue2-datepicker'
-const FileDownload = require('js-file-download')
 
 @Component({
   components: {

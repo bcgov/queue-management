@@ -35,7 +35,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-
+import { v4 as uuidv4 } from 'uuid'
 @Component
 export default class NotificationFields extends Vue {
   @Getter('form_data') private formData!: any;
@@ -57,7 +57,6 @@ export default class NotificationFields extends Vue {
 
   setwalkinUniqueId () {
     if ((this.formData.notification_phone) || (this.formData.notification_email)) {
-      const uuidv4 = require('uuid').v4
       this.$store.commit('updateAddModalForm', { type: 'walkin_unique_id', value: uuidv4() })
     }
   }

@@ -1057,7 +1057,7 @@ export default class ExamInventoryTable extends Vue {
   }
 
   editExamDetails (item) {
-    console.log("Edit exam", item);
+    console.log('Edit exam', item)
     this.actionedExam = item
     this.toggleEditExamModal(true)
   }

@@ -1,15 +1,18 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:20 as build-stage
-ENV VUE_APP_PATH=/
-WORKDIR /app
-COPY ./package*.json ./
-RUN npm install
-COPY . .
-RUN npm dedupe
-RUN npm run build
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.21.0 AS build-stage
 
-FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.25.3 as production-stage
+WORKDIR /app
+
+COPY package*.json ./
+RUN CYPRESS_INSTALL_BINARY=0 PUPPETEER_SKIP_DOWNLOAD=true npm ci
+
+COPY . .
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
+
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.31.8 AS production-stage
+
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir /app
+RUN mkdir -p /app
 COPY --from=build-stage /app/dist /app
-EXPOSE 8080:8080
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

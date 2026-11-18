@@ -14,6 +14,7 @@
 import { Axios } from './../helpers'
 import { makeBookingReqObj } from '../helpers/makeBookingReqObj'
 import moment from 'moment'
+import config from '../../../config'
 
 const DEFAULT_COUNTER_NAME = 'Counter'
 const getEventColor = (isBlackout, room, isStat) => {
@@ -759,7 +760,7 @@ export const commonActions: any = {
           },
           error => {
             let message
-            if(process.env.VUE_APP_API_URL === 'https://qms.sd.gov.bc.ca/api'){
+            if (config.APP_API_URL === 'https://qms.sd.gov.bc.ca/api') {
               message = 'You are not set up in QMS, please contact SDPR.QMSSupportTeam@gov.bc.ca to be set up.'
             }
             else{

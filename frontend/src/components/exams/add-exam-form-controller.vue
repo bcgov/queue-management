@@ -132,6 +132,7 @@
 import { Action, Getter, Mutation } from 'vuex-class'
 import {
   AddExamCounter,
+  Checkmark,
   DateQuestion,
   DropdownQuestion,
   ExamReceivedQuestion,
@@ -142,8 +143,7 @@ import {
   OffsiteSelect,
   SelectOffice,
   SelectQuestion,
-  TimeQuestion,
-  Checkmark
+  TimeQuestion
 } from './add-exam-form-components'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'

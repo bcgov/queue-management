@@ -94,13 +94,13 @@
 </template>
 
 <script lang="ts">
+import FileDownload from 'js-file-download'
 
 import { Action, Mutation, State } from 'vuex-class'
 import { Component, Vue } from 'vue-property-decorator'
 
 import DatePicker from 'vue2-datepicker'
 import moment from 'moment'
-const FileDownload = require('js-file-download')
 
 @Component({
   components: {

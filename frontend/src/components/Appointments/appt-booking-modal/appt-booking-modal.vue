@@ -184,7 +184,7 @@
                   </b-button-group>
                 </b-input-group-prepend>
                 <b-form-input
-                  id="serviceInput" 
+                  id="serviceInput"
                   disabled
                   :state="validated.selectedService"
                   :value="service_name"

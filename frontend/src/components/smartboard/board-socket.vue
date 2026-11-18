@@ -19,7 +19,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import config from '../../../config'
 import configMap from '@/utils/config-helper'
 
-const io = require('socket.io-client')
+import { io } from 'socket.io-client'
 let socket
 
 @Component({})

@@ -16,7 +16,6 @@ import Calendar from '../components/Booking/calendar.vue'
 import Dash from '@/components/ServeCitizen/dash.vue'
 import Exams from '../components/exams/exams.vue'
 import Smartboard from '@/components/smartboard/index.vue'
-
 import Upload from '@/components/upload/upload.vue'
 import Tasklist from '@/views/TaskList.vue'
 import ButtonTasklist from '@/components/TaskList/ButtonTasklist.vue'

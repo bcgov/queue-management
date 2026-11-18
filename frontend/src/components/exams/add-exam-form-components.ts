@@ -6,7 +6,7 @@ import { mapState } from 'vuex'
 import DatePicker from 'vue2-datepicker'
 import OfficeDrop from './office-drop.vue'
 import moment from 'moment'
-import { ModelListSelect } from "vue-search-select"
+import { ModelListSelect } from 'vue-search-select'
 import { throws } from 'assert'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
@@ -224,7 +224,7 @@ export class DateQuestion extends Vue {
             </span>
           </template>
           <template #option="{ option, index }">
-             <div 
+             <div
                :style="{
                  backgroundColor: option.exam_color ? option.exam_color : '#333',
                  padding: '10px',
@@ -232,13 +232,13 @@ export class DateQuestion extends Vue {
                  border: isHoveredIndex === index ? '2px solid #7181a8' : '2px solid transparent',
                  borderRadius: isHoveredIndex === index ? '3px' : '0',
                  transition: 'color 0.3s, border 0.3s, background-color 0.3s, border-radius 0.3s, box-shadow 0.3s, transform 0.3s',
-                 boxShadow: isHoveredIndex === index ? '0 8px 16px rgba(0, 0, 0, 0.3)' : 'none', 
+                 boxShadow: isHoveredIndex === index ? '0 8px 16px rgba(0, 0, 0, 0.3)' : 'none',
                  transform: isHoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
                  fontFamily: 'Roboto, sans-serif',
                  fontSize: '16px',
-                 lineHeight: '1.5'        
-               }" 
-               @mouseover="isHoveredIndex = index" 
+                 lineHeight: '1.5'
+               }"
+               @mouseover="isHoveredIndex = index"
                @mouseleave="isHoveredIndex = null"
                @click="preHandleInput(option)"
              >
@@ -293,15 +293,15 @@ export class DropdownQuestion extends Vue {
     }
     const sorter = (a, b) => {
       if (a.exam_color < b.exam_color) {
-        return -1;
+        return -1
       }
       if (a.exam_color > b.exam_color) {
-        return 1;
+        return 1
       }
-      const totalMinutesA = a.number_of_hours * 60 + a.number_of_minutes;
-      const totalMinutesB = b.number_of_hours * 60 + b.number_of_minutes;
+      const totalMinutesA = a.number_of_hours * 60 + a.number_of_minutes
+      const totalMinutesB = b.number_of_hours * 60 + b.number_of_minutes
 
-      return totalMinutesA - totalMinutesB; 
+      return totalMinutesA - totalMinutesB
     }
     if (this.addExamModal.setup === 'individual') {
       const exams = this.examTypes.filter(type =>
@@ -357,7 +357,7 @@ export class DropdownQuestion extends Vue {
     this.setAddExamModalSetting({ step1MenuOpen: false })
   }
 
-  customLabel(option) {
+  customLabel (option) {
     return option.exam_type_name
   }
 
@@ -369,7 +369,7 @@ export class DropdownQuestion extends Vue {
       }
     })
     this.displayText = item.exam_type_name
-    console.log("CAPTURED EXAM", item.exam_type_id);
+    console.log('CAPTURED EXAM', item.exam_type_id)
   }
 }
 

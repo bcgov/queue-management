@@ -781,6 +781,7 @@ import 'vue2-datepicker/index.css'
 import 'vue2-timepicker/dist/VueTimepicker.css'
 import moment from 'moment'
 import { RRule } from 'rrule'
+import { v4 as uuidv4 } from 'uuid'
 
 
 const appointmentsModule = namespace('appointmentsModule')
@@ -980,7 +981,6 @@ export default class BookingBlackoutModal extends Vue {
     const end = moment(end_time).clone().format('HH:mm:ss')
     const start_date_office = `${date}T${start}`
     const end_date_office = `${date}T${end}`
-    const uuidv4 = require('uuid').v4
     let axiosArray: any = []
     const recurring_uuid = uuidv4()
     if (this.booking_rrule_array.length === 0) {
@@ -1492,7 +1492,6 @@ export default class BookingBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.booking_rrule_array.length)
     showBookingFlagBus.$emit(ShowBookingFlagBusEvents.ShowBookingFlagEvent, true)
-    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
     let rrule_ind = 0

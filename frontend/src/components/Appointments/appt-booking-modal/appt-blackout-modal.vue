@@ -692,6 +692,7 @@
 <script lang="ts">
 /* eslint-disable */
 import { Component, Vue } from 'vue-property-decorator'
+import { v4 as uuidv4 } from 'uuid'
 import { Action, State, namespace } from 'vuex-class'
 import { apiProgressBus, APIProgressBusEvents } from '../../../events/progressBus'
 import { showFlagBus, ShowFlagBusEvents } from '../../../events/showFlagBus'
@@ -896,7 +897,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const start_date = `${date}T${start}`
     const end = moment(end_time).clone().format('HH:mm:ss')
     const end_date = `${date}T${end}`
-    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     if (this.rrule_array.length > 0) {
       this.rrule_array.forEach(item => {
@@ -965,7 +965,6 @@ export default class AppointmentBlackoutModal extends Vue {
     const end = moment(end_time).clone().format('HH:mm:ss')
     const start_date = `${date}T${start}`
     const end_date = `${date}T${end}`
-    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
     let rrule_ind = 0
@@ -1407,7 +1406,6 @@ export default class AppointmentBlackoutModal extends Vue {
     this.setApiTotalCount(0)
     this.setApiTotalCount(this.rrule_array.length)
     showFlagBus.$emit(ShowFlagBusEvents.ShowFlagEvent, true)
-    const uuidv4 = require('uuid').v4
     const recurring_uuid = uuidv4()
     let axiosArray: any = []
     let rrule_ind = 0

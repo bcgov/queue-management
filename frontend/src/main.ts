@@ -14,14 +14,11 @@ limitations under the License. */
 
 /*eslint-disable */
 /*tslint-disable */
-import 'babel-polyfill'; // For IE11 compat
 import './router/componentHooks'; // <-- Needs to be first to work beforeRouteLeave
-import 'core-js/stable'; // For IE11 compat
 
 import Vue from 'vue';
 import vuetify from './plugins/vuetify';
 import Buefy from 'buefy';
-import 'es6-promise/auto';
 import store from './store/index';
 import BootstrapVue from 'bootstrap-vue';
 import router from './router';
@@ -76,7 +73,6 @@ import MainApp from './MainApp.vue';
 
 import ConfigHelper from '@/utils/config-helper';
 
-require('es6-shim');
 Vue.use(Buefy);
 Vue.use(VDragged);
 Vue.use(Plugin);
@@ -119,7 +115,7 @@ library.add(
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
-let kcPath = process.env.KEYCLOAK_JSON_URL?  process.env.KEYCLOAK_JSON_URL: '/static/keycloak/keycloak.json'
+const kcPath = import.meta.env.VITE_KEYCLOAK_JSON_URL || '/static/keycloak/keycloak.json'
 let keycloak = new Keycloak(kcPath);
 // let keycloak = Keycloak({
 //   url: "https://dev.loginproxy.gov.bc.ca/auth/",
