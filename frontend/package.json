@@ -130,7 +130,7 @@
     "postcss-loader": "4.0.3",
     "puppeteer": "8.0.0",
     "rimraf": "3.0.2",
-    "sass": "^1.53.0",
+    "sass": "^1.104.0",
     "sass-loader": "^10.3.0",
     "semver": "7.3.5",
     "shelljs": "^0.8.5",
